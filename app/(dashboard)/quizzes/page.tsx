@@ -34,7 +34,7 @@ const page = () => {
       time: "9AM-11AM",
       participants: null,
       status: "ongoing" as const,
-      poster: "/images/q1.png",
+      poster: "/images/About1.png",
       title: "Challenge Your Mind",
     },
     {
@@ -54,7 +54,7 @@ const page = () => {
       time: "1PM-3PM",
       participants: null,
       status: "upcoming" as const,
-      poster: "classroom.jpg",
+      poster: "/images/job.png",
       title: "Expand Your Knowledge",
     },
     {
