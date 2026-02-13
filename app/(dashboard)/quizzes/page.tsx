@@ -24,7 +24,7 @@ const page = () => {
       pool: 2500,
       participants: 10000,
       status: "finished" as const,
-      poster: "/images/male-employee-croud.jpg",
+      poster: "/images/q2.jpg",
       title: "Master the Basics",
     },
     {
@@ -34,7 +34,7 @@ const page = () => {
       time: "9AM-11AM",
       participants: null,
       status: "ongoing" as const,
-      poster: "/images/man-employers.jpg",
+      poster: "/images/q1.png",
       title: "Challenge Your Mind",
     },
     {
@@ -44,7 +44,7 @@ const page = () => {
       time: "11AM-1PM",
       participants: null,
       status: "upcoming" as const,
-      poster: "/images/classroom.jpg",
+      poster: "/images/Study.jpg",
       title: "Top the Leaderboard",
     },
     {
@@ -54,8 +54,7 @@ const page = () => {
       time: "1PM-3PM",
       participants: null,
       status: "upcoming" as const,
-      poster:
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cXVpenplfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+      poster: "classroom.jpg",
       title: "Expand Your Knowledge",
     },
     {
