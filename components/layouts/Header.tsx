@@ -22,7 +22,7 @@ const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
           <h2 className="text-(--primary) font-bold">{title}</h2>
           <div className="flex gap-4 items-center">
             {backBtn && <Back text="Back" />}
-            <div className="flex gap-8 items-center">
+            <div className="flex gap-4 md:gap-8 items-center">
               <div className="relative">
                 <IoIosNotifications size={30} className="text-(--primary)" />
                 <LuDot

@@ -52,40 +52,50 @@ const defaultStyle =
 const activeStyle = " bg-blue-light border-r-lg border-r-blue text-(--primary)";
 const Sidebar = ({ type }: { type?: string }) => {
   const page = usePathname().split("/")[1];
-  const isOpen = useSidebar((state: any) => state.isOpen);
+  const { isOpen, toggleSidebar } = useSidebar((state: any) => state);
   return (
-    <aside
-      className={clsx(
-        type === "mobile"
-          ? `cu-lg:hidden duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`
-          : "hidden cu-lg:block left-0",
-        "p-8 backdrop-blur-3xl bg-[#0f127a33] md:w-fit fixed inset-b-0 h-full w-70 z-20",
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-20 "
+          onClick={toggleSidebar}
+        >
+          {/* overlay */}
+        </div>
       )}
-    >
-      <div className="py-4 px-4 flex items-center">
-        <Logo />
-      </div>
+      <aside
+        className={clsx(
+          type === "mobile"
+            ? `cu-lg:hidden duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`
+            : "hidden cu-lg:block left-0",
+          "p-8 backdrop-blur-3xl bg-[#0f127a33] md:w-fit fixed inset-b-0 h-full w-70 z-30",
+        )}
+      >
+        <div className="py-4 px-4 flex items-center">
+          <Logo />
+        </div>
 
-      <nav className="mt-4">
-        <ul className="p-0 m-0 flex flex-col gap-1">
-          {navLinks.map(({ label, href, icon: Icon }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className={clsx(
-                  defaultStyle,
-                  "white-space-nowrap",
-                  page === href.split("/")[1] && activeStyle,
-                )}
-              >
-                <Icon size={20} className="text-blue" />
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
+        <nav className="mt-4">
+          <ul className="p-0 m-0 flex flex-col gap-1">
+            {navLinks.map(({ label, href, icon: Icon }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={clsx(
+                    defaultStyle,
+                    "white-space-nowrap",
+                    page === href.split("/")[1] && activeStyle,
+                  )}
+                >
+                  <Icon size={20} className="text-blue" />
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    </>
   );
 };
 

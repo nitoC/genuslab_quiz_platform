@@ -54,7 +54,7 @@ const page = () => {
       time: "1PM-3PM",
       participants: null,
       status: "upcoming" as const,
-      poster: "/images/job.png",
+      poster: "/images/Job.png",
       title: "Expand Your Knowledge",
     },
     {
@@ -122,7 +122,7 @@ const page = () => {
           </GlassCard>
 
           <GlassCard className="flex-1">
-            <div className="bg-blue/10 p-6 flex h-full justify-between items-center">
+            <div className="bg-blue/10 p-6 flex flex-wrap gap-4 h-full justify-between items-center">
               <div className="flex flex-col gap-1">
                 <h3 className="text-blue font-bold text-lg">Performance</h3>
                 <p className="text-grey">
@@ -248,11 +248,11 @@ const page = () => {
         <section
           className={clsx(
             pop ? "opacity-100" : "opacity-0",
-            "px-4 duration-100 md:px-8 py-4 sticky bottom-0 z-50",
+            "px-4 duration-100 md:px-8 py-4 sticky bottom-0 z-10",
           )}
         >
           <GlassCard>
-            <div className="p-4 md:p-6 flex justify-between items-center">
+            <div className="p-4 md:p-6 flex justify-between items-center flex-wrap gap-4">
               <div className="flex items-center gap-4">
                 <div className="bg-blue/20 p-3 rounded-xl">
                   <LuTimer size={24} className="text-blue" />
