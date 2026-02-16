@@ -13,6 +13,7 @@ import { LuTimer } from "react-icons/lu"; // Added for the timer icon
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import Link from "next/link";
 
 const page = () => {
   const [pop, setpop] = useState(false);
@@ -237,7 +238,11 @@ const page = () => {
                 <p className="text-grey text-xs mt-2">87% Complete</p>
               </div>
 
-              <PrimaryButton text="View past quizzes" />
+              <PrimaryButton
+                type="link"
+                to="quizzes/previous"
+                text="View past quizzes"
+              />
             </div>
           </GlassCard>
         </div>

@@ -74,8 +74,14 @@ const page = () => {
                   />
 
                   <div className="flex flex-col sm:flex-row gap-3 justify-between pt-4">
-                    <PrimaryButton text="Earn a level" />
                     <PrimaryButton
+                      type="link"
+                      to="/quizzes"
+                      text="Earn a level"
+                    />
+                    <PrimaryButton
+                      type="link"
+                      to="/profile"
                       text="View Profile"
                       style="text-(--primary) rounded-sm backdrop-blur-lg hover:bg-white/20 duration-500 bg-white/10"
                     />
@@ -105,6 +111,8 @@ const page = () => {
                   </h3>
                   <PrimaryButton
                     text="View Rankings"
+                    type="link"
+                    to="/leaderboard"
                     style="text-(--primary) rounded-sm backdrop-blur-lg hover:bg-white/20 duration-500 bg-white/10"
                   />
                 </div>
@@ -146,7 +154,7 @@ const page = () => {
 
                 <div className="flex justify-center">
                   <Link
-                    href="/quizzes/all"
+                    href="/quizzes/previous"
                     className="text-blue text-xs hover:underline"
                   >
                     View all quizzes

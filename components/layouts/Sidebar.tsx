@@ -26,8 +26,8 @@ const navLinks = [
     icon: MdLeaderboard,
   },
   {
-    label: "History",
-    href: "/history",
+    label: "Transactions",
+    href: "/transactions",
     icon: FaClock,
   },
   {

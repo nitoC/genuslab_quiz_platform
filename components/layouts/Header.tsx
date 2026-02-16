@@ -7,6 +7,7 @@ import ImageWithFallback from "../ui/ImageWithFallback";
 import GlassCard from "../ui/cards/GlassCard";
 import clsx from "clsx";
 import useSidebar from "@/store/useSidebar";
+import Link from "next/link";
 
 const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
@@ -23,13 +24,13 @@ const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
           <div className="flex gap-4 items-center">
             {backBtn && <Back text="Back" />}
             <div className="flex gap-4 md:gap-8 items-center">
-              <div className="relative">
+              <Link href="/notifications" className="relative">
                 <IoIosNotifications size={30} className="text-(--primary)" />
                 <LuDot
                   size={40}
                   className="text-red absolute top-[-.8rem] right-[-.8rem]"
                 />
-              </div>
+              </Link>
               <div className="avatar-header">
                 <ImageWithFallback rounded={true} />
               </div>
