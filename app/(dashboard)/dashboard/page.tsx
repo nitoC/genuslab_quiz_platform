@@ -8,13 +8,103 @@ import Avatar from "@/components/ui/Avatar";
 import PrimaryButton from "@/components/ui/buttons/Primary";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import ProgressBar from "@/components/ui/ProgressBar";
+import useCountdown from "@/hooks/useCountdown";
+import { useTime } from "@/hooks/useTime";
+import getSessionStorage from "@/lib/utils/getSessionStorage";
+import nameResolver from "@/lib/utils/nameResolver";
+import { useSocket } from "@/store/useSocket";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { AiFillDollarCircle } from "react-icons/ai";
 import { FaCheckCircle, FaTrophy } from "react-icons/fa";
 import { IoIosRocket } from "react-icons/io";
 import { MdStars } from "react-icons/md";
 
 const page = () => {
+  const router = useRouter();
+  const socketId = useSocket((state: any) => state.socketId);
+  // const loggedInUser = useUser((state: any) => state.user);
+
+  const [userData, setUserData] = useState<any>();
+  const [userName, setUserName] = useState<any>("");
+  const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
+  const [Sid, setSid] = useState("");
+  const [countdown, setCountdown] = useState("Next quiz in —");
+  const [showNotStartedModal, setShowNotStartedModal] = useState(false);
+  const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [type, setType] = useState("dash");
+
+  const loading = !userData;
+
+  useEffect(() => {
+    const user = getSessionStorage("user");
+    console.log(user, "user");
+    if (user) {
+      setUserData(JSON.parse(user));
+      setUserName(nameResolver(JSON.parse(user).fullname));
+    } else {
+      router.push("/login");
+    }
+  }, []);
+
+  useEffect(() => {
+    setSid(socketId);
+  }, [socketId]);
+
+  /* ---------- Socket Epoch ---------- */
+  const handleTimerUpdate = (epoch: number) => {
+    setTargetEpoch(epoch);
+  };
+
+  useTime(socketId, handleTimerUpdate);
+
+  useCountdown(
+    targetEpoch,
+    "dash",
+    (
+      val:
+        | string
+        | { days: number; hours: number; minutes: number; seconds: number },
+    ) => {
+      setCountdown(typeof val === "string" ? val : `Next quiz in —`);
+    },
+  );
+
+  /* ---------- Quiz Card Click Logic ---------- */
+  const handleQuizClick = (
+    e: React.MouseEvent,
+    quizHour: number,
+    episode: number,
+  ) => {
+    e.preventDefault();
+    if (!targetEpoch) return;
+
+    const now = Date.now();
+    const quizStart = new Date(targetEpoch);
+    quizStart.setHours(quizHour, 0, 0, 0);
+
+    const startEpoch = quizStart.getTime();
+    const endEpoch = startEpoch + 2 * 60 * 60 * 1000;
+
+    if (now < startEpoch) {
+      setShowNotStartedModal(true);
+      return;
+    }
+
+    if (now >= startEpoch && now < endEpoch) {
+      router.push(`/quiz-online/${Sid}`);
+      return;
+    }
+
+    router.push(`/quiz/results?episode=${episode}`);
+  };
+
+  const handleNoticeModal = () => setIsNoticeModalOpen(!isNoticeModalOpen);
+
+  if (loading) return <p className="text-gray-500">Loading...</p>;
+
   return (
     <Layout>
       <div>
@@ -25,7 +115,7 @@ const page = () => {
           {/* WELCOME */}
           <div>
             <h2 className="text-(--primary) dash-title text-lg sm:text-xl lg:text-2xl">
-              Welcome back, <span className="text-blue">Tony Daniels!</span>
+              Welcome back, <span className="text-blue">{userName}!</span>
             </h2>
             <p className="text-grey text-sm">
               Here's is a quick overview of your account and activity quizzes.
@@ -49,7 +139,7 @@ const page = () => {
                   <div>
                     <div className="flex flex-wrap gap-2 items-center">
                       <h3 className="text-(--primary) font-bold text-lg">
-                        Tony Daniels
+                        {userName}
                       </h3>
                       <span className="text-blue text-[.625rem] bg-blue/20 py-2 px-4 rounded-full">
                         Rank 12
@@ -238,7 +328,7 @@ const page = () => {
 
           {/* FOOTER */}
           <div className="flex flex-col sm:flex-row gap-2 justify-between text-xs text-grey px-2 text-center sm:text-left">
-            <span>Next quiz starts in 1hr 58m 18s</span>
+            <span>{countdown}</span>
             <div className="flex gap-4 justify-center">
               <a href="#" className="hover:text-blue">
                 Privacy Policy

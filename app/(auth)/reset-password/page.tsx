@@ -1,6 +1,6 @@
 "use client";
 
-import CustomInput from "@/components/FormItems/CustomInput";
+import CustomInput from "@/components/ui/FormItems/CustomInput";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,8 +9,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 /* ------------------------------------------------------------------
    Reusable wrapped input (same shell used elsewhere)
 ------------------------------------------------------------------- */
-interface WrappedInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface WrappedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   hasIcon?: boolean;
 }
 
