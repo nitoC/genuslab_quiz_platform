@@ -26,11 +26,11 @@ const page = () => {
   const socketId = useSocket((state: any) => state.socketId);
   // const loggedInUser = useUser((state: any) => state.user);
 
+  const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState("Next quiz in —");
   const [userData, setUserData] = useState<any>();
   const [userName, setUserName] = useState<any>("");
-  const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
   const [Sid, setSid] = useState("");
-  const [countdown, setCountdown] = useState("Next quiz in —");
   const [showNotStartedModal, setShowNotStartedModal] = useState(false);
   const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -271,6 +271,8 @@ const page = () => {
                 </div>
 
                 <PrimaryButton
+                  type="link"
+                  to={Sid ? `live-quiz/${Sid}` : "#"}
                   text="Enter Now"
                   style="bg-green-500 text-white rounded-sm hover:bg-green-400 font-semibold"
                 />
@@ -321,7 +323,11 @@ const page = () => {
                 <span className="text-green-400 bg-green-400/10 px-4 py-2 rounded-full text-sm">
                   Bonus ₦250
                 </span>
-                <PrimaryButton text="Invite Friends" />
+                <PrimaryButton
+                  type="link"
+                  to={"/profile"}
+                  text="Invite Friends"
+                />
               </div>
             </div>
           </GlassCard>

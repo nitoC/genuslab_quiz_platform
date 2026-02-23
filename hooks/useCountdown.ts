@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const useCountdown = (
   targetEpoch: number | null,
-  type: "dash" | "quiz",
+  type: "dash" | "quiz" | "dash-2",
   setCountdown: (
     val:
       | string
@@ -102,6 +102,8 @@ const useCountdown = (
 
     if (type === "dash") {
       setCountdown(`Next quiz in ${hours}hrs ${minutes}mins ${seconds}secs`);
+    } else if (type === "dash-2") {
+      setCountdown(`${hours}hrs ${minutes}mins ${seconds}secs`);
     } else {
       setCountdown({ days: 0, hours, minutes, seconds });
     }

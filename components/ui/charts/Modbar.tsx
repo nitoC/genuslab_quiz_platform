@@ -37,7 +37,8 @@ const CustomCardChart = () => {
         backgroundColor: "transparent",
         padding: "20px",
         borderRadius: "12px",
-        width: "400px",
+        width: "100%",
+        maxWidth: "400px",
       }}
     >
       <ResponsiveContainer width="100%" height={200}>

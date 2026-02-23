@@ -20,6 +20,24 @@ const BAR_COLORS = [
   "#448fff",
 ];
 
+const REFERRAL_DATA = [
+  { value: 45 },
+  { value: 20 },
+  { value: 35 },
+  { value: 30 },
+  { value: 55 },
+  { value: 40 },
+];
+
+const MASTER_DATA = [
+  { value: 30 },
+  { value: 65 },
+  { value: 45 },
+  { value: 40 },
+  { value: 35 },
+  { value: 30 },
+];
+
 const ACTIVITY_DATA = [
   { name: "Bobby", points: 45 },
   { name: "Emma", points: 58 },
@@ -45,22 +63,24 @@ const LeaderboardPage = () => {
       <Header title="Global Leaderboard" backBtn={false} />
 
       <main className="p-8 space-y-8">
-        {/* TABS CHANGER: Matches image_6cfd28 styling */}
-        <div className="flex items-center gap-1 bg-[#0f172a]/50 p-1.5 rounded-xl border border-white/5 w-fit">
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                "px-6 py-2 rounded-lg text-xs font-bold transition-all duration-200",
-                activeTab === tab
-                  ? "bg-[#1e293b] text-white shadow-lg"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-white/5",
-              )}
-            >
-              {tab}
-            </button>
-          ))}
+        {/* TABS CHANGER */}
+        <div className="">
+          <div className="flex scroll-hide overflow-scroll lg:overflow-auto items-center gap-1 bg-[#0f172a]/50 p-1.5 rounded-xl border border-white/5 md:w-fit">
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "px-6 py-2 shrink-0 rounded-lg text-xs font-bold transition-all duration-200",
+                  activeTab === tab
+                    ? "bg-[#1e293b] text-white shadow-lg"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-white/5",
+                )}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* TOP ROW */}
@@ -93,7 +113,7 @@ const LeaderboardPage = () => {
           <GlassCard className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-slate-400 font-medium">Top Performers</h3>
-              <div className="text-blue-500 bg-blue-500/10 p-2 rounded-full">
+              <div className="text-blue-500 bg-blue-500/10 p-2 rounded-full text-xl">
                 🏆
               </div>
             </div>
@@ -149,7 +169,7 @@ const LeaderboardPage = () => {
           </GlassCard>
         </div>
 
-        {/* BOTTOM ROW */}
+        {/* MIDDLE ROW (Previous Bottom Row) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <GlassCard className="p-6 flex flex-col justify-between min-h-55">
             <div className="flex justify-between">
@@ -187,30 +207,16 @@ const LeaderboardPage = () => {
             <h2 className="text-3xl font-bold text-white mt-2 mb-6">
               Top: {maxPoints}
             </h2>
-
             <div className="flex-1 min-h-[180px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={ACTIVITY_DATA}
                   margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
                 >
-                  <Tooltip
-                    cursor={{ fill: "rgba(255,255,255,0.02)" }}
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-slate-900 border border-white/10 p-2 rounded text-[10px] text-white">
-                            {payload[0].value} Points
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
                   <Bar dataKey="points" radius={[4, 4, 4, 4]} barSize={40}>
                     {ACTIVITY_DATA.map((entry, index) => (
                       <Cell
-                        key={`cell-${index}`}
+                        key={index}
                         fill={
                           entry.points === maxPoints
                             ? BAR_COLORS[6]
@@ -222,7 +228,6 @@ const LeaderboardPage = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-
             <div className="flex justify-between items-center mt-4 px-4">
               {ACTIVITY_DATA.map((user, i) => (
                 <div
@@ -242,6 +247,93 @@ const LeaderboardPage = () => {
                   </span>
                 </div>
               ))}
+            </div>
+          </GlassCard>
+        </div>
+
+        {/* NEW BOTTOM ROW: Referral and Master Earnings */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Referral Ranking Card */}
+          <GlassCard className="p-6 h-[200px] relative flex flex-col justify-between overflow-hidden">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">
+                  Referral Ranking
+                </p>
+                <h2 className="text-3xl font-bold text-white mt-1">
+                  95 Points
+                </h2>
+              </div>
+              <div className="relative mr-2">
+                <CircularProgress
+                  percentage={75}
+                  size={40}
+                  strokeWidth={4}
+                  color="text-emerald-500"
+                />
+                <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-full -z-10" />
+              </div>
+            </div>
+
+            <div className="h-20 w-full mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={REFERRAL_DATA}>
+                  <Bar dataKey="value" radius={[6, 6, 6, 6]} barSize={32}>
+                    {REFERRAL_DATA.map((entry, index) => (
+                      <Cell
+                        key={index}
+                        fill={index === 0 ? "#10b981" : "#ffffff05"}
+                        className={
+                          index === 0
+                            ? "drop-shadow-[0_0_12px_rgba(16,185,129,0.6)]"
+                            : ""
+                        }
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </GlassCard>
+
+          {/* Master Earnings Card */}
+          <GlassCard className="p-6 h-[200px] relative flex flex-col justify-between overflow-hidden">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">
+                  Master Earnings
+                </p>
+                <h2 className="text-3xl font-bold text-white mt-1">5,000 XP</h2>
+              </div>
+              <div className="relative mr-2">
+                <CircularProgress
+                  percentage={60}
+                  size={40}
+                  strokeWidth={4}
+                  color="text-orange-500"
+                />
+                <div className="absolute inset-0 bg-orange-500/20 blur-md rounded-full -z-10" />
+              </div>
+            </div>
+
+            <div className="h-20 w-full mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={MASTER_DATA}>
+                  <Bar dataKey="value" radius={[6, 6, 6, 6]} barSize={32}>
+                    {MASTER_DATA.map((entry, index) => (
+                      <Cell
+                        key={index}
+                        fill={index === 1 ? "#f97316" : "#ffffff05"}
+                        className={
+                          index === 1
+                            ? "drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]"
+                            : ""
+                        }
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </GlassCard>
         </div>

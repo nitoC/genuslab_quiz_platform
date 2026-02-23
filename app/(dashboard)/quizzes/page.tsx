@@ -14,9 +14,18 @@ import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
+import { useSocket } from "@/store/useSocket";
+import useCountdown from "@/hooks/useCountdown";
+import { useTime } from "@/hooks/useTime";
 
 const page = () => {
   const [pop, setpop] = useState(false);
+  const socketId = useSocket((state: any) => state.socketId);
+  // const loggedInUser = useUser((state: any) => state.user);
+  const [Sid, setSid] = useState("");
+
+  const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState("Next quiz in —");
   const quizzes = [
     {
       day: "1250",
@@ -94,6 +103,29 @@ const page = () => {
   ];
 
   useEffect(() => {
+    setSid(socketId);
+  }, [socketId]);
+
+  /* ---------- Socket Epoch ---------- */
+  const handleTimerUpdate = (epoch: number) => {
+    setTargetEpoch(epoch);
+  };
+
+  useTime(socketId, handleTimerUpdate);
+
+  useCountdown(
+    targetEpoch,
+    "dash-2",
+    (
+      val:
+        | string
+        | { days: number; hours: number; minutes: number; seconds: number },
+    ) => {
+      setCountdown(typeof val === "string" ? val : `00.00.00`);
+    },
+  );
+
+  useEffect(() => {
     const popTimeout = setTimeout(() => {
       setpop(true);
     }, 3000);
@@ -134,7 +166,11 @@ const page = () => {
                 </p>
                 <p className="text-grey text-sm">Last week average score</p>
               </div>
-              <PrimaryButton text="View Analytics" />
+              <PrimaryButton
+                type="link"
+                to="/leaderboard"
+                text="View Analytics"
+              />
             </div>
           </GlassCard>
         </div>
@@ -191,7 +227,7 @@ const page = () => {
                 </p>
               </div>
 
-              <PrimaryButton text="View Profile" />
+              <PrimaryButton type="link" to="/profile" text="View Profile" />
             </div>
           </GlassCard>
 
@@ -213,7 +249,11 @@ const page = () => {
                 <p className="text-grey text-sm">10 Questions • 10 mins</p>
               </div>
 
-              <PrimaryButton text="Play Now" />
+              <PrimaryButton
+                type="link"
+                to={Sid ? `/live-quiz/${Sid}` : "#"}
+                text="Play Now"
+              />
             </div>
           </GlassCard>
 
@@ -267,12 +307,17 @@ const page = () => {
                     Next Event Starts In
                   </span>
                   <h2 className="text-white text-xl md:text-2xl font-bold">
-                    1hrs 58mins 18secs
+                    {/* 1hrs 58mins 18secs */}
+                    {countdown}
                   </h2>
                 </div>
               </div>
 
-              <PrimaryButton text="Join Quiz" />
+              <PrimaryButton
+                type="link"
+                to={Sid ? `/live-quiz/${Sid}` : "#"}
+                text="Join Quiz"
+              />
             </div>
           </GlassCard>
         </section>

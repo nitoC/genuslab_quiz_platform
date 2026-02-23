@@ -4,7 +4,7 @@ import { useSocket } from "@/store/useSocket";
 // import { cookies } from "next/headers";
 import React, { useEffect } from "react";
 
-const dashLayout = async ({ children }: { children: React.ReactNode }) => {
+const dashLayout = ({ children }: { children: React.ReactNode }) => {
   const updateSocketId = useSocket((state: any) => state.updateSocketId);
   // const theme = (await cookies()).get("theme")?.value ?? "dark";
 
