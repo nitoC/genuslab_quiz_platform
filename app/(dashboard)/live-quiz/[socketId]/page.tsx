@@ -78,7 +78,7 @@ const GetReadyModal = () => {
               {/* LEFT: IMAGE */}
               <div className="relative min-h-[420px] md:min-h-[580px]">
                 <img
-                  src="images/lady-office.jpg"
+                  src="/images/lady-office.jpg"
                   className="absolute inset-0 h-full w-full object-cover"
                   alt="Start Challenge"
                 />
