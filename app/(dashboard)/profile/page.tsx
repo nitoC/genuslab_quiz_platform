@@ -35,7 +35,7 @@ const ProfilePage = () => {
                   size={80}
                   type="main"
                   color="border-blue"
-                  className="md:w-[100px] md:h-[100px]"
+                  // className="md:w-[100px] md:h-[100px]"
                 />
                 <span className="absolute bottom-1 right-1 bg-green-500 p-1 rounded-full border-2 border-[#0a121f]">
                   <FaCheckCircle className="text-white text-[8px] md:text-[10px]" />
