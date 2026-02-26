@@ -243,7 +243,11 @@ const PerformancePage = () => {
               <QuizHistoryCard
                 key={quiz._id}
                 episode={`Episode ${index + 1}`}
-                date={new Date(quiz.date).toLocaleString()}
+                date={new Date(quiz.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
                 title={quiz.title}
                 score={quiz.score}
                 image={quiz.image || "/images/default.jpg"}
