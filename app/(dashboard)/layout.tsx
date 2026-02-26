@@ -3,6 +3,7 @@ import { socket } from "@/lib/api/socket";
 import { useSocket } from "@/store/useSocket";
 // import { cookies } from "next/headers";
 import React, { useEffect } from "react";
+import QueryProvider from "@/providers/QueryProvider";
 
 const dashLayout = ({ children }: { children: React.ReactNode }) => {
   const updateSocketId = useSocket((state: any) => state.updateSocketId);
@@ -26,11 +27,11 @@ const dashLayout = ({ children }: { children: React.ReactNode }) => {
     });
   }, []);
   return (
-    <>
+    <QueryProvider>
       <div className="flex-2" data-theme={"dark"}>
         {children}
       </div>
-    </>
+    </QueryProvider>
   );
 };
 
