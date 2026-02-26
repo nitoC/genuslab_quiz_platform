@@ -5,7 +5,7 @@ import { FaClock, FaCompass, FaUser } from "react-icons/fa";
 import { MdLeaderboard } from "react-icons/md";
 import { BiSolidMessageSquareDots } from "react-icons/bi";
 import Logo from "../ui/Logo";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import useSidebar from "@/store/useSidebar";
 
@@ -52,6 +52,7 @@ const defaultStyle =
 const activeStyle = " bg-blue-light border-r-lg border-r-blue text-(--primary)";
 const Sidebar = ({ type }: { type?: string }) => {
   const page = usePathname().split("/")[1];
+  const router = useRouter();
   const { isOpen, toggleSidebar } = useSidebar((state: any) => state);
   return (
     <>
@@ -80,7 +81,13 @@ const Sidebar = ({ type }: { type?: string }) => {
             {navLinks.map(({ label, href, icon: Icon }) => (
               <li key={href}>
                 <Link
-                  href={href}
+                  href={type === "mobile" ? "#" : href}
+                  onClick={(e) => {
+                    type === "mobile" &&
+                      e.preventDefault() &&
+                      toggleSidebar() &&
+                      router.push(href);
+                  }}
                   className={clsx(
                     defaultStyle,
                     "white-space-nowrap",

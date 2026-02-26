@@ -50,7 +50,7 @@ const QuizPage = () => {
   const [userData, setUserData] = useState<any | null>(null);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(600);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -170,9 +170,19 @@ const QuizPage = () => {
     setCurrentQuestionIndex((p) =>
       Math.min(p + 1, Math.max(0, (quizData?.length ?? 1) - 1)),
     );
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // smooth scrolling
+    });
   };
 
-  const goPrev = () => setCurrentQuestionIndex((p) => Math.max(p - 1, 0));
+  const goPrev = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // smooth scrolling
+    });
+    setCurrentQuestionIndex((p) => Math.max(p - 1, 0));
+  };
 
   const retry = () => {
     setAnswers(new Map());
@@ -560,7 +570,7 @@ const QuizPage = () => {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-8">
+                <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="text-right">
                     <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">
                       Potential Reward
@@ -569,7 +579,7 @@ const QuizPage = () => {
                   </div>
 
                   {/* Prev/Next/Submit maintains your CTA style */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col md:flex-row md:items-center gap-3">
                     {currentQuestionIndex > 0 && (
                       <button
                         onClick={goPrev}
@@ -649,8 +659,8 @@ const QuizPage = () => {
           )}
 
           {/* Background Decorative Blurs */}
-          <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full" />
-          <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full" />
+          {/* <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full" />
+          <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full" /> */}
         </div>
       </div>
     </Layout>
