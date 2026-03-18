@@ -20,6 +20,7 @@ const useQuestion = (socketId: ParamValue, sid: string) => {
   let questions: any;
   const isId = !(socketId !== sid && null);
 
+  isId && console.log("Socket ID is valid:", socketId);
   // --- STORE HANDLERS FOR OFF() ---
   const questionEvent = socketId + "question";
   const answerEvent = socketId + "answer";
@@ -31,9 +32,9 @@ const useQuestion = (socketId: ParamValue, sid: string) => {
     console.log("Received questions:", data);
   };
 
-  const onAnswer = (data: any) => {
-    console.log("Received score or answer results:", data);
-  };
+  // const onAnswer = (data: any) => {
+  //   console.log("Received score or answer results:", data);
+  // };
 
   // Store setData to use inside the handler
   let currentSetter: ((data: any) => void) | null = null;

@@ -16,7 +16,7 @@ const CalendarIcon = ({
   onChange,
   placeholder = "Select date of birth",
 }: Props) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+//   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   return (
     <DatePicker

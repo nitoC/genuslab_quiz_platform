@@ -32,7 +32,7 @@ const CircularProgress: React.FC<CircularProgressProps> = ({
       >
         {/* Background Track Ring */}
         <circle
-          className="text-gray-800"
+          className="text-gray-800/50"
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
