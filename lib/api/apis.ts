@@ -9,13 +9,16 @@ export const registerUser = async (payload: any) => {
 };
 export const tokenUser = async (payload: any) => {
   console.log(payload, "token user payload");
-  const res = await axiosUser.post("user/gl_api/v2/oauth/token", payload);
+  const res = await axios.post(
+    "https://genuslab.online/user/gl_api/v2/oauth/token",
+    payload,
+  );
   console.log(res, "token user payload");
   return res;
 };
 export const loginUser = async (payload: any) => {
   console.log(payload, "login user payload");
-  const res = await axiosUser.post("user/gl_api/v2/oauth/login", payload);
+  const res = await axios.post("user/gl_api/v2/oauth/login", payload);
   console.log(res, "login user payload");
   return res;
 };
