@@ -5,7 +5,7 @@ import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
 import { FaShieldHalved } from "react-icons/fa6";
 import { adminLogin } from "@/lib/api/apis";
 import { toast, ToastContainer } from "react-toastify";
-import { set } from "react-datepicker/dist/dist/date_utils.js";
+// import { set } from "react-datepicker/dist/dist/date_utils.js";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {

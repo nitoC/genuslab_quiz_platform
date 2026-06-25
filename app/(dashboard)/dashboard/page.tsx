@@ -369,14 +369,14 @@ import PrimaryButton from "@/components/ui/buttons/Primary";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import ProgressBar from "@/components/ui/ProgressBar";
 
-import useCountdown from "@/hooks/useCountdown";
-import { useTime } from "@/hooks/useTime";
+// import useCountdown from "@/hooks/useCountdown";
+// import { useTime } from "@/hooks/useTime";
 
 import { getRankData, getTime, getUserProfile } from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import nameResolver from "@/lib/utils/nameResolver";
 
-import { useSocket } from "@/store/useSocket";
+// import { useSocket } from "@/store/useSocket";
 
 import { AiFillDollarCircle } from "react-icons/ai";
 import { FaCheckCircle, FaTrophy } from "react-icons/fa";
@@ -605,7 +605,7 @@ const Page = () => {
                 <div className="flex gap-3 justify-center">
                   <PrimaryButton
                     text="Retry"
-                    onClick={() => window.location.reload()}
+                    handler={() => window.location.reload()}
                   />
 
                   <PrimaryButton

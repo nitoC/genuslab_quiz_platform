@@ -9,17 +9,17 @@ import { IoMdArrowForward } from "react-icons/io";
 import { MdStars } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { RiProgress5Line } from "react-icons/ri";
-import { LuTimer } from "react-icons/lu"; // Added for the timer icon
+// import { LuTimer } from "react-icons/lu"; // Added for the timer icon
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useState } from "react";
-import clsx from "clsx";
-import Link from "next/link";
+// import clsx from "clsx";
+// import Link from "next/link";
 import { useSocket } from "@/store/useSocket";
-import useCountdown from "@/hooks/useCountdown";
+// import useCountdown from "@/hooks/useCountdown";
 // import { useTime } from "@/hooks/useTime";
-// import { useTime as useTimeStore } from "@/features/quiz/store/time.store";
-import { useQuery } from "@tanstack/react-query";
-import { getTime } from "@/lib/api/apis";
+// // import { useTime as useTimeStore } from "@/features/quiz/store/time.store";
+// import { useQuery } from "@tanstack/react-query";
+// import { getTime } from "@/lib/api/apis";
 
 const page = () => {
   const [pop, setpop] = useState(false);
@@ -105,38 +105,38 @@ const page = () => {
     },
   ];
 
-  const {
-    isLoading: timeLoading,
-    isError: timeError,
-    data: timeData,
-  } = useQuery({
-    queryKey: ["quiz-time"],
-    queryFn: async () => {
-      const res = await getTime();
-      // setTime(res.data.payload);
-      console.log(res.data.payload, "system time in dashboard");
-      return res.data;
-    },
-  });
+  // const {
+  //   isLoading: timeLoading,
+  //   isError: timeError,
+  //   data: timeData,
+  // } = useQuery({
+  //   queryKey: ["quiz-time"],
+  //   queryFn: async () => {
+  //     const res = await getTime();
+  //     // setTime(res.data.payload);
+  //     console.log(res.data.payload, "system time in dashboard");
+  //     return res.data;
+  //   },
+  // });
 
-  /* ---------- Socket Epoch ---------- */
-  const handleTimerUpdate = (epoch: number) => {
-    setTargetEpoch(epoch);
-  };
+  // /* ---------- Socket Epoch ---------- */
+  // const handleTimerUpdate = (epoch: number) => {
+  //   setTargetEpoch(epoch);
+  // };
 
   // useTime(socketId, handleTimerUpdate);
 
-  useCountdown(
-    targetEpoch,
-    "dash-2",
-    (
-      val:
-        | string
-        | { days: number; hours: number; minutes: number; seconds: number },
-    ) => {
-      setCountdown(typeof val === "string" ? val : `00.00.00`);
-    },
-  );
+  // useCountdown(
+  //   targetEpoch,
+  //   "dash-2",
+  //   (
+  //     val:
+  //       | string
+  //       | { days: number; hours: number; minutes: number; seconds: number },
+  //   ) => {
+  //     setCountdown(typeof val === "string" ? val : `00.00.00`);
+  //   },
+  // );
 
   useEffect(() => {
     const popTimeout = setTimeout(() => {

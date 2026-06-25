@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { QuizQuestion } from "../types";
+// import type { QuizQuestion } from "../types.ts";
 
-export const useQuiz = (questions: QuizQuestion[]) => {
+export const useQuiz = (questions: any[]) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const [selectedAnswers, setSelectedAnswers] = useState<

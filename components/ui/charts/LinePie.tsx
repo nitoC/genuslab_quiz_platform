@@ -103,7 +103,7 @@ const renderActiveShape = ({
 
 export default function CustomActiveShapePieChart({
   isAnimationActive = true,
-  defaultIndex = 0,
+  // defaultIndex = 0,
 }: {
   isAnimationActive?: boolean;
   defaultIndex?: TooltipIndex;

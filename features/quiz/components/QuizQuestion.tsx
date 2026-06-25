@@ -1,7 +1,7 @@
 import QuizOptions from "./QuizOptions";
 
 interface Props {
-  question: QuizQuestion;
+  question: any;
   selectedAnswer?: string;
   onSelect: (value: string) => void;
 }

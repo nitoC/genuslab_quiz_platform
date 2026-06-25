@@ -6,11 +6,9 @@ import { useEffect } from "react";
 import { LuTimer } from "react-icons/lu";
 
 const TimerPop = (pop: boolean) => {
-
-    useEffect(()=>{
-        
-        return ()=>{}
-    })
+  useEffect(() => {
+    return () => {};
+  });
   return (
     <section
       className={clsx(
@@ -30,12 +28,12 @@ const TimerPop = (pop: boolean) => {
               </span>
               <h2 className="text-white text-xl md:text-2xl font-bold">
                 {/* 1hrs 58mins 18secs */}
-                {countdown}
+                {/* {countdown} */}
               </h2>
             </div>
           </div>
 
-          <PrimaryButton type="link" to={`/live-quiz/`} text="Join Quiz" />
+          {/* <PrimaryButton type="link" to={`/live-quiz/`} text="Join Quiz" /> */}
           {/* <PrimaryButton
                 type="link"
                 to={Sid ? `/live-quiz/${Sid}` : "#"}
