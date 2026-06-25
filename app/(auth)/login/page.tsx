@@ -110,28 +110,38 @@ const LoginPage = () => {
 
     setLoading(true);
     try {
-      const respToken = await tokenUser({
-        email: form.email,
-      });
+      // const respToken = await tokenUser({
+      //   email: form.email,
+      // });
 
+      // const resp = await loginUser({
+      //   api_key: respToken?.data,
+      //   Password: form.password,
+      // });
       const resp = await loginUser({
-        api_key: respToken?.data,
-        Password: form.password,
+        email: form.email,
+        password: form.password,
       });
       console.log(resp, "login response");
-      if (resp?.data === "Oh no way!") {
-        toast.error("Invalid login details");
-        setLoading(false);
-        return;
-      }
-      if (resp?.data.length && resp?.data.length > 0) {
-        sessionStorage.setItem("user", JSON.stringify(resp?.data[0]));
-        user(resp?.data[0]);
+      if (resp?.data?.payload) {
+        localStorage.setItem("user", JSON.stringify(resp.data.payload));
+        user(resp.data.payload);
         toast.success("Logged in successfully");
         router.push("/dashboard");
-      } else {
-        toast.error(resp?.data || "Login failed");
       }
+      // if (resp?.data === "Oh no way!") {
+      //   toast.error("Invalid login details");
+      //   setLoading(false);
+      //   return;
+      // }
+      // if (resp?.data.length && resp?.data.length > 0) {
+      //   sessionStorage.setItem("user", JSON.stringify(resp?.data[0]));
+      //   user(resp?.data[0]);
+      //   toast.success("Logged in successfully");
+      //   router.push("/dashboard");
+      // } else {
+      //   toast.error(resp?.data || "Login failed");
+      // }
     } catch (error) {
       console.error(error);
       toast.error(

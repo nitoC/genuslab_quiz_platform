@@ -16,13 +16,16 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useSocket } from "@/store/useSocket";
 import useCountdown from "@/hooks/useCountdown";
-import { useTime } from "@/hooks/useTime";
+// import { useTime } from "@/hooks/useTime";
+// import { useTime as useTimeStore } from "@/features/quiz/store/time.store";
+import { useQuery } from "@tanstack/react-query";
+import { getTime } from "@/lib/api/apis";
 
 const page = () => {
   const [pop, setpop] = useState(false);
   const socketId = useSocket((state: any) => state.socketId);
+  // const { setTime } = useTimeStore() as { setTime: (time: any) => void };
   // const loggedInUser = useUser((state: any) => state.user);
-  const [Sid, setSid] = useState("");
 
   const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
   const [countdown, setCountdown] = useState("Next quiz in —");
@@ -102,16 +105,26 @@ const page = () => {
     },
   ];
 
-  useEffect(() => {
-    setSid(socketId);
-  }, [socketId]);
+  const {
+    isLoading: timeLoading,
+    isError: timeError,
+    data: timeData,
+  } = useQuery({
+    queryKey: ["quiz-time"],
+    queryFn: async () => {
+      const res = await getTime();
+      // setTime(res.data.payload);
+      console.log(res.data.payload, "system time in dashboard");
+      return res.data;
+    },
+  });
 
   /* ---------- Socket Epoch ---------- */
   const handleTimerUpdate = (epoch: number) => {
     setTargetEpoch(epoch);
   };
 
-  useTime(socketId, handleTimerUpdate);
+  // useTime(socketId, handleTimerUpdate);
 
   useCountdown(
     targetEpoch,
@@ -197,7 +210,6 @@ const page = () => {
         </div>
       </section>
 
-      {/* NEW BOTTOM THREE CARDS */}
       <section className="p-4 relative md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* PROFILE CARD */}
@@ -249,11 +261,7 @@ const page = () => {
                 <p className="text-grey text-sm">10 Questions • 10 mins</p>
               </div>
 
-              <PrimaryButton
-                type="link"
-                to={Sid ? `/live-quiz/${Sid}` : "#"}
-                text="Play Now"
-              />
+              <PrimaryButton type="link" to={`/quiz/`} text="Play Now" />
             </div>
           </GlassCard>
 
@@ -288,40 +296,7 @@ const page = () => {
         </div>
       </section>
 
-      {/* Countdown - Updated to match Image */}
-      {
-        <section
-          className={clsx(
-            pop ? "opacity-100" : "opacity-0",
-            "px-4 duration-100 md:px-8 py-4 sticky bottom-0 z-10",
-          )}
-        >
-          <GlassCard>
-            <div className="p-4 md:p-6 flex justify-between items-center flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <div className="bg-blue/20 p-3 rounded-xl">
-                  <LuTimer size={24} className="text-blue" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-blue text-[10px] uppercase tracking-wider font-bold">
-                    Next Event Starts In
-                  </span>
-                  <h2 className="text-white text-xl md:text-2xl font-bold">
-                    {/* 1hrs 58mins 18secs */}
-                    {countdown}
-                  </h2>
-                </div>
-              </div>
-
-              <PrimaryButton
-                type="link"
-                to={Sid ? `/live-quiz/${Sid}` : "#"}
-                text="Join Quiz"
-              />
-            </div>
-          </GlassCard>
-        </section>
-      }
+      {}
     </Layout>
   );
 };

@@ -32,7 +32,7 @@ const GetReadyModal = () => {
     },
     {
       title: "Earn Rewards",
-      desc: "Exclusive NFT drops & tokens",
+      desc: "Exclusive EXPs & point rewards",
       icon: MdAccountBalanceWallet,
       color: "text-yellow-500",
       bg: "bg-yellow-100",
@@ -63,12 +63,8 @@ const GetReadyModal = () => {
           onProceed={() => {
             // alert("Proceeding to demo quiz...", socketId, "socket:", sid);
             // alert("Proceeding to demo quiz..." + socketId + "socket:" + sid);
-            console.log("Proceeding to demo quiz...", { socketId, sid });
-            if (socketId === sid) {
-              router.push("/live-quiz/" + socketId + "/live");
-            } else {
-              alert("Socket ID mismatch!");
-            }
+
+            router.push("/quiz/demo");
           }}
         />
       )}

@@ -1,28 +1,19 @@
-import { socket } from "@/lib/api/socket";
-import { useQuizHours } from "@/store/useQuizHours";
+import { useTimeStore } from "@/features/quiz/store/time.store";
 import { useEffect } from "react";
 
-export const useTime = (
-  socketId: string,
-  handleTimerUpdate: (data: number) => void
+export const useQuizCountdownTime = (
+  isSubmitted: boolean,
+  isLoading: boolean,
+  isError: boolean,
 ) => {
-  const updateEpoch = useQuizHours((state: any) => state.updateEpoch);
-  const timeListener = (epoch: number) => {
-    console.log("Server Time Epoch:", epoch);
-    handleTimerUpdate(epoch);
-    updateEpoch(epoch);
-  };
-
-  socket.on(`${socketId}time`, timeListener);
-
+  const { time: timeLeft, decrementTime } = useTimeStore();
   useEffect(() => {
-    if (!socketId) return;
+    if (timeLeft <= 0 || isSubmitted || isLoading || isError) return;
 
-    // Trigger time sync
-    socket.emit("time", socketId);
-
-    return () => {
-      socket.off(`${socketId}time`, timeListener);
-    };
-  }, [socketId]);
+    const timer = setInterval(() => {
+      decrementTime();
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, isSubmitted, isLoading, isError]);
+  return timeLeft;
 };

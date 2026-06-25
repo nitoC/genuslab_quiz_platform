@@ -110,6 +110,23 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+.scroll-show:hover {
+  -ms-overflow-style: auto; /* Show IE/Edge on hover */
+  scrollbar-width: thin; /* Show Firefox on hover (use 'thin' or 'auto') */
+}
+
+.scroll-show:hover::-webkit-scrollbar {
+  display: block; /* Show WebKit on hover */
+}
+
+.scroll-show::-webkit-scrollbar-thumb {
+  background: #4a90e2; /* Your custom thumb color (Blue) */
+  border-radius: 10px;
+}
+.scroll-show::-webkit-scrollbar-thumb {
+  background: #4a90e2; /* Your custom thumb color (Blue) */
+  border-radius: 10px;
+}
 
 @import "tailwindcss" important;
 

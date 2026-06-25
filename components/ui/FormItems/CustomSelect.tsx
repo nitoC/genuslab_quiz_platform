@@ -34,19 +34,21 @@ const CustomSelect = (props: any) => {
       <div className="absolute inset-x-0 flex-col flex z-5 top-full">
         {drop && (
           <GlassCard className="bg-white-800/50 overflow-hidden rounded-md mt-1 py-1">
-            {options.map((item: any, index: number) => (
-              <div
-                key={index}
-                className="p-4 text-black hover:bg-blue-100 cursor-pointer"
-                onClick={(e) => {
-                  handler(item.label);
-                  setdrop(false);
-                  e.stopPropagation();
-                }}
-              >
-                {item.label}
-              </div>
-            ))}
+            <div className=" max-h-100 overflow-y-scroll scroll-hide scroll-show">
+              {options.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="p-4 text-black hover:bg-blue-100 cursor-pointer"
+                  onClick={(e) => {
+                    handler(item.label);
+                    setdrop(false);
+                    e.stopPropagation();
+                  }}
+                >
+                  {item.label}
+                </div>
+              ))}
+            </div>
           </GlassCard>
         )}
       </div>

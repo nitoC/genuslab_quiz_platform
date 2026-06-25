@@ -61,7 +61,7 @@ export default function SignUpPage() {
     const phoneRegex = /^\+[1-9]\d{10,14}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const nameRegex = /^[A-Za-z\s]+$/;
-    const refCodeRegex = /^[A-Za-z0-9]*$/;
+    const refCodeRegex = /^[A-Za-z0-9-]*$/;
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&^()[\]{}])[A-Za-z\d@$!%*?#&^()[\]{}]{6,}$/;
 
@@ -148,20 +148,32 @@ export default function SignUpPage() {
 
     try {
       const { password, ...restUser } = user;
+      // const payload = {
+      //   ...restUser,
+      //   Password: password,
+      //   Dob: new Date(dob as Date).toLocaleDateString("en-CA"), // Format as YYYY-MM-DD
+      //   gender,
+      //   hdyhau: marketing,
+      // };
       const payload = {
-        ...restUser,
-        Password: password,
-        Dob: new Date(dob as Date).toLocaleDateString("en-CA"), // Format as YYYY-MM-DD
+        password,
+        email: user.email,
+        name: user.fullname,
+        phone: user.phone,
         gender,
-        hdyhau: marketing,
+        dob: new Date(dob as Date).toLocaleDateString("en-CA"),
+        referrerCode: user.refCode,
+        referrer: marketing,
       };
+      // Format as YYYY-MM
       // console.log(payload, "registration payload");
       // toast.success("Account created successfully");
       const response = await registerUser(payload);
       console.log(response, "registration response");
-      if (response.data === "User Registration sucessful") {
+      if (response.data.status === "success") {
+        localStorage.setItem("user", JSON.stringify(response.data.payload));
         toast.success("Account created successfully");
-        Router.push("/login");
+        Router.push("/dashboard");
       } else {
         toast.error((response as any).message || "Registration failed");
       }
@@ -289,8 +301,11 @@ export default function SignUpPage() {
                     label={marketing}
                     onChange={(val: any) => setMarketing(val)}
                     options={[
-                      { label: "Friend / Colleague", value: "friend" },
-                      { label: "Social Media", value: "social" },
+                      { label: "Friend/Colleague", value: "friend" },
+                      { label: "Facebook", value: "facebook" },
+                      { label: "Instagram", value: "instagram" },
+                      { label: "Twitter", value: "twitter" },
+                      { label: "Google", value: "google" },
                       { label: "Ad / Online Search", value: "ad" },
                     ]}
                   />
