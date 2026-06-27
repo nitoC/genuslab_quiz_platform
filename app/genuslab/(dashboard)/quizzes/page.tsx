@@ -55,7 +55,7 @@ const page = () => {
           <AdminQuiz
             badge="New"
             day={1}
-            title="Introduction to Biology"
+            title="Introduction to Tech"
             description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
             questions={10}
             attempts={1500}
@@ -64,7 +64,7 @@ const page = () => {
           <AdminQuiz
             badge="New"
             day={1}
-            title="Introduction to Biology"
+            title="Introduction to Tech"
             description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
             questions={10}
             attempts={1500}
@@ -73,7 +73,7 @@ const page = () => {
           <AdminQuiz
             badge="New"
             day={1}
-            title="Introduction to Biology"
+            title="Introduction to Tech"
             description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
             questions={10}
             attempts={1500}
@@ -82,7 +82,7 @@ const page = () => {
           <AdminQuiz
             badge="New"
             day={1}
-            title="Introduction to Biology"
+            title="Introduction to Tech"
             description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
             questions={10}
             attempts={1500}
