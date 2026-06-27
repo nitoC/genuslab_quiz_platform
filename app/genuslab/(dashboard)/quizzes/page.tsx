@@ -56,7 +56,7 @@ const page = () => {
             badge="New"
             day={1}
             title="Introduction to Biology"
-            description="Test your knowledge on the basics of biology, including cell structure, genetics, and evolution."
+            description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
             questions={10}
             attempts={1500}
             completionRate={85}
