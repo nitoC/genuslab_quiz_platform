@@ -2,7 +2,8 @@ import { create } from "zustand";
 
 const useSidebar = create((set) => ({
   isOpen: false,
-  toggleSidebar: () => set((state: any) => ({ isOpen: !state.isOpen })),
+  toggleSidebar: (open?: boolean) =>
+    set((state: boolean) => ({ isOpen: open ?? !state.isOpen })),
 }));
 
 export default useSidebar;

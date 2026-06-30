@@ -2,11 +2,13 @@ import Link from "next/link";
 import { FaGraduationCap, FaRocket } from "react-icons/fa";
 import { HiArrowRight } from "react-icons/hi";
 import { IoFlash } from "react-icons/io5";
+import { BiCodeAlt } from "react-icons/bi";
+import { BsLightningFill } from "react-icons/bs";
 
 export default function ChooseQuizType() {
   return (
     <div className="min-h-screen px-6 py-12">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto flex-col flex gap-4 max-w-6xl">
         {/* Header */}
         <div className="text-center">
           <h1 className="text-5xl font-bold text-slate-900">
@@ -113,6 +115,60 @@ export default function ChooseQuizType() {
             </Link>
           </div>
         </div>
+        <JsonBuilderCard />
+      </div>
+    </div>
+  );
+}
+
+function JsonBuilderCard() {
+  return (
+    <div className="w-full border border-slate-100 rounded-xl p-6 bg-white shadow-[0_2px_8px_rgba(0,0,0,0,04)] font-sans relative">
+      {/* Top Header Section */}
+      <div className="flex justify-between items-start mb-5">
+        {/* JSON Bracket Icon Wrapper */}
+        <div className="p-3 bg-blue-50 rounded-xl flex items-center justify-center text-blue-900">
+          <BiCodeAlt className="text-2xl stroke-[0.5]" />
+        </div>
+
+        {/* Advanced Badge */}
+        <span className="px-3 py-1 bg-blue-50 text-blue-900 text-xs font-semibold rounded-full border border-blue-100 tracking-wide">
+          Advanced
+        </span>
+      </div>
+
+      {/* Content Section */}
+      <div className="space-y-2 mb-8">
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+          JSON Builder
+        </h2>
+        <p className="text-base text-slate-700 leading-relaxed">
+          Quickly generate your quiz by importing structured data.
+        </p>
+        <p className="text-xs italic text-slate-800 font-medium">
+          Hint: You can paste your past quiz and questions as a JSON file.
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Demo Button */}
+        <Link
+          href={"/genuslab/quizzes/create-quiz/json/questions"}
+          className="flex items-center justify-center gap-2 w-full py-3.5 px-4 bg-slate-200 hover:bg-slate-300 transition-colors duration-200 text-slate-800 font-semibold rounded-xl text-sm"
+        >
+          Demo JSON Builder
+          <HiArrowRight className="text-lg" />
+        </Link>
+
+        {/* Live Button */}
+        <Link
+          href={"/genuslab/quizzes/create-quiz/json/live"}
+          className="flex items-center justify-center gap-2 w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 transition-colors duration-200 text-white font-semibold rounded-xl text-sm shadow-sm"
+        >
+          Live JSON Builder
+          <BsLightningFill className="text-sm" />
+        </Link>
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ import { notFound, useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchQuizDetails } from "@/lib/api/apis";
 import toast, { Toaster } from "react-hot-toast";
+import { a } from "motion/react-client";
 
 export default function CreateQuiz() {
   const { type } = useParams();
@@ -115,17 +116,34 @@ export default function CreateQuiz() {
             quizId={quizId}
             setQuestion={setQuestion}
             handler={(option?: string) => {
+              console.log(question, "question");
               const validate = question.every((a, b) => {
-                a.difficulty &&
+                console.log(a, "a");
+                return (
+                  a.difficulty &&
                   a.explanation &&
                   a.hint &&
                   a.id &&
                   a.questionText &&
                   a.rankRequirement &&
-                  a.options.length === 4;
+                  a.options.length === 4
+                );
               });
-
-              if (question.length < 10) {
+              if (question.length < 4) {
+                toast.custom((t) => (
+                  <div
+                    className={`${
+                      t.visible ? "animate-enter" : "animate-leave"
+                    } max-w-md w-full bg-white pointer-events-auto flex ring-opacity-5 p-4 border-b-red-500 border-b-2`}
+                  >
+                    <div className="flex-1 font-medium text-black text-center">
+                      cannot proceed! Questions must be 4
+                    </div>
+                  </div>
+                ));
+                return;
+              }
+              if (question.length < 10 && quizId) {
                 toast.custom((t) => (
                   <div
                     className={`${

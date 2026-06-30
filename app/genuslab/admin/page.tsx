@@ -7,6 +7,7 @@ import { adminLogin } from "@/lib/api/apis";
 import { toast, ToastContainer } from "react-toastify";
 // import { set } from "react-datepicker/dist/dist/date_utils.js";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,11 +37,15 @@ export default function LoginPage() {
         email,
         password,
       });
+
       console.log(res, "admin login response in page");
-      toast.success("admin Login successful!");
-      setTimeout(() => {
-        router.push("/genuslab/dashboard");
-      }, 1500);
+      if (res?.data?.payload) {
+        localStorage.setItem("admin", JSON.stringify(res.data.payload));
+        toast.success("admin Login successful!");
+        setTimeout(() => {
+          router.push("/genuslab/dashboard");
+        }, 1500);
+      }
     } catch (err) {
       console.log(err, "admin login error in page");
       toast.error(

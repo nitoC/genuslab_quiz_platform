@@ -19,8 +19,7 @@ const GetReadyModal = () => {
   const { socketId } = useParams();
   const [showDemo, setShowDemo] = React.useState(false);
   const [showLive, setShowLive] = React.useState(false);
-  const sid = useSocket((state: any) => state.socketId);
-  console.log("Socket ID from URL:", socketId);
+
   const router = useRouter();
   const benefits = [
     {

@@ -47,9 +47,10 @@
 //   return res;
 // };
 import { axiosSystem } from "./axiosConfig";
-import { axiosUser } from "./axios.interceptors";
+import { axiosUser, axiosAdmin } from "./axios.interceptors";
 import axios from "axios";
 import { IQuestionSubmit } from "@/interfaces";
+import { QuizObject } from "@/app/genuslab/(dashboard)/quizzes/create-quiz/json/live/page";
 
 export const registerUser = async (payload: any) => {
   console.log(payload, "created user payload");
@@ -120,7 +121,7 @@ export const adminLogin = async (payload: any) => {
 
 export const createQuiz = async (payload: any) => {
   console.log(payload, "create quiz payload");
-  const res = await axiosUser.post("quiz/seed", payload);
+  const res = await axiosAdmin.post("quiz/seed", payload);
   console.log(res, "create quiz response");
   return res;
 };
@@ -138,12 +139,27 @@ export const getDemoQuestions = async () => {
   return res;
 };
 export const createQuestion = async (payload: IQuestionSubmit[]) => {
-  const res = await axiosUser.post("question/seed", payload);
+  const res = await axiosAdmin.post("question/seed", payload);
   return res;
 };
 export const updateQuiz = async (id: string, payload: any) => {
   console.log(id, "update quiz id");
-  const res = await axiosUser.put(`quiz/update/${id}`, payload);
+  console.log(
+    {
+      id,
+      questions: payload,
+    },
+    "update quiz id",
+  );
+  const res = await axiosAdmin.patch(`quiz/update/seed`, {
+    id,
+    questions: payload,
+  });
+  console.log(res, "update quiz response");
+  return res;
+};
+export const createQuizBatch = async (payload: QuizObject[]) => {
+  const res = await axiosAdmin.post(`quiz/batch/seed`, payload);
   console.log(res, "update quiz response");
   return res;
 };
@@ -166,9 +182,18 @@ export const fetchQuizDetails = async (id: string) => {
   return res;
 };
 
+export const getAllQuiz = async (query: string) => {
+  const res = await axiosAdmin.get(`quiz/status?status=${query.toUpperCase()}`);
+  return res;
+};
+export const getAllActiveQuiz = async () => {
+  const res = await axiosAdmin.get(`quiz/active`);
+  return res;
+};
+
 export const deleteQuiz = async (id: string) => {
   console.log(id, "delete quiz id");
-  const res = await axiosUser.delete(`quiz/${id}`);
+  const res = await axiosAdmin.delete(`quiz/${id}`);
   console.log(res, "delete quiz response");
   return res;
 };

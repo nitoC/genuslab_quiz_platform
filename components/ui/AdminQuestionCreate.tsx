@@ -20,6 +20,7 @@ import CustomSelect from "./FormItems/CustomSelect";
 import { IQuestion } from "@/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { fetchQuestionDetails, getRankData } from "@/lib/api/apis";
+import { useRouter } from "next/navigation";
 
 export default function QuestionBuilder({
   handler,
@@ -34,6 +35,7 @@ export default function QuestionBuilder({
   quizId: string | undefined;
   setQuestion: React.Dispatch<React.SetStateAction<IQuestion[]>>;
 }) {
+  const router = useRouter();
   const {
     isLoading: ranksLoading,
     data: ranksData,
@@ -77,7 +79,7 @@ export default function QuestionBuilder({
       {
         id: (question.length + 1).toString(),
         questionText: "",
-        difficulty: "Medium",
+        difficulty: "medium",
         rankRequirement: "Fresh Mind",
         options: [],
         explanation: "",
@@ -112,6 +114,8 @@ export default function QuestionBuilder({
 
   const addOption = (questionItem: IQuestion) => {
     const newId = crypto.randomUUID();
+
+    if (questionItem.options.length >= 4) return;
 
     const updatedOptions = [
       ...questionItem.options,
@@ -151,35 +155,38 @@ export default function QuestionBuilder({
   return (
     <div className="min-h-screen max-w-5xl mx-auto px-4 py-8 text-slate-700 antialiased">
       <div className="space-y-5">
-        {question.map((q) => (
-          <AdminQuestionCard
-            key={q.id}
-            question={q}
-            rank={ranksData}
-            toggleCorrect={toggleCorrect}
-            deleteOption={deleteOption}
-            deleteQuestion={deleteQuestion}
-            addOption={addOption}
-            updateOption={updateOption}
-            updateQuestion={updateQuestion}
-          />
-        ))}
+        {ranksData &&
+          question.map((q) => (
+            <AdminQuestionCard
+              key={q.id}
+              question={q}
+              rank={ranksData}
+              toggleCorrect={toggleCorrect}
+              deleteOption={deleteOption}
+              deleteQuestion={deleteQuestion}
+              addOption={addOption}
+              updateOption={updateOption}
+              updateQuestion={updateQuestion}
+            />
+          ))}
 
         {/* Add Question */}
-        {question.length < 10 && (
-          <button
-            onClick={addQuestion}
-            className="group flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 p-7 transition-all hover:bg-slate-100"
-          >
-            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition-colors group-hover:bg-blue-50">
-              <FiPlus className="text-lg text-slate-500 group-hover:text-blue-600" />
-            </div>
+        {quizId
+          ? question.length < 10
+          : question.length < 4 && (
+              <button
+                onClick={addQuestion}
+                className="group flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 p-7 transition-all hover:bg-slate-100"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition-colors group-hover:bg-blue-50">
+                  <FiPlus className="text-lg text-slate-500 group-hover:text-blue-600" />
+                </div>
 
-            <span className="text-sm font-medium text-slate-600">
-              Add Question {question.length + 1}
-            </span>
-          </button>
-        )}
+                <span className="text-sm font-medium text-slate-600">
+                  Add Question {question.length + 1}
+                </span>
+              </button>
+            )}
 
         {/* Footer */}
         <div
@@ -188,7 +195,9 @@ export default function QuestionBuilder({
         >
           <button
             type="button"
-            onClick={() => handler("bi")}
+            onClick={() => {
+              !quizId ? router.push("/genuslab/quizzes") : handler("bi");
+            }}
             className="flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800"
           >
             <FiArrowLeft />
@@ -248,9 +257,9 @@ const AdminQuestionCard = ({
     value: string,
   ) => void;
 }) => {
-  const [difficulty, setDifficulty] = useState<
-    "Easy" | "Medium" | "Hard" | "Expert"
-  >("Medium");
+  const [difficulty, setDifficulty] = useState<"Easy" | "Medium" | "Hard">(
+    "Medium",
+  );
 
   const [drop, setDrop] = useState(false);
 
@@ -337,7 +346,7 @@ const AdminQuestionCard = ({
             </label>
 
             <div className="flex rounded-xl">
-              {(["Easy", "Medium", "Hard", "Expert"] as const).map((level) => (
+              {(["Easy", "Medium", "Hard"] as const).map((level) => (
                 <button
                   key={level}
                   type="button"
@@ -446,14 +455,16 @@ const AdminQuestionCard = ({
           </div>
 
           {/* Add Option */}
-          <button
-            type="button"
-            onClick={() => addOption(question)}
-            className="mt-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 py-3 text-sm font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-50"
-          >
-            <FiPlusCircle className="text-base" />
-            <span>Add Another Option</span>
-          </button>
+          {question.options.length < 4 && (
+            <button
+              type="button"
+              onClick={() => addOption(question)}
+              className="mt-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 py-3 text-sm font-medium text-slate-600 transition-all hover:border-slate-400 hover:bg-slate-50"
+            >
+              <FiPlusCircle className="text-base" />
+              <span>Add Another Option</span>
+            </button>
+          )}
         </div>
 
         {/* Explanation */}

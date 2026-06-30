@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 // import clsx from "clsx";
 // import Link from "next/link";
 import { useSocket } from "@/store/useSocket";
+import { useQuery } from "@tanstack/react-query";
+import { getAllActiveQuiz, getSlotDetails } from "@/lib/api/apis";
 // import useCountdown from "@/hooks/useCountdown";
 // import { useTime } from "@/hooks/useTime";
 // // import { useTime as useTimeStore } from "@/features/quiz/store/time.store";
@@ -23,9 +25,35 @@ import { useSocket } from "@/store/useSocket";
 
 const page = () => {
   const [pop, setpop] = useState(false);
-  const socketId = useSocket((state: any) => state.socketId);
+  // const socketId = useSocket((state: any) => state.socketId);
   // const { setTime } = useTimeStore() as { setTime: (time: any) => void };
   // const loggedInUser = useUser((state: any) => state.user);
+
+  const {
+    data: quizData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["quiz episodes"],
+    queryFn: async () => {
+      const res = await getAllActiveQuiz();
+      console.log(res.data.payload, "active quizzes");
+      return res.data.payload;
+    },
+  });
+
+  const {
+    data: slotData,
+    isLoading: slotLoading,
+    isError: slotError,
+  } = useQuery({
+    queryKey: ["slots"],
+    queryFn: async () => {
+      const res = await getSlotDetails();
+      console.log(res.data.payload, "slot data");
+      return res?.data?.payload;
+    },
+  });
 
   const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
   const [countdown, setCountdown] = useState("Next quiz in —");
@@ -204,8 +232,18 @@ const page = () => {
         </div>
 
         <div className="flex gap-4 overflow-x-auto scroll-hide">
-          {quizzes.map((quiz, index) => (
-            <QuizCard key={index} {...quiz} />
+          {quizData?.map((quiz, index) => (
+            <QuizCard
+              key={index}
+              {...quiz}
+              poster={quizzes[index].poster}
+              pool={"0.00"}
+              time={
+                slotData && slotData.length > 0
+                  ? slotData.find((a: any) => a.tag === quiz.activeAt).label
+                  : []
+              }
+            />
           ))}
         </div>
       </section>

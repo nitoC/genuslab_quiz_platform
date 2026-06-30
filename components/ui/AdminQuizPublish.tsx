@@ -1,9 +1,15 @@
 "use client";
 
 import { IQuestion, IQuestionSubmit, IQuiz } from "@/interfaces";
-import { fetchQuizDetails } from "@/lib/api/apis";
+import {
+  createQuestion,
+  fetchQuizDetails,
+  getRankData,
+  updateQuiz,
+} from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import toast, { ToastBar } from "react-hot-toast";
 import {
   FiClock,
   FiUsers,
@@ -105,7 +111,7 @@ export const ChecklistCard = () => (
 interface QuestionProps {
   number: string;
   question: string;
-  difficulty: "Easy" | "Medium" | "Hard" | "Expert";
+  difficulty: "easy" | "medium" | "hard";
   role: string;
   options: { isCorrect: boolean; text: string }[];
 }
@@ -133,9 +139,9 @@ export const QuestionItem = ({
             </span>
             <span
               className={`px-2 py-0.5 rounded text-[9px] font-bold border ${
-                difficulty === "Hard"
+                difficulty === "hard"
                   ? "bg-red-50 text-red-600 border-red-100"
-                  : difficulty === "Medium"
+                  : difficulty === "medium"
                     ? "bg-blue-50 text-blue-600 border-blue-100"
                     : "bg-emerald-50 text-emerald-600 border-emerald-100"
               }`}
@@ -230,6 +236,21 @@ export default function QuizDetailsPage({
     },
   });
 
+  const {
+    isLoading: ranksLoading,
+    data: ranksData,
+    isError: ranksError,
+  } = useQuery({
+    queryKey: ["fetchRanks"],
+    queryFn: async () => {
+      console.log(id);
+      const res = await getRankData();
+
+      console.log(res, "fetch ranks response");
+      return res.data.payload;
+    },
+  });
+
   // interface IQuestion {
   //   id: string;
   //   questionText: string;
@@ -245,20 +266,38 @@ export default function QuizDetailsPage({
       return {
         answer: a.options.findIndex((a) => a.isCorrect),
         questionText: a.questionText,
-        difficulty: a.difficulty,
-        rankId: a.rankRequirement,
+        difficulty: a.difficulty.toLocaleLowerCase() as
+          | "easy"
+          | "medium"
+          | "hard",
+        rankId: ranksData.find((b: any) => b.rankName === a.rankRequirement).id,
         options: a.options.map((a) => a.text),
         answerDescription: a.explanation,
         quizId: id,
         hint: a.hint,
       };
     });
-    console.log(res, "res");
+    // console.log(res, "res");
     return res;
   };
 
   const handleSubmit = async () => {
-    handleQuestionTransform();
+    const payload = handleQuestionTransform();
+    try {
+      console.log(payload, "transformed");
+      if (id) {
+        await updateQuiz(id, payload);
+      } else {
+        await createQuestion(payload);
+      }
+      toast.success("Quiz created");
+      setTimeout(() => {
+        reset();
+      }, 400);
+    } catch (err) {
+      console.log("err", err);
+      toast.error("oops! something went wrong");
+    }
   };
 
   return (
@@ -276,7 +315,9 @@ export default function QuizDetailsPage({
           <div className="flex items-center justify-between mb-6 px-2">
             <h1 className="text-lg font-bold text-slate-800">
               Question Set{" "}
-              <span className="text-slate-400 font-normal">(10)</span>
+              <span className="text-slate-400 font-normal">
+                ({questions.length})
+              </span>
             </h1>
             <div className="flex items-center gap-4 text-slate-400">
               <FiSearch

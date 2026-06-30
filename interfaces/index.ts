@@ -7,7 +7,7 @@ export interface AnswerOption {
 export interface IQuestion {
   id: string;
   questionText: string;
-  difficulty: "Easy" | "Medium" | "Hard" | "Expert";
+  difficulty: "easy" | "medium" | "hard";
   rankRequirement: string;
   options: AnswerOption[];
   explanation: string;
@@ -18,7 +18,7 @@ export interface IQuestionSubmit {
   id?: string;
   answer: number;
   questionText: string;
-  difficulty: "Easy" | "Medium" | "Hard" | "Expert";
+  difficulty: "easy" | "medium" | "hard";
   rankId: string;
   options: string[];
   answerDescription: string;

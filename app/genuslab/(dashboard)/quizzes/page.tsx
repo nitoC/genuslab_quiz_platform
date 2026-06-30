@@ -2,104 +2,111 @@
 
 import AdminHeader from "@/components/layouts/AdminHeader";
 import AdminQuiz from "@/components/ui/cards/AdminQuiz";
+import EmptyQuizState from "@/features/quiz/components/EmptyData";
+import QuizMatrix from "@/features/quiz/components/skeletons/QuizMatrix";
+import { getAllQuiz } from "@/lib/api/apis";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 
-const page = () => {
-  const [active, setActive] = useState("All Quizzes");
+export default function QuizManagementPage() {
+  const [active, setActive] = useState("Live Quizzes");
+
   const tabs = [
-    { name: "All Quizzes", href: "#", current: true },
-    { name: "Drafts", href: "#", current: false },
-    { name: "Archived", href: "#", current: false },
-    { name: "Demo Quizzes", href: "#", current: false },
-    { name: "Live Quizzes", href: "#", current: false },
+    { name: "Live Quizzes", href: "#", current: false, value: "ACTIVE" },
+    { name: "Drafts", href: "#", current: false, value: "DRAFT" },
+    { name: "Archived", href: "#", current: false, value: "ARCHIVED" },
+    { name: "Demo Quizzes", href: "#", current: false, value: "DEMO" },
   ];
+
+  const {
+    data: quizzes = [],
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["quizzes", active],
+    queryFn: async () => {
+      const tabVal = tabs.find((a) => a.name === active);
+      const res = await getAllQuiz(tabVal?.value as string);
+      return res?.data?.payload ?? [];
+    },
+  });
+
   return (
-    <div>
+    <div className="w-full min-h-screen bg-transparent">
       {/* HEADER SECTION */}
       <section className="flex flex-col gap-3">
         {/* <AdminHeader title="Quiz Management" /> */}
-
-        {/* <p className="text-sm text-gray-500">
-          Welcome back! Here’s what’s happening with Genus Lab today.
-        </p> */}
       </section>
-      <div className="p-8 flex justify-between items-center">
-        <div>
+
+      {/* TOP CONTROLS SECTION */}
+      <div className="p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-wrap gap-1">
           {tabs.map((tab) => (
             <button
               key={tab.name}
               onClick={() => setActive(tab.name)}
-              className={`px-3 cursor-pointer py-2 text-sm font-medium rounded ${
+              className={`px-4 py-2 cursor-pointer text-sm font-medium rounded-lg transition-colors ${
                 active === tab.name
                   ? "bg-blue-100 text-blue-700"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
               }`}
             >
               {tab.name}
             </button>
           ))}
         </div>
+
         <Link
           href="/genuslab/quizzes/create-quiz"
-          className="flex w-full max-w-50 border rounded-sm hover:bg-gray-100 transition duration-75 font-bold py-2 px-4 text-gray-500 items-center justify-center gap-2 border-2 border-gray-300"
+          className="flex w-full sm:w-auto border rounded-xl hover:bg-gray-100 transition font-bold py-2.5 px-5 text-gray-600 items-center justify-center gap-2 border-gray-300 shadow-sm text-sm"
         >
           <FaPlus /> Create New Quiz
         </Link>
       </div>
+
       <div className="w-full h-px bg-gray-200" />
-      <div className="p-8"></div>
-      <section>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <AdminQuiz
-            badge="New"
-            day={1}
-            title="Introduction to Tech"
-            description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
-            questions={10}
-            attempts={1500}
-            completionRate={85}
-          />
-          <AdminQuiz
-            badge="New"
-            day={1}
-            title="Introduction to Tech"
-            description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
-            questions={10}
-            attempts={1500}
-            completionRate={85}
-          />
-          <AdminQuiz
-            badge="New"
-            day={1}
-            title="Introduction to Tech"
-            description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
-            questions={10}
-            attempts={1500}
-            completionRate={85}
-          />
-          <AdminQuiz
-            badge="New"
-            day={1}
-            title="Introduction to Tech"
-            description="Test your knowledge on the basics of Tech, including Networking, computer basics, and software."
-            questions={10}
-            attempts={1500}
-            completionRate={85}
-          />
-        </div>
+      <div className="p-4" />
+
+      {/* CORE DISPLAY MATRIX */}
+      <section className="px-8">
+        {isLoading ? (
+          <QuizMatrix />
+        ) : quizzes.length > 0 ? (
+          /* 2. LIVE ACTIVE DATA MAP STATE */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {quizzes.map((quiz: any, idx: number) => (
+              <AdminQuiz
+                key={quiz.id || idx}
+                id={quiz?.id}
+                badge="New"
+                day={quiz.day}
+                title={quiz.title}
+                description={quiz.title}
+                questions={10}
+              />
+            ))}
+          </div>
+        ) : (
+          /* 3. EMPTY STATE - Breaks out of layout constraints safely */
+          <div className="w-full flex items-center justify-center py-12">
+            <EmptyQuizState title={`No ${active} Added Yet`} />
+          </div>
+        )}
       </section>
-      <section className="flex justify-center mt-8">
-        <Link
-          href="/genuslab/quizzes/create-quiz"
-          className="flex w-full border-dashed aspect-3/1 rounded-sm hover:bg-gray-100 transition duration-75 font-bold py-2 px-4 text-gray-500 items-center justify-center gap-2 border-2 border-gray-300"
-        >
-          <FaPlus /> Create New Quiz
-        </Link>
-      </section>
+
+      {/* BOTTOM DASHED ACTION BANNER */}
+      {!isLoading && quizzes.length > 0 && (
+        <section className="flex justify-center px-8 mt-12 pb-12">
+          <Link
+            href="/genuslab/quizzes/create-quiz"
+            className="flex w-full border-dashed border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition font-bold py-6 px-4 text-gray-500 items-center justify-center gap-2 max-w-4xl"
+          >
+            <FaPlus /> Create New Quiz
+          </Link>
+        </section>
+      )}
     </div>
   );
-};
-
-export default page;
+}
