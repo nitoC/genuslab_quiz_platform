@@ -141,6 +141,14 @@ export const submitLiveQuestion = async (data: any) => {
   console.log(res, "submit data");
   return res;
 };
+export const submitAttempt = async (detailsId: string, data: any) => {
+  const res = await axiosUser.post(
+    `question/attempt/submit/${detailsId}`,
+    data,
+  );
+  console.log(res, "submit data");
+  return res;
+};
 
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {

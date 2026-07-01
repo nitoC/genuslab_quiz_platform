@@ -11,8 +11,6 @@ import Layout from "@/components/layouts/Layout";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import {
-  getDemoQuestions,
-  getDemoResult,
   getQuizSession,
   getUserDetails,
   submitLiveQuestion,
@@ -20,7 +18,7 @@ import {
 import QuizOptions from "@/features/quiz/components/QuizOptions";
 import Timer from "@/features/quiz/components/QuizTimer";
 import Rivals from "@/features/quiz/components/QuizRivals";
-import QuizFooter from "@/features/quiz/components/QuizFooter";
+import LiveQuizFooter from "@/features/quiz/components/LiveQuizFooter";
 import SubmitUI from "@/features/quiz/components/SubmitUI";
 import QuizSkeleton from "@/features/quiz/components/skeletons/QuizSkeleton";
 import CalculatingScore from "@/features/quiz/components/CalculatingScore";
@@ -88,7 +86,16 @@ const QuizPage = () => {
   const [speed, setspeed] = useState("_min: _sec");
   // setTime();
   // 1. Fetching logic using React Query
-  const { data, isLoading, refetch, error, isError } = useQuery<IQuizData>({
+  const {
+    data: queryResponse,
+    isLoading,
+    refetch,
+    error,
+    isError,
+  } = useQuery<{
+    data: IQuizData & { attemptId: string };
+    userDetailsId: string;
+  }>({
     queryKey: ["initiate quiz"],
     queryFn: async () => {
       const userStr = getLocalStorage("user");
@@ -113,7 +120,10 @@ const QuizPage = () => {
         userDetails?.data?.payload?.id,
       );
       console.log(res);
-      return res.data?.payload; // Added fallbacks based on response mapping structures
+      return {
+        data: res.data?.payload,
+        userDetailsId: userDetails?.data?.payload?.id,
+      };
     },
     staleTime: 0,
     gcTime: 0,
@@ -121,6 +131,10 @@ const QuizPage = () => {
     refetchOnReconnect: false,
     refetchOnMount: true,
   });
+
+  const data = queryResponse?.data;
+  const userDetailsId = queryResponse?.userDetailsId;
+  const attemptId = data?.attemptId;
 
   // 2. Functional States
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -187,47 +201,122 @@ const QuizPage = () => {
   }, [currentQuestionIndex]);
 
   const handleQuestionSubmit = useCallback(
-    async (data: any) => {
+    async (id: string) => {
+      if (submitting) return;
+
+      console.log(selectedAnswers, "in handlesubmit");
+
+      //CURRENT SELECTION OF USER
+      const selectedAnswer = selectedAnswers.find((a) => a.id === id);
+
+      // PAST SUBMISSION OF USERS
+      const pastSubmission = submittedAnswers.find((a) => a.id === id);
+
+      const needsSubmission =
+        !pastSubmission ||
+        (selectedAnswer && selectedAnswer.answer !== pastSubmission.answer);
+      console.log(attemptId, "attId", selectedAnswer, "sa");
+      console.log(id, "id");
+
+      if (!needsSubmission) {
+        // No changes detected! Bypass network call completely and proceed forward
+        console.log(
+          "No answer changes detected. Proceeding straight to next question.",
+        );
+        goNext();
+        return;
+      }
+      try {
+        console.log(
+          "Submitting answer to API payload stream...",
+          id,
+          selectedAnswer?.answer,
+        );
+
+        const res = await submitLiveQuestion({
+          questionId: id,
+          attemptId: attemptId,
+          selectedAnswer: selectedAnswer?.answer ?? -1, // fallback flag if skipped entirely
+        });
+
+        if (res) {
+          // Track or overwrite past submissions cleanly
+          setSubmittedAnswers((prev) => {
+            const filtered = prev.filter((a) => a.id !== id); // Strip out stale record if it exists
+            return [
+              ...filtered,
+              {
+                id: id,
+                answer: selectedAnswer?.answer ?? -1,
+              },
+            ];
+          });
+
+          console.log("Answer registered successfully", res);
+          goNext();
+        }
+      } catch (err: any) {
+        toast.error("Failed to submit answer. Check your network connection.");
+        console.error(
+          "Error encountered during layout submission:",
+          err?.response?.data || err,
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [submitting, selectedAnswers, submittedAnswers, attemptId, goNext],
+  );
+
+  const handleAttemptSubmit = useCallback(
+    async (data: { id: string; attemptId: string; selectedAnswer: number }) => {
       if (submitting) return;
       setSubmitting(true);
       try {
         console.log(selectedAnswers, "in handlesubmit");
-        const res = await submitLiveQuestion({
-          questionId: data.id,
-          attemptId: data?.attemptId,
-          selectedAnswer: data.selectedAnswer,
-        });
-        if (res) {
-          setSubmittedAnswers((prev) => [
-            ...prev,
-            {
-              id: data.id,
-              answer: data.selectedAnswer,
-            },
-          ]);
-          // selectedAnswers.map((a) => ({
-          //   questionId: a.id,
-          //   answer: a.answer,
-          // }));
+        // FIND QUIZ IN SELECTED ANSWERS
+        const selectedAnswer = selectedAnswers.find((a) => a.id === data.id);
+        if (
+          submittedAnswers.find((a) => a.id !== data.id) ||
+          submittedAnswers.length < 1
+        ) {
+          const res = await submitLiveQuestion({
+            questionId: data.id,
+            attemptId: data?.attemptId,
+            selectedAnswer: selectedAnswer?.answer ?? data.selectedAnswer,
+          });
+          if (res) {
+            setSubmittedAnswers((prev) => [
+              ...prev,
+              {
+                id: data.id,
+                answer: data.selectedAnswer,
+              },
+            ]);
+            // selectedAnswers.map((a) => ({
+            //   questionId: a.id,
+            //   answer: a.answer,
+            // }));
+          }
+
+          //   @IsString()
+          // attemptId!: string;
+
+          // @IsString()
+          // questionId!: string;
+
+          // @IsInt()
+          // selectedAnswer?: number;
+          console.log(res.data, "submit data");
+          const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
+          // setScore(res.data?.percentage);
+          // setspeed(s);
+
+          setIsSubmitted(true);
+          toast.success("Quiz completed!");
         }
-
-        //   @IsString()
-        // attemptId!: string;
-
-        // @IsString()
-        // questionId!: string;
-
-        // @IsInt()
-        // selectedAnswer?: number;
-        console.log(res.data.percentage, "submit data");
-        const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
-        setScore(res.data?.percentage);
-        setspeed(s);
-
-        setIsSubmitted(true);
-        toast.success("Quiz completed!");
       } catch (err) {
-        toast.error("Failed to submit answers.");
+        toast.error("Failed to submit answer. check network connection");
       } finally {
         setSubmitting(false);
       }
@@ -393,21 +482,24 @@ const QuizPage = () => {
                     isLoading={isLoading}
                     isSubmitted={isSubmitted}
                     isError={isError}
-                    handleSubmit={handleSubmit}
+                    handleSubmit={handleAttemptSubmit}
                   />
                   {/* Live Rivals Widget */}
                   <Rivals />
                 </div>
               </div>
-
+              {/* id: string; attemptId: string; selectedAnswer: number */}
               {/* Footer Actions */}
-              <QuizFooter
+              <LiveQuizFooter
                 currentQuestionIndex={currentQuestionIndex}
                 totalQuestions={totalQuestions}
                 submitting={submitting}
+                currentQuestion={currentQuestion}
+                selectedAnswers={selectedAnswers}
+                submittedAnswers={submittedAnswers}
                 onPrev={goPrev}
                 onNext={goNext}
-                onSubmit={handleSubmit}
+                onSubmit={handleQuestionSubmit}
               />
             </>
           ) : /* Submitted UI */
