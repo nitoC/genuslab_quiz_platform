@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useSocket } from "@/store/useSocket";
 import { useQuery } from "@tanstack/react-query";
 import { getAllActiveQuiz, getSlotDetails } from "@/lib/api/apis";
+import Link from "next/link";
 // import useCountdown from "@/hooks/useCountdown";
 // import { useTime } from "@/hooks/useTime";
 // // import { useTime as useTimeStore } from "@/features/quiz/store/time.store";
@@ -236,6 +237,7 @@ const page = () => {
             <QuizCard
               key={index}
               {...quiz}
+              id={quiz.id}
               poster={quizzes[index].poster}
               pool={"0.00"}
               time={
@@ -346,12 +348,14 @@ const QuizCard = ({
   status,
   title,
   poster,
+  id,
   time,
   pool,
 }: {
   day: string;
   episode: number;
   participants: number | null;
+  id: string;
   status: "upcoming" | "ongoing" | "finished";
   title: string;
   poster: string;
@@ -402,9 +406,12 @@ const QuizCard = ({
             ₦{formater.format(pool)}
           </p>
         </div>
-        <button className="text-sm duration-200 hover:bg-white/15 bg-white/5 backdrop-blur-md text-white border border-white/30 py-2 px-4 rounded-full mt-4">
+        <Link
+          href={`quiz/live/${id}`}
+          className="text-sm duration-200 hover:bg-white/15 bg-white/5 backdrop-blur-md text-white border border-white/30 py-2 px-4 rounded-full mt-4"
+        >
           <IoMdArrowForward size={20} />
-        </button>
+        </Link>
       </section>
     </div>
   );

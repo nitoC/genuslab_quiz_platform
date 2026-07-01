@@ -10,7 +10,13 @@ import Layout from "@/components/layouts/Layout";
 // import QuizReviewModal from "@/components/ui/modals/ViewAnswers";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
-import { getDemoQuestions, getDemoResult } from "@/lib/api/apis";
+import {
+  getDemoQuestions,
+  getDemoResult,
+  getQuizSession,
+  getUserDetails,
+  submitLiveQuestion,
+} from "@/lib/api/apis";
 import QuizOptions from "@/features/quiz/components/QuizOptions";
 import Timer from "@/features/quiz/components/QuizTimer";
 import Rivals from "@/features/quiz/components/QuizRivals";
@@ -21,8 +27,9 @@ import CalculatingScore from "@/features/quiz/components/CalculatingScore";
 import { formatMMSS } from "@/lib/utils/timer";
 import { useQuizCountdownTime } from "@/hooks/useTime";
 import { useTimeStore } from "@/features/quiz/store/time.store";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import getLocalStorage from "@/lib/utils/getLocalStorage";
 
 // Data Structure interface matching your real JSON payload
 interface QuizQuestion {
@@ -32,6 +39,17 @@ interface QuizQuestion {
   rankId: string;
   options: string[];
   hint: string;
+}
+
+interface IQuizData {
+  activeAt: string;
+  createdAt: string;
+  day: number;
+  episode: number;
+  id: string;
+  status: string;
+  title: string;
+  questions: QuizQuestion[];
 }
 
 // const formatMMSS = (s: number) => {
@@ -65,21 +83,37 @@ const speedCalc = (startTime: number, endTime: number) => {
 
 const QuizPage = () => {
   const router = useRouter();
+  const { quizId } = useParams();
   const { resetTime: setTime } = useTimeStore((state) => state);
   const [speed, setspeed] = useState("_min: _sec");
   // setTime();
   // 1. Fetching logic using React Query
-  const {
-    data: questions = [],
-    isLoading,
-    refetch,
-    error,
-    isError,
-  } = useQuery<QuizQuestion[]>({
-    queryKey: ["fetch demo questions"],
+  const { data, isLoading, refetch, error, isError } = useQuery<IQuizData>({
+    queryKey: ["initiate quiz"],
     queryFn: async () => {
-      const res = await getDemoQuestions();
-      return res.data?.payload ?? res ?? []; // Added fallbacks based on response mapping structures
+      const userStr = getLocalStorage("user");
+      console.log(userStr, "user");
+      if (!userStr) {
+        // router.push("/");
+        toast.error("user not found");
+        throw new Error("user not found");
+      }
+      if (!quizId) {
+        router.back();
+        toast.error("quiz id not found");
+        throw new Error("user not found");
+      }
+      const { userId } = JSON.parse(userStr);
+      console.log(userId, "user id");
+      const userDetails = await getUserDetails(userId);
+      console.log(userDetails.data.payload.id, "details");
+      const quizIdStr = Array.isArray(quizId) ? quizId[0] : quizId;
+      const res = await getQuizSession(
+        quizIdStr,
+        userDetails?.data?.payload?.id,
+      );
+      console.log(res);
+      return res.data?.payload; // Added fallbacks based on response mapping structures
     },
     staleTime: 0,
     gcTime: 0,
@@ -93,6 +127,9 @@ const QuizPage = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<
     { id: string; answer: number }[]
   >([]);
+  const [submittedAnswers, setSubmittedAnswers] = useState<
+    { id: string; answer: number }[]
+  >([]);
 
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -101,8 +138,8 @@ const QuizPage = () => {
   // const [review, setReview] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
 
-  const totalQuestions = questions?.length ?? 0;
-  const currentQuestion = questions?.[currentQuestionIndex];
+  const totalQuestions = data?.questions?.length ?? 0;
+  const currentQuestion = data?.questions?.[currentQuestionIndex];
 
   //custom handleSelect
 
@@ -149,30 +186,54 @@ const QuizPage = () => {
     }
   }, [currentQuestionIndex]);
 
-  const handleSubmit = useCallback(async () => {
-    if (submitting) return;
-    setSubmitting(true);
-    try {
-      console.log(selectedAnswers, "in handlesubmit");
-      const res = await getDemoResult({
-        answers: selectedAnswers.map((a) => ({
-          questionId: a.id,
-          answer: a.answer,
-        })),
-      });
-      console.log(res.data.percentage, "submit data");
-      const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
-      setScore(res.data?.percentage);
-      setspeed(s);
+  const handleQuestionSubmit = useCallback(
+    async (data: any) => {
+      if (submitting) return;
+      setSubmitting(true);
+      try {
+        console.log(selectedAnswers, "in handlesubmit");
+        const res = await submitLiveQuestion({
+          questionId: data.id,
+          attemptId: data?.attemptId,
+          selectedAnswer: data.selectedAnswer,
+        });
+        if (res) {
+          setSubmittedAnswers((prev) => [
+            ...prev,
+            {
+              id: data.id,
+              answer: data.selectedAnswer,
+            },
+          ]);
+          // selectedAnswers.map((a) => ({
+          //   questionId: a.id,
+          //   answer: a.answer,
+          // }));
+        }
 
-      setIsSubmitted(true);
-      toast.success("Quiz completed!");
-    } catch (err) {
-      toast.error("Failed to submit answers.");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [selectedAnswers]);
+        //   @IsString()
+        // attemptId!: string;
+
+        // @IsString()
+        // questionId!: string;
+
+        // @IsInt()
+        // selectedAnswer?: number;
+        console.log(res.data.percentage, "submit data");
+        const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
+        setScore(res.data?.percentage);
+        setspeed(s);
+
+        setIsSubmitted(true);
+        toast.success("Quiz completed!");
+      } catch (err) {
+        toast.error("Failed to submit answers.");
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [selectedAnswers],
+  );
 
   const retry = (func: () => void) => {
     setCurrentQuestionIndex(0);
@@ -207,7 +268,7 @@ const QuizPage = () => {
   //   return <div>Something went wrong</div>;
   // }
 
-  if (isError || !questions || totalQuestions === 0) {
+  if (isError || !data?.questions || totalQuestions === 0) {
     const status = (error as any)?.response?.status;
     if (status === 409) {
       return (

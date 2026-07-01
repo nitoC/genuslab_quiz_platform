@@ -52,21 +52,22 @@ import axios from "axios";
 import { IQuestionSubmit } from "@/interfaces";
 import { QuizObject } from "@/app/genuslab/(dashboard)/quizzes/create-quiz/json/live/page";
 
+//USER ENDPOINTS
 export const registerUser = async (payload: any) => {
   console.log(payload, "created user payload");
   const res = await axiosSystem.post("auth/register", payload);
   console.log(res, "created user payload");
   return res;
 };
-export const tokenUser = async (payload: any) => {
-  console.log(payload, "token user payload");
-  const res = await axios.post(
-    "https://genuslab.online/user/gl_api/v2/oauth/token",
-    payload,
-  );
-  console.log(res, "token user payload");
-  return res;
-};
+// export const tokenUser = async (payload: any) => {
+//   console.log(payload, "token user payload");
+//   const res = await axios.post(
+//     "https://genuslab.online/user/gl_api/v2/oauth/token",
+//     payload,
+//   );
+//   console.log(res, "token user payload");
+//   return res;
+// };
 export const loginUser = async (payload: any) => {
   console.log(payload, "login user payload");
   const res = await axiosSystem.post("auth/login", payload);
@@ -77,6 +78,11 @@ export const loginUser = async (payload: any) => {
 export const getUserProfile = async (id: string) => {
   console.log(id, "get user profile id");
   const res = await axiosUser.get(`user/profile/${id}`);
+  return res;
+};
+
+export const getUserDetails = async (id: string) => {
+  const res = await axiosUser.get(`user-details/${id}`);
   return res;
 };
 
@@ -111,18 +117,9 @@ export const getRankData = async () => {
   return res;
 };
 
-//admin endpoints
-export const adminLogin = async (payload: any) => {
-  console.log(payload, "admin login payload");
-  const res = await axiosSystem.post("auth/admin/login", payload);
-  console.log(res, "admin login response");
-  return res;
-};
-
-export const createQuiz = async (payload: any) => {
-  console.log(payload, "create quiz payload");
-  const res = await axiosAdmin.post("quiz/seed", payload);
-  console.log(res, "create quiz response");
+export const getQuizSession = async (id: string, userDetailsId: string) => {
+  const res = await axiosUser.get(`quiz/session/${id}?did=${userDetailsId}`);
+  console.log(res, "session created");
   return res;
 };
 
@@ -138,6 +135,28 @@ export const getDemoQuestions = async () => {
   // console.log(res);
   return res;
 };
+
+export const submitLiveQuestion = async (data: any) => {
+  const res = await axiosUser.post("question/submit", data);
+  console.log(res, "submit data");
+  return res;
+};
+
+//ADMIN ENDPOINTS
+export const adminLogin = async (payload: any) => {
+  console.log(payload, "admin login payload");
+  const res = await axiosSystem.post("auth/admin/login", payload);
+  console.log(res, "admin login response");
+  return res;
+};
+
+export const createQuiz = async (payload: any) => {
+  console.log(payload, "create quiz payload");
+  const res = await axiosAdmin.post("quiz/seed", payload);
+  console.log(res, "create quiz response");
+  return res;
+};
+
 export const createQuestion = async (payload: IQuestionSubmit[]) => {
   const res = await axiosAdmin.post("question/seed", payload);
   return res;
@@ -163,6 +182,8 @@ export const createQuizBatch = async (payload: QuizObject[]) => {
   console.log(res, "update quiz response");
   return res;
 };
+
+//SYSTEM ENDPOINTS
 
 export const getSlotDetails = async () => {
   const res = await axiosSystem.get(`system/quiz-slots`);
