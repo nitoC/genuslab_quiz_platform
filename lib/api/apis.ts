@@ -224,7 +224,7 @@ export const getAllQuiz = async (query: string) => {
   return res;
 };
 export const getAllActiveQuiz = async () => {
-  const res = await axiosAdmin.get(`quiz/active`);
+  const res = await axiosUser.get(`quiz/active`);
   return res;
 };
 

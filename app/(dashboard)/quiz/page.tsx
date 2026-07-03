@@ -15,11 +15,7 @@ import DemoQuizModal from "@/components/ui/modals/quizDemo";
 import { useSocket } from "@/store/useSocket";
 import LiveQuizModal from "@/components/ui/modals/quizLive";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getAllActiveQuiz,
-  getCurrentActive,
-  getSlotDetails,
-} from "@/lib/api/apis";
+import { getCurrentActive } from "@/lib/api/apis";
 // import { set } from "react-datepicker/dist/dist/date_utils.js";
 
 const GetReadyModal = () => {
@@ -42,6 +38,7 @@ const GetReadyModal = () => {
   });
 
   // const {
+  // getAllActiveQuiz
   //   data: slotData,
   //   isLoading: slotLoading,
   //   isError: slotError,
