@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getQuizSession,
   getUserDetails,
+  submitAttempt,
   submitLiveQuestion,
 } from "@/lib/api/apis";
 import QuizOptions from "@/features/quiz/components/QuizOptions";
@@ -28,6 +29,8 @@ import { useTimeStore } from "@/features/quiz/store/time.store";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
+import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
+import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
 
 // Data Structure interface matching your real JSON payload
 interface QuizQuestion {
@@ -148,6 +151,7 @@ const QuizPage = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [xp, setXp] = useState<number>(0);
 
   // const [review, setReview] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
@@ -232,7 +236,7 @@ const QuizPage = () => {
           id,
           selectedAnswer?.answer,
         );
-
+        setSubmitting(true);
         const res = await submitLiveQuestion({
           questionId: id,
           attemptId: attemptId,
@@ -269,59 +273,73 @@ const QuizPage = () => {
   );
 
   const handleAttemptSubmit = useCallback(
-    async (data: { id: string; attemptId: string; selectedAnswer: number }) => {
+    async (id: string) => {
       if (submitting) return;
-      setSubmitting(true);
+
+      console.log(selectedAnswers, "in attempts handleAttemptsubmit");
+
+      //CURRENT SELECTION OF USER
+      const selectedAnswer = selectedAnswers.find((a) => a.id === id);
+
+      // PAST SUBMISSION OF USERS
+
+      // const needsSubmission =
+      //   !pastSubmission ||
+      //   (selectedAnswer && selectedAnswer.answer !== pastSubmission.answer);
+      //     console.log(attemptId, "attId", selectedAnswer, "sa");
+      //     console.log(id, "id");
+
+      // if (!needsSubmission) {
+      //   // No changes detected! Bypass network call completely and proceed forward
+      //   console.log(
+      //     "No answer changes detected. Proceeding straight to next question.",
+      //   );
+      //   goNext();
+      //   return;
+      // }
       try {
-        console.log(selectedAnswers, "in handlesubmit");
-        // FIND QUIZ IN SELECTED ANSWERS
-        const selectedAnswer = selectedAnswers.find((a) => a.id === data.id);
-        if (
-          submittedAnswers.find((a) => a.id !== data.id) ||
-          submittedAnswers.length < 1
-        ) {
-          const res = await submitLiveQuestion({
-            questionId: data.id,
-            attemptId: data?.attemptId,
-            selectedAnswer: selectedAnswer?.answer ?? data.selectedAnswer,
-          });
-          if (res) {
-            setSubmittedAnswers((prev) => [
-              ...prev,
+        console.log(
+          "Submitting attempts to API payload stream...",
+          id,
+          selectedAnswer?.answer,
+        );
+        setSubmitting(true);
+        const res = await submitAttempt(userDetailsId as string, {
+          questionId: id,
+          attemptId: attemptId,
+          selectedAnswer: selectedAnswer?.answer ?? -1, // fallback flag if skipped entirely
+        });
+
+        if (res) {
+          // Track or overwrite past submissions cleanly
+          setSubmittedAnswers((prev) => {
+            const filtered = prev.filter((a) => a.id !== id); // Strip out stale record if it exists
+            return [
+              ...filtered,
               {
-                id: data.id,
-                answer: data.selectedAnswer,
+                id: id,
+                answer: selectedAnswer?.answer ?? -1,
               },
-            ]);
-            // selectedAnswers.map((a) => ({
-            //   questionId: a.id,
-            //   answer: a.answer,
-            // }));
-          }
+            ];
+          });
 
-          //   @IsString()
-          // attemptId!: string;
-
-          // @IsString()
-          // questionId!: string;
-
-          // @IsInt()
-          // selectedAnswer?: number;
-          console.log(res.data, "submit data");
-          const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
-          // setScore(res.data?.percentage);
-          // setspeed(s);
-
+          console.log("Answer attempts registered successfully", res);
           setIsSubmitted(true);
-          toast.success("Quiz completed!");
+          setScore(res.data.score);
+          setXp(res.data.experience);
+          setspeed(res.data.timeStr);
         }
-      } catch (err) {
-        toast.error("Failed to submit answer. check network connection");
+      } catch (err: any) {
+        toast.error("Failed to submit answer. Check your network connection.");
+        console.error(
+          "Error encountered during layout submission:",
+          err?.response?.data || err,
+        );
       } finally {
         setSubmitting(false);
       }
     },
-    [selectedAnswers],
+    [submitting, selectedAnswers, submittedAnswers, attemptId, goNext],
   );
 
   const retry = (func: () => void) => {
@@ -358,29 +376,20 @@ const QuizPage = () => {
   // }
 
   if (isError || !data?.questions || totalQuestions === 0) {
+    console.log(isError, "is error");
+    console.log(data, "data is inerror");
+    console.log(totalQuestions, "totaslquestions");
     const status = (error as any)?.response?.status;
     if (status === 409) {
       return (
         <Layout type="quiz">
-          <div className="flex justify-center items-center">
-            <div className="text-gray-300 flex flex-col gap-2 max-w-400 p-4">
-              You already have an active quiz session.
-              <Link
-                href={"/dashboard"}
-                className="bg-red-600 text-center text-sm cursor-pointer rounded-2xl text-white px-4 py-2"
-              >
-                Back to Dashboard
-              </Link>
-            </div>
-          </div>
+          <ActiveSessionModal />
         </Layout>
       );
     }
     return (
       <Layout type="quiz">
-        <div className="min-h-screen flex items-center justify-center text-gray-200 font-sans font-bold">
-          Failed to load questions. Please try again.
-        </div>
+        <SessionFailureModal onRetry={refetch} />
       </Layout>
     );
   }
@@ -483,6 +492,7 @@ const QuizPage = () => {
                     isSubmitted={isSubmitted}
                     isError={isError}
                     handleSubmit={handleAttemptSubmit}
+                    currentQuestion={currentQuestion}
                   />
                   {/* Live Rivals Widget */}
                   <Rivals />
@@ -495,11 +505,11 @@ const QuizPage = () => {
                 totalQuestions={totalQuestions}
                 submitting={submitting}
                 currentQuestion={currentQuestion}
-                selectedAnswers={selectedAnswers}
-                submittedAnswers={submittedAnswers}
+                // selectedAnswers={selectedAnswers}
+                // submittedAnswers={submittedAnswers}
                 onPrev={goPrev}
-                onNext={goNext}
-                onSubmit={handleQuestionSubmit}
+                onNext={handleQuestionSubmit}
+                onSubmit={handleAttemptSubmit}
               />
             </>
           ) : /* Submitted UI */
@@ -509,6 +519,9 @@ const QuizPage = () => {
               score={score}
               timeTaken={speed}
               resetTime={setTime}
+              type="live"
+              exp={xp}
+              attemptId={attemptId}
               // retry={retry}
               // setReview={() => {
               //   router.refresh();

@@ -8,11 +8,11 @@ interface QuizFooterProps {
   totalQuestions: number;
   submitting?: boolean;
   currentQuestion?: any;
-  selectedAnswers?: any;
-  submittedAnswers?: any;
+  // selectedAnswers?: any;
+  // submittedAnswers?: any;
 
   onPrev: () => void;
-  onNext: () => void;
+  onNext: (data: any) => void;
   onSubmit: (data: any) => void;
 }
 
@@ -21,8 +21,8 @@ const QuizFooter = ({
   totalQuestions,
   submitting = false,
   currentQuestion,
-  selectedAnswers,
-  submittedAnswers,
+  // selectedAnswers,
+  // submittedAnswers,
   onPrev,
   onNext,
   onSubmit,
@@ -47,7 +47,7 @@ const QuizFooter = ({
           <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">
             Potential Reward
           </p>
-          <p className="text-2xl font-black text-white">+520 XP</p>
+          <p className="text-2xl font-black text-white">+100 XP</p>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -62,10 +62,10 @@ const QuizFooter = ({
 
           {currentQuestionIndex >= totalQuestions - 1 ? (
             <button
-              onClick={onSubmit}
+              onClick={() => onSubmit(currentQuestion.id)}
               disabled={submitting}
               className={cn(
-                "bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px]",
+                "bg-red-500 hover:bg-red-400 text-[#020617] px-8 py-4 rounded-[20px]",
                 "font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform",
                 "hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]",
                 submitting && "opacity-60 pointer-events-none",
@@ -76,7 +76,7 @@ const QuizFooter = ({
             </button>
           ) : (
             <button
-              onClick={() => onSubmit(currentQuestion.id)}
+              onClick={() => onNext(currentQuestion.id)}
               disabled={submitting}
               className="bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
             >

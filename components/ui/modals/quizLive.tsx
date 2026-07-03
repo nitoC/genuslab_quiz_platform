@@ -4,33 +4,38 @@ import React from "react";
 import { MdClose } from "react-icons/md";
 import { cn } from "@/lib/utils/cn";
 import GlassCard from "../cards/GlassCard";
-import { FaQuestionCircle } from "react-icons/fa";
+import { FaAward, FaUsers, FaChartBar, FaMoneyBillWave } from "react-icons/fa";
 import Link from "next/link";
 
 type GradientButtonProps = {
   children: React.ReactNode;
-
+  onClick?: () => void;
+  disabled?: boolean;
   className?: string;
+  href: string;
   /**
    * Tailwind gradient classes, e.g.
-   * "from-emerald-400 via-teal-400 to-emerald-600"
+   * "from-blue-600 to-indigo-600"
    */
   gradient?: string;
 };
 
 export const GradientButton = ({
   children,
+  onClick,
+  href,
   className,
-  gradient = "from-emerald-400 to-green-600",
+  gradient = "from-blue-600 to-indigo-600",
 }: GradientButtonProps) => {
   return (
     <Link
-      href={"/quiz/demo"}
+      onClick={onClick}
+      href={href}
       className={cn(
         "w-full rounded-2xl px-6 py-4 text-sm font-extrabold text-white inline-block text-center",
         "bg-gradient-to-r",
         gradient,
-        "shadow-[0_14px_40px_rgba(16,185,129,0.35)]",
+        "shadow-[0_14px_40px_rgba(37,99,235,0.35)]",
         "transition-transform duration-200 active:scale-[0.99] hover:scale-[1.01]",
         "disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100",
         className,
@@ -41,31 +46,30 @@ export const GradientButton = ({
   );
 };
 
-type DemoQuizModalProps = {
+type LiveQuizModalProps = {
   open: boolean;
   onClose: () => void;
   onProceed?: () => void;
   gradient?: string; // forwarded to GradientButton
   title?: string;
+  id: string;
 };
 
-const DemoQuizModal = ({
+const LiveQuizModal = ({
   open,
   onClose,
   onProceed,
-  gradient = "from-emerald-400 to-green",
-  title = "Demo Quiz",
-}: DemoQuizModalProps) => {
+  id,
+  gradient = "from-blue-600 to-indigo-600",
+  title = "Live Quiz",
+}: LiveQuizModalProps) => {
   if (!open) return null;
-
+  if (!id) return null;
   return (
     <div className="fixed inset-0 z-[100]">
       <div
         className="absolute inset-0 bg-slate-900/30 backdrop-blur-[10px]"
-        onClick={() => {
-          console.log(true, "true");
-          onClose();
-        }}
+        onClick={onClose}
       />
 
       {/* Modal */}
@@ -75,7 +79,7 @@ const DemoQuizModal = ({
           aria-modal="true"
           className={cn(
             "relative w-full max-w-[430px] overflow-hidden rounded-[28px]",
-            " backdrop-blur-2xl",
+            "backdrop-blur-2xl",
             "border border-white/60",
             "shadow-[0_30px_80px_rgba(0,0,0,0.25)]",
           )}
@@ -100,9 +104,9 @@ const DemoQuizModal = ({
 
             <div className="relative z-10 px-8 pt-10 pb-8">
               {/* icon */}
-              <div className="mx-auto mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-white text-emerald-700">
-                <span className="text-xl font-black">
-                  <FaQuestionCircle className="text-green" />
+              <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-blue-50 text-blue-600">
+                <span className="text-2xl">
+                  <FaAward />
                 </span>
               </div>
 
@@ -113,43 +117,43 @@ const DemoQuizModal = ({
 
               {/* description */}
               <p className="mx-auto mt-3 max-w-[330px] text-center text-xs leading-relaxed text-slate-500">
-                The demo quiz lets you practice the interface, understand
-                question timing, and build confidence before entering the live
-                challenge.
+                The live quiz is where the real challenge begins. Compete with
+                others in real-time, climb the global leaderboard, and earn real
+                rewards.
               </p>
 
               {/* feature list */}
               <div className="mt-6 space-y-3">
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-emerald-700">
-                      <span className="text-sm font-black">⏱</span>
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-blue-100 text-blue-600">
+                      <FaUsers size={16} />
                     </div>
                   }
-                  label="No pressure — timed practice"
+                  label="Real-time competition with peers"
                 />
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-emerald-700">
-                      <span className="text-sm font-black">≋</span>
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-orange-100 text-orange-600">
+                      <FaChartBar size={16} />
                     </div>
                   }
-                  label="Same format as live quiz"
+                  label="Climb the global ranking tiers"
                 />
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-emerald-700">
-                      <span className="text-sm font-black">🚀</span>
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-amber-100 text-amber-600">
+                      <FaMoneyBillWave size={16} />
                     </div>
                   }
-                  label="Perfect warm-up before going live"
+                  label="Win exclusive prizes and cash rewards"
                 />
               </div>
 
               {/* action */}
               <div className="mt-7">
-                <GradientButton gradient={gradient}>
-                  Proceed to Demo
+                <GradientButton gradient={gradient} href={`/quiz/live/${id}`}>
+                  Enter Live Quiz
                 </GradientButton>
               </div>
             </div>
@@ -160,7 +164,7 @@ const DemoQuizModal = ({
   );
 };
 
-export default DemoQuizModal;
+export default LiveQuizModal;
 
 function FeatureRow({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
@@ -172,7 +176,7 @@ function FeatureRow({ icon, label }: { icon: React.ReactNode; label: string }) {
       )}
     >
       {icon}
-      <div className="text-sm font-bold text-slate-800">{label}</div>
+      <div className="text-sm font-semibold text-slate-800">{label}</div>
     </div>
   );
 }

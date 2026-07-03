@@ -28,6 +28,10 @@ axiosUser.interceptors.response.use(
         "user lacks the neccessary permisions to perform this operation",
       );
     }
+    if (error?.response?.status === 403) {
+      toast.error("user unauthorised");
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
   },
 );

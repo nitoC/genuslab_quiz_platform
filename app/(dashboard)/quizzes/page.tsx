@@ -9,26 +9,19 @@ import { IoMdArrowForward } from "react-icons/io";
 import { MdStars } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { RiProgress5Line } from "react-icons/ri";
-// import { LuTimer } from "react-icons/lu"; // Added for the timer icon
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useState } from "react";
-// import clsx from "clsx";
-// import Link from "next/link";
 import { useSocket } from "@/store/useSocket";
 import { useQuery } from "@tanstack/react-query";
 import { getAllActiveQuiz, getSlotDetails } from "@/lib/api/apis";
 import Link from "next/link";
-// import useCountdown from "@/hooks/useCountdown";
-// import { useTime } from "@/hooks/useTime";
-// // import { useTime as useTimeStore } from "@/features/quiz/store/time.store";
-// import { useQuery } from "@tanstack/react-query";
-// import { getTime } from "@/lib/api/apis";
+
+// 1. IMPORT SKELETONS & FALLBACKS
+import { DashboardSkeleton } from "@/components/ui/skeletons/quizdashboard";
+import { FallbackQuizCard } from "@/components/ui/cards/FallbackQuizCard";
 
 const page = () => {
   const [pop, setpop] = useState(false);
-  // const socketId = useSocket((state: any) => state.socketId);
-  // const { setTime } = useTimeStore() as { setTime: (time: any) => void };
-  // const loggedInUser = useUser((state: any) => state.user);
 
   const {
     data: quizData,
@@ -38,7 +31,6 @@ const page = () => {
     queryKey: ["quiz episodes"],
     queryFn: async () => {
       const res = await getAllActiveQuiz();
-      console.log(res.data.payload, "active quizzes");
       return res.data.payload;
     },
   });
@@ -51,131 +43,84 @@ const page = () => {
     queryKey: ["slots"],
     queryFn: async () => {
       const res = await getSlotDetails();
-      console.log(res.data.payload, "slot data");
       return res?.data?.payload;
     },
   });
 
-  const [targetEpoch, setTargetEpoch] = useState<number | null>(null);
-  const [countdown, setCountdown] = useState("Next quiz in —");
-  const quizzes = [
-    {
-      day: "1250",
-      episode: 1,
-      time: "7AM-9AM",
-      pool: 2500,
-      participants: 10000,
-      status: "finished" as const,
-      poster: "/images/q2.jpg",
-      title: "Master the Basics",
-    },
-    {
-      day: "1250",
-      episode: 2,
-      pool: 6000,
-      time: "9AM-11AM",
-      participants: null,
-      status: "ongoing" as const,
-      poster: "/images/About1.png",
-      title: "Challenge Your Mind",
-    },
-    {
-      day: "1250",
-      episode: 3,
-      pool: 2500,
-      time: "11AM-1PM",
-      participants: null,
-      status: "upcoming" as const,
-      poster: "/images/Study.jpg",
-      title: "Top the Leaderboard",
-    },
-    {
-      day: "1250",
-      episode: 4,
-      pool: 2500,
-      time: "1PM-3PM",
-      participants: null,
-      status: "upcoming" as const,
-      poster: "/images/Job.png",
-      title: "Expand Your Knowledge",
-    },
-    {
-      day: "1250",
-      episode: 5,
-      pool: 3000,
-      time: "3PM-5PM",
-      participants: null,
-      status: "upcoming" as const,
-      poster:
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cXVpenplfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
-      title: "Sharpen Your Skills",
-    },
-    {
-      day: "1250",
-      episode: 6,
-      pool: 5500,
-      time: "5PM-7PM",
-      participants: null,
-      status: "upcoming" as const,
-      poster:
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cXVpenplfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
-      title: "Advanced Strategies",
-    },
-    {
-      day: "1250",
-      episode: 7,
-      pool: 2500,
-      time: "7PM-9PM",
-      participants: null,
-      status: "upcoming" as const,
-      poster:
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cXVpenplfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
-      title: "Final Showdown",
-    },
+  // Base fallback posters for rendering safety
+  const localPosters = [
+    "/images/q2.jpg",
+    "/images/About1.png",
+    "/images/Study.jpg",
+    "/images/Job.png",
+    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
+    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
+    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
   ];
-
-  // const {
-  //   isLoading: timeLoading,
-  //   isError: timeError,
-  //   data: timeData,
-  // } = useQuery({
-  //   queryKey: ["quiz-time"],
-  //   queryFn: async () => {
-  //     const res = await getTime();
-  //     // setTime(res.data.payload);
-  //     console.log(res.data.payload, "system time in dashboard");
-  //     return res.data;
-  //   },
-  // });
-
-  // /* ---------- Socket Epoch ---------- */
-  // const handleTimerUpdate = (epoch: number) => {
-  //   setTargetEpoch(epoch);
-  // };
-
-  // useTime(socketId, handleTimerUpdate);
-
-  // useCountdown(
-  //   targetEpoch,
-  //   "dash-2",
-  //   (
-  //     val:
-  //       | string
-  //       | { days: number; hours: number; minutes: number; seconds: number },
-  //   ) => {
-  //     setCountdown(typeof val === "string" ? val : `00.00.00`);
-  //   },
-  // );
 
   useEffect(() => {
     const popTimeout = setTimeout(() => {
       setpop(true);
     }, 3000);
 
-    return () => {
-      clearTimeout(popTimeout);
-    };
+    return () => clearTimeout(popTimeout);
   }, []);
+
+  // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA
+  if (isLoading || slotLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  // 3. DEFINE RENDERING LOGIC FOR CARDS ARRAY
+  const renderQuizTrack = () => {
+    // Case A: Query missing or broken payload completely -> Return 6 dummy cards
+    if (!quizData || quizData.length === 0 || isError) {
+      return Array.from({ length: 6 }).map((_, index) => (
+        <FallbackQuizCard
+          key={`fallback-only-${index}`}
+          slotIndex={index + 1}
+        />
+      ));
+    }
+
+    // Case B: Real values are found -> Fill up to 7 total blocks if count is low
+    const targetLength = 7;
+    const items = [...quizData];
+
+    return Array.from({ length: Math.max(targetLength, items.length) }).map(
+      (_, index) => {
+        const quiz = items[index];
+
+        if (quiz) {
+          // Render genuine content card
+          const assignedTime =
+            slotData && slotData.length > 0
+              ? slotData.find((a: any) => a.tag === quiz.activeAt)?.label ||
+                "TBD"
+              : "TBD";
+
+          return (
+            <QuizCard
+              key={`quiz-active-${quiz.id || index}`}
+              {...quiz}
+              id={quiz.id}
+              poster={localPosters[index] || localPosters[0]}
+              pool={quiz.pool || 0}
+              time={assignedTime}
+            />
+          );
+        } else {
+          // Render custom fill placeholder to complete the layout grid requirements
+          return (
+            <FallbackQuizCard
+              key={`fill-card-${index}`}
+              slotIndex={index + 1}
+            />
+          );
+        }
+      },
+    );
+  };
 
   return (
     <Layout className="relative">
@@ -228,31 +173,19 @@ const page = () => {
             </h2>
           </div>
           <p className="text-sm text-grey">
-            Seven educational sessions scheduled for today
+            Educational tracks scheduled for today
           </p>
         </div>
 
+        {/* Dynamic horizontal scrolling containers */}
         <div className="flex gap-4 overflow-x-auto scroll-hide">
-          {quizData?.map((quiz, index) => (
-            <QuizCard
-              key={index}
-              {...quiz}
-              id={quiz.id}
-              poster={quizzes[index].poster}
-              pool={"0.00"}
-              time={
-                slotData && slotData.length > 0
-                  ? slotData.find((a: any) => a.tag === quiz.activeAt).label
-                  : []
-              }
-            />
-          ))}
+          {renderQuizTrack()}
         </div>
       </section>
 
+      {/* ADDITIONAL SECTIONS */}
       <section className="p-4 relative md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* PROFILE CARD */}
           <GlassCard>
             <div className="p-6 flex flex-col gap-4">
               <div className="flex items-center gap-4">
@@ -268,22 +201,16 @@ const page = () => {
                   <p className="text-blue text-sm">Quiz Overlord</p>
                 </div>
               </div>
-
               <div>
                 <p className="text-grey text-xs">752 XP Earned</p>
                 <div className="w-full bg-white/10 rounded-full h-2 mt-2">
                   <div className="bg-blue h-2 rounded-full w-[75%]" />
                 </div>
-                <p className="text-grey text-xs mt-2">
-                  Earn a Level: 248 XP remaining
-                </p>
               </div>
-
               <PrimaryButton type="link" to="/profile" text="View Profile" />
             </div>
           </GlassCard>
 
-          {/* PLAY NOW CARD */}
           <GlassCard>
             <div className="p-6 bg-blue/10 flex flex-col gap-6 h-full justify-between">
               <div className="flex items-center gap-4">
@@ -295,37 +222,29 @@ const page = () => {
                   <p className="text-blue font-bold text-xl">₦500 Reward</p>
                 </div>
               </div>
-
               <div>
                 <h3 className="text-(--primary) font-semibold">Episode 102</h3>
                 <p className="text-grey text-sm">10 Questions • 10 mins</p>
               </div>
-
               <PrimaryButton type="link" to={`/quiz/`} text="Play Now" />
             </div>
           </GlassCard>
 
-          {/* PAST QUIZZES CARD */}
           <GlassCard>
             <div className="p-6 flex flex-col gap-6 h-full justify-between">
               <div className="flex items-center gap-3">
                 <RiProgress5Line className="text-purple-400" />
                 <h3 className="text-(--primary) font-semibold">Past Quizzes</h3>
               </div>
-
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-purple-400 font-bold">67</span>
                   <span className="text-grey">Master Path</span>
                 </div>
-
                 <div className="w-full bg-white/10 rounded-full h-2">
                   <div className="bg-purple-500 h-2 rounded-full w-[87%]" />
                 </div>
-
-                <p className="text-grey text-xs mt-2">87% Complete</p>
               </div>
-
               <PrimaryButton
                 type="link"
                 to="quizzes/previous"
@@ -335,8 +254,6 @@ const page = () => {
           </GlassCard>
         </div>
       </section>
-
-      {}
     </Layout>
   );
 };
@@ -418,3 +335,4 @@ const QuizCard = ({
 };
 
 export default page;
+// Keep QuizCard implementation below as it was...

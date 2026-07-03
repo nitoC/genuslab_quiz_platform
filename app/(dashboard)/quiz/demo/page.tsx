@@ -23,6 +23,8 @@ import { useQuizCountdownTime } from "@/hooks/useTime";
 import { useTimeStore } from "@/features/quiz/store/time.store";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
+import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
 
 // Data Structure interface matching your real JSON payload
 interface QuizQuestion {
@@ -212,25 +214,13 @@ const QuizPage = () => {
     if (status === 409) {
       return (
         <Layout type="quiz">
-          <div className="flex justify-center items-center">
-            <div className="text-gray-300 flex flex-col gap-2 max-w-400 p-4">
-              You already have an active quiz session.
-              <Link
-                href={"/dashboard"}
-                className="bg-red-600 text-center text-sm cursor-pointer rounded-2xl text-white px-4 py-2"
-              >
-                Back to Dashboard
-              </Link>
-            </div>
-          </div>
+          <ActiveSessionModal />
         </Layout>
       );
     }
     return (
       <Layout type="quiz">
-        <div className="min-h-screen flex items-center justify-center text-gray-200 font-sans font-bold">
-          Failed to load questions. Please try again.
-        </div>
+        <SessionFailureModal onRetry={refetch} />
       </Layout>
     );
   }
@@ -356,6 +346,7 @@ const QuizPage = () => {
               score={score}
               timeTaken={speed}
               resetTime={setTime}
+              type="demo"
               // retry={retry}
               // setReview={() => {
               //   router.refresh();

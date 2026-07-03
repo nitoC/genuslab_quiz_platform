@@ -129,6 +129,13 @@ export const getDemoResult = async (payload: any) => {
   console.log(res, "submit data");
   return res;
 };
+
+export const getCurrentActive = async () => {
+  const res = await axiosUser.get("quiz/current");
+
+  // console.log(res);
+  return res;
+};
 export const getDemoQuestions = async () => {
   const res = await axiosUser.get("demo/quiz");
 
@@ -142,11 +149,12 @@ export const submitLiveQuestion = async (data: any) => {
   return res;
 };
 export const submitAttempt = async (detailsId: string, data: any) => {
+  console.log(detailsId, "details id");
   const res = await axiosUser.post(
     `question/attempt/submit/${detailsId}`,
     data,
   );
-  console.log(res, "submit data");
+  console.log(res, "submit attempt data");
   return res;
 };
 

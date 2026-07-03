@@ -54,6 +54,8 @@ const Sidebar = ({ type }: { type?: string }) => {
   const page = usePathname().split("/")[1];
   const router = useRouter();
   const { isOpen, toggleSidebar } = useSidebar((state: any) => state);
+  console.log(isOpen, "isopen");
+  console.log(toggleSidebar, "toggle");
   return (
     <>
       {isOpen && (
@@ -72,6 +74,7 @@ const Sidebar = ({ type }: { type?: string }) => {
           "p-8 backdrop-blur-3xl bg-[#0f127a33] md:w-fit fixed inset-b-0 h-full w-70 z-30",
         )}
       >
+        <h1>{isOpen}</h1>
         <div className="py-4 px-4 flex items-center">
           <Logo />
         </div>
@@ -83,10 +86,11 @@ const Sidebar = ({ type }: { type?: string }) => {
                 <Link
                   href={type === "mobile" ? "#" : href}
                   onClick={(e) => {
-                    type === "mobile" &&
-                      e.preventDefault() &&
-                      toggleSidebar() &&
+                    if (type === "mobile") {
+                      e.preventDefault();
+                      toggleSidebar();
                       router.push(href);
+                    }
                   }}
                   className={clsx(
                     defaultStyle,

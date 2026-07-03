@@ -1,19 +1,27 @@
-import React from "react";
+import Link from "next/link";
 import { BiTrophy } from "react-icons/bi";
 import { MdLockClock, MdBarChart } from "react-icons/md";
+import { GiLightningHelix } from "react-icons/gi"; // Added clean XP iconic element
 
 interface SubmitUIProps {
   score: number;
   timeTaken: string; // seconds
   router: any;
+  type: "live" | "demo";
   resetTime: () => void;
+  attemptId?: string;
+  exp?: number;
 }
 
-const SubmitUI = ({ score, timeTaken, router, resetTime }: SubmitUIProps) => {
-  // const minutes = Math.floor(timeTaken / 60);
-  // const seconds = timeTaken % 60;
-  // resetTime();
-
+const SubmitUI = ({
+  score,
+  timeTaken,
+  router,
+  resetTime,
+  type,
+  attemptId,
+  exp = 0, // Default to 0 to prevent fallback layout shifts
+}: SubmitUIProps) => {
   const performance =
     score >= 80
       ? {
@@ -113,6 +121,23 @@ const SubmitUI = ({ score, timeTaken, router, resetTime }: SubmitUIProps) => {
               </p>
 
               <div className="mt-8 space-y-4">
+                {/*Experience Points Container Row */}
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between shadow-[0_0_20px_rgba(245,158,11,0.03)]">
+                  <div className="flex items-center gap-3">
+                    <GiLightningHelix
+                      size={18}
+                      className="text-amber-400 animate-pulse"
+                    />
+                    <span className="text-amber-200/80 font-medium">
+                      Experience Awarded
+                    </span>
+                  </div>
+
+                  <span className="font-black text-xl text-amber-400 tracking-wide">
+                    {type === "demo" ? "0 XP" : `+${exp} XP`}
+                  </span>
+                </div>
+
                 <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <MdLockClock size={18} className="text-slate-400" />
@@ -133,7 +158,6 @@ const SubmitUI = ({ score, timeTaken, router, resetTime }: SubmitUIProps) => {
 
                 <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-4 flex items-center justify-between">
                   <span className="text-slate-300">Maximum Allowed Time</span>
-
                   <span className="font-bold text-white">5 Minutes</span>
                 </div>
               </div>
@@ -152,16 +176,24 @@ const SubmitUI = ({ score, timeTaken, router, resetTime }: SubmitUIProps) => {
           >
             Take Another Quiz
           </button>
-
-          <button
-            onClick={() => {
-              resetTime();
-              router.push("/dashboard");
-            }}
-            className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-8 py-4 rounded-2xl font-bold transition"
-          >
-            Go To Dashboard
-          </button>
+          {type === "demo" ? (
+            <button
+              onClick={() => {
+                resetTime();
+                router.push("/dashboard");
+              }}
+              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-8 py-4 rounded-2xl font-bold transition"
+            >
+              Go To Dashboard
+            </button>
+          ) : (
+            <Link
+              href={`history/${attemptId}`}
+              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-8 py-4 rounded-2xl font-bold transition"
+            >
+              View results
+            </Link>
+          )}
         </div>
       </div>
     </div>

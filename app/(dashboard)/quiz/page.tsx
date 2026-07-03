@@ -13,14 +13,46 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@/store/useUser";
 import DemoQuizModal from "@/components/ui/modals/quizDemo";
 import { useSocket } from "@/store/useSocket";
+import LiveQuizModal from "@/components/ui/modals/quizLive";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getAllActiveQuiz,
+  getCurrentActive,
+  getSlotDetails,
+} from "@/lib/api/apis";
 // import { set } from "react-datepicker/dist/dist/date_utils.js";
 
 const GetReadyModal = () => {
-  const { socketId } = useParams();
   const [showDemo, setShowDemo] = React.useState(false);
   const [showLive, setShowLive] = React.useState(false);
 
   const router = useRouter();
+
+  const {
+    data: quizData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["active quiz"],
+    queryFn: async () => {
+      const res = await getCurrentActive();
+      console.log(res.data.payload, "active quizzes");
+      return res.data.payload;
+    },
+  });
+
+  // const {
+  //   data: slotData,
+  //   isLoading: slotLoading,
+  //   isError: slotError,
+  // } = useQuery({
+  //   queryKey: ["slots"],
+  //   queryFn: async () => {
+  //     const res = await getSlotDetails();
+  //     console.log(res.data.payload, "slot data");
+  //     return res?.data?.payload;
+  //   },
+  // });
   const benefits = [
     {
       title: "Unlock Ranks",
@@ -64,6 +96,21 @@ const GetReadyModal = () => {
             // alert("Proceeding to demo quiz..." + socketId + "socket:" + sid);
 
             router.push("/quiz/demo");
+          }}
+        />
+      )}
+      {showLive && (
+        <LiveQuizModal
+          open={true}
+          id={quizData.id}
+          onClose={() => {
+            setShowLive(false);
+          }}
+          onProceed={() => {
+            // alert("Proceeding to demo quiz...", socketId, "socket:", sid);
+            // alert("Proceeding to demo quiz..." + socketId + "socket:" + sid);
+
+            router.push(`/quiz/live/${quizData.id}`);
           }}
         />
       )}
@@ -180,8 +227,12 @@ const GetReadyModal = () => {
                     {/* Live */}
                     <button
                       type="button"
+                      onClick={() => {
+                        setShowDemo(false);
+                        setShowLive(true);
+                      }}
                       className={cn(
-                        "rounded-2xl bg-white p-6 text-center",
+                        "rounded-2xl bg-white p-6 text-center cursor-pointer",
                         "shadow-[0_16px_50px_rgba(15,23,42,0.06)]",
                         "hover:shadow-[0_22px_65px_rgba(15,23,42,0.10)] transition",
                       )}

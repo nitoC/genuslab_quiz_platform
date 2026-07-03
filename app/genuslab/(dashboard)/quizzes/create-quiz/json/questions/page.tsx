@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import JsonInputCanvas from "@/features/quiz/components/JsonInputCanvas";
 import RequiredSchema from "@/features/quiz/components/RequiredSchema";
 import QuizPreview from "@/features/quiz/components/QuizPreview";
@@ -20,7 +20,7 @@ export interface QuestionObject {
   rankId: string;
 }
 
-export default function JsonBuilderPage() {
+function JsonBuilderPage() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -173,4 +173,10 @@ export default function JsonBuilderPage() {
       </div>
     </>
   );
+}
+
+export default function page() {
+  <Suspense fallback={<p>loading...</p>}>
+    <JsonBuilderPage />
+  </Suspense>;
 }

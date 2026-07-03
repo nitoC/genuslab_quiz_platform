@@ -8,7 +8,13 @@ import { useQuizCountdownTime } from "@/hooks/useTime";
 
 const timeCountDown = 300;
 
-const Timer = ({ isLoading, isSubmitted, isError, handleSubmit }: any) => {
+const Timer = ({
+  isLoading,
+  isSubmitted,
+  isError,
+  handleSubmit,
+  currentQuestion,
+}: any) => {
   const timeLeft = useQuizCountdownTime(isSubmitted, isLoading, isError);
   // const [timeLeft, setTimeLeft] = useState<number>(timeCountDown); // 5 minutes default
 
@@ -22,7 +28,7 @@ const Timer = ({ isLoading, isSubmitted, isError, handleSubmit }: any) => {
   // 3. Simple countdown timer side-effect
   useEffect(() => {
     if (timeLeft === 0 && !isSubmitted) {
-      handleSubmit();
+      handleSubmit(currentQuestion.id);
     }
   }, [timeLeft, isSubmitted, handleSubmit]);
 

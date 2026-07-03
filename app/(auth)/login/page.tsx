@@ -7,7 +7,7 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { loginUser, tokenUser } from "@/lib/api/apis";
+import { loginUser } from "@/lib/api/apis";
 import { toast } from "react-toastify";
 import { useUser } from "@/store/useUser";
 
