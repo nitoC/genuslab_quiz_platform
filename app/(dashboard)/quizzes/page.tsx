@@ -11,7 +11,7 @@ import { FaPlay } from "react-icons/fa";
 import { RiProgress5Line } from "react-icons/ri";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useState } from "react";
-import { useSocket } from "@/store/useSocket";
+// import { useSocket } from "@/store/useSocket";
 import { useQuery } from "@tanstack/react-query";
 import { getAllActiveQuiz, getSlotDetails } from "@/lib/api/apis";
 import Link from "next/link";
@@ -58,13 +58,13 @@ const page = () => {
     "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
   ];
 
-  useEffect(() => {
-    const popTimeout = setTimeout(() => {
-      setpop(true);
-    }, 3000);
+  // useEffect(() => {
+  //   const popTimeout = setTimeout(() => {
+  //     setpop(true);
+  //   }, 3000);
 
-    return () => clearTimeout(popTimeout);
-  }, []);
+  //   return () => clearTimeout(popTimeout);
+  // }, []);
 
   // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA
   if (isLoading || slotLoading) {
