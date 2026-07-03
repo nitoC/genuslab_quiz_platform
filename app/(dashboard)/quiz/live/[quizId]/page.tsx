@@ -201,6 +201,11 @@ const QuizPage = () => {
   const goPrev = useCallback(() => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // Use 'auto' for an instant jump
+      });
     }
   }, [currentQuestionIndex]);
 
@@ -258,6 +263,11 @@ const QuizPage = () => {
 
           console.log("Answer registered successfully", res);
           goNext();
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth", // Use 'auto' for an instant jump
+          });
         }
       } catch (err: any) {
         toast.error("Failed to submit answer. Check your network connection.");

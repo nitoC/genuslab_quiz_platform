@@ -142,12 +142,22 @@ const QuizPage = () => {
   const goNext = useCallback(() => {
     if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // Use 'auto' for an instant jump
+      });
     }
   }, [currentQuestionIndex, totalQuestions]);
 
   const goPrev = useCallback(() => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // Use 'auto' for an instant jump
+      });
     }
   }, [currentQuestionIndex]);
 
