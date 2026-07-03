@@ -131,7 +131,7 @@ export const getDemoResult = async (payload: any) => {
 };
 
 export const getCurrentActive = async () => {
-  const res = await axiosUser.get("quiz/current");
+  const res = await axiosUser.get("quiz/current/active");
 
   // console.log(res);
   return res;
