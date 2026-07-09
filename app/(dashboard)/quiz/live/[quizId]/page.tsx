@@ -53,32 +53,13 @@ interface IQuizData {
   questions: QuizQuestion[];
 }
 
-// const formatMMSS = (s: number) => {
-//   const m = Math.floor(s / 60);
-//   const sec = s % 60;
-//   return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-// };
-
-// const getTimerColor = (seconds: number) => {
-//   if (seconds <= 60) return "text-rose-500";
-//   if (seconds <= 300) return "text-amber-400";
-//   return "text-emerald-500";
-// };
-
 const speedCalc = (startTime: number, endTime: number) => {
-  // 1. Get total difference in milliseconds
   const diffMs = endTime - startTime;
-
-  // 2. Convert to total seconds
   const totalSeconds = Math.floor(diffMs / 1000);
-
-  // 3. Extract minutes and remaining seconds
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   const s = `${minutes}m: ${seconds}s`;
-  // 4. Print the result
   console.log(s);
-  // Output: "3min: 5sec"
   return s;
 };
 
@@ -87,8 +68,7 @@ const QuizPage = () => {
   const { quizId } = useParams();
   const { resetTime: setTime } = useTimeStore((state) => state);
   const [speed, setspeed] = useState("_min: _sec");
-  // setTime();
-  // 1. Fetching logic using React Query
+
   const {
     data: queryResponse,
     isLoading,
@@ -102,9 +82,7 @@ const QuizPage = () => {
     queryKey: ["initiate quiz"],
     queryFn: async () => {
       const userStr = getLocalStorage("user");
-      console.log(userStr, "user");
       if (!userStr) {
-        // router.push("/");
         toast.error("user not found");
         throw new Error("user not found");
       }
@@ -114,15 +92,16 @@ const QuizPage = () => {
         throw new Error("user not found");
       }
       const { userId } = JSON.parse(userStr);
-      console.log(userId, "user id");
       const userDetails = await getUserDetails(userId);
-      console.log(userDetails.data.payload.id, "details");
+      if (!userDetails) {
+        toast.error("user not logged in");
+        router.push("/login");
+      }
       const quizIdStr = Array.isArray(quizId) ? quizId[0] : quizId;
       const res = await getQuizSession(
         quizIdStr,
         userDetails?.data?.payload?.id,
       );
-      console.log(res);
       return {
         data: res.data?.payload,
         userDetailsId: userDetails?.data?.payload?.id,
@@ -139,7 +118,6 @@ const QuizPage = () => {
   const userDetailsId = queryResponse?.userDetailsId;
   const attemptId = data?.attemptId;
 
-  // 2. Functional States
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<
     { id: string; answer: number }[]
@@ -152,25 +130,17 @@ const QuizPage = () => {
   const [isReady, setIsReady] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [xp, setXp] = useState<number>(0);
-
-  // const [review, setReview] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
 
   const totalQuestions = data?.questions?.length ?? 0;
   const currentQuestion = data?.questions?.[currentQuestionIndex];
 
-  //custom handleSelect
-
   const chooseAnswer = (id: string, answer: number) => {
     const dup = [...selectedAnswers];
-
-    console.log({ id, answer }, "option");
-    const isInRecord = dup.find((a, b) => a && a.id === id);
+    const isInRecord = dup.find((a) => a && a.id === id);
 
     if (isInRecord) {
-      const updated = selectedAnswers.map((a, b) => {
-        console.log(a.id, "a id");
-        console.log(id, "the id");
+      const updated = selectedAnswers.map((a) => {
         return a.id === id ? { id: a.id, answer: answer } : a;
       });
       setSelectedAnswers(updated);
@@ -178,20 +148,8 @@ const QuizPage = () => {
       dup.push({ id, answer });
       setSelectedAnswers(dup);
     }
-    console.log(selectedAnswers, "answers");
   };
 
-  // 4. Handle Option Selection
-  // const handleSelect = (optionLabel: string) => {
-  //   if (!currentQuestion) return;
-  //   console.log(selectedAnswers, "selected answers");
-  //   setSelectedAnswers((prev) => ({
-  //     ...prev,
-  //     [currentQuestion.id]: optionLabel,
-  //   }));
-  // };
-
-  // 5. Navigation & Submission Actions
   const goNext = useCallback(() => {
     if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -204,7 +162,7 @@ const QuizPage = () => {
       window.scrollTo({
         top: 0,
         left: 0,
-        behavior: "smooth", // Use 'auto' for an instant jump
+        behavior: "smooth",
       });
     }
   }, [currentQuestionIndex]);
@@ -213,45 +171,28 @@ const QuizPage = () => {
     async (id: string) => {
       if (submitting) return;
 
-      console.log(selectedAnswers, "in handlesubmit");
-
-      //CURRENT SELECTION OF USER
       const selectedAnswer = selectedAnswers.find((a) => a.id === id);
-
-      // PAST SUBMISSION OF USERS
       const pastSubmission = submittedAnswers.find((a) => a.id === id);
 
       const needsSubmission =
         !pastSubmission ||
         (selectedAnswer && selectedAnswer.answer !== pastSubmission.answer);
-      console.log(attemptId, "attId", selectedAnswer, "sa");
-      console.log(id, "id");
 
       if (!needsSubmission) {
-        // No changes detected! Bypass network call completely and proceed forward
-        console.log(
-          "No answer changes detected. Proceeding straight to next question.",
-        );
         goNext();
         return;
       }
       try {
-        console.log(
-          "Submitting answer to API payload stream...",
-          id,
-          selectedAnswer?.answer,
-        );
         setSubmitting(true);
         const res = await submitLiveQuestion({
           questionId: id,
           attemptId: attemptId,
-          selectedAnswer: selectedAnswer?.answer ?? -1, // fallback flag if skipped entirely
+          selectedAnswer: selectedAnswer?.answer ?? -1,
         });
 
         if (res) {
-          // Track or overwrite past submissions cleanly
           setSubmittedAnswers((prev) => {
-            const filtered = prev.filter((a) => a.id !== id); // Strip out stale record if it exists
+            const filtered = prev.filter((a) => a.id !== id);
             return [
               ...filtered,
               {
@@ -260,21 +201,15 @@ const QuizPage = () => {
               },
             ];
           });
-
-          console.log("Answer registered successfully", res);
           goNext();
           window.scrollTo({
             top: 0,
             left: 0,
-            behavior: "smooth", // Use 'auto' for an instant jump
+            behavior: "smooth",
           });
         }
       } catch (err: any) {
         toast.error("Failed to submit answer. Check your network connection.");
-        console.error(
-          "Error encountered during layout submission:",
-          err?.response?.data || err,
-        );
       } finally {
         setSubmitting(false);
       }
@@ -286,44 +221,19 @@ const QuizPage = () => {
     async (id: string) => {
       if (submitting) return;
 
-      console.log(selectedAnswers, "in attempts handleAttemptsubmit");
-
-      //CURRENT SELECTION OF USER
       const selectedAnswer = selectedAnswers.find((a) => a.id === id);
 
-      // PAST SUBMISSION OF USERS
-
-      // const needsSubmission =
-      //   !pastSubmission ||
-      //   (selectedAnswer && selectedAnswer.answer !== pastSubmission.answer);
-      //     console.log(attemptId, "attId", selectedAnswer, "sa");
-      //     console.log(id, "id");
-
-      // if (!needsSubmission) {
-      //   // No changes detected! Bypass network call completely and proceed forward
-      //   console.log(
-      //     "No answer changes detected. Proceeding straight to next question.",
-      //   );
-      //   goNext();
-      //   return;
-      // }
       try {
-        console.log(
-          "Submitting attempts to API payload stream...",
-          id,
-          selectedAnswer?.answer,
-        );
         setSubmitting(true);
         const res = await submitAttempt(userDetailsId as string, {
           questionId: id,
           attemptId: attemptId,
-          selectedAnswer: selectedAnswer?.answer ?? -1, // fallback flag if skipped entirely
+          selectedAnswer: selectedAnswer?.answer ?? -1,
         });
 
         if (res) {
-          // Track or overwrite past submissions cleanly
           setSubmittedAnswers((prev) => {
-            const filtered = prev.filter((a) => a.id !== id); // Strip out stale record if it exists
+            const filtered = prev.filter((a) => a.id !== id);
             return [
               ...filtered,
               {
@@ -332,8 +242,6 @@ const QuizPage = () => {
               },
             ];
           });
-
-          console.log("Answer attempts registered successfully", res);
           setIsSubmitted(true);
           setScore(res.data.score);
           setXp(res.data.experience);
@@ -341,10 +249,6 @@ const QuizPage = () => {
         }
       } catch (err: any) {
         toast.error("Failed to submit answer. Check your network connection.");
-        console.error(
-          "Error encountered during layout submission:",
-          err?.response?.data || err,
-        );
       } finally {
         setSubmitting(false);
       }
@@ -352,18 +256,6 @@ const QuizPage = () => {
     [submitting, selectedAnswers, submittedAnswers, attemptId, goNext],
   );
 
-  const retry = (func: () => void) => {
-    setCurrentQuestionIndex(0);
-    setSelectedAnswers([]);
-    // setTimeLeft(600);
-    func();
-    refetch();
-    setIsSubmitted(false);
-    setScore(0);
-  };
-  // console.log(setTime, "settime");
-
-  // 6.  Progress Segments Calculations
   const progressSegments = Math.max(1, Math.min(10, totalQuestions || 10));
   const activeSeg = totalQuestions
     ? Math.min(
@@ -379,16 +271,7 @@ const QuizPage = () => {
     return <QuizSkeleton />;
   }
 
-  //   if (isError) {
-  //   const status = (error as any)?.response?.status;
-
-  //   return <div>Something went wrong</div>;
-  // }
-
   if (isError || !data?.questions || totalQuestions === 0) {
-    console.log(isError, "is error");
-    console.log(data, "data is inerror");
-    console.log(totalQuestions, "totaslquestions");
     const status = (error as any)?.response?.status;
     if (status === 409) {
       return (
@@ -406,23 +289,11 @@ const QuizPage = () => {
 
   return (
     <Layout type="quiz">
-      {/* {review && (
-        <QuizReviewModal
-          reviewData={questions.map((q) => ({
-            question: q.questionText,
-            selected: selectedAnswers[q.id] || "No Answer",
-            hint: q.hint,
-          }))}
-          onClose={() => setReview(false)}
-        />
-      )} */}
-
-      <div className="min-h-screen flex items-center justify-center p-4 font-sans selection:bg-emerald-500/30">
-        {/* Main Container */}
-        <div className="w-full max-w-5xl bg-[#0f1933] rounded-[40px] border border-white/5 p-8 md:p-12 relative overflow-hidden shadow-2xl">
+      <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-emerald-500/30">
+        {/* Main Container - Adjusted padding dynamically for mobile screen efficiency */}
+        <div className="w-full max-w-5xl bg-[#0f1933] rounded-[24px] sm:rounded-[40px] border border-white/5 p-4 sm:p-6 md:p-12 relative overflow-hidden shadow-2xl">
           {!isSubmitted ? (
             <>
-              {/* Top Header Bar */}
               <section>
                 <MobileQuizHeader
                   isLoading={isLoading}
@@ -441,26 +312,29 @@ const QuizPage = () => {
                   activeSeg={activeSeg}
                 />
               </section>
+
               {/* Question Area */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-2 space-y-8">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
+                <div className="lg:col-span-2 space-y-6 md:space-y-8">
+                  <div className="space-y-3 md:space-y-4">
+                    <div className="flex items-start justify-between gap-3">
+                      {/* Fluid scale applied to question text from text-xl up to text-4xl */}
+                      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-snug break-words flex-1">
                         {currentQuestion?.questionText ??
                           "Waiting for question..."}
                       </h1>
-                      <button className="p-3 bg-white/5 rounded-full text-slate-400 hover:text-white transition-colors">
-                        <MdVolumeUp size={24} />
-                      </button>
+                      {/* <button className="p-2.5 sm:p-3 bg-white/5 rounded-full text-slate-400 hover:text-white transition-colors flex-shrink-0 mt-1">
+                        <MdVolumeUp size={20} className="sm:w-6 sm:h-6" />
+                      </button> */}
                     </div>
-                    <p className="text-slate-500 font-medium text-sm md:text-base">
+                    {/* Adjusted inline hint text parameters for mobile layouts */}
+                    <p className="text-slate-500 font-medium text-xs sm:text-sm md:text-base leading-relaxed">
                       Hint: {currentQuestion?.hint}
                     </p>
                   </div>
 
                   {/* Options Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {currentQuestion?.options &&
                     currentQuestion.options.length ? (
                       currentQuestion.options.map((label, index) => {
@@ -468,11 +342,6 @@ const QuizPage = () => {
                           selectedAnswers.find(
                             (a) => a.id === currentQuestion.id,
                           )?.answer === index;
-
-                        // console.log();
-
-                        // console.log(currentQuestion.id, "keys");
-                        // console.log(id, 'keys');
 
                         return (
                           <QuizOptions
@@ -487,7 +356,7 @@ const QuizPage = () => {
                         );
                       })
                     ) : (
-                      <div className="text-slate-400 text-sm">
+                      <div className="text-slate-400 text-xs sm:text-sm">
                         Loading options…
                       </div>
                     )}
@@ -496,7 +365,6 @@ const QuizPage = () => {
 
                 {/* Sidebar Widgets */}
                 <div className="space-y-6 hidden md:block">
-                  {/* Timer Widget */}
                   <Timer
                     isLoading={isLoading}
                     isSubmitted={isSubmitted}
@@ -504,26 +372,21 @@ const QuizPage = () => {
                     handleSubmit={handleAttemptSubmit}
                     currentQuestion={currentQuestion}
                   />
-                  {/* Live Rivals Widget */}
                   <Rivals />
                 </div>
               </div>
-              {/* id: string; attemptId: string; selectedAnswer: number */}
-              {/* Footer Actions */}
+
               <LiveQuizFooter
                 currentQuestionIndex={currentQuestionIndex}
                 totalQuestions={totalQuestions}
                 submitting={submitting}
                 currentQuestion={currentQuestion}
-                // selectedAnswers={selectedAnswers}
-                // submittedAnswers={submittedAnswers}
                 onPrev={goPrev}
                 onNext={handleQuestionSubmit}
                 onSubmit={handleAttemptSubmit}
               />
             </>
-          ) : /* Submitted UI */
-          isReady ? (
+          ) : isReady ? (
             <SubmitUI
               router={router}
               score={score}
@@ -532,11 +395,6 @@ const QuizPage = () => {
               type="live"
               exp={xp}
               attemptId={attemptId}
-              // retry={retry}
-              // setReview={() => {
-              //   router.refresh();
-              // }}
-              // retry={retry}
             />
           ) : (
             <CalculatingScore onComplete={() => setIsReady(true)} />
@@ -564,12 +422,13 @@ const QuizHeader = ({
 }) => {
   return (
     <>
-      <div className="flex items-center justify-between mb-12">
-        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
-          <div className="w-5 h-5 bg-emerald-500 rounded flex items-center justify-center">
-            <div className="w-2 h-2 bg-white rounded-sm rotate-45" />
+      {/* Changed mb-12 to a fluid mb-6 md:mb-12 to scale spatial bounds down cleanly on small screens */}
+      <div className="flex items-center justify-between mb-6 md:mb-12 gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 bg-white/5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl border border-white/5">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 bg-emerald-500 rounded flex items-center justify-center flex-shrink-0">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-sm rotate-45" />
           </div>
-          <span className="text-slate-300 text-xs font-bold tracking-tight">
+          <span className="text-slate-300 text-[10px] sm:text-xs font-bold tracking-tight whitespace-nowrap">
             Difficulty:{" "}
             <span className="capitalize text-emerald-400">
               {currentQuestion?.difficulty}
@@ -599,17 +458,17 @@ const QuizHeader = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/5">
-            <MdLocalFireDepartment className="text-orange-500 text-lg" />
-            <span className="text-white font-bold text-sm">12</span>
-          </div>
-          <div className="bg-emerald-500/10 text-emerald-500 px-3 py-2 rounded-xl border border-emerald-500/20 text-xs font-black">
-            +15 XP
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* <div className="flex items-center gap-1 sm:gap-2 bg-white/5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-white/5">
+            <MdLocalFireDepartment className="text-orange-500 text-base sm:text-lg" />
+            <span className="text-white font-bold text-xs sm:text-sm">12</span>
+          </div> */}
+          <div className="bg-emerald-500/10 text-emerald-500 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-emerald-500/20 text-[10px] sm:text-xs font-black whitespace-nowrap">
+            +10 XP
           </div>
           <img
             src="https://i.pravatar.cc/150?u=my"
-            className="w-10 h-10 rounded-xl border-2 border-white/10"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border-2 border-white/10 flex-shrink-0"
             alt="avatar"
           />
         </div>
@@ -626,15 +485,6 @@ interface MobileQuizHeaderProps {
   totalQuestions: number;
 }
 
-// const formatMMSS = (seconds: number) => {
-//   const mins = Math.floor(seconds / 60);
-//   const secs = seconds % 60;
-
-//   return `${mins.toString().padStart(2, "0")}:${secs
-//     .toString()
-//     .padStart(2, "0")}`;
-// };
-
 export const MobileQuizHeader = ({
   currentQuestionIndex,
   totalQuestions,
@@ -646,19 +496,18 @@ export const MobileQuizHeader = ({
   const timeLeft = useQuizCountdownTime(isSubmitted, isLoading, isError);
 
   return (
-    <div className="md:hidden sticky top-0 z-40 ">
-      <div className="px-4 py-4">
+    <div className="md:hidden sticky top-0 z-40 bg-[#0f1933]/90 backdrop-blur-md -mx-4 -mt-4 mb-4">
+      {/* Optimized wrapper container layout context for touch interaction efficiency */}
+      <div className="px-4 py-3 sm:py-4">
         {/* Top Row */}
-
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.25em] text-slate-500 font-bold">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-slate-500 font-bold">
               Question
             </p>
-
-            <h2 className="text-lg font-black text-white">
+            <h2 className="text-base sm:text-lg font-black text-white">
               {currentQuestionIndex + 1}
-              <span className="text-slate-500 font-semibold">
+              <span className="text-slate-500 font-semibold text-sm">
                 /{totalQuestions}
               </span>
             </h2>
@@ -666,30 +515,29 @@ export const MobileQuizHeader = ({
 
           <div
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-2xl border",
+              "flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border transition-all",
               timeLeft <= 60
                 ? "bg-red-500/10 border-red-500/20 text-red-400"
                 : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
             )}
           >
-            <MdTimer className="text-lg" />
-
-            <span className="font-black text-base">{formatMMSS(timeLeft)}</span>
+            <MdTimer className="text-base sm:text-lg" />
+            <span className="font-black text-sm sm:text-base">
+              {formatMMSS(timeLeft)}
+            </span>
           </div>
         </div>
 
         {/* Progress Bar */}
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs">
             <span className="text-slate-400">Quiz Progress</span>
-
             <span className="font-bold text-white">
               {Math.round(progress)}%
             </span>
           </div>
 
-          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-1.5 sm:h-2 bg-white/5 rounded-full overflow-hidden">
             <div
               className="h-full bg-emerald-500 rounded-full transition-all duration-500"
               style={{
@@ -702,4 +550,5 @@ export const MobileQuizHeader = ({
     </div>
   );
 };
+
 export default QuizPage;

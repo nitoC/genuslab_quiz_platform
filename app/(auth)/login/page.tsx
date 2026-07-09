@@ -144,6 +144,7 @@ const LoginPage = () => {
       // }
     } catch (error) {
       console.error(error);
+      console.log(error?.response?.data);
       toast.error(
         error instanceof Error ? error.message : "Login failed. Try again.",
       );

@@ -19,9 +19,21 @@ import Link from "next/link";
 // 1. IMPORT SKELETONS & FALLBACKS
 import { DashboardSkeleton } from "@/components/ui/skeletons/quizdashboard";
 import { FallbackQuizCard } from "@/components/ui/cards/FallbackQuizCard";
+import useUser from "@/hooks/useUser";
 
 const page = () => {
   const [pop, setpop] = useState(false);
+
+  const {
+    data,
+    isLoading: userLoading,
+    isError: userIsError,
+    error,
+    storedUser,
+  } = useUser();
+  const user = data?.user;
+  const rank = data?.user.details.rankName;
+  const exp = data?.user.details.xp;
 
   const {
     data: quizData,
@@ -67,7 +79,7 @@ const page = () => {
   // }, []);
 
   // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA
-  if (isLoading || slotLoading) {
+  if (isLoading || slotLoading || userLoading) {
     return <DashboardSkeleton />;
   }
 
@@ -197,12 +209,14 @@ const page = () => {
                   className="rounded-xl"
                 />
                 <div>
-                  <h3 className="text-(--primary) font-semibold">Jane Doe</h3>
-                  <p className="text-blue text-sm">Quiz Overlord</p>
+                  <h3 className="text-(--primary) font-semibold">
+                    {user?.name}
+                  </h3>
+                  <p className="text-blue text-sm">{rank?.rankName}</p>
                 </div>
               </div>
               <div>
-                <p className="text-grey text-xs">752 XP Earned</p>
+                <p className="text-grey text-xs">{exp} XP Earned</p>
                 <div className="w-full bg-white/10 rounded-full h-2 mt-2">
                   <div className="bg-blue h-2 rounded-full w-[75%]" />
                 </div>

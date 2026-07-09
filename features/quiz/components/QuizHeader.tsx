@@ -72,7 +72,7 @@ const QuizHeader = ({
         </div>
 
         <div className="bg-emerald-500/10 text-emerald-500 px-3 py-2 rounded-xl border border-emerald-500/20 text-xs font-black">
-          +15 XP
+          +10 XP
         </div>
 
         <img

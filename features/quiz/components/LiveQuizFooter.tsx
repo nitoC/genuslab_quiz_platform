@@ -32,7 +32,7 @@ const QuizFooter = ({
   return (
     <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex gap-3">
-        {[MdContrast, MdAcUnit, MdGroups].map((Icon, i) => (
+        {[MdGroups].map((Icon, i) => (
           <button
             key={i}
             className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"

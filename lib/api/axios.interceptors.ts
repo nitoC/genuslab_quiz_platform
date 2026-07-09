@@ -32,6 +32,7 @@ axiosUser.interceptors.response.use(
       toast.error("user unauthorised");
       window.location.href = "/login";
     }
+    console.log(error, "error");
     return Promise.reject(error);
   },
 );

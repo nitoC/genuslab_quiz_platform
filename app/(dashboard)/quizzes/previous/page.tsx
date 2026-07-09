@@ -13,7 +13,14 @@ import { FaVideo } from "react-icons/fa";
 import { IoBookOutline } from "react-icons/io5";
 import { PiMedalFill } from "react-icons/pi";
 
-import { getScoreHistory, getQuizNumber } from "@/lib/api/apis"; // adjust path
+import {
+  getScoreHistory,
+  getQuizNumber,
+  getUserProfile,
+  getRankData,
+} from "@/lib/api/apis"; // adjust path
+import getLocalStorage from "@/lib/utils/getLocalStorage";
+import toast from "react-hot-toast";
 
 interface QuizHistoryCardProps {
   episode: string;
@@ -101,16 +108,101 @@ const PerformancePage = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   // Session check
-  useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
-    if (!storedUser) {
-      router.push("/login");
-      return;
-    }
+  const storedUser = useMemo(() => {
+    const user = getLocalStorage("user");
 
-    const parsedUser = JSON.parse(storedUser);
-    setUserEmail(parsedUser.email);
-  }, [router]);
+    if (!user) return null;
+
+    try {
+      return JSON.parse(user);
+    } catch {
+      return null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!storedUser) {
+      router.replace("/login");
+    }
+  }, [storedUser, router]);
+
+  /* -----------------------------
+   * USER QUERY
+   * ---------------------------- */
+
+  //  const {
+  //   data: queryResponse,
+  //   isLoading:isDidLoading,
+  //   refetch,
+  //   error:didError,
+  //   isError:isDidError,
+  // } = useQuery<{
+  //   data: unknown
+  //   userDetailsId: string;
+  // }>({
+  //   queryKey: ["initiate quiz"],
+  //   queryFn: async () => {
+  //     const userStr = getLocalStorage("user");
+  //     if (!userStr) {
+  //       toast.error("user not found");
+  //       throw new Error("user not found");
+  //     }
+  //     if (!quizId) {
+  //       router.back();
+  //       toast.error("quiz id not found");
+  //       throw new Error("user not found");
+  //     }
+  //     const { userId } = JSON.parse(userStr);
+  //     const userDetails = await getUserDetails(userId);
+  //     if (!userDetails) {
+  //       toast.error("user not logged in");
+  //       router.push("/login");
+  //     }
+  //     const quizIdStr = Array.isArray(quizId) ? quizId[0] : quizId;
+  //     const res = await getQuizSession(
+  //       quizIdStr,
+  //       userDetails?.data?.payload?.id,
+  //     );
+  //     return {
+  //       data: res.data?.payload,
+  //       userDetailsId: userDetails?.data?.payload?.id,
+  //     };
+  //   },
+  //   staleTime: 0,
+  //   gcTime: 0,
+  //   refetchOnWindowFocus: false,
+  //   refetchOnReconnect: false,
+  //   refetchOnMount: true,
+  // });
+
+  const {
+    data,
+    isLoading: scoreLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["dashboard-user", storedUser?.userId],
+    enabled: !!storedUser?.userId,
+    retry: 1,
+    staleTime: 1000 * 60 * 5,
+    queryFn: async () => {
+      const [userRes, rankRes] = await Promise.all([
+        getUserProfile(storedUser.userId),
+        getRankData(),
+      ]);
+
+      const user = userRes.data.user;
+      // console.log(rankRes.data, "rank res data");
+      const userRank = rankRes.data.payload.find(
+        (rank: any) => rank.id === user.details.rankId,
+      );
+
+      return {
+        user,
+        rank: userRank,
+      };
+    },
+  });
 
   // Fetch Score History
   const { data: history = [], isLoading } = useQuery({

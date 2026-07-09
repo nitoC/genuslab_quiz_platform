@@ -7,27 +7,31 @@ import BatchSummary from "@/features/quiz/components/BatchSummary";
 import DataReferenceGuide from "@/features/quiz/components/DataReferenceGuide";
 import LiveQuizPreview from "@/features/quiz/components/LiveQuizPreview";
 import { createQuiz, createQuizBatch } from "@/lib/api/apis";
-import toast from "react-hot-toast";
+// import toast from "react-toastify";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export interface QuizObject {
   title?: string;
   day?: number;
   episode?: string;
   activeAt?: string;
+  activeDate?: string;
 }
 
 export default function BulkQuizCreator() {
   const timerRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const router = useRouter();
   const [jsonText, setJsonText] = useState<string>("");
-  // const [targetRank, setTargetRank] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [preview, setPreview] = useState<boolean>(false);
   const [QParsed, setQParsed] = useState<QuizObject[] | undefined>();
   const [validationStatus, setValidationStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+
+  // New state to capture user's manual date input context
+  const [activeDate, setActiveDate] = useState<string>("");
 
   const [summary, setSummary] = useState({
     totalQuizzes: 0,
@@ -82,19 +86,35 @@ export default function BulkQuizCreator() {
   useEffect(() => {
     return () => timerRef.current.forEach((timer) => clearTimeout(timer));
   });
+
   const handleClear = () => {
     setJsonText("");
+    setActiveDate("");
   };
 
   const handleSubmit = async () => {
     if (submitting) return;
     try {
       if (!QParsed || QParsed.length < 1) return toast.error("empty quiz data");
+
+      // Enforce choosing a base active date before sending payload down stream
+      if (!(activeDate || QParsed.every((a) => a.activeDate)))
+        return toast.error("Please select a activation date before submitting");
+
       setSubmitting(true);
-      const res = await createQuizBatch(QParsed);
+
+      // Inject the shared activeDate entered by user into each quiz object properties dynamically
+      const finalizedPayload = QParsed.map((quiz) => ({
+        ...quiz,
+        // activeDate: activeDate,
+      }));
+
+      const res = await createQuizBatch(finalizedPayload);
       console.log(res, "data in batch upload");
       toast.success("quizzes saved in draft proceed to add questions");
       setJsonText("");
+      setActiveDate("");
+
       const timeout = setTimeout(() => {
         router.push("/genuslab/quizzes");
       }, 1500);
@@ -106,25 +126,33 @@ export default function BulkQuizCreator() {
         return;
       }
       if (err?.response?.status === 409) {
+        console.log(err.response.data);
         return toast.error(
           "some episodes has already been scheduled. create for other episodes",
         );
       }
-      toast.error("could not submit quiz");
+      console.log(err?.response, "message");
+      toast.error(`could not submit quiz\n ${err?.response.data.message}`);
     } finally {
       setSubmitting(false);
     }
   };
 
+  // Safe wrapper context payload to let LiveQuizPreview match the target data shape live
+  const previewData = QParsed?.map((quiz) => ({
+    ...quiz,
+    activeDate: quiz.activeDate || activeDate,
+  }));
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-12 text-slate-800">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-12 text-slate-800">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Bulk Live Quiz Creator
           </h1>
-          <p className="mt-2 text-sm text-slate-500 max-w-2xl">
+          <p className="mt-2 text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
             Scale your assessments by importing multiple quizzes simultaneously.
             Paste your JSON array below. Each quiz object should include a
             title, day, episode (e.g., EPISODE_1), activeAt slot, and an array
@@ -132,8 +160,25 @@ export default function BulkQuizCreator() {
           </p>
         </div>
 
+        {/* Activation Configuration Field Block */}
+        <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+            Target Schedule Date (activeDate)
+          </label>
+          <input
+            type="date"
+            value={activeDate}
+            onChange={(e) => setActiveDate(e.target.value)}
+            className="w-full max-w-xs px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+          />
+          <p className="mt-1.5 text-slate-400 text-xs">
+            This value will be dynamically injected into every array block item
+            payload upon creation.
+          </p>
+        </div>
+
         {/* Main Content Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
           {/* Left Column: Input & Workflow */}
           <div className="lg:col-span-2 space-y-6">
             <JsonDataEntry
@@ -154,9 +199,10 @@ export default function BulkQuizCreator() {
           </div>
         </div>
       </div>
+
       {preview && (
         <LiveQuizPreview
-          quizzes={QParsed}
+          quizzes={previewData}
           isValid={validationStatus === "success"}
           handlePreview={() => setPreview(false)}
           submitting={submitting}

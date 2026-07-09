@@ -44,7 +44,7 @@ const RankUnlockModal = ({
       <div className="w-full max-h-[90vh] scroll-hide max-w-lg bg-[#0b1224] rounded-[40px] border border-blue-500/30 p-8 relative overflow-x-hidden shadow-[0_0_50px_rgba(30,58,138,0.3)]">
         {/* Header Actions */}
         <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border">
             <MdVerified className="text-blue-400 text-sm" />
             <span className="text-[10px] text-blue-300 font-black uppercase tracking-widest">
               Pioneer Status
@@ -139,7 +139,7 @@ const RankUnlockModal = ({
 
         {/* Rules of Engagement Box */}
         <div className="bg-amber-500/[0.03] border border-amber-500/20 rounded-3xl p-6 relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/40" />
+          {/* <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/40" /> */}
           <div className="flex items-start gap-3">
             <MdErrorOutline className="text-amber-500 text-xl mt-0.5" />
             <div className="space-y-2">

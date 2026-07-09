@@ -4,6 +4,7 @@ import { useSocket } from "@/store/useSocket";
 // import { cookies } from "next/headers";
 import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 
 const dashLayout = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const dashLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex-2" data-theme={"dark"}>
+        <Toaster />
         {children}
       </div>
     </QueryClientProvider>

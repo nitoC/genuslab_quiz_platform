@@ -176,7 +176,9 @@ function JsonBuilderPage() {
 }
 
 export default function page() {
-  <Suspense fallback={<p>loading...</p>}>
-    <JsonBuilderPage />
-  </Suspense>;
+  return (
+    <Suspense fallback={<p>loading...</p>}>
+      <JsonBuilderPage />
+    </Suspense>
+  );
 }

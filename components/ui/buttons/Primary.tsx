@@ -29,6 +29,7 @@ const Primary = ({
   }
   return (
     <button
+      onClick={handler}
       className={clsx(
         "py-2 px-6 cursor-pointer",
         style ? style : "bg-blue text-white rounded-sm",

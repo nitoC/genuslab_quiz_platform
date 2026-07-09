@@ -177,8 +177,11 @@ export default function SignUpPage() {
       } else {
         toast.error((response as any).message || "Registration failed");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error(err?.response?.data);
+      if (err?.response?.data?.statusCode === 409) {
+        return toast.error("user already exists. login");
+      }
       if (err instanceof Error) {
         toast.error(err.message);
       } else {

@@ -4,13 +4,15 @@ import AdminHeader from "@/components/layouts/AdminHeader";
 import AdminQuiz from "@/components/ui/cards/AdminQuiz";
 import EmptyQuizState from "@/features/quiz/components/EmptyData";
 import QuizMatrix from "@/features/quiz/components/skeletons/QuizMatrix";
-import { getAllQuiz } from "@/lib/api/apis";
-import { useQuery } from "@tanstack/react-query";
+import { deleteQuiz, getAllQuiz } from "@/lib/api/apis";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa6";
 
 export default function QuizManagementPage() {
+  const queryClient = useQueryClient();
   const [active, setActive] = useState("Live Quizzes");
 
   const tabs = [
@@ -32,6 +34,32 @@ export default function QuizManagementPage() {
       return res?.data?.payload ?? [];
     },
   });
+
+  const quizzesTransform = quizzes.sort((a: any, b: any) => a.day - b.day);
+
+  console.log(quizzesTransform);
+
+  const deleteMutation = useMutation({
+    mutationKey: ["delete quiz", active],
+    mutationFn: async (quizId: string) => {
+      const res = await deleteQuiz(quizId);
+      return res.status;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
+    },
+    onError: (error) => {
+      const status = error.response?.status;
+      if (status === 404) return toast.error("item not found");
+      if (status === 401) return toast.error("user is not permited to do this");
+
+      toast.error(error?.response.data?.message);
+    },
+  });
+
+  const handleDelete = (quizId: string) => {
+    deleteMutation.mutate(quizId);
+  };
 
   return (
     <div className="w-full min-h-screen bg-transparent">
@@ -76,15 +104,16 @@ export default function QuizManagementPage() {
         ) : quizzes.length > 0 ? (
           /* 2. LIVE ACTIVE DATA MAP STATE */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {quizzes.map((quiz: any, idx: number) => (
+            {quizzesTransform.map((quiz: any, idx: number) => (
               <AdminQuiz
                 key={quiz.id || idx}
                 id={quiz?.id}
                 badge="New"
                 day={quiz.day}
                 title={quiz.title}
-                description={quiz.title}
+                description={quiz.episode}
                 questions={10}
+                onDelete={handleDelete}
               />
             ))}
           </div>

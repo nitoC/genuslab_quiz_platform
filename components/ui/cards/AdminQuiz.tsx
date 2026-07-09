@@ -15,7 +15,7 @@ type CourseCardProps = {
   title: string;
   description: string;
   questions: number;
-  onDelete?: () => void;
+  onDelete?: (id: string) => void;
   onArchive?: () => void;
   onInsertQuestions?: () => void;
   onViewDetails?: () => void;
@@ -91,7 +91,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
             <div className="relative flex flex-col items-center group/tooltip">
               <button
                 type="button"
-                onClick={onDelete}
+                onClick={() => onDelete && onDelete(id)}
                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-150 cursor-pointer"
                 aria-label="Delete Quiz"
               >

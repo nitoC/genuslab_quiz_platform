@@ -158,6 +158,12 @@ export const submitAttempt = async (detailsId: string, data: any) => {
   return res;
 };
 
+//REFERRAL ENDPOINTS
+export const getReferrals = async (limit: number, page: number, id: string) => {
+  const res = await axiosUser.get(`referral/${id}?limit=${limit}&page=${page}`);
+  return res;
+};
+
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
   console.log(payload, "admin login payload");
@@ -228,9 +234,14 @@ export const getAllActiveQuiz = async () => {
   return res;
 };
 
+export const getAllUserQuizzes = async (did: string) => {
+  const res = await axiosUser.get(`attempts/${did}`);
+  console.log(res);
+  return res;
+};
 export const deleteQuiz = async (id: string) => {
   console.log(id, "delete quiz id");
-  const res = await axiosAdmin.delete(`quiz/${id}`);
+  const res = await axiosAdmin.delete(`quiz/delete/${id}`);
   console.log(res, "delete quiz response");
   return res;
 };
