@@ -28,7 +28,7 @@ axiosUser.interceptors.response.use(
         "user lacks the neccessary permisions to perform this operation",
       );
     }
-    if (error?.response?.status === 403) {
+    if (error?.response?.status === 401) {
       toast.error("user unauthorised");
       window.location.href = "/login";
     }

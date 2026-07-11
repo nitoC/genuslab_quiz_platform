@@ -6,7 +6,7 @@ import PrimaryButton from "@/components/ui/buttons/Primary";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import { FaGraduationCap } from "react-icons/fa";
 import { IoMdArrowForward } from "react-icons/io";
-import { MdStars } from "react-icons/md";
+import { MdStars, MdLock } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { RiProgress5Line } from "react-icons/ri";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
@@ -70,14 +70,6 @@ const page = () => {
     "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
   ];
 
-  // useEffect(() => {
-  //   const popTimeout = setTimeout(() => {
-  //     setpop(true);
-  //   }, 3000);
-
-  //   return () => clearTimeout(popTimeout);
-  // }, []);
-
   // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA
   if (isLoading || slotLoading || userLoading) {
     return <DashboardSkeleton />;
@@ -133,7 +125,9 @@ const page = () => {
       },
     );
   };
-
+  const reward = 0;
+  const formatedReward =
+    reward > 0 ? reward.toLocaleString() : reward.toFixed(2);
   return (
     <Layout className="relative">
       <Header backBtn={false} title="Quizzes" />
@@ -148,7 +142,9 @@ const page = () => {
               </div>
               <div>
                 <h3 className="text-grey text-sm">Rewards</h3>
-                <p className="text-2xl font-bold text-(--primary)">₦5000</p>
+                <p className="text-2xl font-bold text-(--primary)">
+                  ₦{formatedReward}
+                </p>
               </div>
             </div>
           </GlassCard>
@@ -158,9 +154,7 @@ const page = () => {
               <div className="flex flex-col gap-1">
                 <h3 className="text-blue font-bold text-lg">Performance</h3>
                 <p className="text-grey">
-                  <span className="text-3xl font-bold text-(--primary)">
-                    85
-                  </span>
+                  <span className="text-3xl font-bold text-(--primary)">0</span>
                   /100
                 </p>
                 <p className="text-grey text-sm">Last week average score</p>
@@ -252,11 +246,13 @@ const page = () => {
               </div>
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-purple-400 font-bold">67</span>
+                  <span className="text-purple-400 font-bold">
+                    {data?.user?.details?._count?.quizHistory ?? 0}
+                  </span>
                   <span className="text-grey">Master Path</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-2">
-                  <div className="bg-purple-500 h-2 rounded-full w-[87%]" />
+                  <div className="bg-purple-500 h-2 rounded-full w-full" />
                 </div>
               </div>
               <PrimaryButton
@@ -287,7 +283,7 @@ const QuizCard = ({
   episode: number;
   participants: number | null;
   id: string;
-  status: "upcoming" | "ongoing" | "finished";
+  status: string;
   title: string;
   poster: string;
   time: string;
@@ -297,11 +293,44 @@ const QuizCard = ({
     notation: "compact",
     compactDisplay: "short",
   });
+
+  if (!status) return;
+  const normalizedStatus = status.toLowerCase();
+  const isUpcoming = normalizedStatus === "upcoming";
+  const isArchived =
+    normalizedStatus === "archived" || normalizedStatus === "finished";
+  const isLocked = isUpcoming || isArchived;
+
+  const handleDisabledClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isUpcoming) {
+      alert("Quiz is not yet active");
+    } else if (isArchived) {
+      alert("Quiz has expired");
+    }
+  };
+
   return (
     <div
       style={{ backgroundImage: `url('${poster}')` }}
-      className={` bg-cover bg-blend-overlay h-90 bg-(--background)/70 basis-70 shrink-0 bg-center p-4 rounded-lg flex flex-col gap-4 items-start`}
+      className="relative bg-cover bg-blend-overlay h-90 bg-(--background)/70 basis-70 shrink-0 bg-center p-4 rounded-lg flex flex-col gap-4 items-start"
     >
+      {/* WARNING DIM OVERLAY LAYER */}
+      {isLocked && (
+        <div
+          onClick={handleDisabledClick}
+          className="absolute inset-0 bg-black/60 backdrop-blur-[1px] rounded-lg z-20 flex flex-col items-center justify-center cursor-not-allowed transition-all duration-200 hover:bg-black/70"
+        >
+          <div className="bg-amber-500/20 border border-amber-500/40 p-3 rounded-full text-amber-400 shadow-lg mb-2">
+            <MdLock size={28} />
+          </div>
+          <span className="text-xs tracking-wider uppercase font-bold text-amber-400 bg-black/40 px-2.5 py-1 rounded">
+            {isUpcoming ? "Upcoming" : "Expired"}
+          </span>
+        </div>
+      )}
+
       <span className="text-touquise border border-touquise bg-touquise/30 font-bold py-2 px-4 rounded-full text-xs">
         {time}
       </span>
@@ -325,7 +354,7 @@ const QuizCard = ({
               participants
             </p>
           ) : (
-            <p className="text-white text-3xl">{status}</p>
+            <p className="text-white text-3xl capitalize">{status}</p>
           )}
         </div>
         <p className="text-blue-300 font-bold text-sm">{title}</p>
@@ -339,6 +368,7 @@ const QuizCard = ({
         </div>
         <Link
           href={`quiz/live/${id}`}
+          tabIndex={isLocked ? -1 : 0}
           className="text-sm duration-200 hover:bg-white/15 bg-white/5 backdrop-blur-md text-white border border-white/30 py-2 px-4 rounded-full mt-4"
         >
           <IoMdArrowForward size={20} />
@@ -349,4 +379,3 @@ const QuizCard = ({
 };
 
 export default page;
-// Keep QuizCard implementation below as it was...

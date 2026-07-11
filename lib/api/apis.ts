@@ -164,6 +164,16 @@ export const getReferrals = async (limit: number, page: number, id: string) => {
   return res;
 };
 
+//QUIZ ATTEMPT ENDPOINTS
+export const getAttempts = async (page: number) => {
+  const res = await axiosUser.get(`quiz-attempt?page=${page}`);
+  return res;
+};
+export const getAttemptsAnswers = async (did: string, attemptId: string) => {
+  const res = await axiosUser.get(`quiz-attempt/answers/${did}/${attemptId}`);
+  return res;
+};
+
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
   console.log(payload, "admin login payload");

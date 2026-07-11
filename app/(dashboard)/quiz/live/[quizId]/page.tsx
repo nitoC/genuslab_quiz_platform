@@ -273,6 +273,7 @@ const QuizPage = () => {
 
   if (isError || !data?.questions || totalQuestions === 0) {
     const status = (error as any)?.response?.status;
+    console.log((error as any)?.response, "error res");
     if (status === 409) {
       return (
         <Layout type="quiz">
@@ -394,6 +395,8 @@ const QuizPage = () => {
               resetTime={setTime}
               type="live"
               exp={xp}
+              // quizId={quizId}
+              did={userDetailsId ? userDetailsId : ""}
               attemptId={attemptId}
             />
           ) : (

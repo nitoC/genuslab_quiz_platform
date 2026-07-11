@@ -1,27 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import Avatar from "@/components/ui/Avatar";
 import GlassCard from "@/components/ui/cards/GlassCard";
-import PrimaryButton from "@/components/ui/buttons/Primary";
-import CustomCardChart from "@/components/ui/charts/Modbar";
 import {
   MdEdit,
-  MdStars,
-  MdContentCopy,
   MdPerson,
   MdAccountBalanceWallet,
   MdGroups,
 } from "react-icons/md";
 import { FaCheckCircle, FaChartBar } from "react-icons/fa";
-import { LuLayoutDashboard } from "react-icons/lu";
-
-import nameResolver from "@/lib/utils/nameResolver";
 import useUser from "@/hooks/useUser";
-import toast from "react-hot-toast";
-import ShareCard from "@/features/profile/cards/Share";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Profile from "@/features/profile/ui/Profile";
 import ManageReferralsPage from "@/features/profile/ui/Referral";
@@ -147,7 +138,7 @@ const ProfilePage = () => {
   /* ---------- Rewards and Chart Track States ---------- */
 
   /* -----------------------------
-   * LOADING CORE EVALUATION
+   * LOADING SKELETON
    * ---------------------------- */
   if (isLoading || !storedUser || !data?.user) {
     return <ProfileSkeleton />;
@@ -268,4 +259,11 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+const page = () => {
+  return (
+    <Suspense fallback={<p>loading...</p>}>
+      <ProfilePage />
+    </Suspense>
+  );
+};
+export default page;

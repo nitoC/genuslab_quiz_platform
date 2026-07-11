@@ -12,6 +12,8 @@ interface SubmitUIProps {
   resetTime: () => void;
   attemptId?: string;
   exp?: number;
+  // quizId: string;
+  did?: string;
 }
 
 const SubmitUI = ({
@@ -20,6 +22,8 @@ const SubmitUI = ({
   router,
   resetTime,
   type,
+  // quizId,
+  did,
   attemptId,
   exp = 0,
 }: SubmitUIProps) => {
@@ -201,7 +205,7 @@ const SubmitUI = ({
             </button>
           ) : (
             <Link
-              href={`history/${attemptId}`}
+              href={`/quizzes/previous/${attemptId}/${did}`}
               className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl text-sm font-bold transition text-center block"
             >
               View results

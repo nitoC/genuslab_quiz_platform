@@ -49,11 +49,11 @@ export default function QuizManagementPage() {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
     },
     onError: (error) => {
-      const status = error.response?.status;
+      const status = (error as any).response?.status;
       if (status === 404) return toast.error("item not found");
       if (status === 401) return toast.error("user is not permited to do this");
 
-      toast.error(error?.response.data?.message);
+      toast.error((error as any)?.response.data?.message);
     },
   });
 
