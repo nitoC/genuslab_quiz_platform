@@ -79,7 +79,8 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                       Total Rewards
                     </p>
                     <h2 className="text-3xl md:text-4xl font-bold text-(--primary)">
-                      ₦{totalRewards.toLocaleString()}
+                      ₦0.00
+                      {/* {totalRewards.toLocaleString()} */}
                     </h2>
                     <p className="text-green-400 text-[10px] md:text-xs mt-2 font-bold flex gap-1 items-center">
                       +15.4%{" "}
@@ -102,7 +103,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                       <MdStars className="text-orange-400" /> Quiz Winnings
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
-                      ₦450,000
+                      ₦0.00
                     </p>
                   </div>
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
@@ -110,10 +111,10 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                       <MdGroups className="text-blue" /> Referral Earnings
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
-                      ₦306,000
+                      ₦0.00
                     </p>
                     <p className="text-[10px] text-blue mt-1">
-                      ₦250 per invite
+                      ₦1000 per invite
                     </p>
                   </div>
                 </div>
@@ -159,18 +160,18 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
               <StatRow
                 icon={<FaCheckCircle className="text-green-500" />}
                 label="Quizzes Completed"
-                value="128"
+                value={user?.details._count.quizHistory}
               />
               <StatRow
                 icon={<MdGroups className="text-purple-500" />}
                 label="Referrals"
-                value="1,224"
+                value={user?.referrals.length ?? 0}
               />
-              <StatRow
+              {/* <StatRow
                 icon={<LuLayoutDashboard className="text-orange-400" />}
                 label="Avg. Rank"
                 value="#42"
-              />
+              /> */}
             </div>
           </GlassCard>
         </div>

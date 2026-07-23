@@ -5,7 +5,6 @@ import { ReactNode } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import { FaCrown, FaTrophy, FaUniversity } from "react-icons/fa";
-import { IoRefresh } from "react-icons/io5";
 import { MdCardGiftcard, MdSearch, MdCalendarToday } from "react-icons/md";
 import { cn } from "@/lib/utils/cn";
 
@@ -128,19 +127,21 @@ const TransactionsPage = () => {
         <div className="space-y-4">
           {/* Scrollable Tabs for Mobile */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-            {["All", "Subscription", "Rewards", "Withdrawals"].map((tab, i) => (
-              <button
-                key={i}
-                className={cn(
-                  "px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all",
-                  i === 0
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                    : "bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10",
-                )}
-              >
-                {tab}
-              </button>
-            ))}
+            {["All", "Subscription", "Rewards", "Claimed Rewards"].map(
+              (tab, i) => (
+                <button
+                  key={i}
+                  className={cn(
+                    "px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all",
+                    i === 0
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                      : "bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10",
+                  )}
+                >
+                  {tab}
+                </button>
+              ),
+            )}
           </div>
 
           {/* Search + Date Range */}

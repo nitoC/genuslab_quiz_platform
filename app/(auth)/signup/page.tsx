@@ -10,9 +10,11 @@ import CustomDropdown from "@/components/ui/FormItems/CustomSelect";
 import CustomDatePicker from "@/components/ui/FormItems/CustomDatePicker";
 import { toast } from "react-toastify";
 import { registerUser } from "@/lib/api/apis";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignUpPage() {
+  const query = useSearchParams();
+  const refCode = query.get("ref");
   const Router = useRouter();
   const [agree, setAgree] = useState(false);
   const [gender, setGender] = useState("");
@@ -25,7 +27,7 @@ export default function SignUpPage() {
     password: "",
     email: "",
     phone: "",
-    refCode: "",
+    refCode: refCode ? refCode : "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,7 +164,7 @@ export default function SignUpPage() {
         phone: user.phone,
         gender,
         dob: new Date(dob as Date).toLocaleDateString("en-CA"),
-        referrerCode: user.refCode,
+        referrerCode: refCode ? refCode : user.refCode,
         referrer: marketing,
       };
       // Format as YYYY-MM
@@ -316,7 +318,8 @@ export default function SignUpPage() {
                     id="refCode"
                     placeholder="Referral Code (Optional)"
                     onChange={handleChange}
-                    value={user.refCode}
+                    disabled={refCode}
+                    value={refCode ? refCode : user.refCode}
                   />
                 </div>
 

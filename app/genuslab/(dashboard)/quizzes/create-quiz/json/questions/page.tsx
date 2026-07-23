@@ -72,6 +72,7 @@ function JsonBuilderPage() {
       setJsonText(JSON.stringify(parsed, null, 2));
     } catch (e) {
       // Keep unformatted text if it's invalid JSON
+      console.log(e, "error");
     }
   };
 

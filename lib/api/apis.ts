@@ -174,6 +174,112 @@ export const getAttemptsAnswers = async (did: string, attemptId: string) => {
   return res;
 };
 
+/**
+ * =
+ * USER STATS
+ * =
+ */
+
+/**
+ * Complete dashboard
+ */
+export const getUserDashboard = async (detailsId: string) => {
+  console.log(detailsId, "in dash execution");
+  return await axiosUser.get(`stats/user/${detailsId}`);
+};
+
+/**
+ * Overall user stats
+ */
+export const getOverallUserStats = async (detailsId: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/overall`);
+};
+
+/**
+ * Last five days score history
+ */
+export const getLastFiveDaysScore = async (detailsId: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/score/last-five-days`);
+};
+
+/**
+ * User average score
+ */
+export const getAverageScore = async (detailsId: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/score/average`);
+};
+
+/**
+ * Today's rank
+ */
+export const getTodayRank = async (detailsId: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/rank/today`);
+};
+
+/**
+ * Rank for a specific day
+ * Example:
+ * 15-07-2026
+ */
+export const getRankForDay = async (detailsId: string, day: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/rank/${day}`);
+};
+
+/**
+ * =
+ * LEADERBOARDS
+ * =
+ */
+
+/**
+ * Combined leaderboard
+ */
+export const getOverallLeaderboard = async (limit = 10) => {
+  return await axiosUser.get(`leaderboard/overall?limit=${limit}`);
+};
+
+/**
+ * Overall XP leaderboard
+ */
+export const getXpLeaderboard = async (limit = 10) => {
+  return await axiosUser.get(`leaderboard/xp?limit=${limit}`);
+};
+
+/**
+ * Daily XP leaderboard
+ */
+export const getDailyLeaderboard = async (limit = 10) => {
+  return await axiosUser.get(`leaderboard/xp/daily?limit=${limit}`);
+};
+
+/**
+ * Weekly XP leaderboard
+ */
+export const getWeeklyLeaderboard = async (limit = 10) => {
+  return await axiosUser.get(`leaderboard/xp/weekly?limit=${limit}`);
+};
+
+/**
+ * Monthly XP leaderboard
+ */
+export const getMonthlyLeaderboard = async (limit = 10) => {
+  return await axiosUser.get(`leaderboard/xp/monthly?limit=${limit}`);
+};
+
+/**
+ * Previous five weeks leaderboard history
+ */
+export const getWeeklyLeaderboardHistory = async (limit = 10) => {
+  return await axiosUser.get(`leaderboard/xp/weekly/history?limit=${limit}`);
+};
+
+/**
+ * Referral leaderboard
+ */
+export const getReferralLeaderboard = async () => {
+  return await axiosUser.get(`leaderboard/referral`);
+};
+
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
   console.log(payload, "admin login payload");

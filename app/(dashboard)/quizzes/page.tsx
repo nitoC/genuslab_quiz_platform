@@ -43,6 +43,7 @@ const page = () => {
     queryKey: ["quiz episodes"],
     queryFn: async () => {
       const res = await getAllActiveQuiz();
+      console.log(res.data.payload, "quiz data");
       return res.data.payload;
     },
   });
@@ -230,11 +231,27 @@ const page = () => {
                   <p className="text-blue font-bold text-xl">₦500 Reward</p>
                 </div>
               </div>
-              <div>
-                <h3 className="text-(--primary) font-semibold">Episode 102</h3>
-                <p className="text-grey text-sm">10 Questions • 10 mins</p>
-              </div>
-              <PrimaryButton type="link" to={`/quiz/`} text="Play Now" />
+              {quizData && quizData.length > 0 ? (
+                <div>
+                  <h3 className="text-(--primary) font-semibold">
+                    Episode {quizData && quizData[0].episode.split("_")[2]}
+                  </h3>
+                  <p className="text-grey text-sm">10 Questions • 5 mins</p>
+                  <PrimaryButton type="link" to={`/quiz/`} text="Enter Now" />
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-(--primary) font-semibold">
+                    No Episode available
+                  </h3>
+                  <p className="text-grey text-sm">10 Questions • 5 mins</p>
+                  <PrimaryButton
+                    style="w-full bg-blue text-white rounded-sm opacity-40"
+                    type="button"
+                    text="Enter Now"
+                  />
+                </div>
+              )}
             </div>
           </GlassCard>
 
@@ -361,7 +378,7 @@ const QuizCard = ({
       </section>
       <section className="flex items-end grow-2 w-full justify-between">
         <div>
-          <p className="text-sm text-grey">Prize Pool</p>
+          <p className="text-sm text-grey">Total Reward</p>
           <p className="text-lg font-bold text-(--primary)">
             ₦{formater.format(pool)}
           </p>

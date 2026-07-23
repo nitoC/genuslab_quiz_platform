@@ -34,9 +34,9 @@ interface ReferralData {
 }
 
 const ReferralTabContent = ({ user }: { user: any }) => {
-  const referralCode = user?.referralCode?.toUpperCase() || "GENUS-JANE-2024";
+  const referralCode = user?.referralCode?.toUpperCase() || "GENUS-xxxx-2024";
   const totalEarnings = 25000; // Mocked or fetched from user data context
-  const successfulInvites = 102;
+  const successfulInvites = user?.referrals.length;
   const targetInvites = 150;
   const progressPercentage = (successfulInvites / targetInvites) * 100;
 
@@ -50,9 +50,17 @@ const ReferralTabContent = ({ user }: { user: any }) => {
     },
   });
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    toast.success("Referral code copied to clipboard!");
+  const handleCopyCode = (link?: boolean) => {
+    if (link) {
+      const baseUrl = window.location.origin;
+      console.log(`${baseUrl + "/signup?"}ref=${referralCode}`);
+      const refLink = `${baseUrl + "/signup?"}ref=${referralCode}`;
+      navigator.clipboard.writeText(refLink);
+      toast.success("Referral link copied to clipboard!");
+    } else {
+      navigator.clipboard.writeText(referralCode);
+      toast.success("Referral code copied to clipboard!");
+    }
   };
 
   // Safe fallback to an empty array when loading or empty
@@ -101,7 +109,8 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                 Total Earnings
               </p>
               <p className="text-2xl md:text-3xl font-black text-(--primary)">
-                ₦{totalEarnings.toLocaleString()}
+                ₦0.00
+                {/* {totalEarnings.toLocaleString()} */}
               </p>
             </div>
             <div>
@@ -126,7 +135,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                 {referralCode}
               </span>
               <button
-                onClick={handleCopyCode}
+                onClick={() => handleCopyCode()}
                 className="text-grey hover:text-white transition-colors p-1"
                 title="Copy Code"
               >
@@ -137,71 +146,26 @@ const ReferralTabContent = ({ user }: { user: any }) => {
 
           <div className="flex items-center gap-3 w-full">
             <PrimaryButton
-              text="Share"
+              handler={() => handleCopyCode(true)}
+              text="Copy Link"
               style="bg-white text-black hover:bg-white/90 rounded-xl py-3 px-6 text-sm font-bold flex-1 flex justify-center items-center gap-2"
             />
-            <button className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 flex items-center justify-center text-grey hover:text-white transition-all">
+            {/* <button className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 flex items-center justify-center text-grey hover:text-white transition-all">
               <FaTwitter size={18} className="text-blue-400" />
             </button>
             <button className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 flex items-center justify-center text-grey hover:text-white transition-all">
               <FaWhatsapp size={18} className="text-green-500" />
-            </button>
+            </button> */}
           </div>
         </GlassCard>
       </div>
 
       {/* MIDDLE SECTION: BONUS MILESTONE PROGRESS */}
-      <GlassCard className="p-6 sm:p-8 space-y-6">
-        <div className="flex justify-between items-start md:items-center gap-4">
-          <div className="space-y-1">
-            <h3 className="text-base font-bold text-(--primary)">
-              Bonus Milestone
-            </h3>
-            <p className="text-xs text-grey">
-              Next Big Reward:{" "}
-              <span className="text-white/40 line-through">₦50,000</span> Bonus
-              Credit
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-bold text-blue tracking-wide">
-              {successfulInvites} / {targetInvites}
-            </p>
-            <p className="text-[10px] text-grey">Invites to next goal</p>
-          </div>
-        </div>
-
-        {/* Dynamic Progress Bar tracking */}
-        <div className="space-y-4">
-          <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[2px] border border-white/5">
-            <div
-              className="bg-gradient-to-r from-blue to-green-400 h-full rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(progressPercentage, 100)}%` }}
-            />
-          </div>
-
-          {/* Tier Map Nodes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="flex items-center gap-2 text-[11px]">
-              <FaCheckCircle className="text-green-500 shrink-0" size={14} />
-              <span className="text-grey">Tier 1: 50 Invites</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] md:justify-center">
-              <IoMdInformationCircleOutline
-                className="text-blue shrink-0"
-                size={14}
-              />
-              <span className="text-(--primary) font-semibold">
-                Tier 2: 150 Invites
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] md:justify-end">
-              <HiLockClosed className="text-grey shrink-0" size={14} />
-              <span className="text-grey/60">Tier 3: 500 Invites</span>
-            </div>
-          </div>
-        </div>
-      </GlassCard>
+      {/* <BonusCard
+        successfulInvites={successfulInvites}
+        targetInvites={targetInvites}
+        progressPercentage={progressPercentage}
+      /> */}
 
       {/* BOTTOM SECTION: HISTORY DATATABLE / MOBILE LIST */}
       <GlassCard className="overflow-hidden">
@@ -257,7 +221,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                           row.verified ? "text-green-400" : "text-grey"
                         }`}
                       >
-                        ₦{row.verified ? (250).toFixed(2) : (0).toFixed(2)}
+                        ₦{row.verified ? (1000).toFixed(2) : (0).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -350,6 +314,70 @@ const ManageReferralsPage = ({ user }: any) => {
     <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-10">
       <ReferralTabContent user={user} />
     </div>
+  );
+};
+
+const BonusCard = ({
+  successfulInvites,
+  targetInvites,
+  progressPercentage,
+}: {
+  successfulInvites: number;
+  targetInvites: number;
+  progressPercentage: number;
+}) => {
+  return (
+    <GlassCard className="p-6 sm:p-8 space-y-6">
+      <div className="flex justify-between items-start md:items-center gap-4">
+        <div className="space-y-1">
+          <h3 className="text-base font-bold text-(--primary)">
+            Bonus Milestone
+          </h3>
+          <p className="text-xs text-grey">
+            Next Big Reward:{" "}
+            <span className="text-white/40 line-through">₦50,000</span> Bonus
+            Credit
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-bold text-blue tracking-wide">
+            {successfulInvites} / {targetInvites}
+          </p>
+          <p className="text-[10px] text-grey">Invites to next goal</p>
+        </div>
+      </div>
+
+      {/* Dynamic Progress Bar tracking */}
+      <div className="space-y-4">
+        <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[2px] border border-white/5">
+          <div
+            className="bg-gradient-to-r from-blue to-green-400 h-full rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+          />
+        </div>
+
+        {/* Tier Map Nodes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div className="flex items-center gap-2 text-[11px]">
+            <FaCheckCircle className="text-green-500 shrink-0" size={14} />
+            <span className="text-grey">Tier 1: 50 Invites</span>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] md:justify-center">
+            <IoMdInformationCircleOutline
+              className="text-blue shrink-0"
+              size={14}
+            />
+            <span className="text-(--primary) font-semibold">
+              Tier 2: 150 Invites
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] md:justify-end">
+            <HiLockClosed className="text-grey shrink-0" size={14} />
+            <span className="text-grey/60">Tier 3: 500 Invites</span>
+          </div>
+        </div>
+      </div>
+    </GlassCard>
   );
 };
 

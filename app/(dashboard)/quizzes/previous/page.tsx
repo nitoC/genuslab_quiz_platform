@@ -87,16 +87,18 @@ const QuizHistoryCard = ({
   image,
 }: QuizHistoryCardProps) => {
   const badgeStyles = {
-    gold: "bg-yellow/20 text-yellow",
-    silver: "bg-white/10 text-grey",
-    default: "bg-blue/20 text-blue",
+    gold: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/10",
+    silver: "bg-white/10 text-slate-400 border border-white/5",
+    default: "bg-blue-500/20 text-blue-400 border border-blue-500/10",
   };
 
   return (
-    <GlassCard>
-      <div className="p-6 flex items-center justify-between">
-        <div className="flex gap-6 items-center">
-          <div className="w-40 h-28 rounded-xl overflow-hidden">
+    <GlassCard className="overflow-hidden border border-white/5 transition-all duration-200 hover:bg-white/[0.02]">
+      <div className="p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
+        {/* Left Side: Thumbnail & Content */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-center flex-1">
+          {/* Responsive Thumbnail */}
+          <div className="w-full sm:w-40 h-40 sm:h-28 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/5">
             <img
               src={image || "/images/q1.png"}
               alt={title}
@@ -104,29 +106,39 @@ const QuizHistoryCard = ({
             />
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3 text-xs text-grey">
-              <span className="bg-blue/20 text-blue px-3 py-1 rounded-full">
+          {/* Details Stack */}
+          <div className="flex flex-col justify-center gap-2.5 flex-1 min-w-0">
+            {/* Meta Tags */}
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+              <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-semibold">
                 {episode}
               </span>
               <span>{date}</span>
             </div>
 
-            <h3 className="text-lg font-semibold text-(--primary)">{title}</h3>
+            {/* Title */}
+            <h3 className="text-base sm:text-lg font-bold tracking-wide text-white truncate">
+              {title}
+            </h3>
 
-            <div className="flex items-center gap-6">
-              <div className="flex items-end gap-2">
-                <h2 className="text-3xl font-bold text-blue">{score * 10}%</h2>
-                <span className="text-grey text-sm">Score</span>
+            {/* Score & Badge Row */}
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-1">
+              <div className="flex items-end gap-1.5">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-400 font-mono leading-none">
+                  {score * 10}%
+                </h2>
+                <span className="text-slate-400 text-[10px] uppercase tracking-wider font-semibold pb-0.5">
+                  Score
+                </span>
               </div>
 
               {badge && (
                 <span
-                  className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg ${
+                  className={`flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-lg ${
                     badgeStyles[badge.variant || "default"]
                   }`}
                 >
-                  {badge.icon}
+                  {badge.icon && <span className="text-sm">{badge.icon}</span>}
                   {badge.label}
                 </span>
               )}
@@ -134,12 +146,21 @@ const QuizHistoryCard = ({
           </div>
         </div>
 
-        <Link
-          href={`previous/${quizId}/${did}`}
-          className="bg-white/5 p-3 rounded-full hover:bg-white/10 transition"
-        >
-          <HiOutlineChevronRight className="text-(--primary)" size={20} />
-        </Link>
+        {/* Right Side: Navigation Trigger */}
+        <div className="flex md:items-center justify-end border-t border-white/5 pt-4 md:pt-0 md:border-0">
+          <Link
+            href={`previous/${quizId}/${did}`}
+            className="w-full md:w-auto bg-white/5 p-3 rounded-xl md:rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition-all active:scale-95 border border-white/5 flex items-center justify-center gap-2 group"
+          >
+            <span className="text-xs font-semibold tracking-wide md:hidden">
+              View Details
+            </span>
+            <HiOutlineChevronRight
+              size={20}
+              className="transform group-hover:translate-x-0.5 transition-transform"
+            />
+          </Link>
+        </div>
       </div>
     </GlassCard>
   );
@@ -170,6 +191,8 @@ const PerformancePage = () => {
   const {
     data: quizData,
     isLoading,
+    isPending,
+    isFetching,
     isError,
   } = useQuery({
     queryKey: ["quiz episodes"],
@@ -185,10 +208,10 @@ const PerformancePage = () => {
     },
   });
 
-  const history = quizData || [];
+  const history = quizData;
 
   const averageScore = useMemo(() => {
-    if (!history.length) return 0;
+    if (!history || !history.length) return 0;
     const total = history.reduce(
       (sum: number, item: any) => sum + Number(item.score || 0),
       0,
@@ -246,14 +269,14 @@ const PerformancePage = () => {
 
           {/* Stats Blocks Grid */}
           <div className="flex gap-8">
-            {isLoading ? (
+            {isLoading || isPending || isFetching ? (
               <>
                 <StatCardSkeleton />
                 <StatCardSkeleton />
               </>
             ) : (
-              <>
-                <GlassCard className="flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
+                <GlassCard className="w-full">
                   <div className="p-8 flex justify-between items-center">
                     <div>
                       <h4 className="text-grey text-sm">Total Quizzes</h4>
@@ -267,7 +290,7 @@ const PerformancePage = () => {
                   </div>
                 </GlassCard>
 
-                <GlassCard className="flex-1">
+                <GlassCard className="w-full">
                   <div className="p-8 flex justify-between items-center">
                     <div>
                       <h4 className="text-grey text-sm">Average Score</h4>
@@ -280,13 +303,13 @@ const PerformancePage = () => {
                     </div>
                   </div>
                 </GlassCard>
-              </>
+              </div>
             )}
           </div>
 
           {/* Core Quiz Content Mapping Block */}
           <div className="flex flex-col gap-6">
-            {isLoading ? (
+            {isLoading || isPending || isFetching ? (
               // Renders a stack of 3 cleaner skeleton shapes while fetching data
               <>
                 <QuizCardSkeleton />
