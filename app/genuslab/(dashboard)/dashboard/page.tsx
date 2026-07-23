@@ -123,7 +123,7 @@ const page = () => {
 
               {/* CHART */}
               <div className="w-full min-h-[260px] sm:min-h-[300px]">
-                <PerformanceChart />
+                {/* <PerformanceChart data={}/> */}
               </div>
             </div>
           </AdminCard>
