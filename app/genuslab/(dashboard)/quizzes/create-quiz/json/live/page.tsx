@@ -7,7 +7,6 @@ import BatchSummary from "@/features/quiz/components/BatchSummary";
 import DataReferenceGuide from "@/features/quiz/components/DataReferenceGuide";
 import LiveQuizPreview from "@/features/quiz/components/LiveQuizPreview";
 import { createQuiz, createQuizBatch } from "@/lib/api/apis";
-// import toast from "react-toastify";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import useRank from "@/hooks/useRank";
@@ -26,21 +25,33 @@ type Rank = {
 };
 
 type RankDropdownProps = {
-  ranks: Rank[];
+  ranks?: Rank[];
+  activeRank?: Rank | null;
+  setActiveRank: (rank: Rank) => void;
 };
+
 export interface QuizObject {
   title?: string;
   day?: number;
   episode?: string;
   activeAt?: string;
   activeDate?: string;
+  questions?: any[];
 }
 
 export default function BulkQuizCreator() {
   const { data, isLoading, isError, error } = useRank();
-  const [activeRank, setActiveRank] = useState<Rank>(
-    (data && data.find((rank: Rank) => rank.unlocked)) ?? data[data.length - 1],
-  );
+
+  // 🟢 FIX 1: Safely handle activeRank state initialization when data is undefined
+  const [activeRank, setActiveRank] = useState<Rank | null>(null);
+
+  // Synchronize activeRank when rank data becomes available
+  useEffect(() => {
+    if (data && Array.isArray(data) && data.length > 0 && !activeRank) {
+      const unlockedRank = data.find((rank: Rank) => rank.unlocked);
+      setActiveRank(unlockedRank ?? data[data.length - 1]);
+    }
+  }, [data, activeRank]);
 
   const timerRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const router = useRouter();
@@ -52,7 +63,6 @@ export default function BulkQuizCreator() {
     "idle" | "success" | "error"
   >("idle");
 
-  // New state to capture user's manual date input context
   const [activeDate, setActiveDate] = useState<string>("");
 
   const [summary, setSummary] = useState({
@@ -72,6 +82,7 @@ export default function BulkQuizCreator() {
         totalCapacity: 0,
         titles: [],
       });
+      setQParsed(undefined);
       return;
     }
 
@@ -105,9 +116,11 @@ export default function BulkQuizCreator() {
     }
   }, [jsonText]);
 
+  // 🟢 FIX 2: Correct timer cleanup effect dependency array
   useEffect(() => {
-    return () => timerRef.current.forEach((timer) => clearTimeout(timer));
-  });
+    const timers = timerRef.current;
+    return () => timers.forEach((timer) => clearTimeout(timer));
+  }, []);
 
   const handleClear = () => {
     setJsonText("");
@@ -119,22 +132,21 @@ export default function BulkQuizCreator() {
     try {
       if (!QParsed || QParsed.length < 1) return toast.error("empty quiz data");
 
-      // Enforce choosing a base active date before sending payload down stream
       if (!(activeDate || QParsed.every((a) => a.activeDate)))
-        return toast.error("Please select a activation date before submitting");
+        return toast.error(
+          "Please select an activation date before submitting",
+        );
 
       setSubmitting(true);
 
-      // Inject the shared activeDate entered by user into each quiz object properties dynamically
       const finalizedPayload = QParsed.map((quiz) => ({
         ...quiz,
-        // rank: activeRank.id,
-        // activeDate: activeDate,
+        ...(activeRank?.id && { rank: activeRank.id }),
       }));
 
       const res = await createQuizBatch(finalizedPayload);
       console.log(res, "data in batch upload");
-      toast.success("quizzes saved in draft proceed to add questions");
+      toast.success("quizzes saved in draft, proceed to add questions");
       setJsonText("");
       setActiveDate("");
 
@@ -142,32 +154,28 @@ export default function BulkQuizCreator() {
         router.push("/genuslab/quizzes");
       }, 1500);
       timerRef.current.push(timeout);
-      timerRef.current = [];
     } catch (err: any) {
       console.log(err);
       if (err?.response?.status === 403) {
         return;
       }
       if (err?.response?.status === 409) {
-        console.log(err.response.data);
         return toast.error(
-          "some episodes has already been scheduled. create for other episodes",
+          "Some episodes have already been scheduled. Create for other episodes",
         );
       }
-      console.log(err?.response, "message");
-      toast.error(`could not submit quiz\n ${err?.response.data.message}`);
+      toast.error(
+        `Could not submit quiz\n ${err?.response?.data?.message || ""}`,
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Safe wrapper context payload to let LiveQuizPreview match the target data shape live
   const previewData = QParsed?.map((quiz) => ({
     ...quiz,
     activeDate: quiz.activeDate || activeDate,
   }));
-
-  if (!isLoading) console.log(data, "in actual");
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-12 text-slate-800">
@@ -197,7 +205,7 @@ export default function BulkQuizCreator() {
               onChange={(e) => setActiveDate(e.target.value)}
               className="w-full max-w-xs px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
             />
-            {!isLoading && (
+            {!isLoading && data && (
               <RankDropdown
                 ranks={data}
                 activeRank={activeRank}
@@ -213,8 +221,6 @@ export default function BulkQuizCreator() {
 
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
-          {/* Left Column: Input & Workflow */}
-
           <div className="lg:col-span-2 space-y-6">
             <JsonDataEntry
               jsonText={jsonText}
@@ -224,7 +230,6 @@ export default function BulkQuizCreator() {
             <IntegrationWorkflow status={validationStatus} />
           </div>
 
-          {/* Right Column: Actions, Status & Reference */}
           <div className="space-y-6">
             <BatchSummary
               handlePreview={() => setPreview(true)}
@@ -249,16 +254,18 @@ export default function BulkQuizCreator() {
 }
 
 function RankDropdown({
-  ranks,
+  ranks = [],
   setActiveRank,
   activeRank,
-}: RankDropdownProps & { setActiveRank: any; activeRank: any }) {
+}: RankDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelectRank = (rank: Rank) => {
     setActiveRank(rank);
     setIsOpen(false);
   };
+
+  if (!activeRank) return null;
 
   return (
     <div className="relative w-full max-w-md">
@@ -279,7 +286,7 @@ function RankDropdown({
             </p>
 
             <p className="text-xs text-gray-500">
-              {activeRank.unlockXp.toLocaleString()} XP
+              {activeRank.unlockXp?.toLocaleString()} XP
             </p>
           </div>
         </div>
@@ -291,10 +298,10 @@ function RankDropdown({
         />
       </button>
 
-      {/* Dropdown */}
+      {/* Dropdown List */}
       {isOpen && (
         <div className="absolute z-50 mt-2 max-h-80 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
-          {ranks.map((rank) => {
+          {ranks?.map((rank) => {
             const isActive = activeRank.id === rank.id;
 
             return (
@@ -323,7 +330,7 @@ function RankDropdown({
                     </p>
 
                     <p className="text-xs text-gray-500">
-                      {rank.unlockXp.toLocaleString()} XP
+                      {rank.unlockXp?.toLocaleString()} XP
                     </p>
                   </div>
                 </div>
