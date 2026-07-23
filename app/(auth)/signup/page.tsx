@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import CustomInput from "@/components/ui/FormItems/CustomInput";
@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { registerUser } from "@/lib/api/apis";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignUpPage() {
+function SignUpPage() {
   const query = useSearchParams();
   const refCode = query.get("ref");
   const Router = useRouter();
@@ -361,3 +361,13 @@ export default function SignUpPage() {
     </main>
   );
 }
+
+const SuspenseWrapper = () => {
+  return (
+    <Suspense fallback={<p>loading...</p>}>
+      <SignUpPage />
+    </Suspense>
+  );
+};
+
+export default SuspenseWrapper;
