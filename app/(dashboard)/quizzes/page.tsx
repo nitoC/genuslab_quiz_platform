@@ -13,13 +13,18 @@ import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useState } from "react";
 // import { useSocket } from "@/store/useSocket";
 import { useQuery } from "@tanstack/react-query";
-import { getAllActiveQuiz, getSlotDetails } from "@/lib/api/apis";
+import {
+  getAllActiveQuiz,
+  getLastFiveWeeksAverageScore,
+  getSlotDetails,
+} from "@/lib/api/apis";
 import Link from "next/link";
 
 // 1. IMPORT SKELETONS & FALLBACKS
 import { DashboardSkeleton } from "@/components/ui/skeletons/quizdashboard";
 import { FallbackQuizCard } from "@/components/ui/cards/FallbackQuizCard";
 import useUser from "@/hooks/useUser";
+import { deAT } from "date-fns/locale";
 
 const page = () => {
   const [pop, setpop] = useState(false);
@@ -60,6 +65,20 @@ const page = () => {
     },
   });
 
+  const {
+    data: avgData,
+    isLoading: avgLoading,
+    isError: avgError,
+  } = useQuery({
+    queryKey: ["lastFiveWeeksAverageScore", user?.details?.id],
+    queryFn: async () => {
+      const res = await getLastFiveWeeksAverageScore(user?.details?.id || "");
+      // console.log(res?.data?.payload, "avg data");
+      // console.log(res, "avg data2");
+      return res?.data?.average;
+    },
+  });
+
   // Base fallback posters for rendering safety
   const localPosters = [
     "/images/q2.jpg",
@@ -72,7 +91,7 @@ const page = () => {
   ];
 
   // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA
-  if (isLoading || slotLoading || userLoading) {
+  if (isLoading || slotLoading || userLoading || avgLoading) {
     return <DashboardSkeleton />;
   }
 
@@ -155,7 +174,9 @@ const page = () => {
               <div className="flex flex-col gap-1">
                 <h3 className="text-blue font-bold text-lg">Performance</h3>
                 <p className="text-grey">
-                  <span className="text-3xl font-bold text-(--primary)">0</span>
+                  <span className="text-3xl font-bold text-(--primary)">
+                    {avgData}
+                  </span>
                   /100
                 </p>
                 <p className="text-grey text-sm">Last week average score</p>

@@ -1,33 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
 import { cn } from "@/lib/utils/cn";
-import Stats from "@/features/leaderboard/components/Stats";
-import { useQueries } from "@tanstack/react-query";
-import {
-  getAverageScore,
-  getDailyLeaderboard,
-  getLastFiveDaysScore,
-  getMonthlyLeaderboard,
-  getOverallLeaderboard,
-  getOverallUserStats,
-  getRankForDay,
-  getReferralLeaderboard,
-  getTodayRank,
-  getUserDashboard,
-  getWeeklyLeaderboard,
-  getWeeklyLeaderboardHistory,
-  getXpLeaderboard,
+import { FaAngleDoubleRight } from "react-icons/fa";
 
-  //   getDailyXpLeaderboard,
-  // getWeeklyXpLeaderboard,
-  // getMonthlyXpLeaderboard,
-  // getReferralLeaderboard,
-  // getPreviousFiveWeeksLeaderboard,
-} from "@/lib/api/apis";
+// import { useQueries } from "@tanstack/react-query";
+// import {
+//   getAverageScore,
+//   getDailyLeaderboard,
+//   getLastFiveDaysScore,
+//   getMonthlyLeaderboard,
+//   getOverallLeaderboard,
+//   getOverallUserStats,
+//   getRankForDay,
+//   getReferralLeaderboard,
+//   getTodayRank,
+//   getUserDashboard,
+//   getWeeklyLeaderboard,
+//   getWeeklyLeaderboardHistory,
+//   getXpLeaderboard,
+
+//   //   getDailyXpLeaderboard,
+//   // getWeeklyXpLeaderboard,
+//   // getMonthlyXpLeaderboard,
+//   // getReferralLeaderboard,
+//   // getPreviousFiveWeeksLeaderboard,
+// } from "@/lib/api/apis";
 import useUser from "@/hooks/useUser";
+import Link from "next/link";
+
+const Stats = lazy(() => import("@/features/leaderboard/components/Stats"));
+const Personal = lazy(
+  () => import("@/features/leaderboard/components/Personal"),
+);
+
 // import {
 //   getOverallLeaderboard,
 //   getXpLeaderboard,
@@ -74,7 +82,7 @@ const ACTIVITY_DATA = [
   { name: "Jane", points: 95 },
 ];
 
-const TABS = ["Stats", "Performance", "Quiz Ranking", "Referral Ranking"];
+const TABS = ["Stats", "Performance"];
 
 const LeaderboardPage = () => {
   const [activeTab, setActiveTab] = useState("Stats");
@@ -100,7 +108,7 @@ const LeaderboardPage = () => {
       <Header title="Global Leaderboard" backBtn={false} />
 
       <main className="p-8 space-y-8">
-        <div>
+        <div className="flex flex-col md:flex-row justify-between gap-4">
           <div className="flex scroll-hide overflow-scroll lg:overflow-auto items-center gap-1 bg-[#0f172a]/50 p-1.5 rounded-xl border border-white/5 md:w-fit">
             {TABS.map((tab) => (
               <button
@@ -117,16 +125,39 @@ const LeaderboardPage = () => {
               </button>
             ))}
           </div>
+          <Link
+            href="/leaderboard/ranking"
+            className="text-blue text-sm font-medium mt-2 inline-block"
+          >
+            See Rankings <FaAngleDoubleRight className="inline-block" />
+          </Link>
         </div>
 
-        <Stats
-          // ACTIVITY_DATA={ACTIVITY_DATA}
-          MASTER_DATA={MASTER_DATA}
-          maxPoints={maxPoints}
-          REFERRAL_DATA={REFERRAL_DATA}
-          BAR_COLORS={BAR_COLORS}
-          detailsId={detailsId ?? ""}
-        />
+        {activeTab === "Stats" && (
+          <Suspense
+            fallback={
+              <div className="text-center text-white p-8">Loading...</div>
+            }
+          >
+            <Stats
+              // ACTIVITY_DATA={ACTIVITY_DATA}
+              MASTER_DATA={MASTER_DATA}
+              maxPoints={maxPoints}
+              REFERRAL_DATA={REFERRAL_DATA}
+              BAR_COLORS={BAR_COLORS}
+              detailsId={detailsId ?? ""}
+            />
+          </Suspense>
+        )}
+        {activeTab === "Performance" && (
+          <Suspense
+            fallback={
+              <div className="text-center text-white p-8">Loading...</div>
+            }
+          >
+            <Personal detailsId={detailsId ?? ""} />
+          </Suspense>
+        )}
       </main>
     </Layout>
   );

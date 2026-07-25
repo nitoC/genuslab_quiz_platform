@@ -181,13 +181,26 @@ export const getAttemptsAnswers = async (did: string, attemptId: string) => {
  */
 
 /**
- * Complete dashboard
+ * Complete leaderboard stats dashboard
  */
 export const getUserDashboard = async (detailsId: string) => {
-  console.log(detailsId, "in dash execution");
   return await axiosUser.get(`stats/user/${detailsId}`);
 };
 
+export const getPerformanceStats = async (detailsId: string, day: any) => {
+  return await axiosUser.get(`stats/user/${detailsId}/day-performance/${day}`);
+};
+
+export const getLeaderboardStats = async (param: string) => {
+  return await axiosUser.get(`leaderboard/${param}`);
+};
+
+/**
+ * User Rankings
+ */
+export const getUserRankings = async (param: string) => {
+  return await axiosUser.get(`leaderboard/${param}`);
+};
 /**
  * Overall user stats
  */
@@ -205,8 +218,8 @@ export const getLastFiveDaysScore = async (detailsId: string) => {
 /**
  * User average score
  */
-export const getAverageScore = async (detailsId: string) => {
-  return await axiosUser.get(`stats/user/${detailsId}/score/average`);
+export const getLastFiveWeeksAverageScore = async (detailsId: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/week/average`);
 };
 
 /**
