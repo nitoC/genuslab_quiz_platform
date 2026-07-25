@@ -5,7 +5,15 @@ import PrimaryButton from "@/components/ui/buttons/Primary";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ShareCard = ({ user }: { user: any }) => {
+const ShareCard = ({
+  user,
+  share,
+  setShare,
+}: {
+  user: any;
+  share: boolean;
+  setShare: (val: boolean) => void;
+}) => {
   const [clipBoard, setclipBoard] = useState(false);
   const handleCopy = async (text: string) => {
     try {
@@ -46,11 +54,12 @@ const ShareCard = ({ user }: { user: any }) => {
       </div>
       <PrimaryButton
         handler={() => {
-          const baseUrl = window.location.origin;
-          console.log(`${baseUrl + "/signup?"}ref=${user?.referralCode}`);
-          const refLink = `${baseUrl + "/signup?"}ref=${user?.referralCode}`;
-          handleCopy(refLink);
-          toast.success("referral link copied!");
+          setShare(!share);
+          // const baseUrl = window.location.origin;
+          // console.log(`${baseUrl + "/signup?"}ref=${user?.referralCode}`);
+          // const refLink = `${baseUrl + "/signup?"}ref=${user?.referralCode}`;
+          // handleCopy(refLink);
+          // toast.success("referral link copied!");
         }}
         text="Share Link"
         style="w-full bg-white rounded-sm text-black font-bold"

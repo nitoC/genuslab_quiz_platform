@@ -470,6 +470,18 @@ a {
   background-size: cover;
   background-blend-mode: overlay;
 }
+
+/* .slide-up-anim{ */
+/*  z-3 duration-300 */
+/* animation: slide-up 1s ease;
+}
+.slide-down-anim{ */
+/*  z-3 duration-300 */
+/* animation: slide-down 1s ease;
+} */
+/* .show-anim{
+
+} */
 @media (max-width: 700px) {
   .hero {
     background-image:

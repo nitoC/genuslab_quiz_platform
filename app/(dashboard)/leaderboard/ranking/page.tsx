@@ -235,7 +235,7 @@ const LeaderboardPage = () => {
 
   return (
     <Layout>
-      <Header title="Leaderboard" backBtn={false} />
+      <Header title="Leaderboard" backBtn={true} />
 
       <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 max-w-6xl mx-auto">
         {/* GLASS CONTROL BAR: TYPE TABS & TIMEFRAME DROPDOWN */}

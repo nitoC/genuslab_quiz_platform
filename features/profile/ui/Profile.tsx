@@ -1,7 +1,7 @@
 "use client";
 import Avatar from "@/components/ui/Avatar";
 import GlassCard from "@/components/ui/cards/GlassCard";
-import React from "react";
+import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
 import {
@@ -15,8 +15,15 @@ import ShareCard from "../cards/Share";
 import { FaChartBar } from "react-icons/fa6";
 import CustomCardChart from "@/components/ui/charts/Modbar";
 import PrimaryButton from "@/components/ui/buttons/Primary";
+import ReferralShare from "../cards/SocialShare";
+import clsx from "clsx";
 
 const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
+  const [share, setShare] = useState(false);
+
+  const handleShare = (val: boolean) => {
+    setShare(val);
+  };
   return (
     <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-10">
       {/* RANK STAGES */}
@@ -149,7 +156,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
         {/* RIGHT: INVITE & STATS (Col 4) */}
         <div className="lg:col-span-4 flex flex-col gap-8">
           {/* Invite Friends */}
-          <ShareCard user={user} />
+          <ShareCard user={user} share={share} setShare={handleShare} />
 
           {/* Quick Stats */}
           <GlassCard className="p-6">
@@ -176,6 +183,34 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
           </GlassCard>
         </div>
       </div>
+      <section
+        className={clsx(
+          share ? "fixed inset-0 z-200 overflow-hidden" : "hidden z-3",
+        )}
+      >
+        {share && (
+          <div
+            onClick={() => setShare(false)}
+            className="bg-black/50 isolate z-2 absolute inset-0"
+          ></div>
+        )}
+        <div
+          className={clsx(
+            "absolute max-w-250 w-full isolate right-20  xl:translate-x-[50%] xl:right-[50%] z-3 duration-300",
+            !share ? "-bottom-250" : "bottom-2.5",
+          )}
+        >
+          <GlassCard>
+            <ReferralShare
+              referralCode={user?.referralCode}
+              baseUrl={user?.baseUrl}
+              user={user}
+              share={share}
+              setShare={handleShare}
+            />
+          </GlassCard>
+        </div>
+      </section>
     </div>
   );
 };
