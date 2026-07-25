@@ -196,8 +196,8 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
         )}
         <div
           className={clsx(
-            "absolute max-w-250 w-full isolate right-20  xl:translate-x-[50%] xl:right-[50%] z-3 duration-300",
-            !share ? "-bottom-250" : "bottom-2.5",
+            "absolute max-w-250 w-full isolate md:right-20  xl:translate-x-[50%] xl:right-[50%] z-3 duration-300",
+            !share ? "-bottom-250" : "-bottom-2 md:bottom-2.5",
           )}
         >
           <GlassCard>
