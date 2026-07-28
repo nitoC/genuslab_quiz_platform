@@ -236,7 +236,12 @@ const Page = () => {
             <GlassCard className="flex-2">
               <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center">
                 <div className="relative">
-                  <Avatar size={96} type="main" color="border-orange-400" />
+                  <Avatar
+                    url={user?.details?.avatar}
+                    size={96}
+                    type="main"
+                    color="border-orange-400"
+                  />
 
                   <h6 className="text-orange-400 whitespace-nowrap py-2 px-4 rounded-full absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-bold bg-[#0f127a] flex gap-2 items-center">
                     <MdStars size={15} />

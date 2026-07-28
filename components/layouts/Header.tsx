@@ -8,11 +8,15 @@ import GlassCard from "../ui/cards/GlassCard";
 import clsx from "clsx";
 import useSidebar from "@/store/useSidebar";
 import Link from "next/link";
+import useUser from "@/hooks/useUser";
+import Avatar from "../ui/Avatar";
 
 const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
+  const { data, isLoading, isError, error } = useUser();
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
+
   return (
-    <div className=" sticky top-0 z-10">
+    <div className="sticky top-0 z-10">
       <GlassCard type="header">
         <div
           className={clsx(
@@ -32,11 +36,19 @@ const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
                 />
               </Link>
               <div className="avatar-header">
-                <ImageWithFallback rounded={true} />
+                {isLoading ? (
+                  <div className="w-[40px] h-[40px] rounded-full bg-gray-300 dark:bg-gray-700 animate-pulse" />
+                ) : (
+                  <Avatar
+                    type="explore"
+                    size={40}
+                    url={data?.user?.details?.avatar}
+                  />
+                )}
               </div>
               <button
                 onClick={toggleSidebar}
-                className=" cursor-pointer cu-lg:hidden"
+                className="cursor-pointer cu-lg:hidden"
               >
                 <IoMdMenu size={30} className="text-(--primary)" />
               </button>
