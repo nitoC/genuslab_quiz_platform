@@ -24,29 +24,42 @@ import { HiOutlineTv } from "react-icons/hi2";
 import { RiShieldUserLine } from "react-icons/ri";
 import { LuFileKey2 } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
-import { getReferrals } from "@/lib/api/apis";
+import { getReferrals, updateProfileData } from "@/lib/api/apis";
 
 const AccountTabContent = ({ user }: any) => {
+  const [loading, setLoading] = useState(false);
   const [personalInfo, setPersonalInfo] = useState({
     fullName: user?.name,
     email: user?.email,
     phone: user?.phone,
   });
 
-  const [isTwoFactorActive, setIsTwoFactorActive] = useState(true);
+  // const [isTwoFactorActive, setIsTwoFactorActive] = useState(true);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setPersonalInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSaveChanges = (e: React.FormEvent) => {
+  const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Personal information updated successfully!");
+    setLoading(true);
+    try {
+      await updateProfileData({
+        name: personalInfo.fullName,
+        phone: personalInfo.phone,
+      });
+      toast.success("Personal information updated successfully!");
+    } catch (err) {
+      toast.error("something went wrong!");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full items-start p-8">
       {/* 1. PERSONAL INFORMATION CARD */}
       <GlassCard className="p-6 sm:p-8 flex flex-col gap-6">
         <div className="flex items-center gap-2 border-b border-white/5 pb-4">
@@ -77,9 +90,10 @@ const AccountTabContent = ({ user }: any) => {
               <input
                 type="email"
                 name="email"
+                disabled={true}
                 value={personalInfo.email}
                 onChange={handleInputChange}
-                className="w-full bg-white/5 border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-xs text-(--primary) outline-none transition-all"
+                className="w-full bg-white/5 cursor-not-allowed border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-xs text-(--primary) outline-none transition-all"
               />
             </div>
           </div>
@@ -102,7 +116,7 @@ const AccountTabContent = ({ user }: any) => {
               type="submit"
               className="bg-blue hover:bg-blue/95 text-white text-xs font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue/10"
             >
-              <MdSave size={16} /> Save Changes
+              <MdSave size={16} /> {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -152,15 +166,15 @@ const AccountTabContent = ({ user }: any) => {
       </GlassCard>
 
       {/* 3. SECURITY & PRIVACY CARD */}
-      <GlassCard className="p-6 sm:p-8 flex flex-col gap-6">
-        <div className="flex items-center gap-2 border-b border-white/5 pb-4">
+      {/* <GlassCard className="p-6 sm:p-8 flex flex-col gap-6"> */}
+      {/* <div className="flex items-center gap-2 border-b border-white/5 pb-4">
           <RiShieldUserLine className="text-blue text-xl" />
           <h3 className="text-base font-bold text-(--primary)">Security</h3>
-        </div>
+        </div> */}
 
-        <div className="space-y-4">
-          {/* Password Management Node */}
-          <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4">
+      {/* <div className="space-y-4"> */}
+      {/* Password Management Node */}
+      {/* <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4">
             <div className="space-y-0.5">
               <p className="text-xs font-bold text-(--primary)">
                 Password Management
@@ -175,21 +189,21 @@ const AccountTabContent = ({ user }: any) => {
             >
               Change Password
             </button>
-          </div>
+          </div> */}
 
-          {/* Two-Factor Toggle Node */}
-          <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4">
-            <div className="space-y-0.5">
+      {/* Two-Factor Toggle Node */}
+      {/* <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4"> */}
+      {/* <div className="space-y-0.5">
               <p className="text-xs font-bold text-(--primary)">
                 Two-Factor Authentication
               </p>
               <p className="text-[11px] text-grey">
                 Add an extra layer of security
               </p>
-            </div>
+            </div> */}
 
-            {/* Custom Toggle Switch */}
-            <button
+      {/* Custom Toggle Switch */}
+      {/* <button
               type="button"
               onClick={() => setIsTwoFactorActive(!isTwoFactorActive)}
               className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 ease-in-out outline-none ${
@@ -201,10 +215,10 @@ const AccountTabContent = ({ user }: any) => {
                   isTwoFactorActive ? "translate-x-5" : "translate-x-0"
                 }`}
               />
-            </button>
-          </div>
-        </div>
-      </GlassCard>
+            </button> */}
+      {/* </div>
+        </div> */}
+      {/* </GlassCard> */}
 
       {/* 4. LINKED ACCOUNTS CARD */}
       <GlassCard className="p-6 sm:p-8 flex flex-col gap-6">

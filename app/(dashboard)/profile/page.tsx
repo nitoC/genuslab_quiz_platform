@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import { Suspense, useState } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import Avatar from "@/components/ui/Avatar";
@@ -11,13 +11,15 @@ import {
   MdAccountBalanceWallet,
   MdGroups,
 } from "react-icons/md";
-import { FaCheckCircle, FaChartBar } from "react-icons/fa";
+import { FaCheckCircle, FaPen } from "react-icons/fa";
 import useUser from "@/hooks/useUser";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Profile from "@/features/profile/ui/Profile";
 import ManageReferralsPage from "@/features/profile/ui/Referral";
 import clsx from "clsx";
 import AccountTabContent from "@/features/profile/ui/Account";
+import AvatarUpload from "@/features/profile/modals/AvatarUpload";
+import { HiPhotograph } from "react-icons/hi";
 
 const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
@@ -120,11 +122,12 @@ const ProfilePage = () => {
   ];
   /* -----------------------------
    * USER QUERY & MUTATIONS
-   * ---------------------------- */
+  
   /* ---------- Rewards and Chart Track States ---------- */
-
   const [totalRewards, setTotalRewards] = useState<number>(0);
-
+  const [modal, setModal] = useState(false);
+  const [overlay, setOverlay] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   const [userRewardsArray, setUserRewardsArray] = useState<any[]>([]);
   const pageParam = useSearchParams();
 
@@ -133,27 +136,30 @@ const ProfilePage = () => {
   const { data, isLoading, isError, error, storedUser } = useUser();
   const user = data?.user;
   const rank = data?.user.details.rankName;
+  const avatar = data?.user.details.avatar;
   const exp = data?.user.details.xp;
 
   /* ---------- Rewards and Chart Track States ---------- */
 
-  /* -----------------------------
-   * LOADING SKELETON
-   * ---------------------------- */
+  /* ----------------------------- LOADING SKELETON ---------------------------- */
   if (isLoading || !storedUser || !data?.user) {
     return <ProfileSkeleton />;
   }
+  /* ----------------------------- LOADING SKELETON ---------------------------- */
 
   const handleTab = (val: string) => {
     const url = new URLSearchParams(pageParam.toString());
 
     url.set("tab", val);
-    console.log(val, "val");
-    console.log(url, "url");
+
     router.push(`${pathname}?${url.toString()}`);
   };
-  const userName = user?.name;
 
+  const onUpload = (url: string) => {
+    setAvatarUrl(url);
+  };
+  const userName = user?.name;
+  console.log(avatarUrl, "avatar url");
   return (
     <Layout>
       <Header title="Profile" backBtn={false} />
@@ -164,10 +170,27 @@ const ProfilePage = () => {
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue/10 blur-[100px] rounded-full -mr-20 -mt-20 hidden md:block" />
 
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 z-10">
-              <div className="relative">
-                <Avatar size={80} type="main" color="border-blue" />
+              <div
+                onMouseOver={() => setOverlay(true)}
+                onMouseOut={() => setOverlay(false)}
+                onClick={() => setModal(true)}
+                className="relative overflow-hidden cursor-pointer"
+              >
+                <Avatar
+                  url={
+                    avatarUrl || avatar || "https://placehold.net/avatar.svg"
+                  }
+                  size={80}
+                  type="main"
+                  color="border-blue"
+                />
+                {overlay && (
+                  <div className="bg-black/20 inset-0 rounded-full absolute flex justify-center items-center">
+                    <HiPhotograph color="#ccc" />
+                  </div>
+                )}
                 <span className="absolute bottom-1 right-1 bg-green-500 p-1 rounded-full border-2 border-[#0a121f]">
-                  <FaCheckCircle className="text-white text-[8px] md:text-[10px]" />
+                  <FaPen className="text-white text-[8px] md:text-[10px]" />
                 </span>
               </div>
               <div className="text-center md:text-left">
@@ -253,6 +276,12 @@ const ProfilePage = () => {
           // rank={rank}
           // totalRewards={totalRewards}
           // userRewardsArray={userRewardsArray}
+        />
+      )}
+      {modal && (
+        <AvatarUpload
+          handleModal={(val: boolean) => setModal(val)}
+          onUploaded={onUpload}
         />
       )}
     </Layout>

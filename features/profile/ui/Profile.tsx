@@ -17,6 +17,8 @@ import CustomCardChart from "@/components/ui/charts/Modbar";
 import PrimaryButton from "@/components/ui/buttons/Primary";
 import ReferralShare from "../cards/SocialShare";
 import clsx from "clsx";
+import { BiShield, BiStar, BiTrophy } from "react-icons/bi";
+import { GiFlame } from "react-icons/gi";
 
 const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
   const [share, setShare] = useState(false);
@@ -35,7 +37,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
           <StageCard
             title="Fresh Mind"
             subtitle={rank?.rankName === "Fresh Mind" ? "Achieved" : "ongoing"}
-            icon="🔥"
+            icon={<GiFlame color="#fff" />}
             active={rank?.rankName === "Fresh Mind"}
             completed={true}
           />
@@ -44,7 +46,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
             subtitle={
               rank?.rankName === "Rising Star" ? "Achieved" : "Rising Star"
             }
-            icon="⭐"
+            icon={<BiStar color="#fff" />}
             active={rank?.rankName === "Rising Star"}
             completed={true}
           />
@@ -55,7 +57,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                 ? "Achieved"
                 : "Aspiring Expert"
             }
-            icon="🛡️"
+            icon={<BiShield color="#fff" size={20} />}
             active={rank?.rankName === "Aspiring Expert"}
             completed={false}
           />
@@ -66,7 +68,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                 ? "Achieved"
                 : "Knowledge Seeker"
             }
-            icon="🏆"
+            icon={<BiTrophy color="#fff" size={20} />}
             active={rank?.rankName === "Knowledge Seeker"}
             completed={false}
           />

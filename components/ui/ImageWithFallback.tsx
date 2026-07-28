@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ImageWithFallbackProps {
   src?: string;
@@ -14,16 +14,34 @@ interface ImageWithFallbackProps {
   rounded?: boolean;
 }
 
-const ImageWithFallback = (props: ImageWithFallbackProps) => {
-  const [imgSrc, setimgSrc] = useState<string | undefined>(props.src);
+const ImageWithFallback = ({
+  src,
+  alt,
+  className,
+  fallbackSrc,
+  width = 40,
+  height = 40,
+  rounded,
+}: ImageWithFallbackProps) => {
+  const [imgSrc, setImgSrc] = useState<string | undefined>(src);
+
+  // Update image whenever parent src changes
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
+
   return (
     <Image
-      src={imgSrc || props.fallbackSrc || "/images/avatar.png"}
-      alt={props.alt || "Image"}
-      width={props.width || 40}
-      height={props.height || 40}
-      className={clsx(props.className, props.rounded && "rounded-full")}
-      onError={() => setimgSrc(props.fallbackSrc || "/avatar.png")}
+      key={imgSrc}
+      src={imgSrc || fallbackSrc || "https://placehold.net/avatar.svg"}
+      alt={alt || "Image"}
+      width={width}
+      style={{ width: width, height: height }}
+      height={height}
+      className={clsx(className, rounded && "rounded-full")}
+      onError={() => {
+        setImgSrc(fallbackSrc || "/avatar.png");
+      }}
     />
   );
 };

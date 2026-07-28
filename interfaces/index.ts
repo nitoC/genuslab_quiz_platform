@@ -32,3 +32,11 @@ export interface IQuiz {
   episode: String;
   activeAt: String;
 }
+
+export interface IUserDetails {
+  avatar?: string;
+  userId?: string;
+  rewardBalance?: number;
+  rankId?: string;
+  xp?: number;
+}

@@ -1,3 +1,4 @@
+import { constants } from "@/app/constants";
 import { getRankData, getUserProfile } from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import { useQuery } from "@tanstack/react-query";
@@ -35,7 +36,7 @@ const useUser = () => {
   //   }, []);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["dashboard-user", storedUser?.userId],
+    queryKey: [constants.USER, storedUser?.userId],
     enabled: !!storedUser?.userId,
     retry: 1,
     staleTime: 1000 * 60 * 5,

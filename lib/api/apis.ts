@@ -49,7 +49,7 @@
 import { axiosSystem } from "./axiosConfig";
 import { axiosUser, axiosAdmin } from "./axios.interceptors";
 import axios from "axios";
-import { IQuestionSubmit } from "@/interfaces";
+import { IQuestionSubmit, IUserDetails } from "@/interfaces";
 import { QuizObject } from "@/app/genuslab/(dashboard)/quizzes/create-quiz/json/live/page";
 
 //USER ENDPOINTS
@@ -227,6 +227,38 @@ export const getLastFiveWeeksAverageScore = async (detailsId: string) => {
  */
 export const getTodayRank = async (detailsId: string) => {
   return await axiosUser.get(`stats/user/${detailsId}/rank/today`);
+};
+
+/**
+ * =
+ * profile endpoints
+ * =
+ */
+
+export const getPresignedUrl = async (
+  filename: string,
+  fileSize: number,
+  contentType: string,
+) => {
+  const url = await axiosUser.post("s3/upload-url", {
+    fileSize,
+    filename,
+    contentType,
+  });
+  return url;
+};
+
+export const updateProfileImage = async (data: IUserDetails) => {
+  const res = await axiosUser.patch(`user-details/update-avatar/`, data);
+  return res;
+};
+
+export const updateProfileData = async (data: {
+  name: string;
+  phone: string;
+}) => {
+  const res = await axiosUser.patch(`user/update/`, data);
+  return res;
 };
 
 /**

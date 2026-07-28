@@ -28,7 +28,11 @@ const Avatar = ({
         width={size}
         height={size}
         rounded={true}
-        className={clsx(variant[type as keyof typeof variant], color && color)}
+        className={clsx(
+          variant[type as keyof typeof variant],
+          color && color,
+          "object-cover",
+        )}
         alt={alt}
       />
     </div>
