@@ -162,7 +162,7 @@ const page = () => {
               </div>
               <div>
                 <h3 className="text-grey text-sm">Rewards</h3>
-                <p className="text-2xl font-bold text-(--primary)">
+                <p className="text-2xl font-bold text-primary">
                   ₦{formatedReward}
                 </p>
               </div>
@@ -174,12 +174,12 @@ const page = () => {
               <div className="flex flex-col gap-1">
                 <h3 className="text-blue font-bold text-lg">Performance</h3>
                 <p className="text-grey">
-                  <span className="text-3xl font-bold text-(--primary)">
+                  <span className="text-3xl font-bold text-primary">
                     {avgData}
                   </span>
                   /100
                 </p>
-                <p className="text-grey text-sm">Last week average score</p>
+                <p className="text-grey text-sm">weekly average score</p>
               </div>
               <PrimaryButton
                 type="link"

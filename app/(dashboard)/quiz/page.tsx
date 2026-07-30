@@ -16,7 +16,6 @@ import { useSocket } from "@/store/useSocket";
 import LiveQuizModal from "@/components/ui/modals/quizLive";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentActive } from "@/lib/api/apis";
-// import { set } from "react-datepicker/dist/dist/date_utils.js";
 
 const GetReadyModal = () => {
   const [showDemo, setShowDemo] = React.useState(false);
@@ -33,23 +32,10 @@ const GetReadyModal = () => {
     queryFn: async () => {
       const res = await getCurrentActive();
       console.log(res.data.payload, "active quizzes");
-      return res.data.payload;
+      return res?.data?.payload ?? 0;
     },
   });
 
-  // const {
-  // getAllActiveQuiz
-  //   data: slotData,
-  //   isLoading: slotLoading,
-  //   isError: slotError,
-  // } = useQuery({
-  //   queryKey: ["slots"],
-  //   queryFn: async () => {
-  //     const res = await getSlotDetails();
-  //     console.log(res.data.payload, "slot data");
-  //     return res?.data?.payload;
-  //   },
-  // });
   const benefits = [
     {
       title: "Unlock Ranks",
@@ -89,14 +75,13 @@ const GetReadyModal = () => {
             setShowDemo(false);
           }}
           onProceed={() => {
-            // alert("Proceeding to demo quiz...", socketId, "socket:", sid);
-            // alert("Proceeding to demo quiz..." + socketId + "socket:" + sid);
-
             router.push("/quiz/demo");
           }}
         />
       )}
-      {showLive && (
+
+      {/* GUARD: Only render modal if quizData and quizData.id exist */}
+      {showLive && quizData?.id && (
         <LiveQuizModal
           open={true}
           id={quizData.id}
@@ -104,14 +89,12 @@ const GetReadyModal = () => {
             setShowLive(false);
           }}
           onProceed={() => {
-            // alert("Proceeding to demo quiz...", socketId, "socket:", sid);
-            // alert("Proceeding to demo quiz..." + socketId + "socket:" + sid);
-
             router.push(`/quiz/live/${quizData.id}`);
           }}
         />
       )}
-      <div className=" bg-slate-100">
+
+      <div className="bg-slate-100">
         <div className="mx-auto flex min-h-screen w-full max-w-280 flex-col items-center justify-center px-4 py-10">
           {/* MAIN CARD */}
           <div className="w-full overflow-hidden rounded-[34px] bg-white shadow-[0_30px_80px_rgba(15,23,42,0.10)]">
@@ -124,11 +107,9 @@ const GetReadyModal = () => {
                   alt="Start Challenge"
                 />
 
-                {/* overlays to match screenshot tone */}
                 <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/65 via-emerald-950/20 to-slate-950/30" />
                 <div className="absolute inset-0 bg-emerald-500/10" />
 
-                {/* Back button (pill, grey) */}
                 <button
                   type="button"
                   onClick={() => router.back()}
@@ -142,7 +123,6 @@ const GetReadyModal = () => {
                   Back to Dashboard
                 </button>
 
-                {/* Play button */}
                 <button
                   type="button"
                   aria-label="Play video"
@@ -156,7 +136,6 @@ const GetReadyModal = () => {
                   <span className="ml-1 block h-0 w-0 border-y-[10px] border-y-transparent border-l-[16px] border-l-white" />
                 </button>
 
-                {/* Text */}
                 <div className="absolute bottom-16 left-10 right-10">
                   <h2 className="text-3xl font-extrabold tracking-tight text-white">
                     Start Your Challenge
@@ -167,7 +146,6 @@ const GetReadyModal = () => {
                   </p>
                 </div>
 
-                {/* Brand */}
                 <div className="absolute bottom-8 left-10 flex items-center gap-2">
                   <span className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-sm font-black text-white backdrop-blur">
                     G
@@ -181,7 +159,6 @@ const GetReadyModal = () => {
               {/* RIGHT: CONTENT */}
               <div className="px-8 py-10 md:px-16 md:py-12">
                 <div className="mx-auto flex max-w-[520px] flex-col items-center text-center">
-                  {/* logo */}
                   <div className="grid h-12 w-12 place-items-center rounded-full bg-blue-50 ring-1 ring-blue-100">
                     <span className="text-lg font-black text-blue-600">G</span>
                   </div>
@@ -195,7 +172,7 @@ const GetReadyModal = () => {
                     the demo or unlock the live quiz experience.
                   </p>
 
-                  {/* mode cards */}
+                  {/* MODE CARDS */}
                   <div className="mt-9 grid w-full grid-cols-2 gap-8">
                     {/* Demo */}
                     <button
@@ -221,29 +198,43 @@ const GetReadyModal = () => {
                       </div>
                     </button>
 
-                    {/* Live */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowDemo(false);
-                        setShowLive(true);
-                      }}
-                      className={cn(
-                        "rounded-2xl bg-white p-6 text-center cursor-pointer",
-                        "shadow-[0_16px_50px_rgba(15,23,42,0.06)]",
-                        "hover:shadow-[0_22px_65px_rgba(15,23,42,0.10)] transition",
-                      )}
-                    >
-                      <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-blue-100">
-                        <MdLock className="text-xl text-blue-600" />
+                    {/* Live Quiz - Guarded with Skeleton & Disabled States */}
+                    {isLoading ? (
+                      /* SKELETON LOADING STATE */
+                      <div className="rounded-2xl bg-white p-6 text-center shadow-[0_16px_50px_rgba(15,23,42,0.06)] animate-pulse">
+                        <div className="mx-auto h-12 w-12 rounded-2xl bg-slate-200" />
+                        <div className="mx-auto mt-4 h-4 w-20 rounded bg-slate-200" />
+                        <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-200" />
                       </div>
-                      <div className="mt-4 text-sm font-extrabold text-slate-900">
-                        Live Quiz
-                      </div>
-                      <div className="mt-1 text-[11px] font-bold text-blue-600">
-                        Competitive
-                      </div>
-                    </button>
+                    ) : (
+                      /* LIVE BUTTON */
+                      <button
+                        type="button"
+                        disabled={!quizData}
+                        onClick={() => {
+                          if (!quizData) return; // Prevent click guard
+                          setShowDemo(false);
+                          setShowLive(true);
+                        }}
+                        className={cn(
+                          "rounded-2xl bg-white p-6 text-center transition",
+                          "shadow-[0_16px_50px_rgba(15,23,42,0.06)]",
+                          quizData
+                            ? "cursor-pointer hover:shadow-[0_22px_65px_rgba(15,23,42,0.10)]"
+                            : "cursor-not-allowed opacity-50",
+                        )}
+                      >
+                        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-blue-100">
+                          <MdLock className="text-xl text-blue-600" />
+                        </div>
+                        <div className="mt-4 text-sm font-extrabold text-slate-900">
+                          Live Quiz
+                        </div>
+                        <div className="mt-1 text-[11px] font-bold text-blue-600">
+                          {quizData ? "Competitive" : "No Active Quiz"}
+                        </div>
+                      </button>
+                    )}
                   </div>
 
                   {/* benefits + steps */}
@@ -285,7 +276,6 @@ const GetReadyModal = () => {
                       </p>
 
                       <div className="relative mt-6 space-y-6">
-                        {/* line */}
                         <div className="absolute left-[14px] top-2 bottom-2 w-[2px] rounded-full bg-slate-100" />
 
                         {steps.map((s) => (
@@ -306,7 +296,6 @@ const GetReadyModal = () => {
                       </div>
                     </div>
                   </div>
-                  {/* /grid */}
                 </div>
               </div>
             </div>
@@ -319,18 +308,31 @@ const GetReadyModal = () => {
               <div className="flex items-center gap-4">
                 <div className="relative grid h-12 w-12 place-items-center rounded-2xl bg-white ring-1 ring-blue-200">
                   <MdSchool className="text-xl text-blue-600" />
-                  <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 ring-4 ring-white" />
+                  <span
+                    className={cn(
+                      "absolute -bottom-1 -right-1 h-3 w-3 rounded-full ring-4 ring-white",
+                      quizData ? "bg-emerald-500" : "bg-slate-300",
+                    )}
+                  />
                 </div>
 
                 <div className="leading-tight">
                   <p className="text-[11px] font-bold text-blue-600">
                     Status:{" "}
                     <span className="font-extrabold text-slate-700">
-                      Waiting
+                      {isLoading
+                        ? "Loading..."
+                        : quizData
+                          ? "Waiting"
+                          : "Inactive"}
                     </span>
                   </p>
                   <p className="text-sm font-extrabold text-slate-900">
-                    Next: Episode 4
+                    {isLoading ? (
+                      <span className="inline-block h-4 w-24 rounded bg-slate-200 animate-pulse mt-1" />
+                    ) : (
+                      quizData?.title || "No Quiz Active"
+                    )}
                   </p>
                 </div>
               </div>
@@ -342,7 +344,7 @@ const GetReadyModal = () => {
                     Starting in
                   </p>
                   <p className="text-xl font-extrabold tabular-nums text-slate-900">
-                    04:52
+                    {isLoading ? "--:--" : "04:52"}
                   </p>
                 </div>
 
@@ -378,7 +380,6 @@ const GetReadyModal = () => {
               </div>
             </div>
           </div>
-          {/* /bottom bar */}
         </div>
       </div>
     </>

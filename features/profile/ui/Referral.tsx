@@ -99,14 +99,14 @@ const ReferralTabContent = ({ user }: { user: any }) => {
               Referral Program
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-(--primary) tracking-tight">
-              Earn with your Network
+              Earn rewards with your Network
             </h2>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5 z-10">
             <div>
               <p className="text-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">
-                Total Earnings
+                Total Rewards
               </p>
               <p className="text-2xl md:text-3xl font-black text-(--primary)">
                 ₦0.00

@@ -4,36 +4,31 @@ import React, { useState } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import GlassCard from "@/components/ui/cards/GlassCard";
-import { cn } from "@/lib/utils/cn";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import {
-  MdEmojiEvents,
   MdStars,
-  MdPublic,
-  MdCalendarToday,
-  MdFlashOn,
-  MdSmartToy,
   MdCheckCircle,
   MdLock,
   MdSettings,
+  MdHourglassEmpty,
+  MdEmojiEvents,
 } from "react-icons/md";
 import {
-  FaXTwitter,
   FaInstagram,
   FaFacebook,
-  FaDiscord,
   FaCrown,
   FaCentos,
   FaChessKnight,
   FaUsers,
   FaArrowLeft,
+  FaTiktok,
+  FaYoutube,
 } from "react-icons/fa6";
 import { SiClevercloud, SiCoolermaster, SiPrometheus } from "react-icons/si";
 import {
   GiAllSeeingEye,
   GiBlackKnightHelm,
   GiBoxingGlove,
-  GiBrainstorm,
   GiExplosionRays,
   GiGiftOfKnowledge,
   GiMiddleArrow,
@@ -41,35 +36,59 @@ import {
   GiQuicksand,
   GiSoulVessel,
   GiSparkSpirit,
+  GiBrainstorm,
 } from "react-icons/gi";
 import { FcMindMap } from "react-icons/fc";
 import { HiMiniCheckBadge } from "react-icons/hi2";
 import RankUnlockModal from "@/components/ui/modals/leaderboard";
+import BlogContent from "@/features/exploral/BlogContent";
 import { useRouter } from "next/navigation";
+import sanityClient from "@/lib/utils/Sanity";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
-// {
-//                   id: "#001",
-//                   title: "Fresh Mind",
-//                   level: "Level 1 Path",
-//                   req: "Default Unlocked",
-//                   status: "unlocked",
-//                 },
-//                 {
-//                   id: "#002",
-//                   title: "Rising Star",
-//                   level: "Level 2 Path",
-//                   req: "Requires 63,000 XP",
-//                   status: "locked",
-//                 },
-//                 {
-//                   id: "#003",
-//                   title: "Aspiring Expert",
-//                   level: "Level 3 Path",
-//                   req: "Requires 126,000 XP",
-//                   status: "locked",
-//                 },
+// Types
+interface StudioWinner {
+  name: string;
+  avatarUrl?: string;
+  rankTitle: string;
+  pointsWon: number;
+  prizePool: string;
+}
+
+interface ChampionshipEvent {
+  title: string;
+  description: string;
+  isLive: boolean;
+  comingSoon: boolean;
+  statusText?: string;
+}
+
 const ExploralPage = () => {
   const router = useRouter();
+
+  // Dynamic Data States
+  const [techChampionship, setTechChampionship] = useState<ChampionshipEvent>({
+    title: "Tech Championship",
+    description: "Developing the next generation of tech talent.",
+    isLive: false,
+    comingSoon: true,
+    statusText: "Coming Soon",
+  });
+
+  const [studioWinner, setStudioWinner] = useState<StudioWinner | null>(null);
+
+  const query = `*[_type == "post"]
+| order(publishedAt desc)[$start...$end]{
+  _id,
+  title,
+  slug,
+  publishedAt,
+  "authorName": author->name,
+  "categories": categories[]->title,
+  "mainImageUrl": mainImage.asset->url
+}`;
+
   const leaderboardRanks = [
     {
       rank: 20,
@@ -247,6 +266,14 @@ const ExploralPage = () => {
     data: leaderboardRanks[0],
   });
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["blog_posts"],
+    queryFn: async () => {
+      const posts = await sanityClient.fetch(query, { start: 0, end: 4 });
+      return posts;
+    },
+  });
+
   const handleRankClick = (type: string, size: number) => {
     if (type === "inc" && count < size) {
       setCount(count + 1);
@@ -265,6 +292,7 @@ const ExploralPage = () => {
       data: payload as (typeof leaderboardRanks)[0],
     });
   };
+
   const ranksLength = leaderboardRanks.length;
   const paginationSize = Math.round(ranksLength / 5);
 
@@ -272,6 +300,7 @@ const ExploralPage = () => {
     count * paginationSize,
     count * paginationSize + paginationSize + 1,
   );
+
   return (
     <Layout>
       <Header title="Exploral" backBtn={false} />
@@ -294,139 +323,187 @@ const ExploralPage = () => {
                 </p>
               </div>
               <div className="flex gap-2 md:gap-3 mt-4">
-                <button className="bg-emerald-500/20 text-emerald-500 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[10px] font-bold">
-                  LIVE
-                </button>
-                <button className="bg-white/5 text-slate-400 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[10px] font-bold">
-                  1.2k joined
-                </button>
+                <Link
+                  href={"/quiz"}
+                  className="bg-emerald-500/20 hover:bg-emerald-500 duration-200 hover:text-white text-emerald-500 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[10px] font-bold"
+                >
+                  LIVE/DEMO
+                </Link>
+                <Link
+                  href="/quizzes"
+                  className="bg-white/5 hover:bg-blue-400 duration-200 hover:text-white text-slate-400 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[10px] font-bold"
+                >
+                  Join
+                </Link>
               </div>
             </GlassCard>
 
-            {/* Placeholder for the second card seen in mobile mock */}
-            <GlassCard className="p-6 md:p-8 flex flex-col items-center text-center justify-between min-h-[200px] md:min-h-[250px] opacity-50 md:opacity-100">
-              <div className="bg-purple-500/10 p-4 rounded-2xl">
-                <MdStars className="text-purple-500 text-3xl" />
+            {/* Dynamic Tech Championship Card (Disabled / Coming Soon Variant) */}
+            <GlassCard
+              className={`p-6 md:p-8 flex flex-col items-center text-center justify-between min-h-[200px] md:min-h-[250px] transition-all duration-300 ${
+                techChampionship.comingSoon
+                  ? "bg-slate-900/30 border-white/5 opacity-60 hover:opacity-80 grayscale-[30%]"
+                  : ""
+              }`}
+            >
+              <div
+                className={`p-4 rounded-2xl ${
+                  techChampionship.comingSoon
+                    ? "bg-purple-500/5 text-purple-400/60"
+                    : "bg-purple-500/10 text-purple-500"
+                }`}
+              >
+                <MdStars className="text-3xl" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-white font-bold text-lg">
-                  Tech Championship
+                <h3
+                  className={`font-bold text-lg ${
+                    techChampionship.comingSoon
+                      ? "text-slate-300"
+                      : "text-white"
+                  }`}
+                >
+                  {techChampionship.title}
                 </h3>
-                <p className="text-slate-400 text-xs">
-                  Developing the next generation of tech talent.
+                <p
+                  className={`text-xs ${
+                    techChampionship.comingSoon
+                      ? "text-slate-500"
+                      : "text-slate-400"
+                  }`}
+                >
+                  {techChampionship.description}
                 </p>
               </div>
               <div className="flex gap-3 mt-4">
-                <button className="bg-purple-500/20 text-purple-500 px-6 py-2 rounded-full text-[10px] font-bold uppercase">
-                  Starts in 2h
-                </button>
+                {techChampionship.comingSoon ? (
+                  <div className="flex items-center gap-2 bg-purple-950/30 text-purple-300/60 px-5 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-widest border border-purple-500/20 backdrop-blur-sm shadow-inner cursor-not-allowed">
+                    <MdHourglassEmpty className="animate-pulse text-xs text-purple-400/80" />
+                    <span>{techChampionship.statusText || "Coming Soon"}</span>
+                  </div>
+                ) : (
+                  <button className="bg-purple-500 hover:bg-purple-600 transition-colors text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase">
+                    {techChampionship.statusText || "Join Now"}
+                  </button>
+                )}
               </div>
             </GlassCard>
           </div>
 
-          <GlassCard className="p-6 md:p-8 flex flex-col items-center relative overflow-hidden order-1 lg:order-2">
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/20 blur-3xl rounded-full" />
-            <p className="text-blue-500 text-[10px] font-bold flex items-center gap-2 mb-4 md:mb-6 uppercase tracking-wider">
+          {/* Dynamic Studio Winner Card (Disabled / Empty Variant) */}
+          <GlassCard
+            className={`p-6 md:p-8 flex flex-col items-center justify-between relative overflow-hidden order-1 lg:order-2 min-h-[250px] transition-all duration-300 ${
+              !studioWinner ? "bg-slate-900/20 border-white/5 opacity-70" : ""
+            }`}
+          >
+            <div
+              className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl ${
+                studioWinner ? "bg-blue-600/20" : "bg-slate-600/10"
+              }`}
+            />
+            <p
+              className={`text-[10px] font-bold flex items-center gap-2 uppercase tracking-wider ${
+                studioWinner ? "text-blue-500" : "text-slate-500/70"
+              }`}
+            >
               <MdStars /> Current Studio Winner
             </p>
-            <div className="relative mb-4">
-              <ImageWithFallback className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover ring-4 ring-blue-500/20" />
-              <div className="absolute -bottom-2 right-[-10px] bg-blue-600 text-[8px] font-black px-2 py-1 rounded text-white border border-white/20">
-                #1 RANK
-              </div>
-            </div>
-            <h3 className="text-white font-bold text-xl mt-2 md:mt-4">
-              Evelyn S.
-            </h3>
-            <p className="text-slate-500 text-[10px] mb-6 md:mb-8">
-              Studio Championship 2024
-            </p>
-            <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-4">
-              <div>
-                <p className="text-slate-500 text-[8px] uppercase font-bold mb-1">
-                  Points Won
+
+            {studioWinner ? (
+              <>
+                <div className="relative my-2">
+                  <ImageWithFallback
+                    src={studioWinner.avatarUrl}
+                    className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover ring-4 ring-blue-500/20"
+                  />
+                  <div className="absolute -bottom-2 right-[-10px] bg-blue-600 text-[8px] font-black px-2 py-1 rounded text-white border border-white/20">
+                    #1 RANK
+                  </div>
+                </div>
+                <h3 className="text-white font-bold text-xl mt-2">
+                  {studioWinner.name}
+                </h3>
+                <p className="text-slate-500 text-[10px] mb-4">
+                  {studioWinner.rankTitle}
                 </p>
-                <p className="text-white font-bold text-sm">48,750</p>
-              </div>
-              <div>
-                <p className="text-slate-500 text-[8px] uppercase font-bold mb-1">
-                  Prize Pool
+                <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-4">
+                  <div>
+                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-1">
+                      Points Won
+                    </p>
+                    <p className="text-white font-bold text-sm">
+                      {studioWinner.pointsWon.toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-1">
+                      Prize Pool
+                    </p>
+                    <p className="text-emerald-500 font-bold text-sm">
+                      {studioWinner.prizePool}
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* Sleek Semi-Transparent / Disabled Placeholder State */
+              <div className="flex flex-col items-center text-center my-auto py-2 w-full">
+                <div className="relative mb-3 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-slate-500/10 rounded-full blur-xl" />
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/[0.03] border border-dashed border-white/10 flex items-center justify-center text-slate-500/60 shadow-inner">
+                    <MdEmojiEvents size={36} className="opacity-30" />
+                  </div>
+                  <span className="absolute -bottom-2 bg-slate-800/80 text-slate-400 text-[8px] font-extrabold px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-widest backdrop-blur-sm">
+                    Pending
+                  </span>
+                </div>
+                <h4 className="text-slate-300 font-semibold text-sm mb-1">
+                  No Winner Yet
+                </h4>
+                <p className="text-slate-500 text-[10px] max-w-[200px] leading-relaxed mb-4">
+                  Tournament in progress. Be the first to claim top rank!
                 </p>
-                <p className="text-emerald-500 font-bold text-sm">₦1.2M</p>
+
+                <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-3 opacity-40">
+                  <div>
+                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-0.5">
+                      Points Won
+                    </p>
+                    <p className="text-slate-400 font-bold text-xs">--</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-0.5">
+                      Prize Pool
+                    </p>
+                    <p className="text-slate-400 font-bold text-xs">--</p>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </GlassCard>
         </div>
 
         {/* MIDDLE ROW: Tech News & Socials */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
-          <GlassCard className="lg:col-span-3 p-6 md:p-8">
-            <div className="flex justify-between items-center mb-6 md:mb-8">
-              <div>
-                <p className="text-blue-500 text-[10px] uppercase tracking-widest font-bold">
-                  Latest Trends
-                </p>
-                <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2 mt-1">
-                  <MdPublic className="text-blue-500" /> Tech News
-                </h2>
-              </div>
-              <button className="text-slate-400 text-[10px] font-bold bg-white/5 px-4 md:px-6 py-2 rounded-lg border border-white/10 hidden sm:block">
-                Discover Full Feed
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-              <div className="relative group cursor-pointer rounded-3xl overflow-hidden aspect-[16/10] md:aspect-auto">
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
-                <ImageWithFallback className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute bottom-0 left-0 p-6 z-20">
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
-                    How Web3 is changing the quiz ecosystem
-                  </h3>
-                  <p className="text-slate-300 text-[10px] font-bold uppercase tracking-wider">
-                    5 Min Read • Today
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                {[
-                  {
-                    icon: <MdCalendarToday />,
-                    title: "Global Tech Championship 2024 registration open",
-                    time: "2 hours ago",
-                  },
-                  {
-                    icon: <MdFlashOn />,
-                    title: "New AI-driven hint system for Premium users",
-                    time: "4 hours ago",
-                  },
-                  {
-                    icon: <MdSmartToy />,
-                    title: "Neural Networks mimic biological structures",
-                    time: "8 hours ago",
-                  },
-                ].map((item, i) => (
+          {isLoading ? (
+            <GlassCard className="lg:col-span-3 p-6 md:p-8 space-y-4">
+              <div className="h-6 bg-white/10 rounded-md w-1/4 animate-pulse mb-6" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="flex gap-4 group cursor-pointer border-b border-white/5 pb-4 last:border-0"
+                    className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-3"
                   >
-                    <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
-                      {item.icon}
-                    </div>
-                    <div>
-                      <h4 className="text-white text-xs md:text-sm font-bold leading-snug">
-                        {item.title}
-                      </h4>
-                      <p className="text-slate-500 text-[10px] mt-1 font-bold uppercase">
-                        {item.time}
-                      </p>
-                    </div>
+                    <div className="h-40 bg-white/10 rounded-lg animate-pulse" />
+                    <div className="h-4 bg-white/10 rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-white/10 rounded w-1/2 animate-pulse" />
                   </div>
                 ))}
               </div>
-            </div>
-          </GlassCard>
+            </GlassCard>
+          ) : (
+            <BlogContent posts={data} />
+          )}
 
           <GlassCard className="p-6 md:p-8">
             <h3 className="text-white font-bold flex items-center gap-2 mb-6 md:mb-8">
@@ -435,13 +512,31 @@ const ExploralPage = () => {
             </h3>
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               {[
-                { icon: <FaXTwitter />, label: "X Social" },
-                { icon: <FaInstagram />, label: "Instagram" },
-                { icon: <FaFacebook />, label: "Facebook" },
-                { icon: <FaDiscord />, label: "Discord" },
+                {
+                  icon: <FaYoutube />,
+                  label: "Youtube",
+                  ref: "https://www.youtube.com/@Genuslab_technologies",
+                },
+                {
+                  icon: <FaInstagram />,
+                  label: "Instagram",
+                  ref: "https://www.instagram.com/genuslabofficial/",
+                },
+                {
+                  icon: <FaFacebook />,
+                  label: "Facebook",
+                  ref: "https://web.facebook.com/people/Genuslab-Technologies/100089159413660/",
+                },
+                {
+                  icon: <FaTiktok />,
+                  label: "TikTok",
+                  ref: "https://www.tiktok.com/@genus_lab",
+                },
               ].map((social, i) => (
-                <div
+                <Link
                   key={i}
+                  href={social.ref}
+                  target="__blank"
                   className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center gap-3 hover:bg-white/10 transition-all"
                 >
                   <div className="text-white text-xl md:text-2xl">
@@ -450,7 +545,7 @@ const ExploralPage = () => {
                   <span className="text-slate-400 text-[8px] md:text-[10px] font-bold uppercase tracking-tighter">
                     {social.label}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           </GlassCard>
@@ -494,51 +589,47 @@ const ExploralPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredRanks.map((rank, i) => (
-                  <>
-                    <tr
-                      key={i}
-                      onClick={() => handleRankModal(rank)}
-                      className="group transition-colors hover:bg-white/5 rounded-xl cursor-pointer"
-                    >
-                      <td className="py-6 px-4 text-slate-500 font-mono text-xs hidden md:table-cell">
-                        {rank.rank.toString().padStart(3, "0")}
-                      </td>
-                      <td className="py-6 px-0 md:px-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-                            {rank.Icon}
-                          </div>
-                          <div>
-                            <p className="text-white font-bold text-sm">
-                              {rank.title}
-                            </p>
-                            {/* <p className="text-emerald-500 text-[10px] font-bold uppercase">
-                            {rank.rank}
-                            </p> */}
-                          </div>
+                {filteredRanks.map((rank) => (
+                  <tr
+                    key={rank?.title}
+                    onClick={() => handleRankModal(rank)}
+                    className="group transition-colors hover:bg-white/5 rounded-xl cursor-pointer"
+                  >
+                    <td className="py-6 px-4 text-slate-500 font-mono text-xs hidden md:table-cell">
+                      {rank.rank.toString().padStart(3, "0")}
+                    </td>
+                    <td className="py-6 px-0 md:px-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                          {rank.Icon}
                         </div>
-                      </td>
-                      <td className="py-6 px-4 text-white text-xs font-bold hidden md:table-cell">
-                        {rank.pointsToUnlock.toLocaleString()} XP
-                      </td>
-                      <td className="py-6 px-4">
-                        <div className="flex justify-end md:justify-center">
-                          {rank.status === "unlocked" ? (
-                            <MdCheckCircle className="text-emerald-500 text-xl" />
-                          ) : (
-                            <MdLock className="text-slate-500 text-xl" />
-                          )}
+                        <div>
+                          <p className="text-white font-bold text-sm">
+                            {rank.title}
+                          </p>
                         </div>
-                      </td>
-                    </tr>
-                  </>
+                      </div>
+                    </td>
+                    <td className="py-6 px-4 text-white text-xs font-bold hidden md:table-cell">
+                      {rank.pointsToUnlock.toLocaleString()} XP
+                    </td>
+                    <td className="py-6 px-4">
+                      <div className="flex justify-end md:justify-center">
+                        {rank.status === "unlocked" ? (
+                          <MdCheckCircle className="text-emerald-500 text-xl" />
+                        ) : (
+                          <MdLock className="text-slate-500 text-xl" />
+                        )}
+                      </div>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </GlassCard>
       </main>
+
       {rankData.show && (
         <RankUnlockModal
           rank={rankData.data?.rank}
@@ -548,7 +639,6 @@ const ExploralPage = () => {
           requirementPoints={rankData.data?.pointsToUnlock}
           unlockReward={rankData.data?.cashReward}
           onClose={() => {
-            // alert("Modal closed");
             setrankData({ show: false, data: leaderboardRanks[0] });
           }}
         />

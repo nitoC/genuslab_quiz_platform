@@ -20,6 +20,7 @@ import clsx from "clsx";
 import AccountTabContent from "@/features/profile/ui/Account";
 import AvatarUpload from "@/features/profile/modals/AvatarUpload";
 import { HiPhotograph } from "react-icons/hi";
+import { BiUser } from "react-icons/bi";
 
 const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
@@ -194,7 +195,7 @@ const ProfilePage = () => {
                 </span>
               </div>
               <div className="text-center md:text-left">
-                <h1 className="text-xl md:text-2xl font-bold text-(--primary)">
+                <h1 className="text-xl md:text-2xl font-bold text-primary">
                   {userName}
                 </h1>
                 <div className="flex flex-col md:flex-row items-center md:justify-start gap-2 md:gap-3 mt-2">
@@ -206,13 +207,21 @@ const ProfilePage = () => {
             </div>
 
             <div className="flex flex-row md:flex-row items-center gap-4 md:gap-6 z-10 w-full md:w-auto justify-center md:justify-end">
-              <button className="bg-white/5 hover:bg-white/10 text-grey text-[10px] md:text-xs py-2 px-6 rounded-full border border-white/10 flex gap-2 items-center transition-all">
-                <MdEdit /> Edit Profile
+              <button
+                onClick={() => {
+                  tab !== "Account"
+                    ? handleTab("Account")
+                    : handleTab("Profile");
+                }}
+                className="bg-white/5 hover:bg-white/10 text-grey text-[10px] md:text-xs py-2 px-6 rounded-full border border-white/10 flex gap-2 items-center transition-all"
+              >
+                {tab !== "Account" ? <MdEdit /> : <BiUser />}{" "}
+                {tab !== "Account" ? "Edit Profile" : "Profile"}
               </button>
 
               <div className="relative w-12 h-12 md:w-16 md:h-16 border-4 border-white/5 rounded-full flex items-center justify-center">
                 <div className="absolute top-0 left-0 w-full h-full border-4 border-blue border-t-transparent rounded-full -rotate-45" />
-                <span className="text-[10px] md:text-xs font-bold text-(--primary) text-center leading-tight">
+                <span className="text-[10px] md:text-xs font-bold text-primary text-center leading-tight">
                   {exp} <br />
                   <span className="text-[6px] md:text-[8px] text-grey">XP</span>
                 </span>
@@ -234,7 +243,7 @@ const ProfilePage = () => {
                     handleTab(a.label);
                   }}
                   className={clsx(
-                    "px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-(--primary) border-b-2 flex gap-2 items-center shrink-0",
+                    "px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-primary border-b-2 flex gap-2 items-center shrink-0",
 
                     (tab === "" || !tab) && a.label === "Profile"
                       ? "border-blue"
