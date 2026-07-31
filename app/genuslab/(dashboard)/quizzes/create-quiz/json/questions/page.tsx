@@ -9,6 +9,7 @@ import { createQuestion, updateQuiz } from "@/lib/api/apis";
 import { IQuestionSubmit } from "@/interfaces";
 import toast, { Toaster } from "react-hot-toast";
 import { useSearchParams } from "next/navigation";
+import useQuizData from "@/hooks/useQuizData";
 
 export interface QuestionObject {
   questionText: string;
@@ -31,6 +32,8 @@ function JsonBuilderPage() {
   const [submitting, setSubmitting] = useState(false);
   const [preview, setPreview] = useState(false);
 
+  const { quiz, isLoading, isError, error } = useQuizData(id ?? "");
+
   // Parse and validate incoming JSON structure
   useEffect(() => {
     // console.log(jsonText, "jsonte");
@@ -45,7 +48,8 @@ function JsonBuilderPage() {
 
     try {
       const parsed = JSON.parse(jsonText);
-      // console.log(parsed, "parsed");
+      console.log(parsed, "parsed");
+      console.log(jsonText, " not parsed");
       const targetArray = Array.isArray(parsed) ? parsed : [parsed];
 
       // Basic structural validation
@@ -80,6 +84,7 @@ function JsonBuilderPage() {
     // toast.error("fhdlf");
     // console.log("hely sumb");
     // return;
+    console.log(parsedQuestions, "parsed questions");
     if (submitting) return;
     try {
       if (!questionRank) return toast.error("select question rank");
@@ -142,6 +147,10 @@ function JsonBuilderPage() {
               assessment.
             </p>
           </div>
+          <h3>
+            QUIZ TITLE:{" "}
+            <span className="text-blue-400">{quiz && quiz.title}</span>
+          </h3>
           {/* Top Grid Split */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             <div className="lg:col-span-2">

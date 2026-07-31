@@ -20,6 +20,7 @@ export default function QuizManagementPage() {
     { name: "Drafts", href: "#", current: false, value: "DRAFT" },
     { name: "Archived", href: "#", current: false, value: "ARCHIVED" },
     { name: "Demo Quizzes", href: "#", current: false, value: "DEMO" },
+    { name: "Upcoming Quizzes", href: "#", current: false, value: "UPCOMING" },
   ];
 
   const {

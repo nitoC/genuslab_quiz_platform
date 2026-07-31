@@ -339,6 +339,18 @@ export const createQuiz = async (payload: any) => {
   console.log(res, "create quiz response");
   return res;
 };
+export const updateQuizData = async (payload: any) => {
+  console.log(payload, "update quiz payload");
+  const res = await axiosAdmin.put("quiz/update", payload);
+  console.log(res, "create quiz response");
+  return res;
+};
+
+export const fetchQuizById = async (quizId: string) => {
+  console.log(quizId, "auifdk)");
+  const res = await axiosAdmin.get(`quiz/${quizId}`);
+  return res;
+};
 
 export const createQuestion = async (payload: IQuestionSubmit[]) => {
   const res = await axiosAdmin.post("question/seed", payload);

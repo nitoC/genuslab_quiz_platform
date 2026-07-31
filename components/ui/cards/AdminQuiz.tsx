@@ -36,7 +36,10 @@ const CourseCard: React.FC<CourseCardProps> = ({
   onEdit,
 }) => {
   return (
-    <div className="group rounded-2xl w-full max-w-120 bg-white p-5 border border-gray-100 flex flex-col justify-between transition-all duration-200 hover:border-gray-200">
+    <Link
+      href={`/genuslab/quizzes/${id}/edit`}
+      className="group rounded-2xl w-full max-w-120 bg-white p-5 border border-gray-100 flex flex-col justify-between transition-all duration-200 hover:border-gray-200"
+    >
       <div>
         {/* Top Header Controls Section */}
         <div className="mb-6 flex items-center justify-between">
@@ -153,7 +156,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
           Edit Quiz
         </button>
       </div>
-    </div>
+    </Link>
   );
 };
 

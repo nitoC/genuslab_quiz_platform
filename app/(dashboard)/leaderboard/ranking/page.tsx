@@ -206,6 +206,7 @@ const LeaderboardPage = () => {
     },
   });
 
+  console.log(data, "leaderboard");
   const selectedTimeframeLabel =
     TIMEFRAMES.find((tf) => tf.value === timeframe)?.label || "Overall";
 
@@ -238,7 +239,7 @@ const LeaderboardPage = () => {
       <Header title="Leaderboard" backBtn={true} />
 
       <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 max-w-6xl mx-auto">
-        {/* GLASS CONTROL BAR: TYPE TABS & TIMEFRAME DROPDOWN */}
+        {/* CONTROL BAR: TYPE TABS & TIMEFRAME DROPDOWN */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-2 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl relative z-30">
           {/* TYPE SWITCHER TABS */}
           <div className="relative flex items-center p-1 bg-black/20 rounded-xl w-full sm:w-auto border border-white/5">
@@ -264,7 +265,7 @@ const LeaderboardPage = () => {
             </button>
           </div>
 
-          {/* GLASS DROPDOWN */}
+          {/* DROPDOWN */}
           <div className="relative w-full sm:w-52" ref={dropdownRef}>
             <button
               type="button"
@@ -379,10 +380,8 @@ const LeaderboardPage = () => {
                         {user.name}
                       </h3>
                       <p className="text-blue-400 text-sm font-bold">
-                        {type === "quiz"
-                          ? (user.totalXp ?? 0).toLocaleString()
-                          : (user.score ?? 0).toLocaleString()}{" "}
-                        {type === "quiz" ? "XP" : "REFERRALS"}
+                        {type === "quiz" ? "SCORE:" : "REFERRALS:"}{" "}
+                        {(user.score ?? 0).toLocaleString()}{" "}
                       </p>
                       <span className="text-[10px] text-gray-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase">
                         {user.rank}

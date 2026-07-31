@@ -1,6 +1,6 @@
 "use client";
 
-import { MdChevronRight, MdContrast, MdAcUnit, MdGroups } from "react-icons/md";
+import { MdChevronRight, MdGroups } from "react-icons/md";
 import { cn } from "@/lib/utils/cn";
 
 interface QuizFooterProps {
@@ -8,8 +8,6 @@ interface QuizFooterProps {
   totalQuestions: number;
   submitting?: boolean;
   currentQuestion?: any;
-  // selectedAnswers?: any;
-  // submittedAnswers?: any;
 
   onPrev: () => void;
   onNext: (data: any) => void;
@@ -21,14 +19,10 @@ const QuizFooter = ({
   totalQuestions,
   submitting = false,
   currentQuestion,
-  // selectedAnswers,
-  // submittedAnswers,
   onPrev,
   onNext,
   onSubmit,
 }: QuizFooterProps) => {
-  const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
-
   return (
     <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex gap-3">
@@ -54,7 +48,8 @@ const QuizFooter = ({
           {currentQuestionIndex > 0 && (
             <button
               onClick={onPrev}
-              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-xs uppercase tracking-wider transition border border-white/5"
+              disabled={submitting}
+              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-xs uppercase tracking-wider transition border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Prev
             </button>
@@ -62,13 +57,14 @@ const QuizFooter = ({
 
           {currentQuestionIndex >= totalQuestions - 1 ? (
             <button
-              onClick={() => onSubmit(currentQuestion.id)}
+              onClick={() => onSubmit(currentQuestion?.id)}
               disabled={submitting}
               className={cn(
-                "bg-red-500 hover:bg-red-400 text-[#020617] px-8 py-4 rounded-[20px]",
-                "font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform",
-                "hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]",
-                submitting && "opacity-60 pointer-events-none",
+                "px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform",
+                // Active / Default styles
+                "bg-red-500 hover:bg-red-400 text-[#020617] hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(239,68,68,0.3)]",
+                // Disabled / Submitting state styles
+                "disabled:bg-slate-700 disabled:text-slate-400 disabled:border disabled:border-slate-600 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none disabled:hover:bg-slate-700",
               )}
             >
               {submitting ? "Submitting..." : "Submit"}
@@ -76,9 +72,15 @@ const QuizFooter = ({
             </button>
           ) : (
             <button
-              onClick={() => onNext(currentQuestion.id)}
+              onClick={() => onNext(currentQuestion?.id)}
               disabled={submitting}
-              className="bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
+              className={cn(
+                "px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform",
+                // Active / Default styles
+                "bg-emerald-500 hover:bg-emerald-400 text-[#020617] hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]",
+                // Disabled / Submitting state styles
+                "disabled:bg-slate-700 disabled:text-slate-400 disabled:border disabled:border-slate-600 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none disabled:hover:bg-slate-700",
+              )}
             >
               {submitting ? "Submitting..." : "Next Question"}
               <MdChevronRight size={24} />
