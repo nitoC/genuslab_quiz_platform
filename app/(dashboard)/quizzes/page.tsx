@@ -179,7 +179,7 @@ const page = () => {
                   </span>
                   /100
                 </p>
-                <p className="text-grey text-sm">weekly average score</p>
+                <p className="text-grey text-sm">average score</p>
               </div>
               <PrimaryButton
                 type="link"
@@ -218,7 +218,7 @@ const page = () => {
             <div className="p-6 flex flex-col gap-4">
               <div className="flex items-center gap-4">
                 <ImageWithFallback
-                  src="/images/avatar.png"
+                  src={user?.details?.avatar}
                   alt="Jane Doe"
                   width={60}
                   height={60}

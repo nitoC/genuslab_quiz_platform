@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdTimer } from "react-icons/md";
 // import { cn } from "@/lib/utils/cn";
 import { MdVolumeUp, MdLocalFireDepartment } from "react-icons/md";
@@ -31,6 +31,7 @@ import Link from "next/link";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
 import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
+import handleQuizStorage from "@/lib/utils/handleQuizStorage";
 
 // Data Structure interface matching your real JSON payload
 interface QuizQuestion {
@@ -122,9 +123,9 @@ const QuizPage = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<
     { id: string; answer: number }[]
   >([]);
-  const [submittedAnswers, setSubmittedAnswers] = useState<
-    { id: string; answer: number }[]
-  >([]);
+  // const [submittedAnswers, setSubmittedAnswers] = useState<
+  //   { id: string; answer: number }[]
+  // >([]);
 
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -171,90 +172,146 @@ const QuizPage = () => {
     async (id: string) => {
       if (submitting) return;
 
-      const selectedAnswer = selectedAnswers.find((a) => a.id === id);
-      const pastSubmission = submittedAnswers.find((a) => a.id === id);
+      // const selectedAnswer = selectedAnswers.find((a) => a.id === id);
+      // const pastSubmission = submittedAnswers.find((a) => a.id === id);
 
-      const needsSubmission =
-        !pastSubmission ||
-        (selectedAnswer && selectedAnswer.answer !== pastSubmission.answer);
+      // const needsSubmission =
+      //   !pastSubmission ||
+      //   (selectedAnswer && selectedAnswer.answer !== pastSubmission.answer);
 
-      if (!needsSubmission) {
+      // if (!needsSubmission) {
+      //   goNext();
+      //   return;
+      // }
+      try {
+        setSubmitting(true);
+
+        attemptId && handleQuizStorage(attemptId, selectedAnswers, true);
+
+        // send to backend
+        // const res = await submitLiveQuestion({
+        //   questionId: id,
+        //   attemptId: attemptId,
+        //   selectedAnswer: selectedAnswer?.answer ?? -1,
+        // });
+
+        // if (res) {
+        //   setSubmittedAnswers((prev) => {
+        //     const filtered = prev.filter((a) => a.id !== id);
+        //     return [
+        //       ...filtered,
+        //       {
+        //         id: id,
+        //         answer: selectedAnswer?.answer ?? -1,
+        //       },
+        //     ];
+        //   });
         goNext();
-        return;
-      }
-      try {
-        setSubmitting(true);
-        const res = await submitLiveQuestion({
-          questionId: id,
-          attemptId: attemptId,
-          selectedAnswer: selectedAnswer?.answer ?? -1,
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
         });
-
-        if (res) {
-          setSubmittedAnswers((prev) => {
-            const filtered = prev.filter((a) => a.id !== id);
-            return [
-              ...filtered,
-              {
-                id: id,
-                answer: selectedAnswer?.answer ?? -1,
-              },
-            ];
-          });
-          goNext();
-          window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth",
-          });
-        }
+        // }
       } catch (err: any) {
         toast.error("Failed to submit answer. Check your network connection.");
       } finally {
         setSubmitting(false);
       }
     },
-    [submitting, selectedAnswers, submittedAnswers, attemptId, goNext],
+    [submitting, selectedAnswers, attemptId, goNext],
   );
 
-  const handleAttemptSubmit = useCallback(
-    async (id: string) => {
-      if (submitting) return;
+  const handleAttemptSubmit = useCallback(async () => {
+    if (submitting) return;
 
-      const selectedAnswer = selectedAnswers.find((a) => a.id === id);
+    // const selectedAnswer = selectedAnswers.find((a) => a.id === id);
 
-      try {
-        setSubmitting(true);
-        const res = await submitAttempt(userDetailsId as string, {
-          questionId: id,
-          attemptId: attemptId,
-          selectedAnswer: selectedAnswer?.answer ?? -1,
-        });
+    try {
+      setSubmitting(true);
+      const res = await submitAttempt(userDetailsId as string, {
+        attemptId,
+        answers: selectedAnswers.map((a) => ({
+          questionId: a.id,
+          selectedAnswer: a.answer,
+        })),
+      });
 
-        if (res) {
-          setSubmittedAnswers((prev) => {
-            const filtered = prev.filter((a) => a.id !== id);
-            return [
-              ...filtered,
-              {
-                id: id,
-                answer: selectedAnswer?.answer ?? -1,
-              },
-            ];
-          });
-          setIsSubmitted(true);
-          setScore(res.data.score);
-          setXp(res.data.experience);
-          setspeed(res.data.timeStr);
-        }
-      } catch (err: any) {
-        toast.error("Failed to submit answer. Check your network connection.");
-      } finally {
-        setSubmitting(false);
+      if (res) {
+        // setSubmittedAnswers((prev) => {
+        //   const filtered = prev.filter((a) => a.id !== id);
+        //   return [
+        //     ...filtered,
+        //     {
+        //       id: id,
+        //       answer: selectedAnswer?.answer ?? -1,
+        //     },
+        //   ];
+        // });
+        setIsSubmitted(true);
+        setScore(res.data.score);
+        setXp(res.data.experience);
+        setspeed(res.data.timeStr);
       }
-    },
-    [submitting, selectedAnswers, submittedAnswers, attemptId, goNext],
-  );
+
+      localStorage.removeItem("quiz-attempt");
+    } catch (err: any) {
+      toast.error("Failed to submit answer. Check your network connection.");
+      console.log(err.response);
+    } finally {
+      setSubmitting(false);
+    }
+  }, [submitting, selectedAnswers, attemptId, goNext]);
+
+  // useEffect(() => {
+  //   console.log(attemptId, userDetailsId, "both ids");
+  //   async function verifyAttempt() {
+  //     const userStr = getLocalStorage("user");
+  //     if (!userStr) {
+  //       toast.error("user not found");
+  //       throw new Error("user not found");
+  //     }
+  //     if (!quizId) {
+  //       router.back();
+  //       toast.error("quiz id not found");
+  //       throw new Error("user not found");
+  //     }
+  //     const { userId } = JSON.parse(userStr);
+  //     const userDetails = await getUserDetails(userId);
+  //     if (!userDetails) {
+  //       toast.error("user not logged in");
+  //       router.push("/login");
+  //     }
+
+  //     // userDetails?.data?.payload?.id;
+
+  //     if (!userDetails?.data.payload.id) return;
+  //     try {
+  //       const stored = localStorage.getItem("quiz-attempt");
+  //       if (!stored) return;
+
+  //       const parsed = JSON.parse(stored);
+  //       console.log("stored", parsed);
+  //       // Verify the saved attempt matches the active session attemptId
+
+  //       // toast.info("Resuming un-submitted quiz attempt...");
+  //       setSelectedAnswers(parsed.answers);
+  //       await submitAttempt(userDetails.data.payload.id as string, {
+  //         attemptId: parsed?.attemptId,
+  //         answers: parsed.data.map((a: any) => ({
+  //           questionId: a.id,
+  //           selectedAnswer: a.answer,
+  //         })),
+  //       });
+  //       localStorage.removeItem("quiz-attempt");
+
+  //       console.log("submitted prev quiz");
+  //     } catch (error) {
+  //       console.error("Error reading stored quiz attempt:", error);
+  //     }
+  //   }
+  //   verifyAttempt();
+  // }, [attemptId, userDetailsId, handleAttemptSubmit]);
 
   const progressSegments = Math.max(1, Math.min(10, totalQuestions || 10));
   const activeSeg = totalQuestions
@@ -372,6 +429,7 @@ const QuizPage = () => {
                     isError={isError}
                     handleSubmit={handleAttemptSubmit}
                     currentQuestion={currentQuestion}
+                    attemptId={attemptId}
                   />
                   <Rivals />
                 </div>

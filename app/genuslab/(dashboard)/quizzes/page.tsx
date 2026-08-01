@@ -32,6 +32,7 @@ export default function QuizManagementPage() {
     queryFn: async () => {
       const tabVal = tabs.find((a) => a.name === active);
       const res = await getAllQuiz(tabVal?.value as string);
+      // console.log(res, "res");
       return res?.data?.payload ?? [];
     },
   });

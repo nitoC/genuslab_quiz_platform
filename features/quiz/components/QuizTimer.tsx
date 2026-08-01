@@ -2,9 +2,11 @@
 import { cn } from "@/lib/utils/cn";
 import { formatMMSS, getTimerColor } from "@/lib/utils/timer";
 // import { useTime } from "motion/react";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useTimeStore } from "../store/time.store";
 import { useQuizCountdownTime } from "@/hooks/useTime";
+import handleQuizStorage from "@/lib/utils/handleQuizStorage";
+import { submitLiveQuestion } from "@/lib/api/apis";
 
 const timeCountDown = 300;
 
@@ -14,9 +16,15 @@ const Timer = ({
   isError,
   handleSubmit,
   currentQuestion,
+  attemptId,
 }: any) => {
+  const submitTracker = useRef(0);
   const timeLeft = useQuizCountdownTime(isSubmitted, isLoading, isError);
   // const [timeLeft, setTimeLeft] = useState<number>(timeCountDown); // 5 minutes default
+  // const [submitTracker, setSubmitTracker] = useState({
+  //   state: 0,
+  //   maxState: 2,
+  // });
 
   // Timer ring calculations (SVG)
   const totalSeconds = timeCountDown;
@@ -31,6 +39,31 @@ const Timer = ({
       handleSubmit(currentQuestion.id);
     }
   }, [timeLeft, isSubmitted, handleSubmit]);
+
+  useEffect(() => {
+    // ~2 minutes elapsed
+    const syncAnswersInBackground = () => {
+      const data = handleQuizStorage(attemptId);
+      console.log(data, "quiz data", submitTracker.current);
+      submitLiveQuestion({
+        attemptId: data.attemptId,
+        answers: data.data.map((a: { id: string; answer: number }) => ({
+          questionId: a.id,
+          selectedAnswer: a.answer,
+        })),
+      });
+    };
+    if (timeLeft <= 180 && timeLeft > 60 && submitTracker.current < 1) {
+      submitTracker.current = 1;
+      void syncAnswersInBackground();
+    }
+
+    // ~4 minutes elapsed
+    if (timeLeft <= 60 && timeLeft > 0 && submitTracker.current < 2) {
+      submitTracker.current = 2;
+      void syncAnswersInBackground();
+    }
+  }, [timeLeft]);
 
   return (
     <div className="bg-[#11192e] border border-white/5 rounded-[32px] p-8 flex flex-col items-center justify-center text-center">

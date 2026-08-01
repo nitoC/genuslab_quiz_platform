@@ -100,7 +100,7 @@ export default function EditQuizPage() {
   // Form State
   const [formData, setFormData] = useState<QuizFormData | null>(null);
   const { quiz, isLoading, isError, error } = useQuizData(quizId);
-
+  console.log(quiz, "quiz");
   // Sync query data to local state
   useEffect(() => {
     if (quiz) {

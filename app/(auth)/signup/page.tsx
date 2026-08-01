@@ -62,7 +62,7 @@ function SignUpPage() {
   const validateInputs = (): boolean => {
     const phoneRegex = /^\+[1-9]\d{10,14}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const nameRegex = /^[A-Za-z\s]+$/;
+    const nameRegex = /^[\p{L}\s'-]+$/u;
     const refCodeRegex = /^[A-Za-z0-9-]*$/;
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&^()[\]{}])[A-Za-z\d@$!%*?#&^()[\]{}]{6,}$/;
