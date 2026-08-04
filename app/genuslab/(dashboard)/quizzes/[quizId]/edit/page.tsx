@@ -112,9 +112,9 @@ export default function EditQuizPage() {
   const updateMutation = useMutation<void, Error, QuizFormData>({
     mutationFn: async (data: QuizFormData) => {
       const quizData = { ...data };
-      if (quizData.questions.length < 1) {
-        delete (quizData as Partial<QuizFormData>).questions;
-      }
+      // if (quizData.questions.length < 1) {
+      delete (quizData as Partial<QuizFormData>).questions;
+      // }
 
       await updateQuizData(quizData);
     },
@@ -306,10 +306,8 @@ export default function EditQuizPage() {
         </button>
       </div>
       <div className="flex flex-wrap gap-8">
-        <h3 className="text-[1.1rem] text-red-400">Past Day: {quiz.day}</h3>
-        <h3 className="text-[1.1rem] text-blue-400">
-          Current Day: {quiz.day + 1}
-        </h3>
+        <h3 className="text-[1.1rem] text-red-400">Past Day: {quiz.day - 1}</h3>
+        <h3 className="text-[1.1rem] text-blue-400">Current Day: {quiz.day}</h3>
       </div>
       {/* Main Admin Form */}
       <form onSubmit={handleSubmit} className="space-y-6">

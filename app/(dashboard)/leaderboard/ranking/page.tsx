@@ -443,12 +443,15 @@ const LeaderboardPage = () => {
                         <div className="flex items-center gap-4 sm:gap-8">
                           <div className="flex flex-col items-end">
                             <span className="text-white font-bold text-sm">
-                              {type === "quiz"
-                                ? (player.totalXp ?? 0).toLocaleString()
-                                : (player.score ?? 0).toLocaleString()}
+                              {
+                                // type === "quiz"
+                                // ? (player.totalXp ?? 0).toLocaleString()
+                                // :
+                                (player.score ?? 0).toLocaleString()
+                              }
                             </span>
                             <span className="text-gray-400 text-[10px]">
-                              {type === "quiz" ? "Total XP" : "Referrals"}
+                              {type === "quiz" ? "Total Score" : "Referrals"}
                             </span>
                           </div>
                         </div>

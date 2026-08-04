@@ -19,6 +19,8 @@ const Timer = ({
   attemptId,
 }: any) => {
   const submitTracker = useRef(0);
+  const attemptRef = useRef(null);
+  const { resetTime } = useTimeStore();
   const timeLeft = useQuizCountdownTime(isSubmitted, isLoading, isError);
   // const [timeLeft, setTimeLeft] = useState<number>(timeCountDown); // 5 minutes default
   // const [submitTracker, setSubmitTracker] = useState({
@@ -35,12 +37,33 @@ const Timer = ({
 
   // 3. Simple countdown timer side-effect
   useEffect(() => {
+    if (!attemptId || !currentQuestion || isLoading || isError || isSubmitted) {
+      return;
+    }
     if (timeLeft === 0 && !isSubmitted) {
       handleSubmit(currentQuestion.id);
     }
   }, [timeLeft, isSubmitted, handleSubmit]);
 
   useEffect(() => {
+    if (!attemptId) return;
+    if (attemptId !== attemptRef.current) {
+      attemptRef.current = attemptId;
+      resetTime();
+      submitTracker.current = 0;
+    }
+  }, [attemptId]);
+
+  useEffect(() => {
+    if (
+      !attemptId ||
+      isLoading ||
+      isError ||
+      isSubmitted ||
+      attemptRef.current !== attemptId
+    ) {
+      return;
+    }
     // ~2 minutes elapsed
     const syncAnswersInBackground = () => {
       const data = handleQuizStorage(attemptId);
@@ -63,7 +86,7 @@ const Timer = ({
       submitTracker.current = 2;
       void syncAnswersInBackground();
     }
-  }, [timeLeft]);
+  }, [timeLeft, attemptId]);
 
   return (
     <div className="bg-[#11192e] border border-white/5 rounded-[32px] p-8 flex flex-col items-center justify-center text-center">

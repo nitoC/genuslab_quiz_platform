@@ -377,6 +377,15 @@ export const createQuizBatch = async (payload: QuizObject[]) => {
   console.log(res, "update quiz response");
   return res;
 };
+//SUPPORT ENDPOINT
+export const sendSupportMessage = async (messages: any[]) => {
+  const res = await axiosUser.post(
+    "support-ai",
+    { messages: messages },
+    { responseType: "stream", adapter: "fetch" },
+  );
+  return res;
+};
 
 //SYSTEM ENDPOINTS
 

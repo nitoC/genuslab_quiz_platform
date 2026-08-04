@@ -263,55 +263,54 @@ const QuizPage = () => {
     }
   }, [submitting, selectedAnswers, attemptId, goNext]);
 
-  // useEffect(() => {
-  //   console.log(attemptId, userDetailsId, "both ids");
-  //   async function verifyAttempt() {
-  //     const userStr = getLocalStorage("user");
-  //     if (!userStr) {
-  //       toast.error("user not found");
-  //       throw new Error("user not found");
-  //     }
-  //     if (!quizId) {
-  //       router.back();
-  //       toast.error("quiz id not found");
-  //       throw new Error("user not found");
-  //     }
-  //     const { userId } = JSON.parse(userStr);
-  //     const userDetails = await getUserDetails(userId);
-  //     if (!userDetails) {
-  //       toast.error("user not logged in");
-  //       router.push("/login");
-  //     }
+  useEffect(() => {
+    async function verifyAttempt() {
+      const userStr = getLocalStorage("user");
+      if (!userStr) {
+        toast.error("user not found");
+        throw new Error("user not found");
+      }
+      if (!quizId) {
+        router.back();
+        toast.error("quiz id not found");
+        throw new Error("user not found");
+      }
+      const { userId } = JSON.parse(userStr);
+      const userDetails = await getUserDetails(userId);
+      if (!userDetails) {
+        toast.error("user not logged in");
+        router.push("/login");
+      }
 
-  //     // userDetails?.data?.payload?.id;
+      // userDetails?.data?.payload?.id;
 
-  //     if (!userDetails?.data.payload.id) return;
-  //     try {
-  //       const stored = localStorage.getItem("quiz-attempt");
-  //       if (!stored) return;
+      if (!userDetails?.data.payload.id) return;
+      try {
+        const stored = localStorage.getItem("quiz-attempt");
+        if (!stored) return;
 
-  //       const parsed = JSON.parse(stored);
-  //       console.log("stored", parsed);
-  //       // Verify the saved attempt matches the active session attemptId
+        const parsed = JSON.parse(stored);
+        console.log("stored", parsed);
+        // Verify the saved attempt matches the active session attemptId
 
-  //       // toast.info("Resuming un-submitted quiz attempt...");
-  //       setSelectedAnswers(parsed.answers);
-  //       await submitAttempt(userDetails.data.payload.id as string, {
-  //         attemptId: parsed?.attemptId,
-  //         answers: parsed.data.map((a: any) => ({
-  //           questionId: a.id,
-  //           selectedAnswer: a.answer,
-  //         })),
-  //       });
-  //       localStorage.removeItem("quiz-attempt");
+        // toast.info("Resuming un-submitted quiz attempt...");
+        // setSelectedAnswers(parsed.answers);
+        await submitAttempt(userDetails.data.payload.id as string, {
+          attemptId: parsed?.attemptId,
+          answers: parsed.data.map((a: any) => ({
+            questionId: a.id,
+            selectedAnswer: a.answer,
+          })),
+        });
+        localStorage.removeItem("quiz-attempt");
 
-  //       console.log("submitted prev quiz");
-  //     } catch (error) {
-  //       console.error("Error reading stored quiz attempt:", error);
-  //     }
-  //   }
-  //   verifyAttempt();
-  // }, [attemptId, userDetailsId, handleAttemptSubmit]);
+        console.log("submitted prev quiz");
+      } catch (error) {
+        console.error("Error reading stored quiz attempt:", error);
+      }
+    }
+    verifyAttempt();
+  }, []);
 
   const progressSegments = Math.max(1, Math.min(10, totalQuestions || 10));
   const activeSeg = totalQuestions
@@ -430,6 +429,7 @@ const QuizPage = () => {
                     handleSubmit={handleAttemptSubmit}
                     currentQuestion={currentQuestion}
                     attemptId={attemptId}
+                    // startTime={}
                   />
                   <Rivals />
                 </div>

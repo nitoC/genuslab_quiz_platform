@@ -226,7 +226,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                   {trend === "-" && <FaArrowTrendDown />}
                   {trend === "" && <MdOutlineTrendingFlat />}
                 </span>{" "}
-                {statsData.trend} {statsData.growth}% last week
+                {statsData.trend} {statsData.growth.toFixed(1)}% last week
               </p>
             </div>
           </div>
