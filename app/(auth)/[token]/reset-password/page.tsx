@@ -126,7 +126,8 @@ const ResetPasswordPage = () => {
 
   // Support both /reset-password/[token] AND /reset-password?token=xyz
   const rawToken = params?.token || searchParams.get("token");
-  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
+  // const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
+  const [token, setToken] = useState<string | null>(null);
 
   // State Management
   const [password, setPassword] = useState("");
@@ -149,38 +150,96 @@ const ResetPasswordPage = () => {
 
   // Verify reset token on initial mount
   useEffect(() => {
-    let isMounted = true;
+    if (typeof window === "undefined") return;
 
-    const verify = async () => {
-      // Allow Next.js client router a moment to parse params on mobile
-      if (!token) {
-        // Wait 300ms before declaring token missing to avoid race conditions on mobile
-        const timer = setTimeout(() => {
-          if (isMounted && !token) {
-            router.push("/login");
-          }
-        }, 300);
-        return () => clearTimeout(timer);
+    const extractToken = () => {
+      // 1. Try route parameter:
+      // /reset-password/[token]
+      const routeToken = params?.token;
+
+      // 2. Try query parameter:
+      // /reset-password?token=xyz
+      const queryToken = searchParams.get("token");
+
+      let extractedToken: string | null = null;
+
+      if (routeToken) {
+        extractedToken = Array.isArray(routeToken) ? routeToken[0] : routeToken;
+      } else if (queryToken) {
+        extractedToken = queryToken;
       }
 
+      if (!extractedToken) {
+        // Last fallback: read the browser URL directly.
+        const url = new URL(window.location.href);
+
+        const directQueryToken = url.searchParams.get("token");
+
+        if (directQueryToken) {
+          extractedToken = directQueryToken;
+        }
+      }
+
+      if (extractedToken) {
+        // Decode only if necessary.
+        try {
+          extractedToken = decodeURIComponent(extractedToken);
+        } catch {
+          // Keep original token if it wasn't encoded.
+        }
+
+        setToken(extractedToken);
+      }
+    };
+
+    extractToken();
+  }, [params, searchParams]);
+
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const verify = async () => {
       try {
+        setIsLoading(true);
+        setErrorMsg("");
+
+        console.log("Verifying reset token:", token);
+
         const res = await verifyToken(token);
-        if (isMounted) setData(res);
+
+        if (!cancelled) {
+          setData(res);
+        }
       } catch (err: any) {
-        console.error("Token verification failed:", err?.response || err);
-        if (isMounted) {
+        console.error(
+          "Token verification failed:",
+          err?.response?.data || err?.response || err,
+        );
+
+        if (!cancelled) {
           setErrorMsg("Your reset link is invalid or has expired.");
-          setTimeout(() => router.push("/login"), 5000);
+
+          setTimeout(() => {
+            if (!cancelled) {
+              router.replace("/login");
+            }
+          }, 5000);
         }
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     verify();
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, [token, router]);
 
