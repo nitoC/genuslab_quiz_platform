@@ -10,7 +10,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 /* ------------------------------------------------------------------
-   Reusable wrapped input (same shell used elsewhere)
+   Reusable wrapped input
 ------------------------------------------------------------------- */
 interface WrappedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   hasIcon?: boolean;
@@ -36,7 +36,7 @@ const WrappedInput: React.FC<WrappedInputProps> = ({
 );
 
 /* ------------------------------------------------------------------
-   Password field with eye‑toggle
+   Password field with eye-toggle
 ------------------------------------------------------------------- */
 interface PasswordInputProps {
   id: string;
@@ -67,9 +67,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ id, placeholder }) => {
 };
 
 /* ------------------------------------------------------------------
-   Reset‑Password Page
+   Reset-Password Page
 ------------------------------------------------------------------- */
-
 const Page = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -95,16 +94,10 @@ const Page = () => {
 
     try {
       const res = await forgotPassword(email);
-      console.log(res, "res");
       if (res?.data?.status) {
         sessionStorage.setItem("reset-email", email);
-        console.log(res, "res");
-
-        console.log(sessionStorage.getItem("reset-email"));
-
         router.push(`/success`);
       } else {
-        // Handle edge case where API returns 200 OK but success is false
         toast.error(res?.data?.message || "Could not process request.");
       }
     } catch (error: any) {
@@ -123,10 +116,10 @@ const Page = () => {
     <main className="min-h-screen bg-blue px-4 py-12">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 lg:flex-row">
-          {/* ───────── Left Artwork ───────── */}
-          <div className="relative hidden sm:block sm:h-96 lg:flex-1 lg:min-h-180">
+          {/* ───────── Left Artwork (Fixed Mobile Visibility & Height) ───────── */}
+          <div className="relative block h-64 sm:h-96 lg:flex-1 lg:min-h-180">
             <Image
-              src="/images/login.png"
+              src="/images/login.png" // Verify casing in /public/images/ exactly matches!
               alt="Security Illustration"
               fill
               className="object-cover"

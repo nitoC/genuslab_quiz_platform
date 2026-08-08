@@ -213,6 +213,10 @@ const Page = () => {
   if (hasAttempts) taskCount += 1;
   if (hasSharedRef) taskCount += 1;
 
+  if (!data.user.verified && typeof window !== undefined) {
+    router.push("/verify");
+  }
+
   return (
     <Layout>
       <div>

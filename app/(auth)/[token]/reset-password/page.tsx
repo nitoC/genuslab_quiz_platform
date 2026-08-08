@@ -3,7 +3,7 @@
 import { resetPassword, verifyToken } from "@/lib/api/apis";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FiCheck, FiEye, FiEyeOff, FiX } from "react-icons/fi";
 import { CgSpinner } from "react-icons/cg";
@@ -90,23 +90,19 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity">
       <div className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-center shadow-2xl transition-all">
-        {/* Success Icon */}
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
           <FiCheck className="h-8 w-8" />
         </div>
 
-        {/* Modal Header */}
         <h3 className="text-xl font-bold text-gray-900">
           Password Reset Successful
         </h3>
 
-        {/* Modal Body */}
         <p className="mt-2 text-sm text-gray-500">
           Your password has been updated successfully. Please proceed to the
           login page to access your account.
         </p>
 
-        {/* Action Button */}
         <div className="mt-6">
           <Link
             href="/login"
@@ -125,11 +121,14 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen }) => {
 ------------------------------------------------------------------- */
 const ResetPasswordPage = () => {
   const params = useParams();
-  const token = params?.token as string;
+  const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Support both /reset-password/[token] AND /reset-password?token=xyz
+  const rawToken = params?.token || searchParams.get("token");
+  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
+
   // State Management
-  const [resetEmail, setResetEmail] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -148,42 +147,41 @@ const ResetPasswordPage = () => {
   const isMatching = password !== "" && password === confirmPassword;
   const isPasswordValid = hasCapital && hasNumber && hasSpecial && hasMinLength;
 
-  // Retrieve email safely on client side
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const email = sessionStorage.getItem("reset-email");
-  //     setResetEmail(email);
-  //     // return () => sessionStorage.removeItem("reset-email");
-  //   }
-  // }, []);
-
   // Verify reset token on initial mount
   useEffect(() => {
-    const verify = async () => {
-      if (typeof window !== undefined) {
-        const email = sessionStorage.getItem("reset-email");
+    let isMounted = true;
 
-        if (!token) {
-          router.push("/login");
-          return;
-        }
-        console.log(token, "rokwn");
-        try {
-          const res = await verifyToken(token);
-          setData(res);
-        } catch (err: any) {
-          console.error("Token verification failed:", err.respon);
+    const verify = async () => {
+      // Allow Next.js client router a moment to parse params on mobile
+      if (!token) {
+        // Wait 300ms before declaring token missing to avoid race conditions on mobile
+        const timer = setTimeout(() => {
+          if (isMounted && !token) {
+            router.push("/login");
+          }
+        }, 300);
+        return () => clearTimeout(timer);
+      }
+
+      try {
+        const res = await verifyToken(token);
+        if (isMounted) setData(res);
+      } catch (err: any) {
+        console.error("Token verification failed:", err?.response || err);
+        if (isMounted) {
           setErrorMsg("Your reset link is invalid or has expired.");
           setTimeout(() => router.push("/login"), 5000);
-        } finally {
-          setIsLoading(false);
         }
+      } finally {
+        if (isMounted) setIsLoading(false);
       }
     };
 
-    if (token) {
-      verify();
-    }
+    verify();
+
+    return () => {
+      isMounted = false;
+    };
   }, [token, router]);
 
   // Submit Password Form
@@ -201,13 +199,18 @@ const ResetPasswordPage = () => {
       return;
     }
 
+    if (!token) {
+      setErrorMsg("Invalid or missing token.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      await resetPassword(password, token as string);
+      await resetPassword(password, token);
       setIsSubmitted(true);
     } catch (err: any) {
-      console.log(err.response, "res data");
+      console.error("Reset password error:", err?.response || err);
       setErrorMsg(
         err?.response?.data?.message ||
           err?.message ||
@@ -237,9 +240,10 @@ const ResetPasswordPage = () => {
       <div className="mx-auto w-full max-w-6xl">
         <div className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 lg:flex-row">
           {/* ───────── Left Artwork ───────── */}
-          <div className="relative hidden sm:block sm:h-96 lg:flex-1 lg:min-h-[720px]">
+          {/* Note: Changed 'hidden sm:block' to 'block' if you want it visible on mobile, or keep 'hidden lg:block' if intentionally hidden on small screens */}
+          <div className="relative hidden lg:block lg:flex-1 lg:min-h-[720px]">
             <Image
-              src="/images/login.png"
+              src="/images/login.png" // Verify casing in public/images/ exactly matches!
               alt="Security Illustration"
               fill
               className="object-cover"
