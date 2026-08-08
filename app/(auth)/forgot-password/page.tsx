@@ -1,10 +1,13 @@
 "use client";
 
 import CustomInput from "@/components/ui/FormItems/CustomInput";
+import { forgotPassword } from "@/lib/api/apis";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 /* ------------------------------------------------------------------
    Reusable wrapped input (same shell used elsewhere)
@@ -67,24 +70,53 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ id, placeholder }) => {
    Reset‑Password Page
 ------------------------------------------------------------------- */
 
-/* ------------------------------------------------------------------
-   Tailwind config (if you haven't already added it)
-   ------------------------------------------------
-   module.exports = {
-     theme: {
-       extend: {
-         colors: { primary: "#2A8CFF" }, // the blue background / buttons
-       },
-     },
-   };
-------------------------------------------------------------------- */
+const Page = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-const page = () => {
-  /* for demo only */
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateEmail = (email: string) => {
+    if (!email) return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: call your API here
-    alert("Password updated!");
+    if (submitting) return;
+
+    const isValid = validateEmail(email);
+    if (!isValid) {
+      toast.error("Not a valid email address");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const res = await forgotPassword(email);
+      console.log(res, "res");
+      if (res?.data?.status) {
+        sessionStorage.setItem("reset-email", email);
+        console.log(res, "res");
+
+        console.log(sessionStorage.getItem("reset-email"));
+
+        router.push(`/success`);
+      } else {
+        // Handle edge case where API returns 200 OK but success is false
+        toast.error(res?.data?.message || "Could not process request.");
+      }
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+      console.error(error.response);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -92,9 +124,9 @@ const page = () => {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 lg:flex-row">
           {/* ───────── Left Artwork ───────── */}
-          <div className="relative hidden sm:block sm:h-96 lg:flex-1 lg:min-h-[720px]">
+          <div className="relative hidden sm:block sm:h-96 lg:flex-1 lg:min-h-180">
             <Image
-              src="/images/login.png" /* replace with your asset */
+              src="/images/login.png"
               alt="Security Illustration"
               fill
               className="object-cover"
@@ -113,11 +145,6 @@ const page = () => {
           {/* ───────── Right Form ───────── */}
           <div className="flex flex-1 items-center justify-center px-6 py-14 sm:px-10 lg:px-16">
             <div className="w-full max-w-md text-center">
-              {/* success badge – show conditionally in real app */}
-              {/* <span className="inline-block rounded-full bg-emerald-600/90 px-6 py-1.5 text-xs font-medium text-white">
-                Email sent
-              </span> */}
-
               {/* logo */}
               <Image
                 src="/images/logo.png"
@@ -128,17 +155,25 @@ const page = () => {
               />
 
               <h1 className="mb-10 text-2xl font-semibold md:text-3xl">
-                Enter Your mail to reset password!
+                Enter Your email to reset password!
               </h1>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <CustomInput id="email" placeholder="Enter email" />
+                <CustomInput
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEmail(e.target.value)
+                  }
+                  id="email"
+                  placeholder="Enter email"
+                  disabled={submitting}
+                />
 
                 <button
                   type="submit"
-                  className="w-full rounded-md bg-blue py-3 font-medium text-white transition hover:brightness-110"
+                  disabled={submitting}
+                  className="w-full rounded-md bg-blue py-3 font-medium text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Reset
+                  {submitting ? "Submitting..." : "Reset"}
                 </button>
               </form>
             </div>
@@ -149,4 +184,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

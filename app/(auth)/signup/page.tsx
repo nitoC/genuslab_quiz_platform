@@ -2,20 +2,21 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import CustomInput from "@/components/ui/FormItems/CustomInput";
 import CustomDropdown from "@/components/ui/FormItems/CustomSelect";
 import CustomDatePicker from "@/components/ui/FormItems/CustomDatePicker";
 import { toast } from "react-toastify";
-import { registerUser } from "@/lib/api/apis";
+import { getOtp, registerUser } from "@/lib/api/apis";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function SignUpPage() {
   const query = useSearchParams();
   const refCode = query.get("ref");
   const Router = useRouter();
+  const timeOutRef = useRef<NodeJS.Timeout | null>(null);
   const [agree, setAgree] = useState(false);
   const [gender, setGender] = useState("");
   const [marketing, setMarketing] = useState("");
@@ -175,7 +176,9 @@ function SignUpPage() {
       if (response.data.status === "success") {
         localStorage.setItem("user", JSON.stringify(response.data.payload));
         toast.success("Account created successfully");
-        Router.push("/dashboard");
+        // await getO(payload.email, "email");
+
+        Router.push("/verify");
       } else {
         toast.error((response as any).message || "Registration failed");
       }

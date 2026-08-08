@@ -1,5 +1,6 @@
 import { constants } from "@/app/constants";
-import { getRankData, getUserProfile } from "@/lib/api/apis";
+import { IUser } from "@/interfaces";
+import { getOtp, getRankData, getUserProfile } from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -40,7 +41,7 @@ const useUser = () => {
     enabled: !!storedUser?.userId,
     retry: 1,
     staleTime: 1000 * 60 * 5,
-    queryFn: async () => {
+    queryFn: async (): Promise<{ user: IUser; rank: any }> => {
       const [userRes, rankRes] = await Promise.all([
         getUserProfile(storedUser.userId),
         getRankData(),
@@ -51,7 +52,23 @@ const useUser = () => {
       const userRank = rankRes.data.payload.find(
         (rank: any) => rank.id === user.details.rankId,
       );
+      if (
+        user &&
+        !user.verified &&
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/verify"
+      ) {
+        router.push("/verify");
+      }
 
+      if (
+        user &&
+        user.verified &&
+        typeof window !== "undefined" &&
+        window.location.pathname === "/verify"
+      ) {
+        router.push("/dashboard");
+      }
       return {
         user,
         rank: userRank,

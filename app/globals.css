@@ -515,6 +515,11 @@ a {
   background: transparent;
 }
 
+.otp input:focus-within {
+  outline: 2px solid rgba(0, 123, 255, 0.384);
+  /* 2px solid rgb(0, 123, 255, 0.3); */
+  /* background: red; */
+}
 @media (max-width: 700px) {
   .hero {
     background-image:

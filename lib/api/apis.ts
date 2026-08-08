@@ -75,6 +75,37 @@ export const loginUser = async (payload: any) => {
   return res;
 };
 
+export const getOtp = async (email: string) => {
+  const res = await axiosUser.post("otp/get-otp", { email });
+  return res;
+};
+export const verifyEmail = async (email: string, otp: string) => {
+  const res = await axiosUser.post("otp/verify", { email, otp });
+  return res;
+};
+export const verifyToken = async (otp: string) => {
+  const res = await axiosUser.post("otp/verify-token", { token: otp });
+  return res;
+};
+
+export const forgotPassword = async (email: string) => {
+  const res = await axiosUser.post("otp/forgot-password", { email });
+  return res;
+};
+
+export const logout = async () => {
+  const res = await axiosUser.delete("auth/logout");
+  return res;
+};
+
+export const resetPassword = async (password: string, token: string) => {
+  const res = await axiosUser.patch("auth/reset-password", {
+    password,
+    token,
+  });
+  return res;
+};
+
 export const getUserProfile = async (id: string) => {
   console.log(id, "get user profile id");
   const res = await axiosUser.get(`user/profile/${id}`);

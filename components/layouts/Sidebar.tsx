@@ -11,6 +11,7 @@ import useSidebar from "@/store/useSidebar";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { logout } from "@/lib/api/apis";
 
 const navLinks = [
   {
@@ -66,7 +67,9 @@ const Sidebar = ({ type }: { type?: string }) => {
       setLoading(true);
 
       // Axios request to your logout server endpoint
-      await axios.post("/api/auth/logout");
+      await logout();
+      toast.success("logout successfull");
+      localStorage.clear();
     } catch (error) {
       console.error(
         "Server-side logout failed, proceeding with client cleanup:",
@@ -74,7 +77,7 @@ const Sidebar = ({ type }: { type?: string }) => {
       );
     } finally {
       // Clear user data from local storage
-      localStorage.removeItem("user");
+      // localStorage.removeItem("user");
 
       // Cleanly handle mobile state transitions if applicable
       if (type === "mobile") {

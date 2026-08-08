@@ -18,10 +18,8 @@ import AdminQuestionCreate from "@/components/ui/AdminQuestionCreate";
 import clsx from "clsx";
 import { IQuestion } from "@/interfaces";
 import { notFound, useParams, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchQuizDetails } from "@/lib/api/apis";
+
 import toast, { Toaster } from "react-hot-toast";
-import { a } from "motion/react-client";
 
 export default function CreateQuiz() {
   const { type } = useParams();

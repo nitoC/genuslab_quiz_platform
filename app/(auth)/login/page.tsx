@@ -215,7 +215,7 @@ const LoginPage = () => {
                     <span>Remember for 30 days</span>
                   </label>
                   <Link
-                    href="/reset-password"
+                    href="/forgot-password"
                     className="font-medium text-blue"
                   >
                     Forgot password?

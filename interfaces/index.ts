@@ -34,9 +34,29 @@ export interface IQuiz {
 }
 
 export interface IUserDetails {
+  id?: string;
   avatar?: string;
   userId?: string;
   rewardBalance?: number;
   rankId?: string;
   xp?: number;
+  _count?: any;
+  rankName?: any;
+}
+
+export interface IUser {
+  id?: string;
+  email: string;
+  name: string;
+  phone?: string;
+  createdAt: string;
+  status?: string;
+  role?: string;
+  referralCode?: string;
+  verified: boolean;
+  referrals: any[];
+  details: IUserDetails;
+  subscriptions?: any[];
+  transactions?: any[];
+  notifications: any[];
 }

@@ -207,7 +207,7 @@ const Page = () => {
 
   const userName = nameResolver(user.name);
   const hasAttempts = user?.details?._count?.quizHistory >= 5;
-  const hasSharedRef = user?.referrals >= 1;
+  const hasSharedRef = user?.referrals.length >= 1;
 
   let taskCount = 0;
   if (hasAttempts) taskCount += 1;
