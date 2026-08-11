@@ -84,12 +84,12 @@ export const verifyEmail = async (email: string, otp: string) => {
   return res;
 };
 export const verifyToken = async (otp: string) => {
-  const res = await axiosUser.post("otp/verify-token", { token: otp });
+  const res = await axiosSystem.post("otp/verify-token", { token: otp });
   return res;
 };
 
 export const forgotPassword = async (email: string) => {
-  const res = await axiosUser.post("otp/forgot-password", { email });
+  const res = await axiosSystem.post("otp/forgot-password", { email });
   return res;
 };
 

@@ -7,6 +7,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FiCheck, FiEye, FiEyeOff, FiX } from "react-icons/fi";
 import { CgSpinner } from "react-icons/cg";
+import { logToServerTerminal } from "@/lib/utils/logToServer";
 
 /* ------------------------------------------------------------------
    Reusable wrapped input
@@ -207,7 +208,7 @@ const ResetPasswordPage = () => {
         setIsLoading(true);
         setErrorMsg("");
 
-        console.log("Verifying reset token:", token);
+        // logToServerTerminal("Verifying reset token:", token);
 
         const res = await verifyToken(token);
 
@@ -215,11 +216,14 @@ const ResetPasswordPage = () => {
           setData(res);
         }
       } catch (err: any) {
-        console.error(
+        logToServerTerminal(
           "Token verification failed:",
           err?.response?.data || err?.response || err,
         );
 
+        // logToServerTerminal(err?.response?.data.message);
+        // logToServerTerminal(err);
+        // alert(err?.response?.data.toString());
         if (!cancelled) {
           setErrorMsg("Your reset link is invalid or has expired.");
 
@@ -299,10 +303,10 @@ const ResetPasswordPage = () => {
       <div className="mx-auto w-full max-w-6xl">
         <div className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 lg:flex-row">
           {/* ───────── Left Artwork ───────── */}
-          {/* Note: Changed 'hidden sm:block' to 'block' if you want it visible on mobile, or keep 'hidden lg:block' if intentionally hidden on small screens */}
-          <div className="relative hidden lg:block lg:flex-1 lg:min-h-[720px]">
+
+          <div className="relative hidden lg:block lg:flex-1 lg:min-h-180">
             <Image
-              src="/images/login.png" // Verify casing in public/images/ exactly matches!
+              src="/images/Login.png"
               alt="Security Illustration"
               fill
               className="object-cover"
@@ -431,9 +435,9 @@ const ResetPasswordPage = () => {
 const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
   <div className="flex items-center space-x-2">
     {met ? (
-      <FiCheck className="text-emerald-600 flex-shrink-0" />
+      <FiCheck className="text-emerald-600 shrink-0" />
     ) : (
-      <FiX className="text-gray-400 flex-shrink-0" />
+      <FiX className="text-gray-400 shrink-0" />
     )}
     <span className={met ? "text-emerald-700 font-medium" : "text-gray-500"}>
       {text}

@@ -117,9 +117,9 @@ const Page = () => {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 lg:flex-row">
           {/* ───────── Left Artwork (Fixed Mobile Visibility & Height) ───────── */}
-          <div className="relative block h-64 sm:h-96 lg:flex-1 lg:min-h-180">
+          <div className="relative hidden lg:block lg:flex-1 lg:min-h-180">
             <Image
-              src="/images/login.png" // Verify casing in /public/images/ exactly matches!
+              src="/images/Login.png"
               alt="Security Illustration"
               fill
               className="object-cover"
