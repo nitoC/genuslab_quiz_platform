@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 const BASE_SERVER = "http://localhost:8000";
+const BASE_SERVER_PRODUCTION = "https://genuslab-quiz-backend.onrender.com";
 
 export const UseNotificationSocket = (userId: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -13,7 +14,7 @@ export const UseNotificationSocket = (userId: string) => {
     if (!userId) return;
 
     // 2. Initialize the socket connection inside useEffect
-    const socketInstance = io(`${BASE_SERVER}/notification-events`, {
+    const socketInstance = io(`${BASE_SERVER_PRODUCTION}/notification-events`, {
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 5,
