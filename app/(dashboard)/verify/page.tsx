@@ -13,6 +13,8 @@ import GlassCard from "@/components/ui/cards/GlassCard";
 import useUser from "@/hooks/useUser";
 import { getOtp, verifyEmail } from "@/lib/api/apis";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { constants } from "@/app/constants";
 
 const INITIAL_TIME_IN_SECONDS = 300; // 5 minutes
 
@@ -27,6 +29,7 @@ function OtpVerificationContent() {
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME_IN_SECONDS);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const queryClient = useQueryClient();
   const [statusMessage, setStatusMessage] = useState<{
     type: "error" | "success";
     text: string;
@@ -102,8 +105,12 @@ function OtpVerificationContent() {
           text: "Email verified successfully! Redirecting...",
         });
 
+        await queryClient.invalidateQueries({
+          queryKey: [constants.USER, data.user.id],
+        });
+
         timeOutRef.current = setTimeout(() => {
-          router.push("/dashboard");
+          router.replace("/dashboard");
         }, 1000);
       }
     } catch (err: any) {

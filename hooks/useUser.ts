@@ -35,7 +35,7 @@ const useUser = () => {
   }, [isMounted, storedUser, router]);
 
   // 3. React Query: Fetches and caches profile data across pages
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: [constants.USER, storedUser?.userId],
     enabled: !!storedUser?.userId,
     retry: 1,
@@ -75,7 +75,7 @@ const useUser = () => {
     }
   }, [pathname, data?.user, router]);
 
-  return { data, isLoading, isError, error, storedUser };
+  return { data, isLoading, isError, error, storedUser, refetch };
 };
 
 export default useUser;

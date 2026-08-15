@@ -152,6 +152,16 @@ const Page = () => {
    * USER QUERY
    * ---------------------------- */
   const { data, isLoading, isError, error, storedUser } = useUser();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (data?.user && !data.user.verified) {
+      router.replace("/verify");
+    }
+  }, [data?.user?.verified, router]);
   /* -----------------------------
    * LOADING
    * ---------------------------- */
@@ -213,9 +223,9 @@ const Page = () => {
   if (hasAttempts) taskCount += 1;
   if (hasSharedRef) taskCount += 1;
 
-  if (!data.user.verified && typeof window !== undefined) {
-    router.push("/verify");
-  }
+  // if (!data.user.verified && typeof window !== undefined) {
+  //   router.push("/verify");
+  // }
 
   return (
     <Layout>

@@ -54,9 +54,28 @@ import { QuizObject } from "@/app/genuslab/(dashboard)/quizzes/create-quiz/json/
 
 //USER ENDPOINTS
 export const registerUser = async (payload: any) => {
-  console.log(payload, "created user payload");
   const res = await axiosSystem.post("auth/register", payload);
   console.log(res, "created user payload");
+  return res;
+};
+
+export const getNotifications = async (query?: "read" | "unread") => {
+  const res = await axiosUser.get(
+    `notification?${query ? `type=${query}` : ""}`,
+  );
+  console.log(res, "notifications response");
+  return res;
+};
+
+export const markNotificationAsRead = async (id: string) => {
+  const res = await axiosUser.patch(`notification/mark-as-read/${id}`);
+  console.log(res, "mark notification as read response");
+  return res;
+};
+
+export const markAllNotificationsAsRead = async () => {
+  const res = await axiosUser.patch(`notification/mark-all-as-read`);
+  console.log(res, "mark all notifications as read response");
   return res;
 };
 // export const tokenUser = async (payload: any) => {
@@ -69,9 +88,8 @@ export const registerUser = async (payload: any) => {
 //   return res;
 // };
 export const loginUser = async (payload: any) => {
-  console.log(payload, "login user payload");
   const res = await axiosSystem.post("auth/login", payload);
-  console.log(res, "login user payload");
+
   return res;
 };
 
@@ -107,7 +125,6 @@ export const resetPassword = async (password: string, token: string) => {
 };
 
 export const getUserProfile = async (id: string) => {
-  console.log(id, "get user profile id");
   const res = await axiosUser.get(`user/profile/${id}`);
   return res;
 };
@@ -122,7 +139,7 @@ export const getScoreHistory = async (email: string) => {
   const res = await axiosUser.post("scorehistory/gl_api/v2/history", {
     email,
   });
-  console.log(res, "score history");
+
   return res;
 };
 export const getScoreTotal = async (email: string) => {
@@ -130,7 +147,7 @@ export const getScoreTotal = async (email: string) => {
   const res = await axiosUser.post("scorehistory/gl_api/v2/total", {
     email,
   });
-  console.log(res, "score history");
+
   return res;
 };
 export const getQuizNumber = async (email: string) => {
@@ -138,26 +155,25 @@ export const getQuizNumber = async (email: string) => {
   const res = await axiosUser.post("scorehistory/gl_api/v2/histo_num", {
     email,
   });
-  console.log(res, "number of quizzes");
+
   return res;
 };
 
 export const getRankData = async () => {
   const res = await axiosUser.get("rank/all");
-  console.log(res, "rank data");
+
   return res;
 };
 
 export const getQuizSession = async (id: string, userDetailsId: string) => {
   const res = await axiosUser.get(`quiz/session/${id}?did=${userDetailsId}`);
-  console.log(res, "session created");
+
   return res;
 };
 
 export const getDemoResult = async (payload: any) => {
   const res = await axiosUser.post("demo/result", payload);
 
-  console.log(res, "submit data");
   return res;
 };
 
@@ -176,7 +192,7 @@ export const getDemoQuestions = async () => {
 
 export const submitLiveQuestion = async (data: any) => {
   const res = await axiosUser.post("question/submit", data);
-  console.log(res, "submit data");
+
   return res;
 };
 export const submitAttempt = async (detailsId: string, data: any) => {
@@ -185,7 +201,7 @@ export const submitAttempt = async (detailsId: string, data: any) => {
     `question/attempt/submit/${detailsId}`,
     data,
   );
-  console.log(res, "submit attempt data");
+
   return res;
 };
 

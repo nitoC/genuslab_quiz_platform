@@ -1,27 +1,31 @@
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
-// const config = {
-//   "user-agent": "Custom Ws Client",
-// };
+// // const config = {
+// //   "user-agent": "Custom Ws Client",
+// // };
 
-const domain = "https://gslb.site";
+// const domain = "http://localhost:8000/notification-events";
 
-export const socket = io(domain, {
-  transports: ["websocket"],
-  withCredentials: true,
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-  auth: {
-    userAgent: "Custom Ws Client",
-  },
-});
+// export const socket = io(domain, {
+//   transports: ["websocket"],
+//   // withCredentials: true,
+//   reconnection: true,
+//   reconnectionAttempts: 5,
+//   reconnectionDelay: 1000,
+//   auth: {
+//     userAgent: "Custom Ws Client",
+//   },
+// });
 
-socket.on("disconnect", (reason) => {
-  console.warn("⚠️ Disconnected:", reason);
+// socket.on("connect", () => {
+//   console.log(`Connected with session ID: ${socket.id}`); // Unique 20-character ID
+// });
 
-  // server forced disconnect - must reconnect manually
-  socket.connect();
+// socket.on("disconnect", (reason) => {
+//   console.warn("⚠️ Disconnected:", reason);
 
-  console.log("Disconnected from server. Handle reconnect or cleanup here.");
-});
+//   // server forced disconnect - must reconnect manually
+//   socket.connect();
+
+//   console.log("Disconnected from server. Handle reconnect or cleanup here.");
+// });

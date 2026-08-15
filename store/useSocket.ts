@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
 export const useSocket = create((set) => ({
-  socketId: "",
-  updateSocketId: (id: string) =>
+  socket: null,
+  updateSocket: (socket: any) =>
     set(() => ({
-      socketId: id,
+      socket,
     })),
 }));
