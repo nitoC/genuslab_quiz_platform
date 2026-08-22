@@ -371,6 +371,17 @@ export const getWeeklyLeaderboardHistory = async (limit = 10) => {
 export const getReferralLeaderboard = async () => {
   return await axiosUser.get(`leaderboard/referral`);
 };
+/**
+ * Episode leaderboard
+ */
+export const getEpisodeLeaderboard = async (
+  dateStr: string,
+  episode: string,
+) => {
+  return await axiosUser.get(
+    `leaderboard/episode?dateStr=${dateStr}&episode=${episode}`,
+  );
+};
 
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
@@ -435,6 +446,10 @@ export const sendSupportMessage = async (messages: any[]) => {
 };
 
 //SYSTEM ENDPOINTS
+export const getQuizDay = async () => {
+  const res = await axiosAdmin.get("system/activity-details");
+  return res;
+};
 
 export const getSlotDetails = async () => {
   const res = await axiosSystem.get(`system/quiz-slots`);

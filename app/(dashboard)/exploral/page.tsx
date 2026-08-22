@@ -46,6 +46,7 @@ import { useRouter } from "next/navigation";
 import sanityClient from "@/lib/utils/Sanity";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { FaLinkedin, FaTelegram } from "react-icons/fa";
 
 // Types
 interface StudioWinner {
@@ -531,6 +532,16 @@ const ExploralPage = () => {
                   icon: <FaTiktok />,
                   label: "TikTok",
                   ref: "https://www.tiktok.com/@genus_lab",
+                },
+                {
+                  icon: <FaTelegram />,
+                  label: "Telegram",
+                  ref: "https://t.me/+J_fNo61NeJs3Mjc1",
+                },
+                {
+                  icon: <FaLinkedin />,
+                  label: "Linkedin",
+                  ref: "https://www.linkedin.com/company/134604192",
                 },
               ].map((social, i) => (
                 <Link

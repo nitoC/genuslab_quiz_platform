@@ -42,7 +42,7 @@ export interface QuizObject {
 export default function BulkQuizCreator() {
   const { data, isLoading, isError, error } = useRank();
 
-  // 🟢 FIX 1: Safely handle activeRank state initialization when data is undefined
+  //  Safely handle activeRank state initialization when data is undefined
   const [activeRank, setActiveRank] = useState<Rank | null>(null);
 
   // Synchronize activeRank when rank data becomes available
@@ -72,6 +72,9 @@ export default function BulkQuizCreator() {
     titles: [] as string[],
   });
 
+  // const {data, isLoading, isError, error} = useQuery({
+
+  // })
   // Parse and validate JSON dynamically when input changes
   useEffect(() => {
     if (!jsonText.trim()) {
@@ -116,7 +119,7 @@ export default function BulkQuizCreator() {
     }
   }, [jsonText]);
 
-  // 🟢 FIX 2: Correct timer cleanup effect dependency array
+  //  Correct timer cleanup effect dependency array
   useEffect(() => {
     const timers = timerRef.current;
     return () => timers.forEach((timer) => clearTimeout(timer));
@@ -141,7 +144,7 @@ export default function BulkQuizCreator() {
 
       const finalizedPayload = QParsed.map((quiz) => ({
         ...quiz,
-        ...(activeRank?.id && { rank: activeRank.id }),
+        // ...(activeRank?.id && { rank: activeRank.id }),
       }));
 
       const res = await createQuizBatch(finalizedPayload);

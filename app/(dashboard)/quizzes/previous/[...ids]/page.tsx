@@ -9,6 +9,7 @@ import {
   MdArrowBack,
   MdCancel,
   MdCheckCircle,
+  MdEmojiEvents,
   MdInfo,
   MdReplay,
 } from "react-icons/md";
@@ -16,6 +17,8 @@ import Header from "@/components/layouts/Header";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getAttemptsAnswers } from "@/lib/api/apis";
+import GlassCard from "@/components/ui/cards/GlassCard";
+import { format } from "date-fns";
 
 // Interfaces for structured type-safety matching review properties
 interface OptionReview {
@@ -85,13 +88,13 @@ const QuizReviewPage = () => {
     },
   });
   if (!data || isLoading) return <p> loading.. </p>;
-  const { quizAnswers, userDetailsId } = data;
+  const { quizAnswers, userDetailsId, quiz } = data;
 
   return (
     <>
       <Layout>
         <Header title="Quiz questions results" backBtn={false} />
-        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-emerald-500/30 text-white">
+        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-emerald-500/30 text-white relative">
           <div className="w-full max-w-5xl bg-[#090f1f] rounded-[24px] sm:rounded-[40px] border border-white/5 p-4 sm:p-6 md:p-12 relative overflow-hidden shadow-2xl space-y-8">
             {/* Header Action Row */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/5 pb-6">
@@ -151,7 +154,7 @@ const QuizReviewPage = () => {
 
                     {/* Question Core Text */}
                     <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-100 leading-snug">
-                      {item.questionText}
+                      {item?.question?.questionText}
                     </h2>
 
                     {/* Contextualized Options Mapping */}
@@ -245,6 +248,18 @@ const QuizReviewPage = () => {
                 ))}
             </div>
           </div>
+
+          {/* Floating Glass Button for Winners */}
+
+          <Link
+            href={`/quizzes/previous/leaderboard?date=${format(quiz?.activeDate, "dd-MM-yyyy")}&episode=${quiz?.episode}`}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3 rounded-full bg-blue-900/60 text-white-300 font-bold text-sm hover:bg-amber-500/20 hover:text-white-200 hover:scale-105 active:scale-95 transition-all duration-300 group"
+          >
+            <div className="p-1.5 rounded-full bg-white-500/20 border border-blue-500/30 text-white group-hover:bg-blue-500 group-hover:text-slate-900 transition-colors">
+              <MdEmojiEvents size={20} />
+            </div>
+            <span className="tracking-wide">Winners</span>
+          </Link>
         </div>
       </Layout>
     </>

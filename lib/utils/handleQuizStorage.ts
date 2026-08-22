@@ -4,7 +4,7 @@ const handleQuizStorage = (attemptId?: string, data?: any, set?: boolean) => {
     return;
   }
   const val = localStorage.getItem("quiz-attempt");
-  return JSON.parse(val ?? "");
+  return JSON.parse(val ?? "null");
 };
 
 export default handleQuizStorage;
