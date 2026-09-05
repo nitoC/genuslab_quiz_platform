@@ -243,16 +243,16 @@ const AccountTabContent = ({ user }: any) => {
         <div className="flex flex-col gap-3">
           <LinkedAccountRow
             icon={<FaGoogle className="text-orange-500" size={14} />}
-            title="Google Account"
+            title="Email Account"
             subtitle={personalInfo.email}
             status="Linked"
           />
-          <LinkedAccountRow
+          {/*<LinkedAccountRow
             icon={<FaFacebook className="text-blue-500" size={14} />}
             title="Facebook"
             subtitle="Not connected"
             status="Connect"
-          />
+          />*/}
           <LinkedAccountRow
             icon={<FaUniversity className="text-grey/60" size={14} />}
             title="GTBank PLC"
