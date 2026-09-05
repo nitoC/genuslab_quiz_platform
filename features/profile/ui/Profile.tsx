@@ -7,9 +7,11 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import {
   MdAccountBalanceWallet,
   MdEdit,
+  MdErrorOutline,
   MdGroups,
   MdHistory,
   MdPerson,
+  MdRefresh,
   MdStars,
 } from "react-icons/md";
 import ShareCard from "../cards/Share";
@@ -38,7 +40,7 @@ interface RewardItem {
 
 const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
   const [share, setShare] = useState(false);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["total-rewards", user?.details?.id],
     queryFn: async () => {
       const res = await getTotalRewards(user?.details?.id);
@@ -52,33 +54,39 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
     setShare(val);
   };
 
-  const rewardsList: RewardItem[] = data?.payload.lastFive ?? [];
-
-  // Derived earnings calculations directly from real payload data
-  // const quizEarnings = rewardsList
-  //   .filter((r) => r.source === "QUIZ")
-  //   .reduce((sum, r) => sum + parseFloat(r.value || "0"), 0);
-
-  // const referralEarnings = rewardsList
-  //   .filter((r) => r.source === "REFERRAL")
-  //   .reduce((sum, r) => sum + parseFloat(r.value || "0"), 0);
-
-  // const grandTotal = totalRewards ?? quizEarnings + referralEarnings;
+  const rewardsList: RewardItem[] = data?.payload?.lastFive ?? [];
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-(--primary) text-lg">Loading...</p>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
+
   if (isError) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500 text-lg">Error fetching data.</p>
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <GlassCard className="p-8 max-w-md w-full border-red-500/20 bg-red-500/5 backdrop-blur-xl text-center flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+            <MdErrorOutline size={30} />
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-lg mb-1">
+              Unable to Load Rewards
+            </h3>
+            <p className="text-grey text-xs leading-relaxed">
+              We encountered an issue fetching your profile rewards data. Please
+              check your connection and try again.
+            </p>
+          </div>
+          <button
+            onClick={() => refetch()}
+            className="mt-2 flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/10 text-xs px-5 py-2.5 rounded-full transition-all duration-200"
+          >
+            <MdRefresh size={16} /> Retry
+          </button>
+        </GlassCard>
       </div>
     );
   }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-10">
       {/* RANK STAGES */}
@@ -142,20 +150,12 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                     </p>
                     <h2 className="text-3xl md:text-4xl font-bold text-(--primary)">
                       ₦
-                      {data &&
-                        data?.payload &&
-                        data?.payload.total.toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                        })}
+                      {data?.payload?.total?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}
                     </h2>
-                    {/* <p className="text-green-400 text-[10px] md:text-xs mt-2 font-bold flex gap-1 items-center">
-                      +15.4%{" "}
-                      <span className="text-grey font-normal">vs last</span>
-                    </p> */}
                   </div>
                 </div>
-
-                {/* <CustomCardChart data={rewardsList} /> */}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
@@ -164,11 +164,9 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
                       ₦
-                      {data &&
-                        data?.payload &&
-                        data?.payload?.quiz.toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                        })}
+                      {data?.payload?.quiz?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}
                     </p>
                   </div>
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
@@ -177,11 +175,9 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
                       ₦
-                      {data &&
-                        data?.payload &&
-                        data?.payload?.referral.toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                        })}
+                      {data?.payload?.referral?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}
                     </p>
                     <p className="text-[10px] text-blue mt-1">
                       ₦1000 per invite
@@ -198,7 +194,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                     </p>
                   </div>
 
-                  <div className=" rounded-xl overflow-hidden">
+                  <div className="rounded-xl overflow-hidden">
                     {rewardsList.slice(0, 5).map((reward) => {
                       const isReferral = reward.source === "REFERRAL";
                       const amount = parseFloat(reward.value || "0");
@@ -306,6 +302,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
           </GlassCard>
         </div>
       </div>
+
       <section
         className={clsx(
           share ? "fixed inset-0 z-200 overflow-hidden" : "hidden z-3",
@@ -338,12 +335,71 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
   );
 };
 
+// Skeleton Loader Component matching layout structure
+const ProfileSkeleton = () => (
+  <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-10 animate-pulse">
+    {/* Rank Stages Skeleton */}
+    <div>
+      <div className="h-5 w-28 bg-white/10 rounded mb-4" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="p-4 rounded-xl bg-white/5 border border-white/5 h-20 flex items-center gap-4"
+          >
+            <div className="w-10 h-10 rounded-lg bg-white/10 shrink-0" />
+            <div className="flex flex-col gap-2 w-full">
+              <div className="h-3 w-3/4 bg-white/10 rounded" />
+              <div className="h-2 w-1/2 bg-white/5 rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Main Content Grid Skeleton */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="lg:col-span-8 flex flex-col gap-8">
+        <GlassCard className="p-8 flex flex-col gap-6">
+          <div className="h-3 w-20 bg-white/10 rounded" />
+          <div className="h-10 w-48 bg-white/10 rounded" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div className="p-4 rounded-xl bg-white/5 border border-white/5 h-20 flex flex-col justify-between">
+              <div className="h-3 w-24 bg-white/10 rounded" />
+              <div className="h-6 w-32 bg-white/10 rounded" />
+            </div>
+            <div className="p-4 rounded-xl bg-white/5 border border-white/5 h-20 flex flex-col justify-between">
+              <div className="h-3 w-24 bg-white/10 rounded" />
+              <div className="h-6 w-32 bg-white/10 rounded" />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 mt-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-12 w-full bg-white/5 rounded-xl" />
+            ))}
+          </div>
+        </GlassCard>
+      </div>
+
+      <div className="lg:col-span-4 flex flex-col gap-8">
+        <GlassCard className="p-6 h-48">
+          <div className="h-full w-full bg-white/5 rounded-xl" />
+        </GlassCard>
+        <GlassCard className="p-6 flex flex-col gap-4">
+          <div className="h-4 w-28 bg-white/10 rounded" />
+          <div className="h-10 w-full bg-white/5 rounded-xl" />
+          <div className="h-10 w-full bg-white/5 rounded-xl" />
+        </GlassCard>
+      </div>
+    </div>
+  </div>
+);
+
 const StageCard = ({
   title,
   subtitle,
   icon,
   active,
-  completed,
 }: {
   title: string;
   subtitle: string;
@@ -352,16 +408,18 @@ const StageCard = ({
   completed: boolean;
 }) => (
   <div
-    className={`p-4 rounded-xl border shrink-0 flex gap-4 items-center transition-all ${active ? "bg-white/10 border-blue" : "bg-white/5 border-white/5"}`}
+    className={`p-4 rounded-xl border shrink-0 flex gap-4 items-center transition-all ${
+      active ? "bg-white/10 border-blue" : "bg-white/5 border-white/5"
+    }`}
   >
-    <div
-      className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl bg-white/5`}
-    >
+    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl bg-white/5">
       {icon}
     </div>
     <div>
       <h4
-        className={`text-xs font-bold ${active ? "text-(--primary)" : "text-grey"}`}
+        className={`text-xs font-bold ${
+          active ? "text-(--primary)" : "text-grey"
+        }`}
       >
         {title}
       </h4>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import PrimaryButton from "@/components/ui/buttons/Primary";
 import toast from "react-hot-toast";
@@ -19,6 +19,7 @@ import {
   FaGoogle,
   FaFacebook,
   FaUniversity,
+  FaEnvelope,
 } from "react-icons/fa";
 import { HiOutlineTv } from "react-icons/hi2";
 import { RiShieldUserLine } from "react-icons/ri";
@@ -35,7 +36,15 @@ const AccountTabContent = ({ user }: any) => {
     phone: user?.phone,
   });
 
+  console.log(user, "user");
   // const [isTwoFactorActive, setIsTwoFactorActive] = useState(true);
+  const accounts = useMemo(() => {
+    return {
+      bank: user?.accounts?.find(
+        (a: { type: string }) => a.type.toLowerCase() === "bank",
+      ),
+    };
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -242,7 +251,7 @@ const AccountTabContent = ({ user }: any) => {
 
         <div className="flex flex-col gap-3">
           <LinkedAccountRow
-            icon={<FaGoogle className="text-orange-500" size={14} />}
+            icon={<FaEnvelope className="text-grey-500" size={14} />}
             title="Email Account"
             subtitle={personalInfo.email}
             status="Linked"
@@ -253,13 +262,18 @@ const AccountTabContent = ({ user }: any) => {
             subtitle="Not connected"
             status="Connect"
           />*/}
-          <LinkedAccountRow
-            icon={<FaUniversity className="text-grey/60" size={14} />}
-            title="GTBank PLC"
-            subtitle="Payout •••• 4291"
-            status="Linked"
-            hasUpdateAction={true}
-          />
+          {accounts.bank && (
+            <LinkedAccountRow
+              icon={<FaUniversity className="text-grey/60" size={14} />}
+              title={accounts.bank.provider}
+              subtitle={`Payout ••••••${accounts.bank.providerAccountId.slice(6)}`}
+              status="Linked"
+              url={"/accounts"}
+              hasUpdateAction={true}
+            />
+          )}
+
+          {/* "Payout •••• 4291" */}
         </div>
       </GlassCard>
     </div>
@@ -290,12 +304,14 @@ const LinkedAccountRow = ({
   subtitle,
   status,
   hasUpdateAction = false,
+  url,
 }: {
   icon: React.ReactNode;
   title: string;
   subtitle: string;
   status: "Linked" | "Connect";
   hasUpdateAction?: boolean;
+  url?: string;
 }) => (
   <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4">
     <div className="flex items-center gap-3">
@@ -309,10 +325,13 @@ const LinkedAccountRow = ({
     </div>
 
     <div className="flex items-center gap-3">
-      {hasUpdateAction && (
-        <button className="text-blue hover:underline text-[11px] font-bold tracking-tight">
+      {hasUpdateAction && url && (
+        <Link
+          href={url}
+          className="text-blue hover:underline text-[11px] font-bold tracking-tight"
+        >
           Update
-        </button>
+        </Link>
       )}
       <span
         className={`px-3 py-1 rounded-lg text-[10px] font-bold tracking-wide transition-all select-none ${
