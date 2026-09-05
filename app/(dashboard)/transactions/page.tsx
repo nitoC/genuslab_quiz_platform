@@ -14,6 +14,8 @@ import {
   MdCheck,
 } from "react-icons/md";
 import { cn } from "@/lib/utils/cn";
+import { useQuery } from "@tanstack/react-query";
+import { getUserTransactions, getTotalRewards } from "@/lib/api/apis"; // adjust import path to your api file
 
 export type TransactionTypeFilter = "all" | "referral" | "rewards" | "plan";
 
@@ -111,66 +113,6 @@ const TransactionItem = ({
   );
 };
 
-// Initial Mock Data
-const INITIAL_TRANSACTIONS: Transaction[] = [
-  {
-    id: "1",
-    title: "Premium Plan Upgrade",
-    description: "ID: #GEN-49023",
-    date: "2025-10-26",
-    displayDate: "Oct 26, 2025",
-    time: "10:30 AM",
-    amount: "45,000",
-    type: "debit",
-    filterType: "plan",
-    category: "Subscription",
-    status: "Completed",
-    icon: <FaCrown className="text-blue-400 text-lg" />,
-  },
-  {
-    id: "2",
-    title: "Episode 7 Reward",
-    description: "Challenge Completion Bonus",
-    date: "2025-10-24",
-    displayDate: "Oct 24, 2025",
-    time: "04:15 PM",
-    amount: "12,500",
-    type: "credit",
-    filterType: "rewards",
-    category: "Rewards",
-    status: "Completed",
-    icon: <FaTrophy className="text-emerald-400 text-lg" />,
-  },
-  {
-    id: "3",
-    title: "Reward Payout",
-    description: "Withdrawal to Bank Account",
-    date: "2025-10-22",
-    displayDate: "Oct 22, 2025",
-    time: "08:00 AM",
-    amount: "150,000",
-    type: "debit",
-    filterType: "rewards",
-    category: "Claimed Rewards",
-    status: "Processing",
-    icon: <FaUniversity className="text-amber-400 text-lg" />,
-  },
-  {
-    id: "4",
-    title: "Referral Bonus",
-    description: "5 New Users Joined",
-    date: "2025-10-18",
-    displayDate: "Oct 18, 2025",
-    time: "02:30 PM",
-    amount: "5,000",
-    type: "credit",
-    filterType: "referral",
-    category: "Rewards",
-    status: "Completed",
-    icon: <MdCardGiftcard className="text-emerald-400 text-xl" />,
-  },
-];
-
 const CATEGORY_TABS = [
   "All",
   "Subscription",
@@ -185,9 +127,37 @@ const TYPE_OPTIONS: { label: string; value: TransactionTypeFilter }[] = [
   { label: "Plan", value: "plan" },
 ];
 
+// Helper functions for mapping backend transaction values
+const mapCategory = (
+  type: string,
+): "Subscription" | "Rewards" | "Claimed Rewards" => {
+  const lower = type?.toLowerCase() || "";
+  if (lower === "plan" || lower === "subscription") return "Subscription";
+  if (lower === "referral") return "Rewards";
+  if (lower === "rewards" || lower === "reward") return "Rewards";
+  if (lower === "claimed" || lower === "withdrawal") return "Claimed Rewards";
+  return "Subscription";
+};
+
+const mapStatus = (status: string): "Completed" | "Processing" | "Failed" => {
+  const lower = status?.toLowerCase() || "";
+  if (lower === "success" || lower === "completed") return "Completed";
+  if (lower === "pending" || lower === "processing") return "Processing";
+  return "Failed";
+};
+
+const getIconForType = (type: string) => {
+  const lower = type?.toLowerCase() || "";
+  if (lower === "plan") return <FaCrown className="text-blue-400 text-lg" />;
+  if (lower === "referral")
+    return <MdCardGiftcard className="text-emerald-400 text-xl" />;
+  if (lower === "rewards")
+    return <FaTrophy className="text-emerald-400 text-lg" />;
+  return <FaUniversity className="text-amber-400 text-lg" />;
+};
+
 const TransactionsPage = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [transactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
   const [activeTab, setActiveTab] = useState<string>("All");
   const [selectedType, setSelectedType] =
     useState<TransactionTypeFilter>("all");
@@ -217,9 +187,70 @@ const TransactionsPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // TanStack Query to fetch user transactions from API
+  const { data: apiResponse, isLoading } = useQuery({
+    queryKey: ["userTransactions", selectedType],
+    queryFn: async () => {
+      try {
+        const res = await getUserTransactions({
+          type: selectedType === "all" ? undefined : selectedType,
+          limit: 100,
+          page: 1,
+        });
+        return res?.data?.payload || res?.data || [];
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+        return err;
+      }
+    },
+  });
+
+  // Transform raw API transaction items to match UI interface
+  const rawTransactions: Transaction[] = useMemo(() => {
+    if (!Array.isArray(apiResponse)) return [];
+
+    return apiResponse.map((item: any) => {
+      const createdDate = item.createdAt
+        ? new Date(item.createdAt)
+        : new Date();
+      const isoDate = createdDate.toISOString().split("T")[0];
+      const displayDate = createdDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      const time = createdDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      const filterType = (item.type?.toLowerCase() || "plan") as
+        | "referral"
+        | "rewards"
+        | "plan";
+      const isCredit = item.type === "referral" || item.type === "rewards";
+
+      return {
+        id: item.id || item._id,
+        title: item.title || "Transaction",
+        description: item.description || `ID: #${item.id?.slice(0, 8)}`,
+        date: isoDate,
+        displayDate,
+        time,
+        amount: Number(item.amount || 0).toLocaleString(),
+        type: isCredit ? "credit" : "debit",
+        filterType,
+        category: mapCategory(item.type),
+        status: mapStatus(item.status),
+        icon: getIconForType(item.type),
+      };
+    });
+  }, [apiResponse]);
+
   // Dynamic filter pipeline
   const filteredTransactions = useMemo(() => {
-    return transactions.filter((item) => {
+    return rawTransactions.filter((item) => {
       // 1. Category Tab Filter
       const matchesCategory =
         activeTab === "All" || item.category === activeTab;
@@ -245,7 +276,14 @@ const TransactionsPage = () => {
 
       return matchesCategory && matchesType && matchesSearch && matchesDate;
     });
-  }, [transactions, activeTab, selectedType, searchQuery, startDate, endDate]);
+  }, [
+    rawTransactions,
+    activeTab,
+    selectedType,
+    searchQuery,
+    startDate,
+    endDate,
+  ]);
 
   const isFiltered =
     activeTab !== "All" ||
@@ -407,7 +445,11 @@ const TransactionsPage = () => {
 
         {/* Transactions List / Empty State */}
         <div className="space-y-3 min-h-[260px]">
-          {filteredTransactions.length < 0 ? (
+          {isLoading ? (
+            <div className="py-12 flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : filteredTransactions.length > 0 ? (
             filteredTransactions.map((tx) => (
               <TransactionItem
                 key={tx.id}

@@ -55,6 +55,7 @@ export interface IUser {
   referralCode?: string;
   verified: boolean;
   referrals: any[];
+  accounts?: any[];
   details: IUserDetails;
   subscriptions?: any[];
   transactions?: any[];

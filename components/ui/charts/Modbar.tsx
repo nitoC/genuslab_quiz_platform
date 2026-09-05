@@ -9,15 +9,15 @@ import {
   Tooltip,
 } from "recharts";
 
-const data = [
-  { value: 10 },
-  { value: 20 },
-  { value: 35 },
-  { value: 40 },
-  { value: 50 },
-  { value: 45 },
-  { value: 60 },
-];
+// const data = [
+//   { value: 10 },
+//   { value: 20 },
+//   { value: 35 },
+//   { value: 40 },
+//   { value: 50 },
+//   { value: 45 },
+//   { value: 60 },
+// ];
 
 // Colors extracted from your image (dark teal to bright blue)
 const colors = [
@@ -30,7 +30,16 @@ const colors = [
   "#448fff", // Bright blue highlight
 ];
 
-const CustomCardChart = () => {
+const CustomCardChart = ({ data }: { data: any[] }) => {
+  const tooltipFormatter = (value: any) => {
+    return `${value}`;
+  };
+
+  const validateData =
+    data && data.map((entry) => ({ ...entry, value: Number(entry.value) }));
+
+  console.log(validateData);
+
   return (
     <div
       style={{
@@ -42,7 +51,10 @@ const CustomCardChart = () => {
       }}
     >
       <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+        <BarChart
+          data={validateData}
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+        >
           <Bar
             dataKey="value"
             radius={[4, 4, 4, 4]} // Provides the rounded corners seen in the image

@@ -205,6 +205,59 @@ export const submitAttempt = async (detailsId: string, data: any) => {
   return res;
 };
 
+//TRANSACTION ENDPOINTS
+/**
+ * Create a transaction (Admin only)
+ */
+export const createTransaction = async (payload: {
+  userId: string;
+  type: string;
+  title: string;
+  description?: string;
+  amount: number;
+  status?: string;
+}) => {
+  const res = await axiosAdmin.post("transaction", payload);
+  return res;
+};
+
+/**
+ * Get all system transactions (Admin only)
+ */
+export const getAllTransactions = async () => {
+  const res = await axiosAdmin.get("transaction/all");
+  return res;
+};
+
+/**
+ * Get a specific transaction by ID
+ */
+export const getTransactionById = async (id: string) => {
+  const res = await axiosUser.get(`transaction/${id}`);
+  return res;
+};
+
+/**
+ * Get paginated & filtered transactions for the current user
+ * @param params Filters including type, status, limit, and page
+ */
+export const getUserTransactions = async (params?: {
+  type?: string;
+  status?: string;
+  limit?: number;
+  page?: number;
+}) => {
+  const { type, status, limit = 10, page = 1 } = params || {};
+
+  const queryParams = new URLSearchParams();
+  if (type) queryParams.append("type", type);
+  if (status) queryParams.append("status", status);
+  if (limit) queryParams.append("limit", limit.toString());
+  if (page) queryParams.append("page", page.toString());
+
+  const res = await axiosUser.get(`transaction/user?${queryParams.toString()}`);
+  return res;
+};
 //REFERRAL ENDPOINTS
 export const getReferrals = async (limit: number, page: number, id: string) => {
   const res = await axiosUser.get(`referral/${id}?limit=${limit}&page=${page}`);
@@ -382,6 +435,29 @@ export const getEpisodeLeaderboard = async (
     `leaderboard/episode?dateStr=${dateStr}&episode=${episode}`,
   );
 };
+/**
+ * Episode leaderboard
+ */
+
+export const getLastFiveRewards = async (detailsId: string) => {
+  return await axiosUser.get(`reward/last-five/${detailsId}`);
+};
+export const getTotalRewards = async (detailsId: string) => {
+  return await axiosUser.get(`reward/total/${detailsId}`);
+};
+/**
+ * Episode leaderboard
+ */
+
+export const getUserSubscription = async () => {
+  const res = await axiosUser.get(`subscription/active`);
+  return res;
+};
+
+export const subscribe = async (data: any) => {
+  const res = await axiosUser.post("subscription", data);
+  return res;
+};
 
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
@@ -445,17 +521,6 @@ export const sendSupportMessage = async (messages: any[]) => {
   return res;
 };
 
-//SYSTEM ENDPOINTS
-export const getQuizDay = async () => {
-  const res = await axiosAdmin.get("system/activity-details");
-  return res;
-};
-
-export const getSlotDetails = async () => {
-  const res = await axiosSystem.get(`system/quiz-slots`);
-  console.log(res, "fetch slot details response");
-  return res;
-};
 export const getEpisodeDetails = async () => {
   const res = await axiosSystem.get(`system/episode-slots`);
   console.log(res, "fetch episode details response");
@@ -503,13 +568,48 @@ export const fetchQuizQuestions = async (id: string) => {
   console.log(res, "fetch quiz questions details response");
   return res;
 };
+
+// BANK ENDPOINTS
+export const linkBankAccount = async (payload: any) => {
+  const res = await axiosUser.post("accounts", payload);
+  console.log(res, "link bank account response");
+  return res;
+};
+
+export const deleteBankAccount = async (id: string) => {
+  const res = await axiosUser.delete(`accounts/${id}`);
+  console.log(res, "delete bank account response");
+  return res;
+};
+
 //system endpoints
+//SYSTEM ENDPOINTS
+export const getQuizDay = async () => {
+  const res = await axiosAdmin.get("system/activity-details");
+  return res;
+};
+
+export const getSlotDetails = async () => {
+  const res = await axiosSystem.get(`system/quiz-slots`);
+  console.log(res, "fetch slot details response");
+  return res;
+};
 export const getTime = async () => {
   const res = await axiosSystem.get("system/time");
   console.log(res, "system time response");
   return res;
 };
 
+export const getApprovedBanks = async () => {
+  const res = await axiosSystem.get("bank");
+  // console.log(res, "approved banks response");
+  return res.data;
+};
+
+export const getNextTime = async () => {
+  const res = await axiosSystem.get("system/next-quiz");
+  return res;
+};
 //general endpoints
 
 const getRankings = async () => {

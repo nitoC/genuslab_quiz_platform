@@ -18,6 +18,9 @@ import { constants } from "@/app/constants";
 
 const INITIAL_TIME_IN_SECONDS = 300; // 5 minutes
 
+const hasSent = "otp_sent";
+const OTP_TIMESTAMP_KEY = "otp_sent_timestamp";
+
 function OtpVerificationContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -39,8 +42,22 @@ function OtpVerificationContent() {
 
   // 1. Initial OTP send on load (Waits for user data to arrive safely)
   useEffect(() => {
-    if (data?.user?.email && !data?.user?.verified && !hasSentOtp.current) {
+    const sent = sessionStorage.getItem(hasSent);
+    const prevTime = sessionStorage.getItem(OTP_TIMESTAMP_KEY);
+    if (sent && prevTime) {
+      const elapsedSeconds = Math.floor((Date.now() - Number(prevTime)) / 1000);
+      const remaining = INITIAL_TIME_IN_SECONDS - elapsedSeconds;
+      setTimeLeft(remaining > 0 ? remaining : 0);
+    }
+    if (
+      data?.user?.email &&
+      !data?.user?.verified &&
+      !hasSentOtp.current &&
+      !sent
+    ) {
       hasSentOtp.current = true; // Lock it instantly
+      sessionStorage.setItem(hasSent, String(true));
+      sessionStorage.setItem(OTP_TIMESTAMP_KEY, String(Date.now()));
 
       const sendInitialOtp = async () => {
         try {
@@ -51,6 +68,9 @@ function OtpVerificationContent() {
           });
         } catch (err: any) {
           console.error("Initial OTP Send Error:", err?.response);
+          sessionStorage.removeItem(hasSent);
+          sessionStorage.removeItem(OTP_TIMESTAMP_KEY);
+          hasSentOtp.current = false;
           setStatusMessage({
             type: "error",
             text: "Failed to send verification code. Please click resend.",
@@ -100,6 +120,10 @@ function OtpVerificationContent() {
     try {
       if (data?.user?.email) {
         await verifyEmail(data.user.email, otp);
+
+        sessionStorage.removeItem(hasSent);
+        sessionStorage.removeItem(OTP_TIMESTAMP_KEY);
+
         setStatusMessage({
           type: "success",
           text: "Email verified successfully! Redirecting...",
@@ -136,6 +160,8 @@ function OtpVerificationContent() {
       if (data?.user?.email) {
         await getOtp(data.user.email);
 
+        sessionStorage.setItem(hasSent, String(true));
+        sessionStorage.setItem(OTP_TIMESTAMP_KEY, String(Date.now()));
         setTimeLeft(INITIAL_TIME_IN_SECONDS);
         setOtp("");
         setStatusMessage({

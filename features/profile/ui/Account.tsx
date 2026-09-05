@@ -25,6 +25,7 @@ import { RiShieldUserLine } from "react-icons/ri";
 import { LuFileKey2 } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { getReferrals, updateProfileData } from "@/lib/api/apis";
+import Link from "next/link";
 
 const AccountTabContent = ({ user }: any) => {
   const [loading, setLoading] = useState(false);
@@ -151,7 +152,7 @@ const AccountTabContent = ({ user }: any) => {
               Active Benefits
             </p>
             <div className="grid grid-cols-2 gap-y-3 gap-x-4">
-              <BenefitItem active={true} text="10 Daily Quizzes" />
+              <BenefitItem active={true} text="7 Daily Quizzes" />
               <BenefitItem active={true} text="Global Leaderboard" />
               <BenefitItem active={false} text="Unlimited Quizzes" />
               <BenefitItem active={false} text="Double XP Boost" />
@@ -160,6 +161,8 @@ const AccountTabContent = ({ user }: any) => {
         </div>
 
         <PrimaryButton
+          type="link"
+          to="/pricing"
           text="Upgrade Plan"
           style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3.5 w-full text-xs font-bold tracking-wide flex justify-center items-center gap-2 mt-auto"
         />
@@ -229,16 +232,19 @@ const AccountTabContent = ({ user }: any) => {
               Linked Accounts
             </h3>
           </div>
-          <button className="text-[11px] text-blue hover:underline flex items-center gap-0.5 font-bold">
+          <Link
+            href="/accounts"
+            className="text-[11px] text-blue hover:underline flex items-center gap-0.5 font-bold"
+          >
             Add New <MdArrowForward size={12} />
-          </button>
+          </Link>
         </div>
 
         <div className="flex flex-col gap-3">
           <LinkedAccountRow
             icon={<FaGoogle className="text-orange-500" size={14} />}
             title="Google Account"
-            subtitle="jane.doe@gmail.com"
+            subtitle={personalInfo.email}
             status="Linked"
           />
           <LinkedAccountRow

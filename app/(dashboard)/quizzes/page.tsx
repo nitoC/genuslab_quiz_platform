@@ -25,9 +25,12 @@ import { DashboardSkeleton } from "@/components/ui/skeletons/quizdashboard";
 import { FallbackQuizCard } from "@/components/ui/cards/FallbackQuizCard";
 import useUser from "@/hooks/useUser";
 import { deAT } from "date-fns/locale";
+import TimerPop from "@/features/quiz/components/TimerPop";
+import useSlots from "@/hooks/useSlots";
+import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
 
 const page = () => {
-  const [pop, setpop] = useState(false);
+  const [pop, setpop] = useState(true);
 
   const {
     data,
@@ -53,17 +56,19 @@ const page = () => {
     },
   });
 
-  const {
-    data: slotData,
-    isLoading: slotLoading,
-    isError: slotError,
-  } = useQuery({
-    queryKey: ["slots"],
-    queryFn: async () => {
-      const res = await getSlotDetails();
-      return res?.data?.payload;
-    },
-  });
+  // const {
+  //   data: slotData,
+  //   isLoading: slotLoading,
+  //   isError: slotError,
+  // } = useQuery({
+  //   queryKey: ["slots"],
+  //   queryFn: async () => {
+  //     const res = await getSlotDetails();
+  //     return res?.data?.payload;
+  //   },
+  // });
+
+  const { slotData, slotLoading, slotError } = useSlots();
 
   const {
     data: avgData,
@@ -90,7 +95,7 @@ const page = () => {
     "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
   ];
 
-  // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA
+  // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA pop
   if (isLoading || slotLoading || userLoading || avgLoading) {
     return <DashboardSkeleton />;
   }
@@ -255,7 +260,8 @@ const page = () => {
               {quizData && quizData.length > 0 ? (
                 <div>
                   <h3 className="text-(--primary) font-semibold">
-                    Episode {quizData && quizData[0].episode.split("_")[2]}
+                    Episode{" "}
+                    {quizData?.[0]?.episode?.toString().split("_")[2] ?? "N/A"}
                   </h3>
                   <p className="text-grey text-sm">10 Questions • 5 mins</p>
                   <PrimaryButton type="link" to={`/quiz/`} text="Enter Now" />
@@ -302,6 +308,8 @@ const page = () => {
           </GlassCard>
         </div>
       </section>
+      <TimerPop pop={pop} />
+      <FloatingDemoButton href="/quiz/demo" />
     </Layout>
   );
 };
@@ -358,7 +366,7 @@ const QuizCard = ({
       {isLocked && (
         <div
           onClick={handleDisabledClick}
-          className="absolute inset-0 bg-black/60 backdrop-blur-[1px] rounded-lg z-20 flex flex-col items-center justify-center cursor-not-allowed transition-all duration-200 hover:bg-black/70"
+          className="absolute inset-0 bg-black/60 backdrop-blur-[1px] rounded-lg z-6 flex flex-col items-center justify-center cursor-not-allowed transition-all duration-200 hover:bg-black/70"
         >
           <div className="bg-amber-500/20 border border-amber-500/40 p-3 rounded-full text-amber-400 shadow-lg mb-2">
             <MdLock size={28} />

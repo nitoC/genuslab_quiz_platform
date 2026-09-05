@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 
 import ChartUpIcon from "@/assets/ChartUpIcon";
 import ShieldIcon from "@/assets/ShieldIcon";
@@ -30,6 +30,8 @@ import { FaCheckCircle, FaTrophy } from "react-icons/fa";
 import { IoIosRocket } from "react-icons/io";
 import { MdStars } from "react-icons/md";
 import useUser from "@/hooks/useUser";
+import TimerPop from "@/features/quiz/components/TimerPop";
+import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
 
 const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
@@ -137,6 +139,7 @@ const DashboardSkeleton = () => {
 const Page = () => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [pop, setPop] = useState(true);
 
   // const socketId = useSocket((state: any) => state.socketId);
 
@@ -438,7 +441,9 @@ const Page = () => {
                 </h3>
 
                 <div>
-                  <h2 className="text-(--primary) font-bold text-xl">₦500</h2>
+                  <h2 className="text-(--primary) font-bold text-xl">
+                    ₦10,000
+                  </h2>
 
                   <p className="text-grey text-sm">Reward</p>
                 </div>
@@ -446,7 +451,7 @@ const Page = () => {
                 <div className="flex gap-4 text-xs text-grey">
                   <span>10 Questions</span>
 
-                  <span>2 mins left</span>
+                  <span>5 mins left</span>
                 </div>
 
                 <PrimaryButton
@@ -554,6 +559,9 @@ const Page = () => {
           </div>
         </div>
       </div>
+      {/* <h1>hello world</h1> */}
+      <TimerPop pop={true} />
+      <FloatingDemoButton href="/quiz/demo" />
     </Layout>
   );
 };

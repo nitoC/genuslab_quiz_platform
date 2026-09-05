@@ -45,7 +45,7 @@ const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
   }, [socket]);
 
   return (
-    <div className="sticky top-0 z-10">
+    <div className="sticky top-0 z-20">
       <GlassCard type="header">
         <div
           className={clsx(
