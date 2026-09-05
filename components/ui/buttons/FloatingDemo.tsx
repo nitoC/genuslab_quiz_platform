@@ -42,10 +42,10 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
   const wrapperClasses = [
     "group",
     "fixed",
-    "bottom-5",
+    "bottom-27",
     "right-5",
     "z-50",
-    "sm:bottom-6",
+    "sm:bottom-30",
     "sm:right-6",
     "focus:outline-none",
     "focus-visible:ring-2",
