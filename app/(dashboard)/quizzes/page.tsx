@@ -134,7 +134,7 @@ const page = () => {
               {...quiz}
               id={quiz.id}
               poster={localPosters[index] || localPosters[0]}
-              pool={quiz.pool || 0}
+              pool={quiz.pool || 15_000}
               time={assignedTime}
             />
           );
