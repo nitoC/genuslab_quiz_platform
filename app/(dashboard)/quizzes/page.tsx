@@ -10,7 +10,7 @@ import { MdStars, MdLock } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { RiProgress5Line } from "react-icons/ri";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 // import { useSocket } from "@/store/useSocket";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -47,6 +47,7 @@ const page = () => {
     data: quizData,
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["quiz episodes"],
     queryFn: async () => {
@@ -85,6 +86,15 @@ const page = () => {
   });
 
   // Base fallback posters for rendering safety
+
+  const nextActive = useMemo(() => {
+    if (!quizData || quizData.length === 0 || isError) {
+      return null;
+    }
+    const next = quizData.find((a: any) => a.status === "active".toUpperCase());
+    console.log(next, "next");
+    return next;
+  }, [quizData]);
   const localPosters = [
     "/images/q2.jpg",
     "/images/About1.png",
@@ -153,6 +163,7 @@ const page = () => {
   const reward = 0;
   const formatedReward =
     reward > 0 ? reward.toLocaleString() : reward.toFixed(2);
+
   return (
     <Layout className="relative">
       <Header backBtn={false} title="Quizzes" />
@@ -201,7 +212,7 @@ const page = () => {
         <div>
           <div className="flex gap-4 items-center">
             <FaGraduationCap size={28} className="text-blue" />
-            <h2 className="text-2xl font-bold text-(--primary)">
+            <h2 className="text-2xl font-bold text-primary">
               Upcoming Quizzes
             </h2>
           </div>
@@ -254,17 +265,22 @@ const page = () => {
                 </div>
                 <div>
                   <p className="text-grey text-sm">Estimated Reward</p>
-                  <p className="text-blue font-bold text-xl">₦500 Reward</p>
+                  <p className="text-blue font-bold text-xl">₦10,000 Reward</p>
                 </div>
               </div>
-              {quizData && quizData.length > 0 ? (
+              {quizData && nextActive && quizData.length > 0 ? (
                 <div>
-                  <h3 className="text-(--primary) font-semibold">
+                  <h3 className="text-primary font-semibold">
                     Episode{" "}
-                    {quizData?.[0]?.episode?.toString().split("_")[2] ?? "N/A"}
+                    {nextActive?.episode?.toString().split("_")[1] ?? "N/A"}
                   </h3>
                   <p className="text-grey text-sm">10 Questions • 5 mins</p>
-                  <PrimaryButton type="link" to={`/quiz/`} text="Enter Now" />
+                  <PrimaryButton
+                    type="link"
+                    style="block bg-blue text-white rounded-sm"
+                    to={`/quiz/`}
+                    text="Enter Now"
+                  />
                 </div>
               ) : (
                 <div>
@@ -308,7 +324,7 @@ const page = () => {
           </GlassCard>
         </div>
       </section>
-      <TimerPop pop={pop} />
+      <TimerPop pop={pop} refetchQuiz={refetch} />
       <FloatingDemoButton href="/quiz/demo" />
     </Layout>
   );

@@ -19,8 +19,8 @@ const Primary = ({
       <Link
         href={to}
         className={clsx(
-          "py-2 px-6 cursor-pointer text-center inline-block",
-          style ? style : "bg-blue text-white rounded-sm",
+          "py-2 px-6 cursor-pointer text-center",
+          style ? style : "bg-blue text-white inline-block rounded-sm",
         )}
       >
         {text}

@@ -9,9 +9,10 @@ import { LuTimer } from "react-icons/lu";
 
 interface TimerPopProps {
   pop: boolean;
+  refetchQuiz: () => void;
 }
 
-const TimerPop = ({ pop }: TimerPopProps) => {
+const TimerPop = ({ pop, refetchQuiz }: TimerPopProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [countdown, setCountdown] = useState("00Hrs 00Min 00Secs");
 
@@ -42,6 +43,7 @@ const TimerPop = ({ pop }: TimerPopProps) => {
       if (timeRemaining <= 0) {
         setCountdown("00Hrs 00Min 00Secs");
         refetch();
+        refetchQuiz();
         return;
       }
 
