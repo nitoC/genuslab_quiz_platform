@@ -245,7 +245,7 @@ const LeaderboardPage = () => {
           <div className="relative flex items-center p-1 bg-black/20 rounded-xl w-full sm:w-auto border border-white/5">
             <button
               onClick={() => setType("quiz")}
-              className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
+              className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-sm sm:text-sm font-semibold transition-all duration-300 ${
                 type === "quiz"
                   ? "bg-blue-600 text-white"
                   : "text-gray-400 hover:text-white"
@@ -255,7 +255,7 @@ const LeaderboardPage = () => {
             </button>
             <button
               onClick={() => setType("referral")}
-              className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 ${
+              className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-sm sm:text-sm font-semibold transition-all duration-300 ${
                 type === "referral"
                   ? "bg-blue-600 text-white"
                   : "text-gray-400 hover:text-white"
@@ -270,10 +270,10 @@ const LeaderboardPage = () => {
             <button
               type="button"
               onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="w-full flex items-center justify-between bg-white/10 hover:bg-white/15 active:bg-white/20 text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-xl border border-white/15 shadow-lg backdrop-blur-md transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full flex items-center justify-between bg-white/10 hover:bg-white/15 active:bg-white/20 text-white text-sm sm:text-sm font-medium px-4 py-2.5 rounded-xl border border-white/15 shadow-lg backdrop-blur-md transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             >
               <span className="flex items-center gap-2">
-                <span className="text-gray-400 text-xs">Period:</span>
+                <span className="text-gray-400 text-sm">Period:</span>
                 <span className="font-semibold text-white">
                   {selectedTimeframeLabel}
                 </span>
@@ -298,7 +298,7 @@ const LeaderboardPage = () => {
                         setTimeframe(tf.value);
                         setIsDropdownOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
+                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm sm:text-sm font-medium transition-colors ${
                         isSelected
                           ? "bg-blue-600/30 text-blue-300 font-semibold border-l-2 border-blue-500"
                           : "text-gray-300 hover:bg-white/10 hover:text-white"
@@ -383,7 +383,7 @@ const LeaderboardPage = () => {
                         {type === "quiz" ? "SCORE:" : "REFERRALS:"}{" "}
                         {(user.score ?? 0).toLocaleString()}{" "}
                       </p>
-                      <span className="text-[10px] text-gray-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase">
+                      <span className="text-[14px] text-gray-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase">
                         {user.rank}
                       </span>
                     </div>
@@ -405,7 +405,7 @@ const LeaderboardPage = () => {
                   <h2 className="text-xl font-bold text-white flex gap-2 items-center">
                     <MdStars className="text-blue-400" /> Global Rankings
                   </h2>
-                  <span className="text-gray-400 text-xs">Live Updates</span>
+                  <span className="text-gray-400 text-sm">Live Updates</span>
                 </div>
 
                 <GlassCard>
@@ -433,7 +433,7 @@ const LeaderboardPage = () => {
                               <h4 className="text-white text-sm font-semibold capitalize">
                                 {player.name}
                               </h4>
-                              <span className="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full uppercase">
+                              <span className="text-[14px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full uppercase">
                                 {player.rank}
                               </span>
                             </div>
@@ -450,7 +450,7 @@ const LeaderboardPage = () => {
                                 (player.score ?? 0).toLocaleString()
                               }
                             </span>
-                            <span className="text-gray-400 text-[10px]">
+                            <span className="text-gray-400 text-[14px]">
                               {type === "quiz" ? "Total Score" : "Referrals"}
                             </span>
                           </div>
@@ -477,7 +477,7 @@ const LeaderboardPage = () => {
                     <span className="text-white font-bold text-sm">
                       Your Current Rank
                     </span>
-                    <span className="text-gray-400 text-xs">
+                    <span className="text-gray-400 text-sm">
                       Keep attempting quizzes to boost your position
                     </span>
                   </div>

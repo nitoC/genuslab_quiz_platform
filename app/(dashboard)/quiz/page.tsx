@@ -115,7 +115,7 @@ const GetReadyModal = () => {
                   onClick={() => router.back()}
                   className={cn(
                     "absolute left-6 top-6 inline-flex items-center gap-2",
-                    "rounded-full bg-slate-200/80 px-4 py-2 text-xs font-semibold text-slate-700",
+                    "rounded-full bg-slate-200/80 px-4 py-2 text-sm font-semibold text-slate-700",
                     "backdrop-blur-md shadow-sm hover:bg-slate-200",
                   )}
                 >
@@ -193,7 +193,7 @@ const GetReadyModal = () => {
                       <div className="mt-4 text-sm font-extrabold text-slate-900">
                         Demo Quiz
                       </div>
-                      <div className="mt-1 text-[11px] font-bold text-emerald-600">
+                      <div className="mt-1 text-[14px] font-bold text-emerald-600">
                         Warm-up round
                       </div>
                     </button>
@@ -230,7 +230,7 @@ const GetReadyModal = () => {
                         <div className="mt-4 text-sm font-extrabold text-slate-900">
                           Live Quiz
                         </div>
-                        <div className="mt-1 text-[11px] font-bold text-blue-600">
+                        <div className="mt-1 text-[14px] font-bold text-blue-600">
                           {quizData ? "Competitive" : "No Active Quiz"}
                         </div>
                       </button>
@@ -241,7 +241,7 @@ const GetReadyModal = () => {
                   <div className="mt-12 grid w-full grid-cols-2 gap-12">
                     {/* Benefits */}
                     <div className="text-left">
-                      <p className="text-[11px] font-extrabold tracking-wide text-blue-600">
+                      <p className="text-[14px] font-extrabold tracking-wide text-blue-600">
                         Benefits
                       </p>
 
@@ -260,7 +260,7 @@ const GetReadyModal = () => {
                               <p className="text-sm font-extrabold text-slate-900">
                                 {b.title}
                               </p>
-                              <p className="mt-0.5 text-xs text-slate-400">
+                              <p className="mt-0.5 text-sm text-slate-400">
                                 {b.desc}
                               </p>
                             </div>
@@ -271,7 +271,7 @@ const GetReadyModal = () => {
 
                     {/* How it Works */}
                     <div className="text-left">
-                      <p className="text-[11px] font-extrabold tracking-wide text-blue-600">
+                      <p className="text-[14px] font-extrabold tracking-wide text-blue-600">
                         How it Works
                       </p>
 
@@ -280,14 +280,14 @@ const GetReadyModal = () => {
 
                         {steps.map((s) => (
                           <div key={s.id} className="relative z-10 flex gap-4">
-                            <div className="grid h-8 w-8 place-items-center rounded-full bg-white ring-2 ring-slate-100 text-[11px] font-extrabold text-blue-600">
+                            <div className="grid h-8 w-8 place-items-center rounded-full bg-white ring-2 ring-slate-100 text-[14px] font-extrabold text-blue-600">
                               {s.id}
                             </div>
                             <div>
                               <p className="text-sm font-extrabold text-slate-900">
                                 {s.title}
                               </p>
-                              <p className="mt-0.5 text-xs text-slate-400">
+                              <p className="mt-0.5 text-sm text-slate-400">
                                 {s.desc}
                               </p>
                             </div>
@@ -317,7 +317,7 @@ const GetReadyModal = () => {
                 </div>
 
                 <div className="leading-tight">
-                  <p className="text-[11px] font-bold text-blue-600">
+                  <p className="text-[14px] font-bold text-blue-600">
                     Status:{" "}
                     <span className="font-extrabold text-slate-700">
                       {isLoading
@@ -340,7 +340,7 @@ const GetReadyModal = () => {
               {/* right */}
               <div className="flex items-center gap-6">
                 <div className="text-right leading-tight">
-                  <p className="text-[11px] font-bold text-slate-400">
+                  <p className="text-[14px] font-bold text-slate-400">
                     Starting in
                   </p>
                   <p className="text-xl font-extrabold tabular-nums text-slate-900">
@@ -373,7 +373,7 @@ const GetReadyModal = () => {
                       className="text-blue-600"
                     />
                   </svg>
-                  <div className="absolute inset-0 grid place-items-center text-[11px] font-extrabold text-blue-600">
+                  <div className="absolute inset-0 grid place-items-center text-[14px] font-extrabold text-blue-600">
                     75%
                   </div>
                 </div>

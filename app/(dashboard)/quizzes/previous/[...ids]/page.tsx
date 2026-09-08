@@ -135,17 +135,17 @@ const QuizReviewPage = () => {
                   >
                     {/* Question Status Banner */}
                     <div className="flex items-center justify-between gap-4">
-                      <span className="text-xs sm:text-sm text-sky-400 font-bold uppercase tracking-wider">
+                      <span className="text-sm sm:text-sm text-sky-400 font-bold uppercase tracking-wider">
                         {item.questionNumber}
                       </span>
 
                       {item.isCorrect ? (
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-bold">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-sm font-bold">
                           <MdCheckCircle size={16} />
                           <span>Correct</span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full text-xs font-bold">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full text-sm font-bold">
                           <MdCancel size={16} />
                           <span>Incorrect</span>
                         </div>
@@ -186,7 +186,7 @@ const QuizReviewPage = () => {
                               {/* Selector Letter Ring Indicator */}
                               <div
                                 className={cn(
-                                  "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs flex-shrink-0 transition-colors",
+                                  "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 transition-colors",
                                   isCorrectChoice &&
                                     "bg-emerald-500 text-slate-900",
                                   isUserChoice &&
@@ -235,10 +235,10 @@ const QuizReviewPage = () => {
                           className="text-sky-400 flex-shrink-0 mt-0.5"
                         />
                         <div className="space-y-1">
-                          <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-sky-400">
+                          <h4 className="text-sm sm:text-sm font-black uppercase tracking-wider text-sky-400">
                             Description
                           </h4>
-                          <p className="text-xs sm:text-sm font-medium leading-relaxed text-slate-400">
+                          <p className="text-sm sm:text-sm font-medium leading-relaxed text-slate-400">
                             {item.question.answerDescription}
                           </p>
                         </div>

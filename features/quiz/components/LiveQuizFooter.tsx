@@ -38,7 +38,7 @@ const QuizFooter = ({
 
       <div className="flex flex-col md:flex-row items-center gap-8">
         <div className="text-right">
-          <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">
+          <p className="text-[14px] text-slate-500 font-black uppercase tracking-widest">
             Potential Reward
           </p>
           <p className="text-2xl font-black text-white">+100 XP</p>
@@ -49,7 +49,7 @@ const QuizFooter = ({
             <button
               onClick={onPrev}
               disabled={submitting}
-              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-xs uppercase tracking-wider transition border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider transition border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Prev
             </button>

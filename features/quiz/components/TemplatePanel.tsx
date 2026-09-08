@@ -20,20 +20,20 @@ export default function TemplatePanel({ setJsonText }: TemplatePanelProps) {
         <span className="text-sm font-semibold tracking-wide">Template</span>
       </div>
 
-      <pre className="p-3 bg-slate-950 rounded-lg text-[11px] font-mono text-cyan-400 leading-normal overflow-x-auto max-h-48">
+      <pre className="p-3 bg-slate-950 rounded-lg text-[14px] font-mono text-cyan-400 leading-normal overflow-x-auto max-h-48">
         {TEMPLATE_JSON}
       </pre>
 
       <div className="grid grid-cols-2 gap-3 pt-1">
         <button
           onClick={copyTemplate}
-          className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold bg-slate-800 hover:bg-slate-700 transition-colors rounded-lg text-white"
+          className="flex items-center justify-center gap-1.5 py-2 px-3 text-sm font-semibold bg-slate-800 hover:bg-slate-700 transition-colors rounded-lg text-white"
         >
           <HiOutlineClipboardCopy /> Copy Template
         </button>
         <button
           onClick={() => setJsonText(TEMPLATE_JSON)}
-          className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 transition-colors rounded-lg text-white"
+          className="flex items-center justify-center gap-1.5 py-2 px-3 text-sm font-semibold bg-blue-600 hover:bg-blue-700 transition-colors rounded-lg text-white"
         >
           <HiUpload /> Upload JSON
         </button>

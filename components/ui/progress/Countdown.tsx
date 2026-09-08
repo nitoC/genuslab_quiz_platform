@@ -64,7 +64,7 @@ const CountdownCircle = ({ initialSeconds = 60 }) => {
         <span className="text-4xl font-mono font-bold text-white tracking-tighter">
           {formatTime(timeLeft)}
         </span>
-        <span className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">
+        <span className="text-[14px] uppercase tracking-widest text-slate-500 font-semibold">
           Remaining
         </span>
       </div>

@@ -92,7 +92,7 @@ export default function ManageBankAccountsPage() {
               <h1 className="text-2xl font-semibold text-white tracking-tight">
                 Manage Bank Account
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-sm text-slate-400">
                 Connect your primary settlement account for automated payouts
                 and withdrawals.
               </p>
@@ -102,7 +102,7 @@ export default function ManageBankAccountsPage() {
           {/* Account Panel */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
                 Linked Account ({account ? 1 : 0})
               </h2>
 
@@ -110,7 +110,7 @@ export default function ManageBankAccountsPage() {
               {account ? (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg"
                 >
                   <MdEdit size={14} />
                   <span>Update Account</span>
@@ -118,7 +118,7 @@ export default function ManageBankAccountsPage() {
               ) : (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   <MdAdd size={16} />
                   <span>Link Account</span>

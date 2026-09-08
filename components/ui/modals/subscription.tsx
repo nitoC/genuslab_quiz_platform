@@ -35,13 +35,13 @@ const SubscriptionModal = ({ onClose }: { onClose?: () => void }) => {
         <div className="mt-12 flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-            <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-slate-400 text-[14px] font-bold uppercase tracking-wider">
               Premium Active
             </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-            <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-slate-400 text-[14px] font-bold uppercase tracking-wider">
               Auto-renewal
             </span>
           </div>

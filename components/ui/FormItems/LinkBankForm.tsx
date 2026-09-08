@@ -65,10 +65,10 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
       <div className="w-full bg-slate-950/40 border border-slate-800/80 rounded-xl px-4 py-2.5 transition-all duration-200 flex items-center gap-3 animate-pulse">
         <MdAccountBalance size={18} className="text-slate-500" />
         <div className="flex flex-col w-full">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+          <span className="text-[14px] uppercase font-bold tracking-wider text-slate-400">
             Financial Institution
           </span>
-          <span className="text-slate-500 text-xs mt-0.5">
+          <span className="text-slate-500 text-sm mt-0.5">
             Loading banks...
           </span>
         </div>
@@ -81,10 +81,10 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
       <div className="w-full bg-slate-950/40 border border-slate-800/80 rounded-xl px-4 py-2.5 transition-all duration-200 flex items-center gap-3">
         <MdAccountBalance size={18} className="text-slate-500" />
         <div className="flex flex-col w-full">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+          <span className="text-[14px] uppercase font-bold tracking-wider text-slate-400">
             Financial Institution
           </span>
-          <span className="text-slate-500 text-xs mt-0.5">
+          <span className="text-slate-500 text-sm mt-0.5">
             Error loading banks
           </span>
         </div>
@@ -119,7 +119,7 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
           isOpen
             ? "border-blue-500/80 shadow-[0_0_12px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/20"
             : "border-slate-800/80 hover:border-slate-700"
-        } rounded-xl px-4 py-3 text-xs text-white flex items-center justify-between cursor-pointer transition-all duration-200 backdrop-blur-md group`}
+        } rounded-xl px-4 py-3 text-sm text-white flex items-center justify-between cursor-pointer transition-all duration-200 backdrop-blur-md group`}
       >
         <div className="flex items-center gap-3">
           <MdAccountBalance
@@ -129,14 +129,14 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
             }`}
           />
           <div className="flex flex-col text-left">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+            <span className="text-[14px] uppercase font-bold tracking-wider text-slate-400">
               Financial Institution
             </span>
             <span
               className={
                 selectedBank
-                  ? "text-slate-100 font-medium text-xs mt-0.5"
-                  : "text-slate-500 text-xs mt-0.5"
+                  ? "text-slate-100 font-medium text-sm mt-0.5"
+                  : "text-slate-500 text-sm mt-0.5"
               }
             >
               {selectedBank ? selectedBank.bankName : "Select your bank"}
@@ -156,14 +156,14 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
         <div className="absolute z-50 left-0 right-0 mt-2 bg-slate-900/90 border border-slate-800/90 rounded-xl shadow-2xl backdrop-blur-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Search Filter Input inside Dropdown */}
           <div className="p-2 border-b border-slate-800/60 bg-slate-950/40">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/80 border border-slate-800 rounded-lg text-xs text-slate-300">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/80 border border-slate-800 rounded-lg text-sm text-slate-300">
               <MdSearch size={16} className="text-slate-500" />
               <input
                 type="text"
                 placeholder="Search bank..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent focus:outline-none text-slate-200 placeholder:text-slate-500 text-xs"
+                className="w-full bg-transparent focus:outline-none text-slate-200 placeholder:text-slate-500 text-sm"
               />
             </div>
           </div>
@@ -171,7 +171,7 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
           {/* List Wrapper with Custom Scrollbar Utility */}
           <div className="max-h-52 pb-10 overflow-y-auto divide-y divide-slate-800/30 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-700/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-blue-500/50">
             {filteredBanks.length === 0 ? (
-              <div className="px-4 py-3 text-xs text-slate-500 text-center">
+              <div className="px-4 py-3 text-sm text-slate-500 text-center">
                 No bank found
               </div>
             ) : (
@@ -196,7 +196,7 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
                         setSearchQuery("");
                       }
                     }}
-                    className={`px-4 py-3 text-xs flex items-center justify-between cursor-pointer transition-all ${
+                    className={`px-4 py-3 text-sm flex items-center justify-between cursor-pointer transition-all ${
                       isSelected
                         ? "bg-blue-600/15 text-blue-300 font-medium"
                         : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
@@ -310,7 +310,7 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
               <h3 className="text-base font-semibold text-white tracking-tight">
                 Link Bank Account
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-sm text-slate-400 mt-0.5">
                 Connect your account for automated settlements
               </p>
             </div>
@@ -328,7 +328,7 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-4 pt-6">
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
               {error}
             </div>
@@ -351,7 +351,7 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
                 className="text-slate-500 group-focus-within:text-blue-400 transition-colors"
               />
               <div className="flex flex-col w-full">
-                <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                <label className="text-[14px] uppercase font-bold tracking-wider text-slate-400">
                   Account Number
                 </label>
                 <input
@@ -363,7 +363,7 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
                     setAccountNumber(e.target.value.replace(/\D/g, ""))
                   }
                   required
-                  className="w-full bg-transparent text-xs text-white font-mono tracking-widest focus:outline-none placeholder:text-slate-600 mt-0.5"
+                  className="w-full bg-transparent text-sm text-white font-mono tracking-widest focus:outline-none placeholder:text-slate-600 mt-0.5"
                 />
               </div>
             </div>
@@ -377,7 +377,7 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
                 className="text-slate-500 group-focus-within:text-blue-400 transition-colors"
               />
               <div className="flex flex-col w-full">
-                <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                <label className="text-[14px] uppercase font-bold tracking-wider text-slate-400">
                   Legal Account Name
                 </label>
                 <input
@@ -386,7 +386,7 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
                   value={accountName}
                   onChange={(e) => setAccountName(e.target.value)}
                   required
-                  className="w-full bg-transparent text-xs text-white focus:outline-none placeholder:text-slate-600 mt-0.5"
+                  className="w-full bg-transparent text-sm text-white focus:outline-none placeholder:text-slate-600 mt-0.5"
                 />
               </div>
             </div>
@@ -397,14 +397,14 @@ export const LinkBankFormModal: React.FC<LinkBankFormModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-800/80 hover:bg-slate-800/40 text-slate-300 text-xs font-semibold transition-colors"
+              className="px-5 py-2.5 rounded-xl border border-slate-800/80 hover:bg-slate-800/40 text-slate-300 text-sm font-semibold transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] disabled:bg-blue-900/60 disabled:text-slate-400 text-white rounded-xl text-xs font-semibold transition-all shadow-[0_4px_20px_rgba(37,99,235,0.25)] flex items-center gap-2"
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] disabled:bg-blue-900/60 disabled:text-slate-400 text-white rounded-xl text-sm font-semibold transition-all shadow-[0_4px_20px_rgba(37,99,235,0.25)] flex items-center gap-2"
             >
               <MdVerifiedUser size={16} />
               <span>

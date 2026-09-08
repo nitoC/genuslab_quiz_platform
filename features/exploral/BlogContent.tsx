@@ -24,7 +24,7 @@ const BlogContent = ({ posts }: { posts: any }) => {
     <GlassCard className="lg:col-span-3 p-6 md:p-8">
       <div className="flex justify-between items-center mb-6 md:mb-8">
         <div>
-          <p className="text-blue-500 text-[10px] uppercase tracking-widest font-bold">
+          <p className="text-blue-500 text-[14px] uppercase tracking-widest font-bold">
             Latest Trends
           </p>
           <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2 mt-1">
@@ -34,7 +34,7 @@ const BlogContent = ({ posts }: { posts: any }) => {
         <Link
           href={blogUrl}
           target="__blank"
-          className="text-slate-400 text-[10px] hover:bg-blue-400 duration-200 hover:text-white font-bold bg-white/5 px-4 md:px-6 py-2 rounded-lg border border-white/10 hidden sm:block"
+          className="text-slate-400 text-[14px] hover:bg-blue-400 duration-200 hover:text-white font-bold bg-white/5 px-4 md:px-6 py-2 rounded-lg border border-white/10 hidden sm:block"
         >
           Discover Full Feed
         </Link>
@@ -55,7 +55,7 @@ const BlogContent = ({ posts }: { posts: any }) => {
             <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
               {post.title}
             </h3>
-            <p className="text-slate-300 text-[10px] font-bold uppercase tracking-wider">
+            <p className="text-slate-300 text-[14px] font-bold uppercase tracking-wider">
               5 Min Read •{" "}
               {formatDistanceToNowStrict(new Date(post.publishedAt))} ago
             </p>
@@ -74,10 +74,10 @@ const BlogContent = ({ posts }: { posts: any }) => {
                 {postIcons[i]}
               </div>
               <div>
-                <h4 className="text-xs md:text-sm font-bold leading-snug">
+                <h4 className="text-sm md:text-sm font-bold leading-snug">
                   {item.title}
                 </h4>
-                <p className="text-slate-500 text-[10px] mt-1 font-bold uppercase">
+                <p className="text-slate-500 text-[14px] mt-1 font-bold uppercase">
                   {formatDistanceToNowStrict(new Date(item.publishedAt))} ago
                 </p>
               </div>

@@ -389,7 +389,7 @@ const AdminQuestionCard = ({
               Answer Options
             </label>
 
-            <span className="text-xs text-slate-500">
+            <span className="text-sm text-slate-500">
               Toggle switch for correct answer
             </span>
           </div>
@@ -415,7 +415,7 @@ const AdminQuestionCard = ({
                   <div className="flex items-center gap-2">
                     <span
                       className={clsx(
-                        "text-xs font-semibold",
+                        "text-sm font-semibold",
                         option.isCorrect ? "text-blue-600" : "text-slate-400",
                       )}
                     >
@@ -432,7 +432,7 @@ const AdminQuestionCard = ({
                     >
                       <div
                         className={clsx(
-                          "flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-bold text-blue-600 shadow-sm transition-transform",
+                          "flex h-4 w-4 items-center justify-center rounded-full bg-white text-[14px] font-bold text-blue-600 shadow-sm transition-transform",
                           option.isCorrect ? "translate-x-5" : "translate-x-0",
                         )}
                       >

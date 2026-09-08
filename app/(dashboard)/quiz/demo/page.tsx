@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
 import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
+import useUser from "@/hooks/useUser";
 
 // Data Structure interface matching your real JSON payload
 interface QuizQuestion {
@@ -71,6 +72,7 @@ const QuizPage = () => {
   const [speed, setspeed] = useState("_min: _sec");
   // setTime();
   // 1. Fetching logic using React Query
+  const { data: userData, isLoading: userIsLoading } = useUser();
   const {
     data: questions = [],
     isLoading,
@@ -172,8 +174,8 @@ const QuizPage = () => {
           answer: a.answer,
         })),
       });
-      console.log(res.data.percentage, "submit data");
       const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
+      console.log(res.data.percentage, "submit data");
       setScore(res.data?.percentage);
       setspeed(s);
 
@@ -261,6 +263,7 @@ const QuizPage = () => {
                   isError={isError}
                   currentQuestionIndex={currentQuestionIndex}
                   totalQuestions={totalQuestions}
+                  imgUrl={userData?.user?.details?.avatar}
                 />
               </section>
               <section>
@@ -270,6 +273,7 @@ const QuizPage = () => {
                   totalQuestions={totalQuestions}
                   progressSegments={progressSegments}
                   activeSeg={activeSeg}
+                  imgUrl={userData?.user?.details?.avatar}
                 />
               </section>
               {/* Question Area */}
@@ -331,6 +335,8 @@ const QuizPage = () => {
                   <Timer
                     isLoading={isLoading}
                     isSubmitted={isSubmitted}
+                    // attemptId="demo"
+                    type="demo"
                     isError={isError}
                     handleSubmit={handleSubmit}
                   />
@@ -380,12 +386,14 @@ const QuizHeader = ({
   currentQuestionIndex,
   totalQuestions,
   activeSeg,
+  imgUrl,
 }: {
   currentQuestion: any;
   currentQuestionIndex: number;
   totalQuestions: number;
   progressSegments: number;
   activeSeg: number;
+  imgUrl?: string;
 }) => {
   return (
     <>
@@ -394,7 +402,7 @@ const QuizHeader = ({
           <div className="w-5 h-5 bg-emerald-500 rounded flex items-center justify-center">
             <div className="w-2 h-2 bg-white rounded-sm rotate-45" />
           </div>
-          <span className="text-slate-300 text-xs font-bold tracking-tight">
+          <span className="text-slate-300 text-sm font-bold tracking-tight">
             Difficulty:{" "}
             <span className="capitalize text-emerald-400">
               {currentQuestion?.difficulty}
@@ -417,7 +425,7 @@ const QuizHeader = ({
               />
             ))}
           </div>
-          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
+          <span className="text-[14px] text-slate-500 font-bold uppercase tracking-[0.2em]">
             Question{" "}
             {Math.min(currentQuestionIndex + 1, Math.max(1, totalQuestions))} of{" "}
             {Math.max(1, totalQuestions)}
@@ -425,15 +433,15 @@ const QuizHeader = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/5">
+          {/* <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/5">
             <MdLocalFireDepartment className="text-orange-500 text-lg" />
             <span className="text-white font-bold text-sm">12</span>
-          </div>
-          <div className="bg-emerald-500/10 text-emerald-500 px-3 py-2 rounded-xl border border-emerald-500/20 text-xs font-black">
+          </div> */}
+          {/* <div className="bg-emerald-500/10 text-emerald-500 px-3 py-2 rounded-xl border border-emerald-500/20 text-sm font-black">
             +15 XP
-          </div>
+          </div> */}
           <img
-            src="https://i.pravatar.cc/150?u=my"
+            src={imgUrl ?? "https://i.pravatar.cc/150?u=my"}
             className="w-10 h-10 rounded-xl border-2 border-white/10"
             alt="avatar"
           />
@@ -449,6 +457,7 @@ interface MobileQuizHeaderProps {
   isError: boolean;
   currentQuestionIndex: number;
   totalQuestions: number;
+  imgUrl?: string;
 }
 
 // const formatMMSS = (seconds: number) => {
@@ -466,6 +475,7 @@ export const MobileQuizHeader = ({
   isSubmitted,
   isLoading,
   isError,
+  imgUrl,
 }: MobileQuizHeaderProps) => {
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
   const timeLeft = useQuizCountdownTime(isSubmitted, isLoading, isError);
@@ -477,7 +487,7 @@ export const MobileQuizHeader = ({
 
         <div className="flex items-center justify-between mb-3">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.25em] text-slate-500 font-bold">
+            <p className="text-[14px] uppercase tracking-[0.25em] text-slate-500 font-bold">
               Question
             </p>
 
@@ -506,7 +516,7 @@ export const MobileQuizHeader = ({
         {/* Progress Bar */}
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center justify-between text-sm">
             <span className="text-slate-400">Quiz Progress</span>
 
             <span className="font-bold text-white">

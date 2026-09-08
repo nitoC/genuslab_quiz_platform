@@ -58,7 +58,7 @@ const SubmitUI = ({
         {/* Header */}
         <div className="text-center px-2">
           <div
-            className={`inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] ${performance.bg} ${performance.color}`}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border text-[14px] sm:text-sm font-black uppercase tracking-[0.2em] ${performance.bg} ${performance.color}`}
           >
             <BiTrophy size={14} />
             Quiz Completed
@@ -69,7 +69,7 @@ const SubmitUI = ({
             Assessment Results
           </h1>
 
-          <p className="mt-2 sm:mt-3 text-slate-400 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
+          <p className="mt-2 sm:mt-3 text-slate-400 text-sm sm:text-sm max-w-lg mx-auto leading-relaxed">
             Your responses have been evaluated successfully. Review your
             performance summary below.
           </p>
@@ -109,7 +109,7 @@ const SubmitUI = ({
                   <span className="text-4xl sm:text-5xl md:text-6xl font-black text-white">
                     {score}
                   </span>
-                  <span className="text-emerald-400 font-bold text-xs sm:text-sm">
+                  <span className="text-emerald-400 font-bold text-sm sm:text-sm">
                     %
                   </span>
                 </div>
@@ -122,7 +122,7 @@ const SubmitUI = ({
                 {performance.label}
               </h2>
 
-              <p className="mt-2 text-slate-400 text-xs sm:text-sm leading-relaxed">
+              <p className="mt-2 text-slate-400 text-sm sm:text-sm leading-relaxed">
                 Your performance has been calculated based on the answers
                 submitted for this assessment.
               </p>
@@ -130,7 +130,7 @@ const SubmitUI = ({
               {/* Smaller font layout variables and compact paddings for statistics items */}
               <div className="mt-6 space-y-3">
                 {/* Experience Points Row */}
-                <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between shadow-[0_0_20px_rgba(245,158,11,0.03)] text-xs sm:text-sm">
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between shadow-[0_0_20px_rgba(245,158,11,0.03)] text-sm sm:text-sm">
                   <div className="flex items-center gap-2.5">
                     <GiLightningHelix
                       size={16}
@@ -146,7 +146,7 @@ const SubmitUI = ({
                 </div>
 
                 {/* Completion Time Row */}
-                <div className="bg-white/[0.03] border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between text-xs sm:text-sm">
+                <div className="bg-white/[0.03] border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between text-sm sm:text-sm">
                   <div className="flex items-center gap-2.5">
                     <MdLockClock
                       size={16}
@@ -158,7 +158,7 @@ const SubmitUI = ({
                 </div>
 
                 {/* Performance Evaluation Row */}
-                <div className="bg-white/[0.03] border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between text-xs sm:text-sm">
+                <div className="bg-white/[0.03] border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between text-sm sm:text-sm">
                   <div className="flex items-center gap-2.5">
                     <MdBarChart
                       size={16}
@@ -172,7 +172,7 @@ const SubmitUI = ({
                 </div>
 
                 {/* Maximum Allowed Time Row */}
-                <div className="bg-white/[0.03] border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between text-xs sm:text-sm">
+                <div className="bg-white/[0.03] border border-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between text-sm sm:text-sm">
                   <span className="text-slate-300">Maximum Allowed Time</span>
                   <span className="font-bold text-white">5 Minutes</span>
                 </div>

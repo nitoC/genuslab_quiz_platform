@@ -12,7 +12,7 @@ export default function IntegrationWorkflow({
 }: IntegrationWorkflowProps) {
   return (
     <div className="bg-white rounded-xl border border-slate-200/80 p-6 shadow-sm">
-      <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-6">
+      <h3 className="text-sm uppercase font-bold tracking-wider text-slate-400 mb-6">
         Integration Workflow
       </h3>
 
@@ -34,13 +34,13 @@ export default function IntegrationWorkflow({
             {status === "success" ? (
               <HiCheck className="text-lg" />
             ) : (
-              <span className="text-xs font-bold">1</span>
+              <span className="text-sm font-bold">1</span>
             )}
           </div>
-          <span className="text-xs font-bold text-slate-800 mt-2">
+          <span className="text-sm font-bold text-slate-800 mt-2">
             JSON Validation
           </span>
-          <span className="text-[10px] text-slate-400">
+          <span className="text-[14px] text-slate-400">
             Syntax & Schema check
           </span>
         </div>
@@ -50,10 +50,10 @@ export default function IntegrationWorkflow({
           <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 bg-white border-slate-200 text-slate-400">
             <HiOutlineDatabase className="text-lg" />
           </div>
-          <span className="text-xs font-bold text-slate-400 mt-2">
+          <span className="text-sm font-bold text-slate-400 mt-2">
             Quiz Creation
           </span>
-          <span className="text-[10px] text-slate-400">Entity generation</span>
+          <span className="text-[14px] text-slate-400">Entity generation</span>
         </div>
 
         {/* Step 3: Mapping */}
@@ -61,10 +61,10 @@ export default function IntegrationWorkflow({
           <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 bg-white border-slate-200 text-slate-400">
             <HiOutlineLink className="text-lg" />
           </div>
-          <span className="text-xs font-bold text-slate-400 mt-2">
+          <span className="text-sm font-bold text-slate-400 mt-2">
             Question Assignment
           </span>
-          <span className="text-[10px] text-slate-400">Mapping & linking</span>
+          <span className="text-[14px] text-slate-400">Mapping & linking</span>
         </div>
       </div>
     </div>

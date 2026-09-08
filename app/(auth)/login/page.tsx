@@ -1,72 +1,15 @@
 "use client";
 
 import CustomInput from "@/components/ui/FormItems/CustomInput";
+import PasswordInput from "@/components/ui/FormItems/PasswordInput";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/api/apis";
 import { toast } from "react-toastify";
 import { useUser } from "@/store/useUser";
-
-interface WrappedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  hasIcon?: boolean;
-}
-
-const WrappedInput: React.FC<WrappedInputProps> = ({
-  className = "",
-  hasIcon = false,
-  ...props
-}) => (
-  <div
-    className={`w-full overflow-hidden h-10 rounded-sm border border-blue-300 text-white px-3 focus-within:outline-2 outline-blue-10 focus-within:outline-blue-500/10 ${className}`}
-  >
-    <input
-      {...props}
-      className={`w-full h-10 text-gray-800 px-3 border-none focus:outline-none bg-transparent ${
-        hasIcon ? "pr-8" : ""
-      }`}
-    />
-  </div>
-);
-
-interface PasswordInputProps {
-  id: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-const PasswordInput: React.FC<PasswordInputProps> = ({
-  id,
-  placeholder,
-  value,
-  onChange,
-}) => {
-  const [show, setShow] = useState(false);
-  return (
-    <div className="relative">
-      <WrappedInput
-        id={id}
-        type={show ? "text" : "password"}
-        placeholder={placeholder}
-        hasIcon
-        value={value}
-        onChange={onChange}
-      />
-      <button
-        type="button"
-        onClick={() => setShow((s) => !s)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
-        aria-label={show ? "Hide password" : "Show password"}
-      >
-        {show ? <FiEyeOff /> : <FiEye />}
-      </button>
-    </div>
-  );
-};
 
 const LoginPage = () => {
   const router = useRouter();
@@ -167,7 +110,7 @@ const LoginPage = () => {
             />
             <Link
               href="/"
-              className="absolute right-5 top-5 rounded-full bg-blue/80 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-blue"
+              className="absolute right-5 top-5 rounded-full bg-blue/80 px-4 py-1.5 text-sm font-medium text-white backdrop-blur transition hover:bg-blue"
             >
               Back to website →
             </Link>
@@ -201,11 +144,14 @@ const LoginPage = () => {
                   id="password"
                   placeholder="Enter Password"
                   value={form.password}
-                  onChange={handleChange}
+                  onChange={(value) =>
+                    setForm((prev) => ({ ...prev, password: value }))
+                  }
+                  showRequirements={false}
                 />
 
                 <p className="mt-2 text-sm flex items-center justify-between">
-                  <label className="flex items-center gap-3 text-xs">
+                  <label className="flex items-center gap-3 text-sm">
                     <input
                       type="checkbox"
                       className="h-4 w-4 accent-primary"

@@ -71,14 +71,14 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
             <h3 className="text-white font-bold text-lg mb-1">
               Unable to Load Rewards
             </h3>
-            <p className="text-grey text-xs leading-relaxed">
+            <p className="text-grey text-sm leading-relaxed">
               We encountered an issue fetching your profile rewards data. Please
               check your connection and try again.
             </p>
           </div>
           <button
             onClick={() => refetch()}
-            className="mt-2 flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/10 text-xs px-5 py-2.5 rounded-full transition-all duration-200"
+            className="mt-2 flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/10 text-sm px-5 py-2.5 rounded-full transition-all duration-200"
           >
             <MdRefresh size={16} /> Retry
           </button>
@@ -94,7 +94,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
         <h3 className="text-(--primary) font-bold flex items-center gap-2 mb-4 text-sm md:text-base">
           <MdStars className="text-blue" /> Rank Stages
         </h3>
-        <div className="flex scroll-hide md:grid md:grid-cols-4 gap-4 overflow-x-auto no-scrollbar pb-2">
+        <div className="flex scroll-hide md:grid md:grid-cols-4 gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-2">
           <StageCard
             title="Fresh Mind"
             subtitle={rank?.rankName === "Fresh Mind" ? "Achieved" : "ongoing"}
@@ -145,9 +145,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
               <>
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                   <div>
-                    <p className="text-grey text-[10px] md:text-xs mb-1">
-                      Total Rewards
-                    </p>
+                    <p className="text-grey md:text-sm mb-1">Total Rewards</p>
                     <h2 className="text-3xl md:text-4xl font-bold text-(--primary)">
                       ₦
                       {data?.payload?.total?.toLocaleString("en-US", {
@@ -159,7 +157,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <p className="text-grey text-[10px] flex gap-2 items-center uppercase">
+                    <p className="text-grey flex gap-2 items-center uppercase">
                       <MdStars className="text-orange-400" /> Quiz Winnings
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
@@ -170,7 +168,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                     </p>
                   </div>
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <p className="text-grey text-[10px] flex gap-2 items-center uppercase">
+                    <p className="text-grey flex gap-2 items-center uppercase">
                       <MdGroups className="text-blue" /> Referral Earnings
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
@@ -179,16 +177,14 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                         minimumFractionDigits: 2,
                       })}
                     </p>
-                    <p className="text-[10px] text-blue mt-1">
-                      ₦1000 per invite
-                    </p>
+                    <p className="text-blue mt-1">₦1000 per invite</p>
                   </div>
                 </div>
 
                 {/* RECENT REWARDS ACTIVITY (LAST 5 REWARDS) */}
                 <div className="mt-8 pt-6 border-t border-white/5 flex flex-col gap-3">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-grey text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    <p className="text-grey text-sm font-bold uppercase tracking-widest flex items-center gap-2">
                       <MdHistory className="text-blue" size={16} /> Recent
                       Rewards (Last 5)
                     </p>
@@ -223,24 +219,22 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                               )}
                             </div>
                             <div>
-                              <p className="text-xs font-bold text-(--primary)">
+                              <p className="text-sm font-bold text-(--primary)">
                                 {isReferral
                                   ? "Referral Bonus"
                                   : "Quiz Event Prize"}
                               </p>
-                              <p className="text-[10px] text-grey">
-                                {formattedDate}
-                              </p>
+                              <p className="text-grey">{formattedDate}</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-xs font-bold text-green-400">
+                            <p className="text-sm font-bold text-green-400">
                               +₦
                               {amount.toLocaleString("en-US", {
                                 minimumFractionDigits: 2,
                               })}
                             </p>
-                            <span className="text-[9px] uppercase tracking-wider text-grey">
+                            <span className="text-[14px] uppercase tracking-wider text-grey">
                               {reward.claimed ? "Claimed" : "Unclaimed"}
                             </span>
                           </div>
@@ -260,7 +254,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                   <h3 className="text-(--primary) font-bold text-lg">
                     No rewards accumulated yet
                   </h3>
-                  <p className="text-xs text-grey max-w-sm mx-auto leading-relaxed">
+                  <p className="text-sm text-grey max-w-sm mx-auto leading-relaxed">
                     Your completed tracks and performance settlement timelines
                     metrics update here. Participate in live events to earn
                     rewards.
@@ -270,7 +264,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                   text="View Active Quizzes"
                   type="link"
                   to="/quizzes"
-                  style="bg-blue text-white rounded-full px-6 py-2 text-xs font-semibold mt-2"
+                  style="bg-blue text-white rounded-full px-6 py-2 text-sm font-semibold mt-2"
                 />
               </div>
             )}
@@ -284,7 +278,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
 
           {/* Quick Stats */}
           <GlassCard className="p-6">
-            <h4 className="text-grey text-xs font-bold uppercase tracking-widest mb-6">
+            <h4 className="text-grey text-sm font-bold uppercase tracking-widest mb-6">
               Quick Stats
             </h4>
             <div className="flex flex-col gap-6">
@@ -304,20 +298,22 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
       </div>
 
       <section
+        aria-hidden={!share}
         className={clsx(
-          share ? "fixed inset-0 z-200 overflow-hidden" : "hidden z-3",
+          "fixed inset-0 z-200 transition-opacity duration-300 ease-out",
+          share
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
       >
-        {share && (
-          <div
-            onClick={() => setShare(false)}
-            className="bg-black/50 isolate z-2 absolute inset-0"
-          ></div>
-        )}
+        <div
+          onClick={() => setShare(false)}
+          className="absolute inset-0 bg-black/50"
+        />
         <div
           className={clsx(
-            "absolute max-w-250 w-full isolate md:right-20 xl:translate-x-[50%] xl:right-[50%] z-3 duration-300",
-            !share ? "-bottom-250" : "-bottom-2 md:bottom-2.5",
+            "absolute inset-x-4 bottom-4 mx-auto max-w-2xl md:inset-x-auto md:right-20 xl:right-1/2 xl:translate-x-1/2 transition-transform duration-300 ease-out",
+            share ? "translate-y-0" : "translate-y-8",
           )}
         >
           <GlassCard>
@@ -408,7 +404,7 @@ const StageCard = ({
   completed: boolean;
 }) => (
   <div
-    className={`p-4 rounded-xl border shrink-0 flex gap-4 items-center transition-all ${
+    className={`p-4 rounded-xl border shrink-0 snap-start min-w-[220px] md:min-w-0 flex gap-4 items-center transition-all duration-300 ${
       active ? "bg-white/10 border-blue" : "bg-white/5 border-white/5"
     }`}
   >
@@ -417,13 +413,13 @@ const StageCard = ({
     </div>
     <div>
       <h4
-        className={`text-xs font-bold ${
+        className={`text-sm font-bold ${
           active ? "text-(--primary)" : "text-grey"
         }`}
       >
         {title}
       </h4>
-      <p className="text-[10px] text-grey">{subtitle}</p>
+      <p className="text-grey">{subtitle}</p>
     </div>
   </div>
 );
@@ -442,7 +438,7 @@ const StatRow = ({
       <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
         {icon}
       </div>
-      <span className="text-grey text-xs">{label}</span>
+      <span className="text-grey text-sm">{label}</span>
     </div>
     <span className="text-(--primary) font-bold text-sm">{value}</span>
   </div>

@@ -86,7 +86,7 @@ const EmptyStateCard: FC<EmptyStateCardProps> = ({
       <Icon className="text-slate-400 text-xl" />
     </div>
     <h4 className="text-slate-200 font-semibold text-sm mb-1">{title}</h4>
-    <p className="text-slate-400 text-xs max-w-[200px] leading-relaxed">
+    <p className="text-slate-400 text-sm max-w-[200px] leading-relaxed">
       {description}
     </p>
   </div>
@@ -221,7 +221,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                   trend === "" && "text-gray-400",
                 )}
               >
-                <span className="text-xs">
+                <span className="text-sm">
                   {trend === "+" && <FaArrowTrendUp />}
                   {trend === "-" && <FaArrowTrendDown />}
                   {trend === "" && <MdOutlineTrendingFlat />}
@@ -259,7 +259,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                       strokeWidth={3}
                       color={user.color}
                     />
-                    <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-bold">
+                    <span className="absolute inset-0 flex items-center justify-center text-[14px] text-white font-bold">
                       {user.score}
                     </span>
                   </div>
@@ -297,7 +297,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
         <GlassCard className="p-6 flex flex-col justify-between min-h-55">
           <div className="flex justify-between">
             <div>
-              <p className="text-slate-400 text-xs uppercase tracking-wider">
+              <p className="text-slate-400 text-sm uppercase tracking-wider">
                 Personal Performance
               </p>
               <h2 className="text-3xl font-bold text-white mt-2">
@@ -326,7 +326,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
         {/* Activity Leaderboard Bar Chart */}
         <GlassCard className="p-6 flex flex-col justify-between">
           <div>
-            <p className="text-slate-400 text-xs uppercase tracking-wider">
+            <p className="text-slate-400 text-sm uppercase tracking-wider">
               Activity Leaderboard
             </p>
             <h2 className="text-3xl font-bold text-white mt-2 mb-4">
@@ -372,7 +372,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                           : "border-slate-600",
                       )}
                     />
-                    <span className="text-[9px] text-slate-400 font-medium truncate w-full text-center">
+                    <span className="text-[14px] text-slate-400 font-medium truncate w-full text-center">
                       {user.name}
                     </span>
                   </div>

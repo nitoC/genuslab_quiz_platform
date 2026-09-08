@@ -45,14 +45,14 @@ export default function RequiredSchema() {
         <span>Required Schema</span>
       </div>
 
-      <ul className="space-y-3.5 text-xs">
+      <ul className="space-y-3.5 text-sm">
         {schemaRules.map((rule, idx) => (
           <li key={idx} className="flex gap-2.5 items-start">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0 mt-1.5" />
             <div>
               <span className="font-semibold text-slate-800">{rule.field}</span>{" "}
               <span
-                className={`text-[10px] font-bold ${rule.required ? "text-rose-500" : "text-slate-400"}`}
+                className={`text-[14px] font-bold ${rule.required ? "text-rose-500" : "text-slate-400"}`}
               >
                 ({rule.required ? "Required" : "Optional"})
               </span>

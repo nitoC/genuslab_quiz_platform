@@ -29,15 +29,15 @@ export const BankAccountCard: React.FC<BankAccountCardProps> = ({
                 {account.provider}
               </h4>
               {account.isPrimary && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                <span className="inline-flex items-center gap-1 text-[14px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
                   <MdCheckCircle size={12} /> Primary
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 font-mono tracking-wider">
+            <p className="text-sm text-slate-400 font-mono tracking-wider">
               •••• •••• {account.providerAccountId?.slice(-4)}
             </p>
-            <p className="text-[11px] text-slate-500 font-medium uppercase">
+            <p className="text-[14px] text-slate-500 font-medium uppercase">
               {account.accountName}
             </p>
           </div>

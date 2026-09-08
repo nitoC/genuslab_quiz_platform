@@ -2,13 +2,28 @@
 // import { socket } from "@/lib/api/socket";
 import { useSocket } from "@/store/useSocket";
 // import { cookies } from "next/headers";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import SocketProvider from "@/providers/SocketProvider";
 
 const dashLayout = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = new QueryClient();
+  // Lazily created once per mount — creating a fresh QueryClient on every
+  // render (as a plain `new QueryClient()` in the component body would)
+  // wipes the entire cache each time this layout re-renders.
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+            gcTime: 5 * 60 * 1000,
+            retry: 1,
+            refetchOnWindowFocus: false,
+          },
+        },
+      }),
+  );
   // const updateSocketId = useSocket((state: any) => state.updateSocketId);
   // const theme = (await cookies()).get("theme")?.value ?? "dark";
 

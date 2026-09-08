@@ -121,7 +121,7 @@ export default function QuizReviewModal({
               <h2 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
                 Quiz Review: {meta.ep}
               </h2>
-              <p className="mt-1 text-xs text-slate-400">{meta.dayTime}</p>
+              <p className="mt-1 text-sm text-slate-400">{meta.dayTime}</p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -131,7 +131,7 @@ export default function QuizReviewModal({
                 className={cn(
                   "hidden sm:inline-flex items-center gap-2 rounded-xl px-4 py-2",
                   "bg-white/5 hover:bg-white/10 border border-white/5",
-                  "text-xs font-bold text-slate-200 transition",
+                  "text-sm font-bold text-slate-200 transition",
                 )}
               >
                 ← Back to Results
@@ -197,7 +197,7 @@ export default function QuizReviewModal({
                     {/* question header row */}
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <div className="text-[11px] font-extrabold tracking-[0.25em] text-cyan-300/90 uppercase">
+                        <div className="text-[14px] font-extrabold tracking-[0.25em] text-cyan-300/90 uppercase">
                           Question{" "}
                           {String(q.number ?? idx + 1).padStart(2, "0")}
                         </div>
@@ -210,7 +210,7 @@ export default function QuizReviewModal({
                       <div
                         className={cn(
                           "inline-flex items-center gap-2 rounded-xl px-4 py-2",
-                          "border text-xs font-extrabold",
+                          "border text-sm font-extrabold",
                           isCorrect
                             ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300"
                             : "bg-rose-500/10 border-rose-500/20 text-rose-300",
@@ -249,7 +249,7 @@ export default function QuizReviewModal({
                         );
 
                         const badgeClass = cn(
-                          "grid h-7 w-7 place-items-center rounded-full text-[11px] font-extrabold",
+                          "grid h-7 w-7 place-items-center rounded-full text-[14px] font-extrabold",
                           isCorrectOpt
                             ? "bg-emerald-500/20 text-emerald-300"
                             : isYourPick && !isCorrectOpt
@@ -302,7 +302,7 @@ export default function QuizReviewModal({
                           "bg-white/[0.03] border border-white/5",
                         )}
                       >
-                        <div className="flex items-center gap-2 text-[11px] font-extrabold tracking-[0.22em] uppercase text-cyan-300/90">
+                        <div className="flex items-center gap-2 text-[14px] font-extrabold tracking-[0.22em] uppercase text-cyan-300/90">
                           <MdInfoOutline size={16} className="opacity-90" />
                           Expert Insight
                         </div>

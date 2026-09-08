@@ -35,7 +35,7 @@ const ShareCard = ({
       </div>
       <div>
         <h3 className="text-(--primary) font-bold">Invite Friends</h3>
-        <p className="text-grey text-xs mt-2">
+        <p className="text-grey text-sm mt-2">
           Earn ₦1000 for every friend who joins using your unique code.
         </p>
       </div>

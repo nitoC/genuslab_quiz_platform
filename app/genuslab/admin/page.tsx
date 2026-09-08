@@ -83,7 +83,7 @@ export default function LoginPage() {
         >
           {/* Work Email Field */}
           <div>
-            <label className="block text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2">
+            <label className="block text-sm font-semibold text-[#666666] uppercase tracking-wider mb-2">
               Work Email
             </label>
             <div className="relative">
@@ -103,12 +103,12 @@ export default function LoginPage() {
           {/* Password Field */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="block text-xs font-semibold text-[#666666] uppercase tracking-wider">
+              <label className="block text-sm font-semibold text-[#666666] uppercase tracking-wider">
                 Password
               </label>
               <a
                 href="#"
-                className="text-xs font-semibold text-blue hover:underline"
+                className="text-sm font-semibold text-blue hover:underline"
               >
                 Forgot password?
               </a>
@@ -165,7 +165,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-6 flex items-center justify-center">
             <div className="w-full border-t border-[#e2e8f0]"></div>
-            <span className="absolute bg-white px-3 text-[10px] font-bold tracking-widest text-[#999999] uppercase">
+            <span className="absolute bg-white px-3 text-[14px] font-bold tracking-widest text-[#999999] uppercase">
               OR SECURELY ACCESS WITH
             </span>
           </div>
@@ -182,14 +182,14 @@ export default function LoginPage() {
       </div>
 
       {/* Footer Section */}
-      <div className="mt-8 text-center text-xs font-medium text-[#777777]">
+      <div className="mt-8 text-center text-sm font-medium text-[#777777]">
         <div className="flex justify-center space-x-4 mb-3">
           <a href="#" className="flex items-center gap-1 hover:text-[#333333]">
             <FaShieldHalved size={11} /> Security Policy
           </a>
           <span className="text-gray-300">|</span>
           <a href="#" className="flex items-center gap-1 hover:text-[#333333]">
-            <span className="inline-block rounded-full border border-[#777777] w-3.5 h-3.5 text-[9px] leading-3 font-bold">
+            <span className="inline-block rounded-full border border-[#777777] w-3.5 h-3.5 text-[14px] leading-3 font-bold">
               ?
             </span>{" "}
             Help Center

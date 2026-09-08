@@ -95,7 +95,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
           <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full -mr-10 -mt-10" />
 
           <div className="space-y-2 z-10">
-            <span className="text-green-400 text-xs font-bold uppercase tracking-wide">
+            <span className="text-green-400 text-sm font-bold uppercase tracking-wide">
               Referral Program
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-(--primary) tracking-tight">
@@ -105,7 +105,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
 
           <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5 z-10">
             <div>
-              <p className="text-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">
+              <p className="text-grey text-[14px] md:text-sm uppercase tracking-wider mb-1">
                 Total Rewards
               </p>
               <p className="text-2xl md:text-3xl font-black text-(--primary)">
@@ -114,7 +114,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
               </p>
             </div>
             <div>
-              <p className="text-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">
+              <p className="text-grey text-[14px] md:text-sm uppercase tracking-wider mb-1">
                 Successful Invites
               </p>
               <p className="text-2xl md:text-3xl font-black text-green-400">
@@ -127,7 +127,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
         {/* Right Code & Share Panel */}
         <GlassCard className="lg:col-span-4 p-6 sm:p-8 flex flex-col justify-between gap-6">
           <div>
-            <p className="text-grey text-xs text-center lg:text-left mb-3">
+            <p className="text-grey text-sm text-center lg:text-left mb-3">
               Your Referral Code
             </p>
             <div className="bg-white/5 border border-white/5 rounded-xl px-4 py-3 flex justify-between items-center group hover:bg-white/10 transition-all">
@@ -173,24 +173,24 @@ const ReferralTabContent = ({ user }: { user: any }) => {
           <h3 className="text-base font-bold text-(--primary)">
             Referral History
           </h3>
-          <button className="text-xs text-blue hover:underline flex items-center gap-1 font-semibold transition-all">
+          <button className="text-sm text-blue hover:underline flex items-center gap-1 font-semibold transition-all">
             View All <MdArrowForward />
           </button>
         </div>
 
         {/* Shared Async States UI handler */}
         {isLoading && (
-          <div className="py-12 text-center text-xs text-grey">
+          <div className="py-12 text-center text-sm text-grey">
             Loading referrals...
           </div>
         )}
         {isError && (
-          <div className="py-12 text-center text-xs text-red-400">
+          <div className="py-12 text-center text-sm text-red-400">
             Failed to load referrals.
           </div>
         )}
         {!isLoading && !isError && referralsList.length === 0 && (
-          <div className="py-12 text-center text-xs text-grey">
+          <div className="py-12 text-center text-sm text-grey">
             No referrals found.
           </div>
         )}
@@ -203,21 +203,21 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                 <div key={row.id} className="p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[11px] text-blue shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[14px] text-blue shrink-0">
                         {getInitials(row.name)}
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <span className="font-bold text-(--primary) text-xs truncate">
+                        <span className="font-bold text-(--primary) text-sm truncate">
                           {row.name}
                         </span>
-                        <span className="text-[10px] text-grey/60 truncate">
+                        <span className="text-[14px] text-grey/60 truncate">
                           {row.email}
                         </span>
                       </div>
                     </div>
                     <div className="text-right shrink-0">
                       <p
-                        className={`font-bold text-xs ${
+                        className={`font-bold text-sm ${
                           row.verified ? "text-green-400" : "text-grey"
                         }`}
                       >
@@ -226,12 +226,12 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] pt-1">
+                  <div className="flex items-center justify-between text-[14px] pt-1">
                     <span className="text-grey/60">
                       {formatDate(row.createdAt)}
                     </span>
                     <span
-                      className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
+                      className={`inline-block px-2.5 py-0.5 rounded-full text-[14px] font-bold ${
                         row.verified
                           ? "bg-green-500/10 text-green-400 border border-green-500/20"
                           : "bg-orange-500/10 text-orange-400 border border-orange-500/20"
@@ -248,7 +248,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
             <div className="hidden md:block overflow-x-auto w-full">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-grey">
+                  <tr className="border-b border-white/5 text-[14px] uppercase tracking-wider text-grey">
                     <th className="py-4 px-6 font-medium">User</th>
                     <th className="py-4 px-6 font-medium">Date Joined</th>
                     <th className="py-4 px-6 font-medium">Status</th>
@@ -257,21 +257,21 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 text-xs">
+                <tbody className="divide-y divide-white/5 text-sm">
                   {referralsList.map((row) => (
                     <tr
                       key={row.id}
                       className="hover:bg-white/[0.02] transition-colors"
                     >
                       <td className="py-4 px-6 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[11px] text-blue">
+                        <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[14px] text-blue">
                           {getInitials(row.name)}
                         </div>
                         <div className="flex flex-col">
                           <span className="font-bold text-(--primary)">
                             {row.name}
                           </span>
-                          <span className="text-[10px] text-grey/60">
+                          <span className="text-[14px] text-grey/60">
                             {row.email}
                           </span>
                         </div>
@@ -281,7 +281,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                       </td>
                       <td className="py-4 px-6">
                         <span
-                          className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold ${
+                          className={`inline-block px-3 py-1 rounded-full text-[14px] font-bold ${
                             row.verified
                               ? "bg-green-500/10 text-green-400 border border-green-500/20"
                               : "bg-orange-500/10 text-orange-400 border border-orange-500/20"
@@ -333,7 +333,7 @@ const BonusCard = ({
           <h3 className="text-base font-bold text-(--primary)">
             Bonus Milestone
           </h3>
-          <p className="text-xs text-grey">
+          <p className="text-sm text-grey">
             Next Big Reward:{" "}
             <span className="text-white/40 line-through">₦50,000</span> Bonus
             Credit
@@ -343,7 +343,7 @@ const BonusCard = ({
           <p className="text-sm font-bold text-blue tracking-wide">
             {successfulInvites} / {targetInvites}
           </p>
-          <p className="text-[10px] text-grey">Invites to next goal</p>
+          <p className="text-[14px] text-grey">Invites to next goal</p>
         </div>
       </div>
 
@@ -358,11 +358,11 @@ const BonusCard = ({
 
         {/* Tier Map Nodes */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-          <div className="flex items-center gap-2 text-[11px]">
+          <div className="flex items-center gap-2 text-[14px]">
             <FaCheckCircle className="text-green-500 shrink-0" size={14} />
             <span className="text-grey">Tier 1: 50 Invites</span>
           </div>
-          <div className="flex items-center gap-2 text-[11px] md:justify-center">
+          <div className="flex items-center gap-2 text-[14px] md:justify-center">
             <IoMdInformationCircleOutline
               className="text-blue shrink-0"
               size={14}
@@ -371,7 +371,7 @@ const BonusCard = ({
               Tier 2: 150 Invites
             </span>
           </div>
-          <div className="flex items-center gap-2 text-[11px] md:justify-end">
+          <div className="flex items-center gap-2 text-[14px] md:justify-end">
             <HiLockClosed className="text-grey shrink-0" size={14} />
             <span className="text-grey/60">Tier 3: 500 Invites</span>
           </div>

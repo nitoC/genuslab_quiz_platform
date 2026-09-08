@@ -259,7 +259,7 @@ export default function EditQuizPage() {
         </p>
         <button
           onClick={() => router.back()}
-          className="text-xs font-bold text-blue-600 hover:underline"
+          className="text-sm font-bold text-blue-600 hover:underline"
         >
           Go back
         </button>
@@ -272,7 +272,7 @@ export default function EditQuizPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-3 p-6">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-        <p className="text-slate-500 text-xs font-medium">
+        <p className="text-slate-500 text-sm font-medium">
           Loading quiz details...
         </p>
       </div>
@@ -287,7 +287,7 @@ export default function EditQuizPage() {
         <div>
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-xs font-bold cursor-pointer mb-1"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-sm font-bold cursor-pointer mb-1"
           >
             <MdArrowBack className="text-base" /> Back to Quizzes
           </button>
@@ -299,7 +299,7 @@ export default function EditQuizPage() {
         <button
           onClick={handleSubmit}
           disabled={updateMutation.isPending}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs md:text-sm px-5 py-2.5 rounded-lg transition-all shadow-sm cursor-pointer"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-sm md:text-sm px-5 py-2.5 rounded-lg transition-all shadow-sm cursor-pointer"
         >
           <MdSave className="text-lg" />
           {updateMutation.isPending ? "Saving..." : "Save Changes"}
@@ -319,7 +319,7 @@ export default function EditQuizPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+              <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                 Quiz Title
               </label>
               <input
@@ -334,7 +334,7 @@ export default function EditQuizPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Episode
                 </label>
                 <select
@@ -351,7 +351,7 @@ export default function EditQuizPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Day Number
                 </label>
                 <input
@@ -367,7 +367,7 @@ export default function EditQuizPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Active Slot
                 </label>
                 <select
@@ -384,7 +384,7 @@ export default function EditQuizPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Status
                 </label>
                 <select
@@ -401,7 +401,7 @@ export default function EditQuizPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Active Date
                 </label>
                 <input
@@ -426,7 +426,7 @@ export default function EditQuizPage() {
             <button
               type="button"
               onClick={addQuestion}
-              className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-4 py-2 rounded-lg transition-all cursor-pointer border border-slate-200"
+              className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm px-4 py-2 rounded-lg transition-all cursor-pointer border border-slate-200"
             >
               <MdAdd className="text-base text-blue-600" /> Add Question
             </button>
@@ -438,7 +438,7 @@ export default function EditQuizPage() {
               className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
+                <span className="text-sm font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
                   Question #{qIndex + 1}
                 </span>
                 <button
@@ -463,7 +463,7 @@ export default function EditQuizPage() {
               />
 
               <div className="space-y-2 pt-1">
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <label className="block text-[14px] font-bold text-slate-500 uppercase tracking-wider">
                   Options (Select correct answer)
                 </label>
 
@@ -518,7 +518,7 @@ export default function EditQuizPage() {
                 <button
                   type="button"
                   onClick={() => addOption(qIndex)}
-                  className="text-xs font-bold text-blue-600 hover:underline pt-2 inline-block cursor-pointer"
+                  className="text-sm font-bold text-blue-600 hover:underline pt-2 inline-block cursor-pointer"
                 >
                   + Add Option
                 </button>

@@ -31,7 +31,7 @@ export const FeatureItem: React.FC<{ feature: PlanFeature }> = ({
   feature,
 }) => {
   return (
-    <li className="flex items-center gap-3 text-xs md:text-sm font-medium">
+    <li className="flex items-center gap-3 text-sm md:text-sm font-medium">
       {feature.icon ? (
         renderCustomIcon(feature.icon)
       ) : feature.included ? (

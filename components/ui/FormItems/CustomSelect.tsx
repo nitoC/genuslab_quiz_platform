@@ -1,16 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import GlassCard from "../cards/GlassCard";
+import clsx from "clsx";
+import React, { useEffect, useRef, useState } from "react";
+import { Check, ChevronDown } from "lucide-react";
+import { inputShell, inputShellDisabled } from "./inputStyles";
 
 const CustomSelect = (props: any) => {
-  const [drop, setdrop] = useState(false);
+  const [drop, setDrop] = useState(false);
   const options = props.options ?? [];
-  const { onChange: handler } = props;
+  const { onChange: handler, disabled } = props;
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      setdrop(false);
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+        setDrop(false);
+      }
     }
     window.addEventListener("click", handleClickOutside);
 
@@ -21,42 +25,65 @@ const CustomSelect = (props: any) => {
 
   return (
     <div
-      className="relative flex justify-between items-center cursor-pointer w-full h-10 rounded-sm border border-blue-300 text-white px-3 focus-within:outline-2 outline-blue-10 focus-within:outline-blue-500/10"
+      ref={rootRef}
+      className={clsx(
+        inputShell,
+        disabled && inputShellDisabled,
+        drop && "border-blue-500 ring-4 ring-blue-500/10",
+        "relative cursor-pointer justify-between select-none",
+      )}
       onClick={(e) => {
-        setdrop(!drop);
-        console.log(options, "options");
+        setDrop(!drop);
         e.stopPropagation();
       }}
     >
-      <label className="block text-sm font-medium text-gray-400 mb-1">
+      <span
+        className={clsx(
+          "truncate text-[15px]",
+          props.label ? "text-gray-800" : "text-gray-400",
+        )}
+      >
         {!props.label ? props.placeholder : props.label}
-      </label>
-      <div className="absolute inset-x-0 flex-col flex z-5 top-full">
-        {drop && (
-          <GlassCard className="bg-white-800/50 overflow-hidden rounded-md mt-1 py-1">
-            <div className=" max-h-100 overflow-y-scroll scroll-hide scroll-show">
-              {options.map((item: any, index: number) => (
+      </span>
+
+      {drop && (
+        <div className="animate-fadeIn absolute inset-x-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-gray-100 bg-white py-1.5 shadow-xl shadow-black/10">
+          <div className="menu-scrollbar max-h-56 overflow-y-auto">
+            {options.map((item: any, index: number) => {
+              const isSelected = item.label === props.label;
+              return (
                 <div
                   key={index}
-                  className="p-4 text-black hover:bg-blue-100 cursor-pointer"
+                  className={clsx(
+                    "flex items-center justify-between gap-2 px-4 py-2.5 text-[15px] transition-colors duration-150",
+                    isSelected
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-50",
+                  )}
                   onClick={(e) => {
                     handler(item.label);
-                    setdrop(false);
+                    setDrop(false);
                     e.stopPropagation();
                   }}
                 >
-                  {item.label}
+                  <span className="truncate">{item.label}</span>
+                  {isSelected && (
+                    <Check size={16} strokeWidth={2.5} className="shrink-0" />
+                  )}
                 </div>
-              ))}
-            </div>
-          </GlassCard>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <ChevronDown
+        size={18}
+        className={clsx(
+          "shrink-0 text-gray-400 transition-transform duration-200",
+          drop && "rotate-180",
         )}
-      </div>
-      {drop ? (
-        <IoIosArrowUp className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-      ) : (
-        <IoIosArrowDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-      )}{" "}
+      />
     </div>
   );
 };

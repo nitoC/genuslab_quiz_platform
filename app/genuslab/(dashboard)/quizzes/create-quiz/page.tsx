@@ -30,7 +30,7 @@ export default function ChooseQuizType() {
                 <FaGraduationCap className="text-lg text-slate-700" />
               </div>
 
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600">
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-[14px] font-medium text-slate-600">
                 Internal
               </span>
             </div>
@@ -76,7 +76,7 @@ export default function ChooseQuizType() {
                 <FaRocket className="text-lg text-white" />
               </div>
 
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-medium text-blue-600">
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-[14px] font-medium text-blue-600">
                 Official
               </span>
             </div>
@@ -132,7 +132,7 @@ function JsonBuilderCard() {
         </div>
 
         {/* Advanced Badge */}
-        <span className="px-3 py-1 bg-blue-50 text-blue-900 text-xs font-semibold rounded-full border border-blue-100 tracking-wide">
+        <span className="px-3 py-1 bg-blue-50 text-blue-900 text-sm font-semibold rounded-full border border-blue-100 tracking-wide">
           Advanced
         </span>
       </div>
@@ -145,7 +145,7 @@ function JsonBuilderCard() {
         <p className="text-base text-slate-700 leading-relaxed">
           Quickly generate your quiz by importing structured data.
         </p>
-        <p className="text-xs italic text-slate-800 font-medium">
+        <p className="text-sm italic text-slate-800 font-medium">
           Hint: You can paste your past quiz and questions as a JSON file.
         </p>
       </div>

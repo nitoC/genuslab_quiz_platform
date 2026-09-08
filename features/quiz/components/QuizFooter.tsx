@@ -39,7 +39,7 @@ const QuizFooter = ({
 
       <div className="flex flex-col md:flex-row items-center gap-8">
         <div className="text-right">
-          <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">
+          <p className="text-[14px] text-slate-500 font-black uppercase tracking-widest">
             Potential Reward
           </p>
           <p className="text-2xl font-black text-white">+520 XP</p>
@@ -49,7 +49,7 @@ const QuizFooter = ({
           {currentQuestionIndex > 0 && (
             <button
               onClick={onPrev}
-              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-xs uppercase tracking-wider transition border border-white/5"
+              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider transition border border-white/5"
             >
               Prev
             </button>
@@ -72,9 +72,13 @@ const QuizFooter = ({
           ) : (
             <button
               onClick={onNext}
-              className="bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
+              disabled={submitting}
+              className={cn(
+                "bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]",
+                submitting && "opacity-40 pointer-events-none",
+              )}
             >
-              Next Question
+              {submitting ? "submitting..." : "Next Question"}
               <MdChevronRight size={24} />
             </button>
           )}

@@ -20,7 +20,7 @@ const Button: React.FC<ButtonProps> = ({
     return (
       <button
         disabled
-        className="w-full py-3 px-4 rounded-xl bg-slate-800/80 text-slate-400 text-xs font-semibold cursor-not-allowed border border-slate-700/50"
+        className="w-full py-3 px-4 rounded-xl bg-slate-800/80 text-slate-400 text-sm font-semibold cursor-not-allowed border border-slate-700/50"
       >
         {children}
       </button>
@@ -34,8 +34,8 @@ const Button: React.FC<ButtonProps> = ({
         disabled={submitting}
         className={clsx(
           submitting
-            ? "cursor-not-allowed opacity-50 w-full py-3 px-4 rounded-xl bg-slate-800/80 text-slate-400 text-xs font-semibold"
-            : "w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-95 text-white text-xs font-bold transition-opacity shadow-lg shadow-purple-500/20",
+            ? "cursor-not-allowed opacity-50 w-full py-3 px-4 rounded-xl bg-slate-800/80 text-slate-400 text-sm font-semibold"
+            : "w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-95 text-white text-sm font-bold transition-opacity shadow-lg shadow-purple-500/20",
         )}
       >
         {children}
@@ -49,8 +49,8 @@ const Button: React.FC<ButtonProps> = ({
       disabled={submitting}
       className={clsx(
         submitting
-          ? "cursor-not-allowed opacity-50 w-full py-3 px-4 rounded-xl bg-slate-800/80 text-slate-400 text-xs font-semibold"
-          : "w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors",
+          ? "cursor-not-allowed opacity-50 w-full py-3 px-4 rounded-xl bg-slate-800/80 text-slate-400 text-sm font-semibold"
+          : "w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors",
       )}
     >
       {children}
@@ -111,7 +111,7 @@ export const PricingCard: React.FC<{
     >
       {/* Top Floating Badge */}
       {plan.badge && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white text-[10px] font-bold tracking-widest uppercase py-1 px-4 rounded-full shadow-md">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white text-[14px] font-bold tracking-widest uppercase py-1 px-4 rounded-full shadow-md">
           {plan.badge}
         </div>
       )}
@@ -121,7 +121,7 @@ export const PricingCard: React.FC<{
         <div className="space-y-1">
           <span
             className={clsx(
-              "text-xs font-semibold tracking-wide",
+              "text-sm font-semibold tracking-wide",
               plan.isHighlighted
                 ? "text-fuchsia-400"
                 : plan.id === "basic"
@@ -143,7 +143,7 @@ export const PricingCard: React.FC<{
             {plan.price}
           </span>
           {plan.period && (
-            <span className="text-xs font-medium text-slate-400">
+            <span className="text-sm font-medium text-slate-400">
               {plan.period}
             </span>
           )}

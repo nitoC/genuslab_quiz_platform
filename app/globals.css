@@ -165,10 +165,35 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-base leading-relaxed;
   }
   html {
     @apply font-sans;
+  }
+
+  /* Accessible type hierarchy — floors for any element rendered without an
+     explicit Tailwind text-size utility. Utility classes on the element
+     itself still win, so this only fills the gaps and keeps a consistent
+     scale (h1 > h2 > h3 > h4 > body) across every page. */
+  h1 {
+    @apply text-3xl font-bold leading-tight;
+  }
+  h2 {
+    @apply text-2xl font-bold leading-snug;
+  }
+  h3 {
+    @apply text-xl font-semibold leading-snug;
+  }
+  h4,
+  h5,
+  h6 {
+    @apply text-lg font-semibold leading-snug;
+  }
+  p {
+    @apply text-base leading-relaxed;
+  }
+  label {
+    @apply text-sm;
   }
 }
 
@@ -513,6 +538,115 @@ a {
 
 .chat-scrollbar::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/* Polished, thin scrollbar for dropdown / listbox panels */
+.menu-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.menu-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.menu-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.menu-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 999px;
+}
+.menu-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+/* Age-friendly, senior-legible date of birth picker */
+.dob-datepicker.react-datepicker {
+  font-family: inherit;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow:
+    0 12px 32px -12px rgba(15, 23, 42, 0.18),
+    0 4px 12px -4px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  padding-bottom: 0.5rem;
+}
+.dob-datepicker.react-datepicker .react-datepicker__month-container {
+  float: none;
+}
+.dob-datepicker .react-datepicker__triangle {
+  display: none;
+}
+.dob-datepicker .react-datepicker__header {
+  background: #fff;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.85rem 0.75rem 0.6rem;
+}
+.dob-datepicker .react-datepicker__current-month {
+  display: none;
+}
+.dob-datepicker .react-datepicker__day-names {
+  margin-top: 0.5rem;
+}
+.dob-datepicker .react-datepicker__day-name {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: 2.4rem;
+  line-height: 2rem;
+}
+.dob-datepicker .react-datepicker__month {
+  margin: 0.4rem 0.6rem 0.2rem;
+}
+.dob-datepicker .react-datepicker__week {
+  display: flex;
+}
+.dob-datepicker .react-datepicker__day {
+  width: 2.4rem;
+  line-height: 2.4rem;
+  font-size: 0.95rem;
+  color: #334155;
+  border-radius: 999px;
+  margin: 0.1rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.dob-datepicker .react-datepicker__day:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+.dob-datepicker .react-datepicker__day--outside-month {
+  color: #cbd5e1;
+}
+.dob-datepicker .react-datepicker__day--selected,
+.dob-datepicker .react-datepicker__day--keyboard-selected {
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+.dob-datepicker .react-datepicker__day--selected:hover,
+.dob-datepicker .react-datepicker__day--keyboard-selected:hover {
+  background-color: #1d4ed8;
+}
+.dob-datepicker .react-datepicker__day--today:not(.react-datepicker__day--selected) {
+  border: 1.5px solid #2563eb;
+  line-height: calc(2.4rem - 3px);
+}
+.dob-datepicker .react-datepicker__navigation {
+  top: 1rem;
+}
+.dob-datepicker .react-datepicker__navigation--previous {
+  left: 0.75rem;
+}
+.dob-datepicker .react-datepicker__navigation--next {
+  right: 0.75rem;
+}
+.dob-datepicker .react-datepicker__navigation-icon::before {
+  border-color: #64748b;
+  border-width: 2px 2px 0 0;
+  width: 8px;
+  height: 8px;
+}
+.dob-datepicker .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #2563eb;
 }
 
 .otp input:focus-within {

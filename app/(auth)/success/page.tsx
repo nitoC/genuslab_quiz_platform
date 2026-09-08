@@ -139,7 +139,7 @@ function PasswordResetSuccessPage() {
               </span>
             </div>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <ShieldCheck className="w-3.5 h-3.5" /> Secure Verification
             </span>
           </div>
@@ -168,7 +168,7 @@ function PasswordResetSuccessPage() {
           <div className="inline-flex items-center justify-between gap-3 bg-slate-950/80 border border-slate-800/80 rounded-2xl px-4 py-3 max-w-full mb-8 text-left group">
             <div className="flex items-center gap-2.5 min-w-0">
               <Inbox className="w-4 h-4 text-blue-400 shrink-0" />
-              <span className="text-xs sm:text-sm font-mono text-slate-200 truncate select-all">
+              <span className="text-sm sm:text-sm font-mono text-slate-200 truncate select-all">
                 {email}
               </span>
             </div>
@@ -208,21 +208,21 @@ function PasswordResetSuccessPage() {
 
           {/* Resend Feedback Banner */}
           {resendStatus === "success" && (
-            <div className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm flex items-center justify-center gap-2">
+            <div className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm sm:text-sm flex items-center justify-center gap-2">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>A fresh reset link has been dispatched to your inbox.</span>
             </div>
           )}
 
           {resendStatus === "error" && (
-            <div className="mb-6 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs sm:text-sm flex items-center justify-center gap-2">
+            <div className="mb-6 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm sm:text-sm flex items-center justify-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>Failed to resend link. Please try again shortly.</span>
             </div>
           )}
 
           {/* Resend Cooldown Section */}
-          <div className="pt-6 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm gap-3">
+          <div className="pt-6 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between text-sm sm:text-sm gap-3">
             <span className="text-slate-400">Didn't receive the email?</span>
             <button
               onClick={handleResend}
@@ -247,7 +247,7 @@ function PasswordResetSuccessPage() {
           </div>
 
           {/* Spam Callout Warning */}
-          <div className="mt-8 p-4 rounded-2xl bg-slate-950/50 border border-slate-800/50 text-left text-xs text-slate-400 flex items-start gap-3">
+          <div className="mt-8 p-4 rounded-2xl bg-slate-950/50 border border-slate-800/50 text-left text-sm text-slate-400 flex items-start gap-3">
             <AlertCircle className="w-4 h-4 text-amber-400/80 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
               <strong className="text-slate-300">Can’t find it?</strong> Please
@@ -266,7 +266,7 @@ function PasswordResetSuccessPage() {
         </div>
 
         {/* Footer info */}
-        <p className="text-center text-xs text-slate-500 mt-6">
+        <p className="text-center text-sm text-slate-500 mt-6">
           &copy; {new Date().getFullYear()} GenusLab Technologies Academy. All
           rights reserved.
         </p>

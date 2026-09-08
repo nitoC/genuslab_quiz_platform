@@ -3,7 +3,7 @@ import React from "react";
 export const Footer: React.FC = () => {
   return (
     <footer className="pt-16 pb-8 text-center space-y-3">
-      <div className="flex items-center justify-center gap-6 text-xs text-slate-400 font-medium">
+      <div className="flex items-center justify-center gap-6 text-sm text-slate-400 font-medium">
         <a href="#terms" className="hover:text-white transition-colors">
           Terms of Service
         </a>
@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
           Support
         </a>
       </div>
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[14px] text-slate-500">
         © 2024 Genuslab Systems. Built for the next generation of learners.
       </p>
     </footer>

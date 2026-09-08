@@ -35,7 +35,7 @@ const UpdateSuccessModal = ({ onClose }: { onClose?: () => void }) => {
         {/* Footer info */}
         <div className="mt-12 flex items-center gap-2 opacity-40">
           <MdVerifiedUser className="text-slate-400 text-sm" />
-          <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+          <span className="text-slate-400 text-[14px] font-bold uppercase tracking-widest">
             Security Verified
           </span>
         </div>

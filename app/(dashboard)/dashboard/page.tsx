@@ -260,7 +260,7 @@ const Page = () => {
                     color="border-orange-400"
                   />
 
-                  <h6 className="text-orange-400 whitespace-nowrap py-2 px-4 rounded-full absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-bold bg-[#0f127a] flex gap-2 items-center">
+                  <h6 className="text-orange-400 whitespace-nowrap py-2 px-4 rounded-full absolute -bottom-4 left-1/2 -translate-x-1/2 text-sm font-bold bg-[#0f127a] flex gap-2 items-center">
                     <MdStars size={15} />
 
                     {rank?.rankName || "Fresh Mind"}
@@ -274,7 +274,7 @@ const Page = () => {
                         {userName}
                       </h3>
 
-                      <span className="text-blue text-[.625rem] bg-blue/20 py-2 px-4 rounded-full">
+                      <span className="text-blue text-[14px] bg-blue/20 py-2 px-4 rounded-full">
                         Rank {rank?.rank || 0}
                       </span>
                     </div>
@@ -285,11 +285,11 @@ const Page = () => {
                   </div>
 
                   <div className="flex justify-between">
-                    <h4 className="text-xs text-(--primary)">
+                    <h4 className="text-sm text-(--primary)">
                       Level {rank?.rank || 0} Progress
                     </h4>
 
-                    <h4 className="text-blue text-xs">
+                    <h4 className="text-blue text-sm">
                       {user?.details?.xp || 0}/{rank?.unlockXp || 0} XP
                     </h4>
                   </div>
@@ -324,7 +324,7 @@ const Page = () => {
                 <div className="flex items-center justify-between">
                   <ChartUpIcon color="#B3B3B3" size={24} />
 
-                  <span className="text-yellow text-xs font-bold px-2 py-1 rounded-b-sm bg-yellow/10">
+                  <span className="text-yellow text-sm font-bold px-2 py-1 rounded-b-sm bg-yellow/10">
                     TOP 5%
                   </span>
                 </div>
@@ -356,7 +356,7 @@ const Page = () => {
                       <ShieldIcon />
                     </div>
                     <h3 className="text-grey text-sm mt-2">No rewards yet</h3>
-                    <p className="text-xs text-grey max-w-[200px]">
+                    <p className="text-sm text-grey max-w-[200px]">
                       Climb up the leaderboard rank metrics to start earning.
                     </p>
                   </div>
@@ -373,7 +373,7 @@ const Page = () => {
                 <div className="flex justify-between items-center">
                   <h3 className="text-(--primary) font-semibold">Tasks</h3>
 
-                  <span className="text-grey text-xs">{taskCount}/2 Done</span>
+                  <span className="text-grey text-sm">{taskCount}/2 Done</span>
                 </div>
 
                 <div className="flex justify-between items-center rounded-lg p-3">
@@ -384,18 +384,18 @@ const Page = () => {
 
                     <p className="text-sm text-grey">
                       Complete 5 Quizzes{" "}
-                      <span className="text-yellow text-xs font-bold">
+                      <span className="text-yellow text-sm font-bold">
                         +150 XP
                       </span>
                     </p>
                   </div>
 
                   {hasAttempts ? (
-                    <span className="text-green-400 text-xs font-bold">
+                    <span className="text-green-400 text-sm font-bold">
                       DONE
                     </span>
                   ) : (
-                    <span className="text-orange-400 text-xs font-bold">
+                    <span className="text-orange-400 text-sm font-bold">
                       PENDING
                     </span>
                   )}
@@ -411,11 +411,11 @@ const Page = () => {
                   </div>
 
                   {hasSharedRef ? (
-                    <span className="text-green-400 text-xs font-bold">
+                    <span className="text-green-400 text-sm font-bold">
                       DONE
                     </span>
                   ) : (
-                    <span className="text-orange-400 text-xs font-bold">
+                    <span className="text-orange-400 text-sm font-bold">
                       PENDING
                     </span>
                   )}
@@ -424,7 +424,7 @@ const Page = () => {
                 <div className="flex justify-center">
                   <Link
                     href="/quizzes/previous"
-                    className="text-blue text-xs hover:underline"
+                    className="text-blue text-sm hover:underline"
                   >
                     View all quizzes
                   </Link>
@@ -448,7 +448,7 @@ const Page = () => {
                   <p className="text-grey text-sm">Reward</p>
                 </div>
 
-                <div className="flex gap-4 text-xs text-grey">
+                <div className="flex gap-4 text-sm text-grey">
                   <span>10 Questions</span>
 
                   <span>5 mins left</span>
@@ -483,20 +483,20 @@ const Page = () => {
                 {currentPayout > 0 ? (
                   <>
                     <div>
-                      <p className="text-grey text-xs">Amount</p>
+                      <p className="text-grey text-sm">Amount</p>
 
                       <h2 className="text-(--primary) font-bold text-xl">
                         ₦{currentPayout.toLocaleString()}
                       </h2>
 
-                      <p className="text-grey text-xs mt-2">
+                      <p className="text-grey text-sm mt-2">
                         xxxx-8329 GTBank PLC
                       </p>
                     </div>
 
                     <Link
                       href="/transactions"
-                      className="text-blue text-xs hover:underline text-center"
+                      className="text-blue text-sm hover:underline text-center"
                     >
                       View Transaction History
                     </Link>
@@ -506,7 +506,7 @@ const Page = () => {
                     <p className="text-sm text-grey font-medium">
                       No recent payouts
                     </p>
-                    <p className="text-xs text-grey/60 max-w-[180px]">
+                    <p className="text-sm text-grey/60 max-w-[180px]">
                       Your completed quiz earnings settlement summary updates
                       here.
                     </p>
@@ -544,7 +544,7 @@ const Page = () => {
           </GlassCard>
 
           {/* FOOTER */}
-          <div className="flex flex-col sm:flex-row gap-2 justify-between text-xs text-grey px-2 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row gap-2 justify-between text-sm text-grey px-2 text-center sm:text-left">
             <span>{countdown}</span>
 
             <div className="flex gap-4 justify-center">

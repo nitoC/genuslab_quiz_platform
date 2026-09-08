@@ -36,7 +36,7 @@ export const BasicInfoCard = ({ quiz }: { quiz: IQuiz }) => (
       </button>
     </div>
 
-    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest mb-3">
+    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[14px] font-bold uppercase tracking-widest mb-3">
       Live Quiz
     </span>
 
@@ -53,7 +53,7 @@ export const BasicInfoCard = ({ quiz }: { quiz: IQuiz }) => (
           <FiClock size={20} />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase">
+          <p className="text-[14px] font-bold text-slate-400 uppercase">
             Midday Slot
           </p>
           <p className="text-sm font-bold text-slate-700">
@@ -71,7 +71,7 @@ export const BasicInfoCard = ({ quiz }: { quiz: IQuiz }) => (
           />
         </div>
         {/* <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase">
+          <p className="text-[14px] font-bold text-slate-400 uppercase">
             Assigned to:
           </p>
           <p className="text-sm font-bold text-blue-600 hover:underline cursor-pointer">
@@ -138,7 +138,7 @@ export const QuestionItem = ({
               Question {number}
             </span>
             <span
-              className={`px-2 py-0.5 rounded text-[9px] font-bold border ${
+              className={`px-2 py-0.5 rounded text-[14px] font-bold border ${
                 difficulty === "hard"
                   ? "bg-red-50 text-red-600 border-red-100"
                   : difficulty === "medium"
@@ -148,7 +148,7 @@ export const QuestionItem = ({
             >
               {difficulty}
             </span>
-            <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[9px] font-bold border border-slate-200 uppercase">
+            <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[14px] font-bold border border-slate-200 uppercase">
               {role}
             </span>
           </div>
@@ -179,7 +179,7 @@ export const QuestionItem = ({
                 >
                   <span className="text-sm text-slate-700">{ans.text}</span>
                   {ans.isCorrect && (
-                    <span className="px-2 py-1 bg-blue-600 text-white text-[9px] font-bold rounded uppercase tracking-wider">
+                    <span className="px-2 py-1 bg-blue-600 text-white text-[14px] font-bold rounded uppercase tracking-wider">
                       Correct
                     </span>
                   )}
@@ -189,7 +189,7 @@ export const QuestionItem = ({
 
             {/* Answer Explanation Box */}
             <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-5">
-              <div className="flex items-center gap-2 text-blue-700 font-bold text-xs uppercase tracking-wider mb-2">
+              <div className="flex items-center gap-2 text-blue-700 font-bold text-sm uppercase tracking-wider mb-2">
                 <FiInfo className="text-blue-600" />
                 <span>Answer Explanation</span>
               </div>

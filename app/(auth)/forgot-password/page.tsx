@@ -6,65 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "react-toastify";
-
-/* ------------------------------------------------------------------
-   Reusable wrapped input
-------------------------------------------------------------------- */
-interface WrappedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  hasIcon?: boolean;
-}
-
-const WrappedInput: React.FC<WrappedInputProps> = ({
-  className = "",
-  hasIcon = false,
-  ...props
-}) => (
-  <div
-    className={`relative w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-sm
-                transition focus-within:border-primary focus-within:bg-white
-                focus-within:ring-2 focus-within:ring-primary/30 ${className}`}
-  >
-    <input
-      {...props}
-      className={`w-full bg-transparent outline-none placeholder:text-gray-500 ${
-        hasIcon ? "pr-8" : ""
-      }`}
-    />
-  </div>
-);
-
-/* ------------------------------------------------------------------
-   Password field with eye-toggle
-------------------------------------------------------------------- */
-interface PasswordInputProps {
-  id: string;
-  placeholder: string;
-}
-
-const PasswordInput: React.FC<PasswordInputProps> = ({ id, placeholder }) => {
-  const [show, setShow] = useState(false);
-
-  return (
-    <div className="relative">
-      <WrappedInput
-        id={id}
-        type={show ? "text" : "password"}
-        placeholder={placeholder}
-        hasIcon
-      />
-      <button
-        type="button"
-        onClick={() => setShow((s) => !s)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
-        aria-label={show ? "Hide password" : "Show password"}
-      >
-        {show ? <FiEyeOff /> : <FiEye />}
-      </button>
-    </div>
-  );
-};
 
 /* ------------------------------------------------------------------
    Reset-Password Page
@@ -129,7 +71,7 @@ const Page = () => {
             {/* back button */}
             <Link
               href="/"
-              className="absolute right-5 top-5 rounded-full bg-blue/80 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-blue"
+              className="absolute right-5 top-5 rounded-full bg-blue/80 px-4 py-1.5 text-sm font-medium text-white backdrop-blur transition hover:bg-blue"
             >
               Back to website →
             </Link>

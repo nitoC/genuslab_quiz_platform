@@ -7,26 +7,26 @@ export const FallbackQuizCard = ({ slotIndex }: { slotIndex: number }) => {
       <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent pointer-events-none" />
 
       <div>
-        <span className="text-neutral-500 border border-neutral-700 bg-neutral-800/50 font-medium py-1.5 px-3 rounded-full text-xs">
+        <span className="text-neutral-500 border border-neutral-700 bg-neutral-800/50 font-medium py-1.5 px-3 rounded-full text-sm">
           Slot TBD
         </span>
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="text-xs tracking-wider font-mono text-neutral-600 uppercase">
+        <p className="text-sm tracking-wider font-mono text-neutral-600 uppercase">
           [ Slot Empty #{slotIndex} ]
         </p>
         <h3 className="text-neutral-500 font-semibold text-sm">
           Content Unassigned
         </h3>
-        <p className="text-xs text-neutral-600">
+        <p className="text-sm text-neutral-600">
           Check back later for updated scheduling.
         </p>
       </div>
 
       <div className="flex items-center justify-between border-t border-white/5 pt-3">
         <div>
-          <p className="text-[10px] text-neutral-600 uppercase tracking-tight">
+          <p className="text-[14px] text-neutral-600 uppercase tracking-tight">
             Prize Allocation
           </p>
           <p className="text-sm font-bold text-neutral-500">-- --</p>

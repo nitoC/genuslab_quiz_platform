@@ -111,7 +111,7 @@ const EpisodePerformancePage = () => {
                 >
                   <MdMenu className="text-xl" />
                 </button>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <span className="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                   {ongoing && (
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   )}
@@ -121,7 +121,7 @@ const EpisodePerformancePage = () => {
               <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                 Episode Performance
               </h1>
-              <p className="text-xs md:text-sm text-slate-400 font-medium">
+              <p className="text-sm md:text-sm text-slate-400 font-medium">
                 Day {date || "--"}{" "}
                 <span className="text-slate-700 mx-1.5">|</span> Episode{" "}
                 {episode || "--"}
@@ -132,7 +132,7 @@ const EpisodePerformancePage = () => {
               onClick={() => {
                 router.back();
               }}
-              className="w-fit inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-semibold transition-colors"
+              className="w-fit inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-sm font-semibold transition-colors"
             >
               <span>VIEW QUIZ ANSWERS</span>
               <MdArrowForward className="text-base text-slate-400" />
@@ -147,13 +147,13 @@ const EpisodePerformancePage = () => {
                   <MdHourglassTop size={32} className="animate-spin" />
                 </div>
                 <div className="flex-1 text-center md:text-left space-y-1">
-                  <div className="inline-block px-2.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-[10px] font-bold tracking-wider text-blue-400 uppercase">
+                  <div className="inline-block px-2.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-[14px] font-bold tracking-wider text-blue-400 uppercase">
                     Ongoing Episode
                   </div>
                   <h2 className="text-xl md:text-2xl font-bold text-white">
                     Episode is currently in progress
                   </h2>
-                  <p className="text-slate-400 text-xs md:text-sm">
+                  <p className="text-slate-400 text-sm md:text-sm">
                     Scores and positions are updated live. Final winners will be
                     announced once this episode concludes.
                   </p>
@@ -186,7 +186,7 @@ const EpisodePerformancePage = () => {
                       </div>
                     </div>
 
-                    <div className="mt-3 px-3 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-[10px] font-bold tracking-wider text-amber-400">
+                    <div className="mt-3 px-3 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-[14px] font-bold tracking-wider text-amber-400">
                       CHAMPION
                     </div>
                   </div>
@@ -194,7 +194,7 @@ const EpisodePerformancePage = () => {
                   {/* Winner Content */}
                   <div className="flex-1 text-center md:text-left space-y-3">
                     <div>
-                      <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                      <span className="text-sm font-semibold tracking-wider text-slate-400 uppercase">
                         RANK #{winner.position}
                       </span>
                       <h2 className="text-xl md:text-2xl font-bold text-white mt-0.5 capitalize">
@@ -203,7 +203,7 @@ const EpisodePerformancePage = () => {
                     </div>
 
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
                         <MdAccountBalanceWallet
                           size={15}
                           className="text-emerald-400"
@@ -211,13 +211,13 @@ const EpisodePerformancePage = () => {
                         <span>{winner.totalXp} XP</span>
                       </div>
 
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
                         <MdAccessTime size={15} className="text-slate-400" />
                         <span>Score: {winner.score}</span>
                       </div>
                     </div>
 
-                    <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-xl">
+                    <p className="text-slate-400 text-sm md:text-sm leading-relaxed max-w-xl">
                       Outstanding performance this episode!{" "}
                       <span className="capitalize">{winner.name}</span> achieved
                       a score of {winner.score}% and secured {winner.totalXp}{" "}
@@ -228,7 +228,7 @@ const EpisodePerformancePage = () => {
                       <Link
                         href={"/rewards-breakdown"}
                         target="_blank"
-                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
+                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
                       >
                         View Reward Breakdown
                       </Link>
@@ -244,7 +244,7 @@ const EpisodePerformancePage = () => {
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-white">Leaderboard</h3>
-                <span className="text-xs text-slate-500">
+                <span className="text-sm text-slate-500">
                   — {leaderboardList.length}{" "}
                   {ongoing ? "Participating" : "Participants"}
                 </span>
@@ -258,7 +258,7 @@ const EpisodePerformancePage = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-800 text-[10px] md:text-xs font-semibold uppercase tracking-wider text-slate-400 bg-slate-950/50">
+                    <tr className="border-b border-slate-800 text-[14px] md:text-sm font-semibold uppercase tracking-wider text-slate-400 bg-slate-950/50">
                       <th className="py-3 px-5">RANK</th>
                       <th className="py-3 px-5">USER</th>
                       <th className="py-3 px-5">
@@ -267,7 +267,7 @@ const EpisodePerformancePage = () => {
                       <th className="py-3 px-5 text-right">TOTAL XP</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-xs md:text-sm font-medium">
+                  <tbody className="divide-y divide-slate-800 text-sm md:text-sm font-medium">
                     {leaderboardList.map((row) => (
                       <tr
                         key={row.position}
@@ -318,7 +318,7 @@ const EpisodePerformancePage = () => {
                         {/* Progress Bar & Score */}
                         <td className="py-3.5 px-5">
                           <div className="flex items-center gap-3 min-w-35 max-w-50">
-                            <span className="text-slate-300 font-semibold text-xs shrink-0">
+                            <span className="text-slate-300 font-semibold text-sm shrink-0">
                               {row.score}
                             </span>
                           </div>

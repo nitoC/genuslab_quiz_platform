@@ -204,7 +204,7 @@ function OtpVerificationContent() {
           <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">
             Verify Your Email
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xs mb-6 leading-relaxed">
+          <p className="text-sm sm:text-sm text-slate-300 max-w-xs mb-6 leading-relaxed">
             We've sent a verification code to your email address. Please enter
             it below to confirm your account.
           </p>
@@ -212,7 +212,7 @@ function OtpVerificationContent() {
           {/* Status Message Notification */}
           {statusMessage && (
             <div
-              className={`w-full p-3 rounded-xl mb-6 text-xs sm:text-sm flex items-center gap-2 text-left border ${
+              className={`w-full p-3 rounded-xl mb-6 text-sm sm:text-sm flex items-center gap-2 text-left border ${
                 statusMessage.type === "success"
                   ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
                   : "bg-rose-500/20 text-rose-300 border-rose-500/30"
@@ -240,7 +240,7 @@ function OtpVerificationContent() {
             </div>
 
             {/* Countdown Timer Display */}
-            <div className="flex items-center gap-2 text-xs sm:text-sm font-medium">
+            <div className="flex items-center gap-2 text-sm sm:text-sm font-medium">
               <span className="text-slate-400">Code expires in:</span>
               <span
                 className={`font-mono font-bold ${isTimerExpired ? "text-rose-400" : "text-blue"}`}
@@ -253,7 +253,7 @@ function OtpVerificationContent() {
             <button
               type="submit"
               disabled={isSubmitting || otp.length < 4 || isTimerExpired}
-              className="w-full py-3 px-6 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-blue hover:opacity-90 text-white shadow-lg shadow-blue/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+              className="w-full py-3 px-6 rounded-xl text-sm sm:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-blue hover:opacity-90 text-white shadow-lg shadow-blue/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               {isSubmitting ? (
                 <span>Verifying Code...</span>
@@ -267,7 +267,7 @@ function OtpVerificationContent() {
           </form>
 
           {/* Resend Action Footer */}
-          <div className="mt-8 pt-6 border-t border-white/10 w-full flex items-center justify-between text-xs sm:text-sm">
+          <div className="mt-8 pt-6 border-t border-white/10 w-full flex items-center justify-between text-sm sm:text-sm">
             <span className="text-slate-400">Didn't receive a code?</span>
             <button
               onClick={handleResend}

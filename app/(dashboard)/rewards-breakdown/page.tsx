@@ -65,14 +65,14 @@ const RewardBreakdownPage = () => {
                 >
                   <MdMenu className="text-lg" />
                 </button>
-                <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                <span className="text-sm font-medium uppercase tracking-wide text-slate-400">
                   Performance & Incentives
                 </span>
               </div>
               <h1 className="text-2xl font-semibold text-white tracking-tight">
                 Reward Breakdown
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-sm text-slate-400">
                 Transparent payout structure for competitive episodes and user
                 referrals.
               </p>
@@ -82,7 +82,7 @@ const RewardBreakdownPage = () => {
             <div className="inline-flex bg-slate-900 border border-slate-800 p-1 rounded-md self-start sm:self-auto">
               <button
                 onClick={() => setActiveTab("all")}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                   activeTab === "all"
                     ? "bg-slate-800 text-white font-semibold"
                     : "text-slate-400 hover:text-slate-200"
@@ -92,7 +92,7 @@ const RewardBreakdownPage = () => {
               </button>
               <button
                 onClick={() => setActiveTab("episodes")}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                   activeTab === "episodes"
                     ? "bg-slate-800 text-white font-semibold"
                     : "text-slate-400 hover:text-slate-200"
@@ -102,7 +102,7 @@ const RewardBreakdownPage = () => {
               </button>
               <button
                 onClick={() => setActiveTab("referral")}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                   activeTab === "referral"
                     ? "bg-slate-800 text-white font-semibold"
                     : "text-slate-400 hover:text-slate-200"
@@ -116,7 +116,7 @@ const RewardBreakdownPage = () => {
           {/* Metric Summary Bar */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
                 <MdToday size={16} className="text-slate-400" />
                 <span>Daily Pool</span>
               </div>
@@ -126,7 +126,7 @@ const RewardBreakdownPage = () => {
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
                 <MdDateRange size={16} className="text-slate-400" />
                 <span>Weekly Pool</span>
               </div>
@@ -136,7 +136,7 @@ const RewardBreakdownPage = () => {
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
                 <MdCalendarMonth size={16} className="text-amber-500/90" />
                 <span>Monthly Jackpot</span>
               </div>
@@ -146,13 +146,13 @@ const RewardBreakdownPage = () => {
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-xs font-medium mb-1">
+              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
                 <MdGroupAdd size={16} className="text-emerald-500/90" />
                 <span>Referral Payout</span>
               </div>
               <p className="text-lg font-bold text-white tracking-tight">
                 {formatCurrency(rewardData.referral)}{" "}
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-sm font-normal text-slate-400">
                   / user
                 </span>
               </p>
@@ -166,7 +166,7 @@ const RewardBreakdownPage = () => {
                 <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
                   Leaderboard Distributions
                 </h2>
-                <span className="text-xs text-slate-400">
+                <span className="text-sm text-slate-400">
                   Calculated by final score and completion time
                 </span>
               </div>
@@ -176,16 +176,16 @@ const RewardBreakdownPage = () => {
                 <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                      <span className="text-xs font-semibold text-white uppercase tracking-wider">
+                      <span className="text-sm font-semibold text-white uppercase tracking-wider">
                         Daily Episodes
                       </span>
-                      <span className="text-[11px] font-medium text-slate-400">
+                      <span className="text-[14px] font-medium text-slate-400">
                         Top 3 Ranked
                       </span>
                     </div>
 
                     <div className="my-4">
-                      <span className="text-xs text-slate-400 font-medium block">
+                      <span className="text-sm text-slate-400 font-medium block">
                         Total Distribution
                       </span>
                       <span className="text-2xl font-bold text-white tracking-tight">
@@ -193,7 +193,7 @@ const RewardBreakdownPage = () => {
                       </span>
                     </div>
 
-                    <div className="space-y-2 text-xs">
+                    <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
                         <span className="font-medium text-slate-300">
                           1st Place
@@ -226,16 +226,16 @@ const RewardBreakdownPage = () => {
                 <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                      <span className="text-xs font-semibold text-white uppercase tracking-wider">
+                      <span className="text-sm font-semibold text-white uppercase tracking-wider">
                         Weekly Championship
                       </span>
-                      <span className="text-[11px] font-medium text-slate-400">
+                      <span className="text-[14px] font-medium text-slate-400">
                         Top 3 Ranked
                       </span>
                     </div>
 
                     <div className="my-4">
-                      <span className="text-xs text-slate-400 font-medium block">
+                      <span className="text-sm text-slate-400 font-medium block">
                         Total Distribution
                       </span>
                       <span className="text-2xl font-bold text-white tracking-tight">
@@ -243,7 +243,7 @@ const RewardBreakdownPage = () => {
                       </span>
                     </div>
 
-                    <div className="space-y-2 text-xs">
+                    <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
                         <span className="font-medium text-slate-300">
                           1st Place
@@ -276,16 +276,16 @@ const RewardBreakdownPage = () => {
                 <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                      <span className="text-xs font-semibold text-white uppercase tracking-wider">
+                      <span className="text-sm font-semibold text-white uppercase tracking-wider">
                         Monthly Leaderboard
                       </span>
-                      <span className="text-[11px] font-medium text-amber-500">
+                      <span className="text-[14px] font-medium text-amber-500">
                         Winner Takes All
                       </span>
                     </div>
 
                     <div className="my-4">
-                      <span className="text-xs text-slate-400 font-medium block">
+                      <span className="text-sm text-slate-400 font-medium block">
                         Grand Prize Pool
                       </span>
                       <span className="text-2xl font-bold text-white tracking-tight">
@@ -293,7 +293,7 @@ const RewardBreakdownPage = () => {
                       </span>
                     </div>
 
-                    <div className="text-xs">
+                    <div className="text-sm">
                       <div className="flex items-center justify-between p-3 rounded bg-amber-500/10 border border-amber-500/20">
                         <span className="font-medium text-amber-200">
                           1st Place Champion
@@ -302,7 +302,7 @@ const RewardBreakdownPage = () => {
                           {formatCurrency(rewardData.monthly.reward.first)}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-3 leading-normal">
+                      <p className="text-[14px] text-slate-400 mt-3 leading-normal">
                         Accumulate the highest points across all episodes during
                         the calendar month to claim the monthly jackpot.
                       </p>
@@ -323,10 +323,10 @@ const RewardBreakdownPage = () => {
               <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                    <span className="text-sm font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
                       Direct Payout
                     </span>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-sm text-slate-400">
                       No payout limit
                     </span>
                   </div>
@@ -334,14 +334,14 @@ const RewardBreakdownPage = () => {
                     Earn {formatCurrency(rewardData.referral)} per active
                     referral
                   </h3>
-                  <p className="text-xs text-slate-400 max-w-xl">
+                  <p className="text-sm text-slate-400 max-w-xl">
                     Share your invitation code with new participants. Funds are
                     credited directly to your wallet balance once their first
                     entry is verified.
                   </p>
                 </div>
 
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0">
+                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm font-semibold transition-colors flex items-center gap-1.5 shrink-0">
                   <span>Invite Users</span>
                   <MdArrowForward size={15} />
                 </button>
@@ -350,7 +350,7 @@ const RewardBreakdownPage = () => {
           )}
 
           {/* Institutional Note */}
-          <div className="bg-slate-950 border border-slate-800/80 rounded-md p-3.5 flex items-start gap-3 text-xs text-slate-400">
+          <div className="bg-slate-950 border border-slate-800/80 rounded-md p-3.5 flex items-start gap-3 text-sm text-slate-400">
             <MdInfoOutline
               size={16}
               className="text-slate-500 shrink-0 mt-0.5"

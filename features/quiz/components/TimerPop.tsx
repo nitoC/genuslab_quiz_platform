@@ -9,7 +9,7 @@ import { LuTimer } from "react-icons/lu";
 
 interface TimerPopProps {
   pop: boolean;
-  refetchQuiz: () => void;
+  refetchQuiz?: () => void;
 }
 
 const TimerPop = ({ pop, refetchQuiz }: TimerPopProps) => {
@@ -43,7 +43,7 @@ const TimerPop = ({ pop, refetchQuiz }: TimerPopProps) => {
       if (timeRemaining <= 0) {
         setCountdown("00Hrs 00Min 00Secs");
         refetch();
-        refetchQuiz();
+        refetchQuiz && refetchQuiz();
         return;
       }
 
@@ -83,7 +83,7 @@ const TimerPop = ({ pop, refetchQuiz }: TimerPopProps) => {
               <LuTimer size={24} className="text-blue" />
             </div>
             <div className="flex flex-col">
-              <span className="text-blue text-[10px] uppercase tracking-wider font-bold">
+              <span className="text-blue text-[14px] uppercase tracking-wider font-bold">
                 Next Event Starts In {data.episode ? `(${data.episode})` : ""}
               </span>
               <h2 className="text-white text-xl md:text-2xl font-bold font-mono">

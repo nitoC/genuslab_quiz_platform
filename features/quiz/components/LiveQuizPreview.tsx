@@ -102,10 +102,10 @@ export default function LiveQuizPreview({
                     <div className="bg-slate-50 border-b border-slate-200 p-5 grid grid-cols-1 md:flex md:items-center md:justify-between gap-4">
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="px-2.5 py-0.5 bg-blue-600 text-white text-[11px] font-bold tracking-wide rounded-md uppercase">
+                          <span className="px-2.5 py-0.5 bg-blue-600 text-white text-[14px] font-bold tracking-wide rounded-md uppercase">
                             Day {quiz.day || "N/A"}
                           </span>
-                          <span className="px-2.5 py-0.5 bg-slate-200 text-slate-800 text-[11px] font-bold tracking-wide rounded-md uppercase">
+                          <span className="px-2.5 py-0.5 bg-slate-200 text-slate-800 text-[14px] font-bold tracking-wide rounded-md uppercase">
                             Ep. {quiz.episode || "N/A"}
                           </span>
                         </div>

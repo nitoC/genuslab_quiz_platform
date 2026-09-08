@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useRef, useState } from "react";
-import { FaCalendarAlt } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import CustomInput from "@/components/ui/FormItems/CustomInput";
+import PasswordInput from "@/components/ui/FormItems/PasswordInput";
 import CustomDropdown from "@/components/ui/FormItems/CustomSelect";
 import CustomDatePicker from "@/components/ui/FormItems/CustomDatePicker";
 import { toast } from "react-toastify";
@@ -219,7 +219,7 @@ function SignUpPage() {
             />
             <Link
               href="/"
-              className="absolute right-5 top-5 rounded-full bg-blue/70 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-blue"
+              className="absolute right-5 top-5 rounded-full bg-blue/70 px-4 py-1.5 text-sm font-medium text-white backdrop-blur transition hover:bg-blue"
             >
               Back to website →
             </Link>
@@ -243,21 +243,21 @@ function SignUpPage() {
                 }}
                 className="mt-10 space-y-5"
               >
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <CustomInput
-                    id="fullname"
-                    placeholder="FullName"
-                    onChange={handleChange}
-                    value={user.fullname}
-                  />
-                  <CustomInput
-                    id="password"
-                    type="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                    value={user.password}
-                  />
-                </div>
+                <CustomInput
+                  id="fullname"
+                  placeholder="FullName"
+                  onChange={handleChange}
+                  value={user.fullname}
+                />
+
+                <PasswordInput
+                  id="password"
+                  placeholder="Password"
+                  value={user.password}
+                  onChange={(value) =>
+                    setUser((prev) => ({ ...prev, password: value }))
+                  }
+                />
 
                 <CustomInput
                   type="email"
@@ -276,17 +276,14 @@ function SignUpPage() {
                 />
 
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <div className="relative w-full">
-                    <div className="relative w-full rounded-sm border border-blue-300 text-sm transition focus-within:outline-blue-10 focus-within:outline-500/10">
-                      <CustomDatePicker
-                        value={dob}
-                        onChange={(date) => {
-                          setDob(date as Date);
-                        }}
-                        placeholder="Date of Birth"
-                      />
-                      <FaCalendarAlt className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                    </div>
+                  <div className="flex h-12 w-full items-center rounded-xl border border-gray-200 bg-white px-3.5 shadow-sm shadow-black/[0.02] transition-all duration-200 hover:border-gray-300 focus-within:border-blue-500 focus-within:shadow-none focus-within:ring-4 focus-within:ring-blue-500/10">
+                    <CustomDatePicker
+                      value={dob}
+                      onChange={(date) => {
+                        setDob(date as Date);
+                      }}
+                      placeholder="Date of Birth"
+                    />
                   </div>
 
                   <CustomDropdown
@@ -326,7 +323,7 @@ function SignUpPage() {
                   />
                 </div>
 
-                <label className="flex items-center gap-3 text-xs">
+                <label className="flex items-center gap-3 text-sm">
                   <input
                     type="checkbox"
                     className="h-4 w-4 accent-primary"

@@ -1,82 +1,15 @@
 "use client";
 
 import { resetPassword, verifyToken } from "@/lib/api/apis";
+import PasswordInput from "@/components/ui/FormItems/PasswordInput";
+import { usePasswordValidation } from "@/hooks/usePasswordValidation";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { FiCheck, FiEye, FiEyeOff, FiX } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
 import { CgSpinner } from "react-icons/cg";
 import { logToServerTerminal } from "@/lib/utils/logToServer";
-
-/* ------------------------------------------------------------------
-   Reusable wrapped input
-------------------------------------------------------------------- */
-interface WrappedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  hasIcon?: boolean;
-  hasError?: boolean;
-}
-
-const WrappedInput: React.FC<WrappedInputProps> = ({
-  className = "",
-  hasIcon = false,
-  hasError = false,
-  ...props
-}) => (
-  <div
-    className={`relative w-full rounded-md border bg-gray-100 px-4 py-3 text-sm transition focus-within:bg-white focus-within:ring-2 ${
-      hasError
-        ? "border-red-500 focus-within:border-red-500 focus-within:ring-red-500/30"
-        : "border-gray-300 focus-within:border-primary focus-within:ring-primary/30"
-    } ${className}`}
-  >
-    <input
-      {...props}
-      className={`w-full bg-transparent outline-none placeholder:text-gray-500 ${
-        hasIcon ? "pr-8" : ""
-      }`}
-    />
-  </div>
-);
-
-/* ------------------------------------------------------------------
-   Password field with eye toggle
-------------------------------------------------------------------- */
-interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  id: string;
-  placeholder: string;
-  hasError?: boolean;
-}
-
-const PasswordInput: React.FC<PasswordInputProps> = ({
-  id,
-  placeholder,
-  hasError,
-  ...props
-}) => {
-  const [show, setShow] = useState(false);
-
-  return (
-    <div className="relative">
-      <WrappedInput
-        id={id}
-        type={show ? "text" : "password"}
-        placeholder={placeholder}
-        hasIcon
-        hasError={hasError}
-        {...props}
-      />
-      <button
-        type="button"
-        onClick={() => setShow((s) => !s)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-        aria-label={show ? "Hide password" : "Show password"}
-      >
-        {show ? <FiEyeOff /> : <FiEye />}
-      </button>
-    </div>
-  );
-};
 
 /* ------------------------------------------------------------------
    Success Modal Component
@@ -142,12 +75,8 @@ const ResetPasswordPage = () => {
   const [data, setData] = useState<any>(null);
 
   // Validation Rules
-  const hasCapital = /[A-Z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecial = /[^A-Za-z0-9]/.test(password);
-  const hasMinLength = password.length >= 8;
+  const { isValid: isPasswordValid } = usePasswordValidation(password);
   const isMatching = password !== "" && password === confirmPassword;
-  const isPasswordValid = hasCapital && hasNumber && hasSpecial && hasMinLength;
 
   // Verify reset token on initial mount
   useEffect(() => {
@@ -316,7 +245,7 @@ const ResetPasswordPage = () => {
             {/* Back button */}
             <Link
               href="/login"
-              className="absolute right-5 top-5 rounded-full bg-black/40 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-black/60"
+              className="absolute right-5 top-5 rounded-full bg-black/40 px-4 py-1.5 text-sm font-medium text-white backdrop-blur transition hover:bg-black/60"
             >
               Back to Login &rarr;
             </Link>
@@ -342,72 +271,35 @@ const ResetPasswordPage = () => {
               </p>
 
               {errorMsg && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-xs text-red-600 border border-red-200 text-left">
+                <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200 text-left">
                   {errorMsg}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4 text-left">
-                {/* New Password */}
-                <div>
-                  <label
-                    htmlFor="new-password"
-                    className="mb-1 block text-xs font-medium text-gray-700"
-                  >
-                    New Password
-                  </label>
-                  <PasswordInput
-                    id="new-password"
-                    placeholder="Enter new password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
+                <PasswordInput
+                  id="new-password"
+                  label="New Password"
+                  placeholder="Enter new password"
+                  value={password}
+                  onChange={setPassword}
+                />
 
-                {/* Requirement Checklist */}
-                <div className="space-y-1.5 rounded-md bg-gray-50 p-3 text-xs">
-                  <p className="font-medium text-gray-600 mb-1">
-                    Password requirements:
+                <PasswordInput
+                  id="confirm-password"
+                  label="Confirm Password"
+                  placeholder="Re-enter new password"
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
+                  error={confirmPassword.length > 0 && !isMatching}
+                  showRequirements={false}
+                  className="pt-2"
+                />
+                {confirmPassword.length > 0 && !isMatching && (
+                  <p className="!mt-1 text-sm text-red-500">
+                    Passwords do not match
                   </p>
-                  <RequirementItem
-                    met={hasCapital}
-                    text="At least one uppercase letter (A-Z)"
-                  />
-                  <RequirementItem
-                    met={hasNumber}
-                    text="At least one number (0-9)"
-                  />
-                  <RequirementItem
-                    met={hasSpecial}
-                    text="At least one special character (!@#$%^&*...)"
-                  />
-                  <RequirementItem
-                    met={hasMinLength}
-                    text="At least 8 characters long"
-                  />
-                </div>
-
-                {/* Confirm Password */}
-                <div className="pt-2">
-                  <label
-                    htmlFor="confirm-password"
-                    className="mb-1 block text-xs font-medium text-gray-700"
-                  >
-                    Confirm Password
-                  </label>
-                  <PasswordInput
-                    id="confirm-password"
-                    placeholder="Re-enter new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    hasError={confirmPassword.length > 0 && !isMatching}
-                  />
-                  {confirmPassword.length > 0 && !isMatching && (
-                    <p className="mt-1 text-xs text-red-500">
-                      Passwords do not match
-                    </p>
-                  )}
-                </div>
+                )}
 
                 {/* Submit Button */}
                 <button
@@ -430,19 +322,5 @@ const ResetPasswordPage = () => {
     </main>
   );
 };
-
-/* Helper component for rule checks */
-const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
-  <div className="flex items-center space-x-2">
-    {met ? (
-      <FiCheck className="text-emerald-600 shrink-0" />
-    ) : (
-      <FiX className="text-gray-400 shrink-0" />
-    )}
-    <span className={met ? "text-emerald-700 font-medium" : "text-gray-500"}>
-      {text}
-    </span>
-  </div>
-);
 
 export default ResetPasswordPage;

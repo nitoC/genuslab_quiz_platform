@@ -31,7 +31,9 @@ import {
   MdRefresh,
   MdInbox,
   MdReceiptLong,
+  MdVisibility,
 } from "react-icons/md";
+import { NotificationDetailModal } from "@/components/ui/modals/NotificationDetail";
 
 type FilterType = "all" | "unread" | "read";
 
@@ -43,7 +45,6 @@ interface NotificationItem {
   description: string;
   time: string;
   color: string;
-  action?: string;
   dot: boolean;
   isRead: boolean;
   metadata?: Record<string, any>;
@@ -107,6 +108,9 @@ const NotificationsPage = () => {
   const [filter, setFilter] = useState<FilterType>("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [selectedNotice, setSelectedNotice] = useState<NotificationItem | null>(
+    null,
+  );
 
   const {
     data: notifications,
@@ -158,23 +162,9 @@ const NotificationsPage = () => {
           },
         };
       });
-
-      toast.custom((t) => (
-        <div
-          className={`${
-            t.visible ? "animate-enter" : "animate-leave"
-          } max-w-md w-full bg-slate-900/90 border border-white/10 backdrop-blur-xl shadow-2xl rounded-2xl pointer-events-auto flex p-4 ring-1 ring-black ring-opacity-5`}
-        >
-          <div className="flex-1 w-0">
-            <p className="text-xs font-bold text-blue-400 uppercase tracking-wider">
-              {newNotice.title || "New Notification"}
-            </p>
-            <p className="mt-1 text-xs text-slate-300">
-              {newNotice.content || newNotice.message || newNotice.description}
-            </p>
-          </div>
-        </div>
-      ));
+      // The sound + toast alert for this event is handled globally in
+      // SocketProvider so it fires no matter which dashboard page is open —
+      // this listener only needs to keep this page's own list in sync.
     };
 
     socket.on("notification", handleIncomingNotification);
@@ -218,7 +208,6 @@ const NotificationsPage = () => {
         description: notice.content || notice.description || "",
         time: groupLabel,
         color: TYPE_COLORS[notice.type] || "bg-slate-500",
-        action: notice.actionUrl ? "View Details" : undefined,
         dot: !notice.isRead && !notice.read,
         isRead: notice.isRead ?? notice.read ?? false,
       };
@@ -250,6 +239,38 @@ const NotificationsPage = () => {
     },
   });
 
+  // Marks a single notification as read the moment its detail modal is opened.
+  const markReadMutation = useMutation({
+    mutationFn: (id: string) => markNotificationAsRead(id),
+    onMutate: (id: string) => {
+      queryClient.setQueryData(["notifications", filter], (old: any) => {
+        if (!old) return old;
+        const payload = old?.data?.payload || [];
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            payload: payload.map((n: any) =>
+              String(n.id ?? n._id) === id
+                ? { ...n, isRead: true, read: true }
+                : n,
+            ),
+          },
+        };
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+
+  const handleViewDetails = (item: NotificationItem) => {
+    setSelectedNotice(item);
+    if (!item.isRead) {
+      markReadMutation.mutate(String(item.id));
+    }
+  };
+
   const handleMarkAllAsRead = async () => {
     try {
       await notificationsMutation.mutateAsync();
@@ -280,11 +301,11 @@ const NotificationsPage = () => {
               </h2>
             </div>
             {unreadCount > 0 ? (
-              <span className="w-fit bg-blue-600/20 text-blue-400 text-[9px] md:text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20 uppercase">
+              <span className="w-fit bg-blue-600/20 text-blue-400 text-[14px] md:text-[14px] font-bold px-3 py-1 rounded-full border border-blue-500/20 uppercase">
                 {unreadCount} Unread
               </span>
             ) : (
-              <span className="w-fit bg-slate-800/60 text-slate-400 text-[9px] md:text-[10px] font-bold px-3 py-1 rounded-full border border-white/5 uppercase">
+              <span className="w-fit bg-slate-800/60 text-slate-400 text-[14px] md:text-[14px] font-bold px-3 py-1 rounded-full border border-white/5 uppercase">
                 {filter} View
               </span>
             )}
@@ -293,7 +314,7 @@ const NotificationsPage = () => {
           <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={handleMarkAllAsRead}
-              className="text-blue-500 md:text-slate-300 text-[11px] md:text-[10px] font-bold md:bg-white/5 md:px-6 md:py-2.5 md:rounded-xl md:border md:border-white/5 hover:bg-white/10 transition-all"
+              className="text-blue-500 md:text-slate-300 text-[14px] md:text-[14px] font-bold md:bg-white/5 md:px-6 md:py-2.5 md:rounded-xl md:border md:border-white/5 hover:bg-white/10 transition-all"
             >
               Mark all as read
             </button>
@@ -320,7 +341,7 @@ const NotificationsPage = () => {
 
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 z-50 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/10 shadow-2xl p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-white/5">
+                  <div className="px-3 py-2 text-[14px] font-bold uppercase tracking-wider text-slate-500 border-b border-white/5">
                     Filter By
                   </div>
                   {filterOptions.map((opt) => {
@@ -333,7 +354,7 @@ const NotificationsPage = () => {
                           setIsDropdownOpen(false);
                         }}
                         className={cn(
-                          "w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left",
+                          "w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold transition-all text-left",
                           active
                             ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
                             : "text-slate-300 hover:bg-white/5 hover:text-white",
@@ -381,7 +402,7 @@ const NotificationsPage = () => {
               <h3 className="text-white font-bold text-lg md:text-xl">
                 Unable to Load Notifications
               </h3>
-              <p className="text-slate-400 text-xs md:text-sm leading-relaxed">
+              <p className="text-slate-400 text-sm md:text-sm leading-relaxed">
                 {(error as Error)?.message ||
                   "Something went wrong while retrieving your notifications. Please check your connection and try again."}
               </p>
@@ -389,7 +410,7 @@ const NotificationsPage = () => {
 
             <button
               onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold transition-all hover:bg-rose-500/30 hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 text-sm font-bold transition-all hover:bg-rose-500/30 hover:scale-[1.02] active:scale-[0.98]"
             >
               <MdRefresh size={18} />
               Try Again
@@ -418,7 +439,7 @@ const NotificationsPage = () => {
                     ? "No Read Notifications"
                     : "No Notifications Found"}
               </h3>
-              <p className="text-slate-400 text-xs md:text-sm leading-relaxed">
+              <p className="text-slate-400 text-sm md:text-sm leading-relaxed">
                 {filter === "all"
                   ? "You don't have any notifications at the moment. Check back later!"
                   : `There are currently no ${filter} notifications to display.`}
@@ -428,7 +449,7 @@ const NotificationsPage = () => {
             {filter !== "all" && (
               <button
                 onClick={() => setFilter("all")}
-                className="px-5 py-2 rounded-xl bg-white/5 text-slate-300 border border-white/10 text-xs font-bold hover:bg-white/10 hover:text-white transition-all"
+                className="px-5 py-2 rounded-xl bg-white/5 text-slate-300 border border-white/10 text-sm font-bold hover:bg-white/10 hover:text-white transition-all"
               >
                 Clear Filters
               </button>
@@ -442,7 +463,7 @@ const NotificationsPage = () => {
           noticeGroups.map((group) => (
             <div key={group.label} className="space-y-4 md:space-y-6">
               <div className="flex items-center gap-4 px-2">
-                <h2 className="text-slate-500 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap">
+                <h2 className="text-slate-500 text-[14px] md:text-sm font-bold uppercase tracking-[0.2em] whitespace-nowrap">
                   {group.label}
                 </h2>
                 <div className="h-px w-full bg-white/5 md:hidden" />
@@ -481,16 +502,16 @@ const NotificationsPage = () => {
                             </div>
 
                             {item.subject && (
-                              <p className="text-slate-300 text-xs font-medium">
+                              <p className="text-slate-300 text-sm font-medium">
                                 {item.subject}
                               </p>
                             )}
 
-                            <p className="text-slate-400 text-xs md:text-sm leading-relaxed">
-                              {item.description}
+                            <p className="text-slate-500 text-sm md:text-sm italic leading-relaxed">
+                              Tap "See Details" to view this notice
                             </p>
 
-                            <p className="hidden md:block text-slate-500 text-[10px] font-bold uppercase tracking-wider pt-1">
+                            <p className="hidden md:block text-slate-500 text-[14px] font-bold uppercase tracking-wider pt-1">
                               {item.time}
                             </p>
                           </div>
@@ -498,22 +519,22 @@ const NotificationsPage = () => {
 
                         {/* Mobile Time & Action Button */}
                         <div className="flex items-center justify-between md:justify-end gap-4 mt-2 md:mt-0">
-                          <p className="md:hidden text-slate-500 text-[9px] font-bold uppercase tracking-wider">
+                          <p className="md:hidden text-slate-500 text-[14px] font-bold uppercase tracking-wider">
                             {item.time}
                           </p>
 
-                          {item.action && (
-                            <button
-                              className={cn(
-                                "px-5 py-2 md:px-6 md:py-2.5 rounded-xl text-[10px] md:text-xs font-bold transition-all shadow-lg whitespace-nowrap",
-                                item.dot
-                                  ? "bg-blue-600 text-white hover:bg-blue-500"
-                                  : "bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10",
-                              )}
-                            >
-                              {item.action}
-                            </button>
-                          )}
+                          <button
+                            onClick={() => handleViewDetails(item)}
+                            className={cn(
+                              "flex items-center gap-1.5 px-5 py-2 md:px-6 md:py-2.5 rounded-xl text-[14px] md:text-sm font-bold transition-all shadow-lg whitespace-nowrap",
+                              item.dot
+                                ? "bg-blue-600 text-white hover:bg-blue-500"
+                                : "bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10",
+                            )}
+                          >
+                            <MdVisibility size={14} />
+                            See Details
+                          </button>
                         </div>
                       </div>
                     </GlassCard>
@@ -523,6 +544,12 @@ const NotificationsPage = () => {
             </div>
           ))}
       </main>
+
+      <NotificationDetailModal
+        isOpen={!!selectedNotice}
+        onClose={() => setSelectedNotice(null)}
+        notice={selectedNotice}
+      />
     </Layout>
   );
 };

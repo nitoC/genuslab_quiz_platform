@@ -69,7 +69,7 @@ const AccountTabContent = ({ user }: any) => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full items-start p-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 w-full items-start p-4 sm:p-6 lg:p-8">
       {/* 1. PERSONAL INFORMATION CARD */}
       <GlassCard className="p-6 sm:p-8 flex flex-col gap-6">
         <div className="flex items-center gap-2 border-b border-white/5 pb-4">
@@ -82,7 +82,7 @@ const AccountTabContent = ({ user }: any) => {
         <form onSubmit={handleSaveChanges} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-grey text-[11px] font-medium tracking-wide">
+              <label className="text-grey font-medium tracking-wide">
                 Full Name
               </label>
               <input
@@ -90,11 +90,11 @@ const AccountTabContent = ({ user }: any) => {
                 name="fullName"
                 value={personalInfo.fullName}
                 onChange={handleInputChange}
-                className="w-full bg-white/5 border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-xs text-(--primary) outline-none transition-all"
+                className="w-full bg-white/5 border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-sm text-(--primary) outline-none transition-all"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-grey text-[11px] font-medium tracking-wide">
+              <label className="text-grey font-medium tracking-wide">
                 Email Address
               </label>
               <input
@@ -103,13 +103,13 @@ const AccountTabContent = ({ user }: any) => {
                 disabled={true}
                 value={personalInfo.email}
                 onChange={handleInputChange}
-                className="w-full bg-white/5 cursor-not-allowed border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-xs text-(--primary) outline-none transition-all"
+                className="w-full bg-white/5 cursor-not-allowed border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-sm text-(--primary) outline-none transition-all"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-grey text-[11px] font-medium tracking-wide">
+            <label className="text-grey font-medium tracking-wide">
               Phone Number
             </label>
             <input
@@ -117,14 +117,14 @@ const AccountTabContent = ({ user }: any) => {
               name="phone"
               value={personalInfo.phone}
               onChange={handleInputChange}
-              className="w-full bg-white/5 border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-xs text-(--primary) outline-none transition-all"
+              className="w-full bg-white/5 border border-white/5 focus:border-blue/50 rounded-xl px-4 py-3 text-sm text-(--primary) outline-none transition-all"
             />
           </div>
 
           <div className="pt-2">
             <button
               type="submit"
-              className="bg-blue hover:bg-blue/95 text-white text-xs font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue/10"
+              className="bg-blue hover:bg-blue/95 text-white text-sm font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-md shadow-blue/10"
             >
               <MdSave size={16} /> {loading ? "Saving..." : "Save Changes"}
             </button>
@@ -142,7 +142,7 @@ const AccountTabContent = ({ user }: any) => {
                 Subscription Plan
               </h3>
             </div>
-            <span className="bg-blue/10 border border-blue/20 text-blue text-[10px] font-bold px-3 py-1 rounded-full">
+            <span className="bg-blue/10 border border-blue/20 text-blue text-[14px] font-bold px-3 py-1 rounded-full">
               Current Plan
             </span>
           </div>
@@ -154,15 +154,16 @@ const AccountTabContent = ({ user }: any) => {
               <h4 className="text-2xl font-black text-(--primary)">
                 Free Tier
               </h4>
-              <span className="text-grey text-xs font-medium">$0/month</span>
+              <span className="text-grey text-sm font-medium">$0/month</span>
             </div>
 
-            <p className="text-[11px] text-grey font-bold mt-4 mb-3 tracking-wide uppercase">
+            <p className="text-grey font-bold mt-4 mb-3 tracking-wide uppercase">
               Active Benefits
             </p>
             <div className="grid grid-cols-2 gap-y-3 gap-x-4">
-              <BenefitItem active={true} text="7 Daily Quizzes" />
-              <BenefitItem active={true} text="Global Leaderboard" />
+              <BenefitItem active={true} text="Demo Quiz" />
+              <BenefitItem active={false} text="7 Daily Quizzes" />
+              <BenefitItem active={false} text="Global Leaderboard" />
               <BenefitItem active={false} text="Unlimited Quizzes" />
               <BenefitItem active={false} text="Double XP Boost" />
             </div>
@@ -173,7 +174,7 @@ const AccountTabContent = ({ user }: any) => {
           type="link"
           to="/pricing"
           text="Upgrade Plan"
-          style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3.5 w-full text-xs font-bold tracking-wide flex justify-center items-center gap-2 mt-auto"
+          style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3.5 w-full text-sm font-bold tracking-wide flex justify-center items-center gap-2 mt-auto"
         />
       </GlassCard>
 
@@ -188,16 +189,16 @@ const AccountTabContent = ({ user }: any) => {
       {/* Password Management Node */}
       {/* <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4">
             <div className="space-y-0.5">
-              <p className="text-xs font-bold text-(--primary)">
+              <p className="text-sm font-bold text-(--primary)">
                 Password Management
               </p>
-              <p className="text-[11px] text-grey">Last changed 3 months ago</p>
+              <p className="text-grey">Last changed 3 months ago</p>
             </div>
             <button
               onClick={() =>
                 toast.loading("Redirecting to verification framework...")
               }
-              className="text-blue hover:underline text-xs font-bold tracking-tight whitespace-nowrap"
+              className="text-blue hover:underline text-sm font-bold tracking-tight whitespace-nowrap"
             >
               Change Password
             </button>
@@ -206,10 +207,10 @@ const AccountTabContent = ({ user }: any) => {
       {/* Two-Factor Toggle Node */}
       {/* <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4"> */}
       {/* <div className="space-y-0.5">
-              <p className="text-xs font-bold text-(--primary)">
+              <p className="text-sm font-bold text-(--primary)">
                 Two-Factor Authentication
               </p>
-              <p className="text-[11px] text-grey">
+              <p className="text-grey">
                 Add an extra layer of security
               </p>
             </div> */}
@@ -243,7 +244,7 @@ const AccountTabContent = ({ user }: any) => {
           </div>
           <Link
             href="/accounts"
-            className="text-[11px] text-blue hover:underline flex items-center gap-0.5 font-bold"
+            className="text-blue hover:underline flex items-center gap-0.5 font-bold"
           >
             Add New <MdArrowForward size={12} />
           </Link>
@@ -286,7 +287,7 @@ const AccountTabContent = ({ user }: any) => {
 
 const BenefitItem = ({ active, text }: { active: boolean; text: string }) => (
   <div
-    className={`flex items-center gap-2 text-[11px] ${active ? "text-(--primary)" : "text-grey/40"}`}
+    className={`flex items-center gap-2 ${active ? "text-(--primary)" : "text-grey/40"}`}
   >
     <FaCheckCircle
       className={`shrink-0 ${active ? "text-green-500" : "text-grey/20"}`}
@@ -313,28 +314,28 @@ const LinkedAccountRow = ({
   hasUpdateAction?: boolean;
   url?: string;
 }) => (
-  <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex justify-between items-center gap-4">
-    <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-white">
+  <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex flex-wrap justify-between items-center gap-3">
+    <div className="flex items-center gap-3 min-w-0">
+      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-white shrink-0">
         {icon}
       </div>
-      <div className="space-y-0.5">
-        <p className="text-xs font-bold text-(--primary)">{title}</p>
-        <p className="text-[11px] text-grey/80 font-medium">{subtitle}</p>
+      <div className="space-y-0.5 min-w-0">
+        <p className="text-sm font-bold text-(--primary) truncate">{title}</p>
+        <p className="text-grey/80 font-medium truncate">{subtitle}</p>
       </div>
     </div>
 
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 shrink-0">
       {hasUpdateAction && url && (
         <Link
           href={url}
-          className="text-blue hover:underline text-[11px] font-bold tracking-tight"
+          className="text-blue hover:underline font-bold tracking-tight"
         >
           Update
         </Link>
       )}
       <span
-        className={`px-3 py-1 rounded-lg text-[10px] font-bold tracking-wide transition-all select-none ${
+        className={`px-3 py-1 rounded-lg text-[14px] font-bold tracking-wide transition-all select-none ${
           status === "Linked"
             ? "bg-green-500/10 text-green-400 border border-green-500/10"
             : "bg-blue text-white hover:bg-blue/90 cursor-pointer shadow-sm"

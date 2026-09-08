@@ -112,7 +112,7 @@ const DemoQuizModal = ({
               </h2>
 
               {/* description */}
-              <p className="mx-auto mt-3 max-w-[330px] text-center text-xs leading-relaxed text-slate-500">
+              <p className="mx-auto mt-3 max-w-[330px] text-center text-sm leading-relaxed text-slate-500">
                 The demo quiz lets you practice the interface, understand
                 question timing, and build confidence before entering the live
                 challenge.

@@ -67,7 +67,7 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
         {/* Header */}
 
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-2xl border border-emerald-500/20 text-xs font-black uppercase tracking-[0.2em]">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-2xl border border-emerald-500/20 text-sm font-black uppercase tracking-[0.2em]">
             Assessment Complete
           </div>
 
@@ -121,7 +121,7 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
 
                   <span className="text-xl font-bold text-emerald-400">%</span>
 
-                  <span className="mt-2 text-xs uppercase tracking-[0.25em] text-slate-500 font-bold">
+                  <span className="mt-2 text-sm uppercase tracking-[0.25em] text-slate-500 font-bold">
                     Processing
                   </span>
                 </div>

@@ -109,7 +109,7 @@ const QuizHistoryCard = ({
           {/* Details Stack */}
           <div className="flex flex-col justify-center gap-2.5 flex-1 min-w-0">
             {/* Meta Tags */}
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
               <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-semibold">
                 {episode}
               </span>
@@ -127,14 +127,14 @@ const QuizHistoryCard = ({
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-400 font-mono leading-none">
                   {score * 10}%
                 </h2>
-                <span className="text-slate-400 text-[10px] uppercase tracking-wider font-semibold pb-0.5">
+                <span className="text-slate-400 text-[14px] uppercase tracking-wider font-semibold pb-0.5">
                   Score
                 </span>
               </div>
 
               {badge && (
                 <span
-                  className={`flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-lg ${
+                  className={`flex items-center gap-1.5 text-[14px] sm:text-sm font-semibold px-3 py-1.5 rounded-lg ${
                     badgeStyles[badge.variant || "default"]
                   }`}
                 >
@@ -152,7 +152,7 @@ const QuizHistoryCard = ({
             href={`previous/${quizId}/${did}`}
             className="w-full md:w-auto bg-white/5 p-3 rounded-xl md:rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition-all active:scale-95 border border-white/5 flex items-center justify-center gap-2 group"
           >
-            <span className="text-xs font-semibold tracking-wide md:hidden">
+            <span className="text-sm font-semibold tracking-wide md:hidden">
               View Details
             </span>
             <HiOutlineChevronRight

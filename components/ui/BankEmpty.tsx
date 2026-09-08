@@ -19,7 +19,7 @@ export const EmptyBankState: React.FC<EmptyBankStateProps> = ({
         <h3 className="text-base font-semibold text-white">
           No Bank Account Linked
         </h3>
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className="text-sm text-slate-400 leading-relaxed">
           You haven't connected a settlement account yet. Link your bank account
           to receive automated withdrawals and payouts.
         </p>
@@ -27,7 +27,7 @@ export const EmptyBankState: React.FC<EmptyBankStateProps> = ({
 
       <button
         onClick={onLinkClick}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-xs font-semibold transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-sm font-semibold transition-colors"
       >
         <MdAdd size={16} />
         <span>Link a Bank Account</span>

@@ -170,7 +170,7 @@ const AdminQuizCreate = ({
       <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
         {/* Quiz Title */}
         <div className="space-y-2 flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
             Quiz Title
           </label>
           <AdminInput
@@ -185,7 +185,7 @@ const AdminQuizCreate = ({
 
         {/* Quiz Type */}
         <div className="space-y-2 flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
             Quiz Type
           </label>
 
@@ -193,7 +193,7 @@ const AdminQuizCreate = ({
             <button
               type="button"
               onClick={() => setQuizType("demo")}
-              className={`px-6 py-2 text-xs font-semibold transition ${
+              className={`px-6 py-2 text-sm font-semibold transition ${
                 quizType === "demo"
                   ? "bg-blue-600 text-white"
                   : "text-gray-600 hover:text-gray-900"
@@ -205,7 +205,7 @@ const AdminQuizCreate = ({
             <button
               type="button"
               onClick={() => setQuizType("live")}
-              className={`px-6 py-2 text-xs font-semibold transition border-l border-gray-200 ${
+              className={`px-6 py-2 text-sm font-semibold transition border-l border-gray-200 ${
                 quizType === "live"
                   ? "bg-blue-600 text-white"
                   : "text-gray-600 hover:text-gray-900"
@@ -220,7 +220,7 @@ const AdminQuizCreate = ({
         <div className="grid grid-cols-1 gap-6">
           {/* Release Day */}
           <div className="space-y-2 flex flex-col gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
               Release Day
             </label>
 
@@ -236,7 +236,7 @@ const AdminQuizCreate = ({
 
           {/* Episode */}
           <div className="space-y-2 flex flex-col gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
               Episode Number
             </label>
             {/* <AdminInput
@@ -266,7 +266,7 @@ const AdminQuizCreate = ({
 
         {/* Time Slot */}
         <div className="space-y-2 flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
             Active Time Slot
           </label>
 
@@ -294,7 +294,7 @@ const AdminQuizCreate = ({
           </div>
 
           <div>
-            <p className="text-xs text-center font-semibold text-blue-700 uppercase tracking-wider">
+            <p className="text-sm text-center font-semibold text-blue-700 uppercase tracking-wider">
               Smart Prep AI
             </p>
             <p className=" text-center text-gray-600 mt-1">

@@ -152,14 +152,14 @@ export default function ReferralShare({
         <h2 className="text-lg sm:text-xl font-bold text-white tracking-wide">
           Invite Your Friends
         </h2>
-        <p className="text-xs sm:text-sm text-gray-400">
+        <p className="text-sm sm:text-md md:text-lg text-gray-400">
           Share your referral link to earn bonus XP and move up the leaderboard!
         </p>
       </div>
 
       {/* Share Link Input & Copy Field */}
       <div className="mb-6">
-        <label className="block text-xs font-semibold text-gray-300 mb-2 uppercase tracking-wider">
+        <label className="block text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">
           Your Referral Link
         </label>
         <div className="flex items-center gap-2 p-1.5 rounded-xl bg-black/30 border border-white/10 backdrop-blur-md focus-within:border-blue-500/50 transition-colors">
@@ -167,11 +167,11 @@ export default function ReferralShare({
             type="text"
             readOnly
             value={referralLink}
-            className="w-full bg-transparent px-3 py-1.5 text-xs sm:text-sm text-gray-200 outline-none truncate"
+            className="w-full bg-transparent px-3 py-1.5 text-sm sm:text-sm text-gray-200 outline-none truncate"
           />
           <button
             onClick={copyReferralLink}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shrink-0 ${
               copied
                 ? "bg-emerald-600 text-white"
                 : "bg-blue-600 hover:bg-blue-500 text-white active:scale-95"
@@ -209,7 +209,7 @@ export default function ReferralShare({
             >
               {platform.icon}
             </div>
-            <span className="text-xs font-semibold text-gray-300 group-hover:text-white">
+            <span className="text-sm font-semibold text-gray-300 group-hover:text-white">
               {platform.name}
             </span>
           </button>

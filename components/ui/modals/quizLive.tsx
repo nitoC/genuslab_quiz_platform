@@ -116,7 +116,7 @@ const LiveQuizModal = ({
               </h2>
 
               {/* description */}
-              <p className="mx-auto mt-3 max-w-[330px] text-center text-xs leading-relaxed text-slate-500">
+              <p className="mx-auto mt-3 max-w-[330px] text-center text-sm leading-relaxed text-slate-500">
                 The live quiz is where the real challenge begins. Compete with
                 others in real-time, climb the global leaderboard, and earn real
                 rewards.

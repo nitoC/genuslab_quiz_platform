@@ -52,7 +52,7 @@ export default function ActiveSessionModal({
         {/* Secondary View Details Trigger */}
         <button
           //   onClick={onViewDetails || onClose}
-          className="mt-6 flex items-center gap-2 text-slate-400 hover:text-slate-300 font-mono text-xs uppercase tracking-wider transition-colors"
+          className="mt-6 flex items-center gap-2 text-slate-400 hover:text-slate-300 font-mono text-sm uppercase tracking-wider transition-colors"
         >
           <Info size={14} className="text-slate-400" />
           <span>View session details</span>

@@ -76,7 +76,7 @@ const TransactionItem = ({
             <h4 className="text-white font-bold text-sm md:text-base truncate">
               {title}
             </h4>
-            <p className="text-[10px] md:text-xs text-slate-500 truncate mt-0.5">
+            <p className="text-[14px] md:text-sm text-slate-500 truncate mt-0.5">
               {description}
             </p>
           </div>
@@ -85,8 +85,8 @@ const TransactionItem = ({
         {/* Right Section: Amount & Meta */}
         <div className="flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-8 shrink-0">
           <div className="hidden md:flex flex-col text-right">
-            <p className="text-[11px] text-white font-medium">{date}</p>
-            <p className="text-[10px] text-slate-500 uppercase">{time}</p>
+            <p className="text-[14px] text-white font-medium">{date}</p>
+            <p className="text-[14px] text-slate-500 uppercase">{time}</p>
           </div>
 
           <div className="flex flex-col items-end gap-1.5">
@@ -100,7 +100,7 @@ const TransactionItem = ({
             </p>
             <span
               className={cn(
-                "text-[8px] md:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md",
+                "text-[14px] md:text-[14px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md",
                 statusStyles[status],
               )}
             >
@@ -316,7 +316,7 @@ const TransactionsPage = () => {
           <h2 className="text-white text-xl md:text-2xl font-bold">
             Transaction History
           </h2>
-          <p className="text-slate-500 text-xs md:text-sm">
+          <p className="text-slate-500 text-sm md:text-sm">
             Manage and track your financial activities with precision.
           </p>
         </div>
@@ -324,7 +324,7 @@ const TransactionsPage = () => {
         {/* Current Reward Card */}
         <GlassCard className="w-full md:w-[320px] bg-gradient-to-br from-blue-600/20 to-transparent border-blue-500/20">
           <div className="p-6 space-y-3">
-            <p className="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest">
+            <p className="text-[14px] md:text-sm text-slate-400 font-bold uppercase tracking-widest">
               Current reward
             </p>
             <h2 className="text-3xl md:text-4xl font-black text-white">
@@ -332,7 +332,7 @@ const TransactionsPage = () => {
             </h2>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-emerald-500 text-[10px] font-bold uppercase">
+              <span className="text-emerald-500 text-[14px] font-bold uppercase">
                 Active Reward
               </span>
             </div>
@@ -348,7 +348,7 @@ const TransactionsPage = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={cn(
-                  "px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer",
+                  "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all cursor-pointer",
                   activeTab === tab
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
                     : "bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10",
@@ -377,7 +377,7 @@ const TransactionsPage = () => {
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
-                className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-xs md:text-sm font-bold text-slate-300 flex items-center justify-between outline-none hover:bg-white/10 focus:border-blue-500/50 transition-all cursor-pointer"
+                className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-sm md:text-sm font-bold text-slate-300 flex items-center justify-between outline-none hover:bg-white/10 focus:border-blue-500/50 transition-all cursor-pointer"
               >
                 <span className="truncate">Type: {selectedTypeLabel}</span>
                 <MdExpandMore
@@ -402,7 +402,7 @@ const TransactionsPage = () => {
                           setIsDropdownOpen(false);
                         }}
                         className={cn(
-                          "w-full px-4 py-2.5 text-xs font-medium flex items-center justify-between transition-all cursor-pointer text-left",
+                          "w-full px-4 py-2.5 text-sm font-medium flex items-center justify-between transition-all cursor-pointer text-left",
                           isSelected
                             ? "bg-blue-600/20 text-blue-400 font-bold"
                             : "text-slate-300 hover:bg-white/5 hover:text-white",
@@ -426,7 +426,7 @@ const TransactionsPage = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-xl px-3 py-3 text-xs font-medium text-slate-300 outline-none focus:border-blue-500/50 transition-colors [color-scheme:dark]"
+                  className="w-full bg-white/5 border border-white/5 rounded-xl px-3 py-3 text-sm font-medium text-slate-300 outline-none focus:border-blue-500/50 transition-colors [color-scheme:dark]"
                   placeholder="From Date"
                 />
               </div>
@@ -435,7 +435,7 @@ const TransactionsPage = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-xl px-3 py-3 text-xs font-medium text-slate-300 outline-none focus:border-blue-500/50 transition-colors [color-scheme:dark]"
+                  className="w-full bg-white/5 border border-white/5 rounded-xl px-3 py-3 text-sm font-medium text-slate-300 outline-none focus:border-blue-500/50 transition-colors [color-scheme:dark]"
                   placeholder="To Date"
                 />
               </div>
@@ -478,7 +478,7 @@ const TransactionsPage = () => {
                 <h3 className="text-white font-bold text-base md:text-lg">
                   No Transactions Found
                 </h3>
-                <p className="text-slate-500 text-xs md:text-sm">
+                <p className="text-slate-500 text-sm md:text-sm">
                   {isFiltered
                     ? "We couldn't find any transactions matching your current filters."
                     : "You haven't made any transactions yet. Your transaction history will show up here once available."}
@@ -488,7 +488,7 @@ const TransactionsPage = () => {
               {isFiltered && (
                 <button
                   onClick={resetFilters}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-sm font-bold text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 transition-all cursor-pointer"
                 >
                   Reset Filters
                 </button>

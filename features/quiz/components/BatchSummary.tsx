@@ -27,7 +27,7 @@ export default function BatchSummary({
       <div className="bg-blue-600 text-white rounded-xl shadow-md overflow-hidden">
         <div className="p-5 bg-blue-700/40">
           <h2 className="text-lg font-bold">Batch Summary</h2>
-          <p className="text-xs text-blue-100 mt-0.5">
+          <p className="text-sm text-blue-100 mt-0.5">
             {summary.totalQuizzes > 0
               ? `Pending processing of ${summary.totalQuizzes}+ episodes`
               : "No batch loaded"}
@@ -37,7 +37,7 @@ export default function BatchSummary({
         <div className="p-5 space-y-4 bg-white text-slate-800">
           {/* Total Quizzes Row */}
           <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
               <HiOutlineCollection className="text-blue-600 text-base" />
               <span>Total Quizzes</span>
             </div>
@@ -48,7 +48,7 @@ export default function BatchSummary({
 
           {/* Questions/Quiz Row */}
           <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
               <HiOutlineDocumentText className="text-blue-600 text-base" />
               <span>Questions / Quiz</span>
             </div>
@@ -59,7 +59,7 @@ export default function BatchSummary({
 
           {/* Capacity Progress Segment */}
           <div className="pt-2">
-            <div className="flex justify-between text-xs font-medium text-slate-500 mb-1.5">
+            <div className="flex justify-between text-sm font-medium text-slate-500 mb-1.5">
               <span>Total Capacity</span>
               <span className="font-bold text-slate-900">
                 {summary.totalCapacity} Questions
@@ -78,10 +78,10 @@ export default function BatchSummary({
           {/* Titles Preview Block */}
           {summary.titles.length > 0 && (
             <div className="pt-2 border-t border-slate-100">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-2">
+              <span className="text-[14px] uppercase font-bold tracking-wider text-slate-400 block mb-2">
                 Titles Preview
               </span>
-              <ul className="text-xs space-y-1.5 font-medium text-slate-700">
+              <ul className="text-sm space-y-1.5 font-medium text-slate-700">
                 {summary.titles.slice(0, 3).map((title, idx) => (
                   <li key={idx} className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0" />

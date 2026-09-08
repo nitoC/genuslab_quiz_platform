@@ -231,7 +231,7 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
                   Drag & drop your photo here, or{" "}
                   <span className="text-blue-400">browse</span>
                 </p>
-                <p className="mt-1 text-xs text-white/40">
+                <p className="mt-1 text-sm text-white/40">
                   PNG, JPG or WEBP (Max. 5 MB)
                 </p>
               </div>
@@ -249,13 +249,13 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
                   <p className="text-sm font-medium text-white truncate max-w-[200px]">
                     {file?.name}
                   </p>
-                  <p className="text-xs text-white/50">{readableSize}</p>
+                  <p className="text-sm text-white/50">{readableSize}</p>
                 </div>
 
                 {!uploading && !success && (
                   <button
                     onClick={removeImage}
-                    className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 transition"
+                    className="flex items-center gap-1 text-sm text-red-400 hover:text-red-300 transition"
                   >
                     <BiTrash /> Remove
                   </button>
@@ -273,7 +273,7 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-right text-xs text-white/60">{progress}%</p>
+              <p className="text-right text-sm text-white/60">{progress}%</p>
             </div>
           )}
 

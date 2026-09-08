@@ -68,11 +68,11 @@ export default function QuizPreview({
                     >
                       {/* Badge */}
                       <div className="flex justify-between items-center">
-                        <span className="text-[11px] font-bold uppercase tracking-wide bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                        <span className="text-[14px] font-bold uppercase tracking-wide bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
                           Question {idx + 1}
                         </span>
 
-                        <span className="text-[11px] uppercase text-slate-500 font-semibold">
+                        <span className="text-[14px] uppercase text-slate-500 font-semibold">
                           {(q.difficulty || "easy").toUpperCase()}
                         </span>
                       </div>
@@ -85,7 +85,7 @@ export default function QuizPreview({
                       {/* Hint */}
                       {q.hint && (
                         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                          <p className="text-xs text-amber-700">
+                          <p className="text-sm text-amber-700">
                             💡 <strong>Hint:</strong> {q.hint}
                           </p>
                         </div>
@@ -107,7 +107,7 @@ export default function QuizPreview({
                                 <span>{option}</span>
 
                                 {optionIndex === q.answer && (
-                                  <span className="text-xs font-bold text-emerald-600">
+                                  <span className="text-sm font-bold text-emerald-600">
                                     ✓ Correct
                                   </span>
                                 )}
@@ -120,7 +120,7 @@ export default function QuizPreview({
                       {/* Explanation */}
                       {q.answerDescription && (
                         <div className="rounded-lg border border-slate-200 bg-white p-3">
-                          <p className="text-xs leading-5 text-slate-600">
+                          <p className="text-sm leading-5 text-slate-600">
                             <span className="font-semibold">Explanation:</span>{" "}
                             {q.answerDescription}
                           </p>

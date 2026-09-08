@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { IoIosNotifications, IoMdMenu } from "react-icons/io";
+import { IoIosNotifications, IoMdMenu, IoMdSettings } from "react-icons/io";
 import { LuDot } from "react-icons/lu";
 
 import GlassCard from "../ui/cards/GlassCard";
@@ -57,6 +57,9 @@ const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
           <div className="flex gap-4 items-center">
             {backBtn && <Back text="Back" />}
             <div className="flex gap-4 md:gap-8 items-center">
+              <Link href="/settings">
+                <IoMdSettings size={30} className="text-primary" />
+              </Link>
               <Link href="/notifications" className="relative">
                 <IoIosNotifications size={30} className="text-primary" />
                 {unRead && (

@@ -101,14 +101,14 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
             <h2 className="text-2xl font-bold tracking-tight text-white">
               Payment Receipt
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm text-slate-400">
               Genuslab Academy Subscription
             </p>
           </div>
 
           {/* Amount Display */}
           <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-4 text-center">
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            <span className="text-sm font-medium uppercase tracking-wider text-slate-400">
               Total Amount Paid
             </span>
             <div className="text-3xl font-extrabold text-white mt-1">
@@ -117,7 +117,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
           </div>
 
           {/* Key Transaction Metadata */}
-          <div className="space-y-3 text-xs md:text-sm">
+          <div className="space-y-3 text-sm md:text-sm">
             <div className="flex justify-between items-center py-1">
               <span className="text-slate-400">Plan Enrolled</span>
               <span className="font-semibold text-slate-200">
@@ -141,7 +141,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
             <div className="flex justify-between items-center py-1 border-t border-slate-800/50">
               <span className="text-slate-400">Reference Ref</span>
-              <span className="font-mono text-xs text-slate-400 truncate max-w-[200px]">
+              <span className="font-mono text-sm text-slate-400 truncate max-w-[200px]">
                 {receiptData.txRef}
               </span>
             </div>
@@ -161,7 +161,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
           {/* Footer Note inside printable area */}
           <div className="pt-4 border-t border-slate-800 text-center">
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[14px] text-slate-500">
               Thank you for subscribing to Genuslab Academy. For queries,
               contact support@genuslabtech.online
             </p>
@@ -172,14 +172,14 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
         <div className="p-4 bg-slate-950/60 border-t border-slate-800 flex items-center justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white rounded-lg transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white rounded-lg transition-colors"
           >
             Close
           </button>
           <button
             onClick={handleDownloadPDF}
             disabled={isDownloading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-medium text-xs shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
           >
             {isDownloading ? (
               <>

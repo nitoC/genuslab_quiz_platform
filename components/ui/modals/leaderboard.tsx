@@ -46,7 +46,7 @@ const RankUnlockModal = ({
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border">
             <MdVerified className="text-blue-400 text-sm" />
-            <span className="text-[10px] text-blue-300 font-black uppercase tracking-widest">
+            <span className="text-[14px] text-blue-300 font-black uppercase tracking-widest">
               Pioneer Status
             </span>
           </div>
@@ -70,7 +70,7 @@ const RankUnlockModal = ({
           <h2 className="text-white text-3xl font-black mb-2 tracking-tight">
             Rank {rank}: {title}
           </h2>
-          <p className="text-slate-500 text-xs leading-relaxed max-w-[320px] font-medium">
+          <p className="text-slate-500 text-sm leading-relaxed max-w-[320px] font-medium">
             This elite rank is currently locked. It is reserved for pioneers who
             push the boundaries of knowledge through exceptional platform
             engagement.
@@ -85,13 +85,13 @@ const RankUnlockModal = ({
               <MdEmojiEvents className="text-amber-500 text-xl" />
             </div>
             <div>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">
+              <p className="text-[14px] text-slate-500 font-bold uppercase tracking-wider mb-1">
                 Requirement
               </p>
               <p className="text-white font-black text-lg">
                 {requirementPoints} Points
               </p>
-              <p className="text-[9px] text-slate-500 leading-tight mt-1">
+              <p className="text-[14px] text-slate-500 leading-tight mt-1">
                 Accumulate XP through daily quizzes and arena victories to
                 qualify.
               </p>
@@ -104,13 +104,13 @@ const RankUnlockModal = ({
               <MdAccountBalanceWallet className="text-emerald-500 text-xl" />
             </div>
             <div>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">
+              <p className="text-[14px] text-slate-500 font-bold uppercase tracking-wider mb-1">
                 Reward
               </p>
               <p className="text-emerald-500 font-black text-lg">
                 ₦{unlockReward}
               </p>
-              <p className="text-[9px] text-slate-500 leading-tight mt-1">
+              <p className="text-[14px] text-slate-500 leading-tight mt-1">
                 Direct deposit to your linked bank account upon verification.
               </p>
             </div>
@@ -123,7 +123,7 @@ const RankUnlockModal = ({
             <MdHub className="text-blue-500 text-xl" />
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
+            <p className="text-[14px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">
               Current Status
             </p>
             <h4 className="text-white font-bold text-sm">
@@ -131,7 +131,7 @@ const RankUnlockModal = ({
                 ? "No user has unlocked this rank yet"
                 : `users have unlocked this rank so no cash reward is currently available`}
             </h4>
-            <p className="text-[10px] text-slate-500 mt-1">
+            <p className="text-[14px] text-slate-500 mt-1">
               Global competition in progress. Be the first to claim your throne.
             </p>
           </div>
@@ -143,10 +143,10 @@ const RankUnlockModal = ({
           <div className="flex items-start gap-3">
             <MdErrorOutline className="text-amber-500 text-xl mt-0.5" />
             <div className="space-y-2">
-              <h5 className="text-amber-500 text-xs font-black uppercase tracking-widest">
+              <h5 className="text-amber-500 text-sm font-black uppercase tracking-widest">
                 Rules of Engagement
               </h5>
-              <p className="text-slate-400 text-[11px] leading-relaxed">
+              <p className="text-slate-400 text-[14px] leading-relaxed">
                 This rank and its associated cash reward are strictly limited.
                 The prize can only be claimed by the{" "}
                 <span className="text-white font-bold">first individual</span>{" "}
@@ -163,11 +163,11 @@ const RankUnlockModal = ({
             <div className="w-10 h-5 bg-blue-600 rounded-full relative p-1 cursor-pointer">
               <div className="w-3 h-3 bg-white rounded-full ml-auto" />
             </div>
-            <span className="text-slate-300 text-xs font-bold">
+            <span className="text-slate-300 text-sm font-bold">
               Notify me on unlock
             </span>
           </div>
-          <button className="text-blue-400 text-xs font-bold hover:underline transition-all">
+          <button className="text-blue-400 text-sm font-bold hover:underline transition-all">
             Learn More about Ranks
           </button>
         </div>

@@ -108,7 +108,7 @@ const page = () => {
                     <button
                       key={item}
                       className="
-                        px-3 py-1.5 text-xs sm:text-sm
+                        px-3 py-1.5 text-sm sm:text-sm
                         rounded-lg
                         bg-gray-100 hover:bg-gray-200
                         text-gray-600 hover:text-gray-900

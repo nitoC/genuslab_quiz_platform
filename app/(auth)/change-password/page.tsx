@@ -104,7 +104,7 @@ const page = () => {
             {/* back button */}
             <Link
               href="/"
-              className="absolute right-5 top-5 rounded-full bg-blue/80 px-4 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-blue"
+              className="absolute right-5 top-5 rounded-full bg-blue/80 px-4 py-1.5 text-sm font-medium text-white backdrop-blur transition hover:bg-blue"
             >
               Back to website →
             </Link>
@@ -114,7 +114,7 @@ const page = () => {
           <div className="flex flex-1 items-center justify-center px-6 py-14 sm:px-10 lg:px-16">
             <div className="w-full max-w-md text-center">
               {/* success badge – show conditionally in real app */}
-              {/* <span className="inline-block rounded-full bg-emerald-600/90 px-6 py-1.5 text-xs font-medium text-white">
+              {/* <span className="inline-block rounded-full bg-emerald-600/90 px-6 py-1.5 text-sm font-medium text-white">
                 Password Updated
               </span> */}
 

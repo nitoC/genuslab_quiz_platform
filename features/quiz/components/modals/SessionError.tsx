@@ -21,7 +21,7 @@ export default function SessionFailureModal({
           {/* Custom composition replicating a loading/refresh alert style */}
           <div className="relative text-white font-bold text-xl flex items-center justify-center">
             <HiOutlineRefresh size={36} className="text-white/90" />
-            <span className="absolute text-xs top-[11px] left-[15px] font-black">
+            <span className="absolute text-sm top-[11px] left-[15px] font-black">
               !
             </span>
           </div>

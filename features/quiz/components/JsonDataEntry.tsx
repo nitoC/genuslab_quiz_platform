@@ -49,14 +49,14 @@ export default function JsonDataEntry({
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
           >
             <HiUpload className="text-sm" />
             Upload
           </button>
           <button
             onClick={onClear}
-            className="px-3 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors"
+            className="px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
           >
             Clear
           </button>
@@ -64,7 +64,7 @@ export default function JsonDataEntry({
       </div>
 
       {/* Target Rank Dropdown */}
-      {/* <div className="flex items-center gap-3 text-xs">
+      {/* <div className="flex items-center gap-3 text-sm">
         <span className="text-slate-500 font-medium">Target Rank:</span>
         <select
           value={targetRank}
@@ -83,7 +83,7 @@ export default function JsonDataEntry({
           value={jsonText}
           onChange={(e) => setJsonText(e.target.value)}
           placeholder={`[{"title": "Quiz Title", "day": 1, "episode": "EPISODE_1", "activeAt": "SLOT_A", "questions": [...]}, ...Custom JSON Array]`}
-          className="w-full h-80 p-4 font-mono text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-slate-700 resize-none leading-relaxed"
+          className="w-full h-80 p-4 font-mono text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-slate-700 resize-none leading-relaxed"
         />
       </div>
     </div>

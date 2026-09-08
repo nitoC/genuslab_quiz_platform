@@ -191,7 +191,7 @@ const ProfilePage = () => {
                   </div>
                 )}
                 <span className="absolute bottom-1 right-1 bg-green-500 p-1 rounded-full border-2 border-[#0a121f]">
-                  <FaPen className="text-white text-[8px] md:text-[10px]" />
+                  <FaPen className="text-white text-[14px] md:text-[14px]" />
                 </span>
               </div>
               <div className="text-center md:text-left">
@@ -199,7 +199,7 @@ const ProfilePage = () => {
                   {userName}
                 </h1>
                 <div className="flex flex-col md:flex-row items-center md:justify-start gap-2 md:gap-3 mt-2">
-                  <span className="text-blue bg-blue/20 px-4 py-1 rounded-full text-[10px] md:text-xs font-bold">
+                  <span className="text-blue bg-blue/20 px-4 py-1 rounded-full text-[14px] md:text-sm font-bold">
                     Level {rank?.rank} — {rank?.rankName}
                   </span>
                 </div>
@@ -213,7 +213,7 @@ const ProfilePage = () => {
                     ? handleTab("Account")
                     : handleTab("Profile");
                 }}
-                className="bg-white/5 hover:bg-white/10 text-grey text-[10px] md:text-xs py-2 px-6 rounded-full border border-white/10 flex gap-2 items-center transition-all"
+                className="bg-white/5 hover:bg-white/10 text-grey text-[14px] md:text-sm py-2 px-6 rounded-full border border-white/10 flex gap-2 items-center transition-all"
               >
                 {tab !== "Account" ? <MdEdit /> : <BiUser />}{" "}
                 {tab !== "Account" ? "Edit Profile" : "Profile"}
@@ -221,9 +221,9 @@ const ProfilePage = () => {
 
               <div className="relative w-12 h-12 md:w-16 md:h-16 border-4 border-white/5 rounded-full flex items-center justify-center">
                 <div className="absolute top-0 left-0 w-full h-full border-4 border-blue border-t-transparent rounded-full -rotate-45" />
-                <span className="text-[10px] md:text-xs font-bold text-primary text-center leading-tight">
+                <span className="text-[14px] md:text-sm font-bold text-primary text-center leading-tight">
                   {exp} <br />
-                  <span className="text-[6px] md:text-[8px] text-grey">XP</span>
+                  <span className="text-[14px] md:text-[14px] text-grey">XP</span>
                 </span>
               </div>
             </div>
@@ -233,9 +233,12 @@ const ProfilePage = () => {
             <MdEdit /> Edit Profile
           </button> */}
           {/* Tab Navigation - Scrollable on mobile */}
-          <div className="flex border-t border-white/5 px-4 md:px-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex border-t border-white/5 px-4 md:px-6 overflow-x-auto scroll-smooth no-scrollbar whitespace-nowrap">
             {/* <div className="flex flex-row md:flex-row items-center gap-4 md:gap-6 z-10 w-full md:w-auto justify-center md:justify-end"> */}
             {PROFILE_TABS.map((a) => {
+              const isActive =
+                ((tab === "" || !tab) && a.label === "Profile") ||
+                tab === a.label;
               return (
                 <button
                   key={a.label}
@@ -243,13 +246,10 @@ const ProfilePage = () => {
                     handleTab(a.label);
                   }}
                   className={clsx(
-                    "px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-primary border-b-2 flex gap-2 items-center shrink-0",
-
-                    (tab === "" || !tab) && a.label === "Profile"
-                      ? "border-blue"
-                      : tab === a.label
-                        ? "border-blue"
-                        : "border-transparent",
+                    "px-4 md:px-6 py-4 text-md font-bold flex gap-2 items-center shrink-0 border-b-2 transition-colors duration-200",
+                    isActive
+                      ? "border-blue text-primary"
+                      : "border-transparent text-grey hover:text-primary",
                   )}
                 >
                   {a.label}{" "}
@@ -263,30 +263,32 @@ const ProfilePage = () => {
           {/* </div> */}
         </GlassCard>
       </div>
-      {(tab === "" || tab === "Profile" || !tab) && (
-        <Profile
-          user={user}
-          rank={rank}
-          totalRewards={totalRewards}
-          userRewardsArray={userRewardsArray}
-        />
-      )}
-      {tab === "Referral" && (
-        <ManageReferralsPage
-          user={user}
-          // rank={rank}
-          // totalRewards={totalRewards}
-          // userRewardsArray={userRewardsArray}
-        />
-      )}
-      {tab === "Account" && (
-        <AccountTabContent
-          user={user}
-          // rank={rank}
-          // totalRewards={totalRewards}
-          // userRewardsArray={userRewardsArray}
-        />
-      )}
+      <div key={tab || "Profile"} className="animate-fadeIn">
+        {(tab === "" || tab === "Profile" || !tab) && (
+          <Profile
+            user={user}
+            rank={rank}
+            totalRewards={totalRewards}
+            userRewardsArray={userRewardsArray}
+          />
+        )}
+        {tab === "Referral" && (
+          <ManageReferralsPage
+            user={user}
+            // rank={rank}
+            // totalRewards={totalRewards}
+            // userRewardsArray={userRewardsArray}
+          />
+        )}
+        {tab === "Account" && (
+          <AccountTabContent
+            user={user}
+            // rank={rank}
+            // totalRewards={totalRewards}
+            // userRewardsArray={userRewardsArray}
+          />
+        )}
+      </div>
       {modal && (
         <AvatarUpload
           handleModal={(val: boolean) => setModal(val)}

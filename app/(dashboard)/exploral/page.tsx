@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+
 import {
   MdStars,
   MdCheckCircle,
@@ -13,6 +14,7 @@ import {
   MdHourglassEmpty,
   MdEmojiEvents,
 } from "react-icons/md";
+
 import {
   FaInstagram,
   FaFacebook,
@@ -24,7 +26,9 @@ import {
   FaTiktok,
   FaYoutube,
 } from "react-icons/fa6";
+
 import { SiClevercloud, SiCoolermaster, SiPrometheus } from "react-icons/si";
+
 import {
   GiAllSeeingEye,
   GiBlackKnightHelm,
@@ -38,6 +42,7 @@ import {
   GiSparkSpirit,
   GiBrainstorm,
 } from "react-icons/gi";
+
 import { FcMindMap } from "react-icons/fc";
 import { HiMiniCheckBadge } from "react-icons/hi2";
 import RankUnlockModal from "@/components/ui/modals/leaderboard";
@@ -306,7 +311,7 @@ const ExploralPage = () => {
     <Layout>
       <Header title="Exploral" backBtn={false} />
 
-      <main className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-[1600px] mx-auto">
+      <main className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-400 mx-auto">
         {/* TOP ROW: Championships & Studio Winner */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
           <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 order-2 lg:order-1">
@@ -318,7 +323,7 @@ const ExploralPage = () => {
                 <h3 className="text-white font-bold text-base md:text-lg">
                   Genuslab Quiz Challenge
                 </h3>
-                <p className="text-slate-400 text-[10px] md:text-xs">
+                <p className="text-slate-400 text-[14px] md:text-sm">
                   The ultimate flagship competition. High stakes, maximum
                   rewards.
                 </p>
@@ -326,13 +331,13 @@ const ExploralPage = () => {
               <div className="flex gap-2 md:gap-3 mt-4">
                 <Link
                   href={"/quiz"}
-                  className="bg-emerald-500/20 hover:bg-emerald-500 duration-200 hover:text-white text-emerald-500 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[10px] font-bold"
+                  className="bg-emerald-500/20 hover:bg-emerald-500 duration-200 hover:text-white text-emerald-500 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[14px] font-bold"
                 >
                   LIVE/DEMO
                 </Link>
                 <Link
                   href="/quizzes"
-                  className="bg-white/5 hover:bg-blue-400 duration-200 hover:text-white text-slate-400 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[10px] font-bold"
+                  className="bg-white/5 hover:bg-blue-400 duration-200 hover:text-white text-slate-400 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[14px] font-bold"
                 >
                   Join
                 </Link>
@@ -367,7 +372,7 @@ const ExploralPage = () => {
                   {techChampionship.title}
                 </h3>
                 <p
-                  className={`text-xs ${
+                  className={`text-sm ${
                     techChampionship.comingSoon
                       ? "text-slate-500"
                       : "text-slate-400"
@@ -378,12 +383,12 @@ const ExploralPage = () => {
               </div>
               <div className="flex gap-3 mt-4">
                 {techChampionship.comingSoon ? (
-                  <div className="flex items-center gap-2 bg-purple-950/30 text-purple-300/60 px-5 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-widest border border-purple-500/20 backdrop-blur-sm shadow-inner cursor-not-allowed">
-                    <MdHourglassEmpty className="animate-pulse text-xs text-purple-400/80" />
+                  <div className="flex items-center gap-2 bg-purple-950/30 text-purple-300/60 px-5 py-2 rounded-full text-[14px] font-extrabold uppercase tracking-widest border border-purple-500/20 backdrop-blur-sm shadow-inner cursor-not-allowed">
+                    <MdHourglassEmpty className="animate-pulse text-sm text-purple-400/80" />
                     <span>{techChampionship.statusText || "Coming Soon"}</span>
                   </div>
                 ) : (
-                  <button className="bg-purple-500 hover:bg-purple-600 transition-colors text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase">
+                  <button className="bg-purple-500 hover:bg-purple-600 transition-colors text-white px-6 py-2 rounded-full text-[14px] font-bold uppercase">
                     {techChampionship.statusText || "Join Now"}
                   </button>
                 )}
@@ -403,7 +408,7 @@ const ExploralPage = () => {
               }`}
             />
             <p
-              className={`text-[10px] font-bold flex items-center gap-2 uppercase tracking-wider ${
+              className={`text-[14px] font-bold flex items-center gap-2 uppercase tracking-wider ${
                 studioWinner ? "text-blue-500" : "text-slate-500/70"
               }`}
             >
@@ -417,19 +422,17 @@ const ExploralPage = () => {
                     src={studioWinner.avatarUrl}
                     className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover ring-4 ring-blue-500/20"
                   />
-                  <div className="absolute -bottom-2 right-[-10px] bg-blue-600 text-[8px] font-black px-2 py-1 rounded text-white border border-white/20">
+                  <div className="absolute -bottom-2 right-2.5 bg-blue-600 text-[14px] font-black px-2 py-1 rounded text-white border border-white/20">
                     #1 RANK
                   </div>
                 </div>
                 <h3 className="text-white font-bold text-xl mt-2">
                   {studioWinner.name}
                 </h3>
-                <p className="text-slate-500 text-[10px] mb-4">
-                  {studioWinner.rankTitle}
-                </p>
+                <p className="text-slate-500 mb-4">{studioWinner.rankTitle}</p>
                 <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-4">
                   <div>
-                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-1">
+                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
                       Points Won
                     </p>
                     <p className="text-white font-bold text-sm">
@@ -437,7 +440,7 @@ const ExploralPage = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-1">
+                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
                       Prize Pool
                     </p>
                     <p className="text-emerald-500 font-bold text-sm">
@@ -454,29 +457,29 @@ const ExploralPage = () => {
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/[0.03] border border-dashed border-white/10 flex items-center justify-center text-slate-500/60 shadow-inner">
                     <MdEmojiEvents size={36} className="opacity-30" />
                   </div>
-                  <span className="absolute -bottom-2 bg-slate-800/80 text-slate-400 text-[8px] font-extrabold px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-widest backdrop-blur-sm">
+                  <span className="absolute -bottom-2 bg-slate-800/80 text-slate-400 text-[14px] font-extrabold px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-widest backdrop-blur-sm">
                     Pending
                   </span>
                 </div>
                 <h4 className="text-slate-300 font-semibold text-sm mb-1">
                   No Winner Yet
                 </h4>
-                <p className="text-slate-500 text-[10px] max-w-[200px] leading-relaxed mb-4">
+                <p className="text-slate-500 text-[14px] max-w-50 leading-relaxed mb-4">
                   Tournament in progress. Be the first to claim top rank!
                 </p>
 
                 <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-3 opacity-40">
                   <div>
-                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-0.5">
+                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-0.5">
                       Points Won
                     </p>
-                    <p className="text-slate-400 font-bold text-xs">--</p>
+                    <p className="text-slate-400 font-bold text-sm">--</p>
                   </div>
                   <div>
-                    <p className="text-slate-500 text-[8px] uppercase font-bold mb-0.5">
+                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-0.5">
                       Prize Pool
                     </p>
-                    <p className="text-slate-400 font-bold text-xs">--</p>
+                    <p className="text-slate-400 font-bold text-sm">--</p>
                   </div>
                 </div>
               </div>
@@ -553,7 +556,7 @@ const ExploralPage = () => {
                   <div className="text-white text-xl md:text-2xl">
                     {social.icon}
                   </div>
-                  <span className="text-slate-400 text-[8px] md:text-[10px] font-bold uppercase tracking-tighter">
+                  <span className="text-slate-400 text-[14px] md:text-[14px] font-bold uppercase tracking-tighter">
                     {social.label}
                   </span>
                 </Link>
@@ -569,7 +572,7 @@ const ExploralPage = () => {
               <h2 className="text-xl md:text-2xl font-bold text-white">
                 Leaderboard Ranks
               </h2>
-              <p className="text-slate-500 text-[10px] md:text-xs mt-1">
+              <p className="text-slate-500 text-[14px] md:text-sm mt-1">
                 Ascend through the hierarchy of knowledge.
               </p>
             </div>
@@ -592,7 +595,7 @@ const ExploralPage = () => {
           <div className="w-full">
             <table className="w-full text-left">
               <thead className="hidden md:table-header-group">
-                <tr className="text-slate-500 text-[10px] uppercase font-bold tracking-widest border-b border-white/5">
+                <tr className="text-slate-500 text-[14px] uppercase font-bold tracking-widest border-b border-white/5">
                   <th className="pb-6 px-4">Rank ID</th>
                   <th className="pb-6 px-4">Designation</th>
                   <th className="pb-6 px-4">Unlock Requirements</th>
@@ -606,7 +609,7 @@ const ExploralPage = () => {
                     onClick={() => handleRankModal(rank)}
                     className="group transition-colors hover:bg-white/5 rounded-xl cursor-pointer"
                   >
-                    <td className="py-6 px-4 text-slate-500 font-mono text-xs hidden md:table-cell">
+                    <td className="py-6 px-4 text-slate-500 font-mono text-sm hidden md:table-cell">
                       {rank.rank.toString().padStart(3, "0")}
                     </td>
                     <td className="py-6 px-0 md:px-4">
@@ -621,7 +624,7 @@ const ExploralPage = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="py-6 px-4 text-white text-xs font-bold hidden md:table-cell">
+                    <td className="py-6 px-4 text-white text-sm font-bold hidden md:table-cell">
                       {rank.pointsToUnlock.toLocaleString()} XP
                     </td>
                     <td className="py-6 px-4">

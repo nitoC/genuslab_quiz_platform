@@ -122,7 +122,7 @@ export default function SupportPage() {
           <GlassCard className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col justify-between chat-scrollbar">
             {!isLoaded ? (
               /* Loading State during Session Retrieval */
-              <div className="my-auto flex items-center justify-center text-grey text-xs gap-2">
+              <div className="my-auto flex items-center justify-center text-grey text-sm gap-2">
                 <FaCircleNotch className="animate-spin" size={14} />
                 <span>Restoring chat history...</span>
               </div>
@@ -136,7 +136,7 @@ export default function SupportPage() {
                   <h2 className="text-lg font-semibold text-(--primary)">
                     How can we help you today?
                   </h2>
-                  <p className="text-xs text-grey">
+                  <p className="text-sm text-grey">
                     Ask questions about your account, active quizzes, rewards,
                     or platform navigation.
                   </p>
@@ -165,7 +165,7 @@ export default function SupportPage() {
                       </div>
 
                       <div
-                        className={`max-w-[85%] sm:max-w-[75%] p-4 text-xs sm:text-sm rounded-2xl ${
+                        className={`max-w-[85%] sm:max-w-[75%] p-4 text-sm sm:text-sm rounded-2xl ${
                           isUser
                             ? "bg-blue/20 text-white border border-blue/30 rounded-tr-none"
                             : "bg-white/5 text-slate-200 border border-white/10 rounded-tl-none"
@@ -223,12 +223,12 @@ export default function SupportPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your question or support request..."
-                className="w-full bg-transparent px-4 py-2.5 text-xs sm:text-sm text-(--primary) placeholder-grey outline-none"
+                className="w-full bg-transparent px-4 py-2.5 text-sm sm:text-sm text-(--primary) placeholder-grey outline-none"
               />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 shrink-0 bg-blue hover:opacity-90 text-white shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shrink-0 bg-blue hover:opacity-90 text-white shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
               >
                 {isLoading ? (
                   <FaCircleNotch className="animate-spin" size={14} />

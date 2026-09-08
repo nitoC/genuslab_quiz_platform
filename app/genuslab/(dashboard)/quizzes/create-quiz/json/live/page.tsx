@@ -188,7 +188,7 @@ export default function BulkQuizCreator() {
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Bulk Live Quiz Creator
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+          <p className="mt-2 text-sm sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
             Scale your assessments by importing multiple quizzes simultaneously.
             Paste your JSON array below. Each quiz object should include a
             title, day, episode (e.g., EPISODE_1), activeAt slot, and an array
@@ -198,7 +198,7 @@ export default function BulkQuizCreator() {
 
         {/* Activation Configuration Field Block */}
         <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+          <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
             Target Schedule Date (activeDate)
           </label>
           <div className="flex flex-wrap justify-between gap-4">
@@ -216,7 +216,7 @@ export default function BulkQuizCreator() {
               />
             )}
           </div>
-          <p className="mt-1.5 text-slate-400 text-xs">
+          <p className="mt-1.5 text-slate-400 text-sm">
             This value will be dynamically injected into every array block item
             payload upon creation.
           </p>
@@ -288,7 +288,7 @@ function RankDropdown({
               {activeRank.rankName}
             </p>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-sm text-gray-500">
               {activeRank.unlockXp?.toLocaleString()} XP
             </p>
           </div>
@@ -332,13 +332,13 @@ function RankDropdown({
                       {rank.rankName}
                     </p>
 
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-gray-500">
                       {rank.unlockXp?.toLocaleString()} XP
                     </p>
                   </div>
                 </div>
 
-                {!rank.unlocked && <FaLock className="text-xs text-gray-400" />}
+                {!rank.unlocked && <FaLock className="text-sm text-gray-400" />}
               </button>
             );
           })}

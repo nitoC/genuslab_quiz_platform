@@ -31,10 +31,10 @@ const LeaderboardPage = () => {
       <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col gap-6">
         {/* Navigation Buttons - Adjusted for mobile */}
         <div className="flex justify-between md:justify-start gap-4">
-          <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-grey text-[10px] md:text-xs py-2 px-3 md:px-4 rounded-lg border border-white/10 transition-all">
+          <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-grey text-[14px] md:text-sm py-2 px-3 md:px-4 rounded-lg border border-white/10 transition-all">
             <MdArrowBack /> Back
           </button>
-          <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-grey text-[10px] md:text-xs py-2 px-3 md:px-4 rounded-lg border border-white/10 transition-all">
+          <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-grey text-[14px] md:text-sm py-2 px-3 md:px-4 rounded-lg border border-white/10 transition-all">
             <MdDashboard /> Dashboard
           </button>
         </div>
@@ -53,7 +53,7 @@ const LeaderboardPage = () => {
           <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter">
             FRESH MIND
           </h1>
-          <p className="text-grey text-[10px] md:text-sm uppercase tracking-widest opacity-60 font-medium">
+          <p className="text-grey text-[14px] md:text-sm uppercase tracking-widest opacity-60 font-medium">
             The Rising Elite of Genuslab
           </p>
         </div>
@@ -64,13 +64,13 @@ const LeaderboardPage = () => {
           <div className="flex flex-col items-center gap-3 order-2 md:order-1 scale-90 md:scale-100">
             <div className="relative">
               <Avatar size={70} type="main" color="border-grey/50" />
-              <span className="absolute -bottom-1 -right-1 bg-slate-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-[#0a121f]">
+              <span className="absolute -bottom-1 -right-1 bg-slate-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[14px] font-bold border-2 border-[#0a121f]">
                 2
               </span>
             </div>
             <div className="text-center">
-              <p className="text-white font-bold text-xs">Mila Chen</p>
-              <p className="text-grey text-[9px]">24,100 XP</p>
+              <p className="text-white font-bold text-sm">Mila Chen</p>
+              <p className="text-grey text-[14px]">24,100 XP</p>
             </div>
             <GlassCard className="w-28 h-20 md:w-40 md:h-32 flex items-center justify-center opacity-40">
               <MdEmojiEvents className="text-grey text-2xl" />
@@ -84,13 +84,13 @@ const LeaderboardPage = () => {
                 <FaCrown size={20} className="animate-pulse" />
               </div>
               <Avatar size={90} type="main" color="border-yellow-500" />
-              <span className="absolute -bottom-1 -right-1 bg-yellow-500 text-black w-7 h-7 rounded-full flex items-center justify-center text-xs font-black border-4 border-[#0a121f]">
+              <span className="absolute -bottom-1 -right-1 bg-yellow-500 text-black w-7 h-7 rounded-full flex items-center justify-center text-sm font-black border-4 border-[#0a121f]">
                 1
               </span>
             </div>
             <div className="text-center">
               <p className="text-white font-bold text-sm">Alex Rivera</p>
-              <p className="text-yellow-500 text-[10px] font-bold uppercase">
+              <p className="text-yellow-500 text-[14px] font-bold uppercase">
                 25,400 XP
               </p>
             </div>
@@ -103,13 +103,13 @@ const LeaderboardPage = () => {
           <div className="flex flex-col items-center gap-3 order-3 scale-90 md:scale-100">
             <div className="relative">
               <Avatar size={70} type="main" color="border-orange-800/50" />
-              <span className="absolute -bottom-1 -right-1 bg-orange-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-[#0a121f]">
+              <span className="absolute -bottom-1 -right-1 bg-orange-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-[14px] font-bold border-2 border-[#0a121f]">
                 3
               </span>
             </div>
             <div className="text-center">
-              <p className="text-white font-bold text-xs">Jordan Smit</p>
-              <p className="text-grey text-[9px]">21,850 XP</p>
+              <p className="text-white font-bold text-sm">Jordan Smit</p>
+              <p className="text-grey text-[14px]">21,850 XP</p>
             </div>
             <GlassCard className="w-28 h-16 md:w-40 md:h-28 flex items-center justify-center opacity-30">
               <span className="text-lg text-orange-800 font-black">🏅</span>
@@ -120,7 +120,7 @@ const LeaderboardPage = () => {
         {/* Leaderboard Section */}
         <GlassCard className="bg-white/1 backdrop-blur-md rounded-3xl border border-white/5 overflow-hidden">
           {/* Mobile Labels */}
-          <div className="grid grid-cols-6 px-4 py-3 border-b border-white/5 text-[9px] uppercase tracking-tighter text-grey font-bold">
+          <div className="grid grid-cols-6 px-4 py-3 border-b border-white/5 text-[14px] uppercase tracking-tighter text-grey font-bold">
             <div className="col-span-1">Rank</div>
             <div className="col-span-2">User</div>
             <div className="col-span-2 text-center">Stats</div>
@@ -143,15 +143,15 @@ const LeaderboardPage = () => {
                 {/* User Info */}
                 <div className="col-span-2 flex items-center gap-2">
                   <Avatar size={28} type="main" />
-                  <span className="text-white text-[11px] md:text-sm font-semibold truncate">
+                  <span className="text-white text-[14px] md:text-sm font-semibold truncate">
                     {user.name}
                   </span>
                 </div>
 
                 {/* Stats (XP + Progress) */}
                 <div className="col-span-2 flex flex-col gap-1 px-2">
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-white">
-                    <FaBolt className="text-blue-400 text-[8px]" />
+                  <div className="flex items-center gap-1 text-[14px] font-bold text-white">
+                    <FaBolt className="text-blue-400 text-[14px]" />
                     {user.xp}
                   </div>
                   <div className="h-1 bg-white/10 rounded-full overflow-hidden w-full">
@@ -164,7 +164,7 @@ const LeaderboardPage = () => {
 
                 {/* Global Pos */}
                 <div className="col-span-1 text-right">
-                  <span className="text-[9px] text-grey font-mono opacity-50">
+                  <span className="text-[14px] text-grey font-mono opacity-50">
                     {user.pos}
                   </span>
                 </div>

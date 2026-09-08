@@ -29,6 +29,21 @@ import TimerPop from "@/features/quiz/components/TimerPop";
 import useSlots from "@/hooks/useSlots";
 import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
 
+// Active quizzes surface first, archived/expired ones sink to the bottom.
+const statusPriority = (status: string) => {
+  switch ((status || "").toLowerCase()) {
+    case "active":
+      return 0;
+    case "upcoming":
+      return 1;
+    case "archived":
+    case "finished":
+      return 3;
+    default:
+      return 2;
+  }
+};
+
 const page = () => {
   const [pop, setpop] = useState(true);
 
@@ -79,11 +94,13 @@ const page = () => {
     queryKey: ["lastFiveWeeksAverageScore", user?.details?.id],
     queryFn: async () => {
       const res = await getLastFiveWeeksAverageScore(user?.details?.id || "");
-      // console.log(res?.data?.payload, "avg data");
+      // console.log(res?.data, "avg data");
       // console.log(res, "avg data2");
       return res?.data?.average;
     },
+    enabled: Boolean(!!user?.details?.id),
   });
+  console.log(user?.details);
 
   // Base fallback posters for rendering safety
 
@@ -106,7 +123,9 @@ const page = () => {
   ];
 
   // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA pop
-  if (isLoading || slotLoading || userLoading || avgLoading) {
+  // avgData depends on the user query resolving first, so it's rendered
+  // inline further down instead of gating the whole page behind a waterfall.
+  if (isLoading || slotLoading || userLoading) {
     return <DashboardSkeleton />;
   }
 
@@ -124,7 +143,11 @@ const page = () => {
 
     // Case B: Real values are found -> Fill up to 7 total blocks if count is low
     const targetLength = 7;
-    const items = [...quizData];
+    // Active quizzes first, then upcoming, with archived/expired pushed to the
+    // end so users see what they can actually play before anything stale.
+    const items = [...quizData].sort(
+      (a: any, b: any) => statusPriority(a.status) - statusPriority(b.status),
+    );
 
     return Array.from({ length: Math.max(targetLength, items.length) }).map(
       (_, index) => {
@@ -191,7 +214,7 @@ const page = () => {
                 <h3 className="text-blue font-bold text-lg">Performance</h3>
                 <p className="text-grey">
                   <span className="text-3xl font-bold text-primary">
-                    {avgData}
+                    {avgLoading ? "--" : avgData}
                   </span>
                   /100
                 </p>
@@ -248,7 +271,7 @@ const page = () => {
                 </div>
               </div>
               <div>
-                <p className="text-grey text-xs">{exp} XP Earned</p>
+                <p className="text-grey text-sm">{exp} XP Earned</p>
                 <div className="w-full bg-white/10 rounded-full h-2 mt-2">
                   <div className="bg-blue h-2 rounded-full w-[75%]" />
                 </div>
@@ -387,22 +410,22 @@ const QuizCard = ({
           <div className="bg-amber-500/20 border border-amber-500/40 p-3 rounded-full text-amber-400 shadow-lg mb-2">
             <MdLock size={28} />
           </div>
-          <span className="text-xs tracking-wider uppercase font-bold text-amber-400 bg-black/40 px-2.5 py-1 rounded">
+          <span className="text-sm tracking-wider uppercase font-bold text-amber-400 bg-black/40 px-2.5 py-1 rounded">
             {isUpcoming ? "Upcoming" : "Expired"}
           </span>
         </div>
       )}
 
-      <span className="text-touquise border border-touquise bg-touquise/30 font-bold py-2 px-4 rounded-full text-xs">
+      <span className="text-touquise border border-touquise bg-touquise/30 font-bold py-2 px-4 rounded-full text-sm">
         {time}
       </span>
       <section className="flex flex-col gap-4">
         <div className="flex bg-white/5 backdrop-blur-sm p1 border border-white/30 rounded-sm w-fit">
-          <div className="p-2 text-white text-[.625rem]">
+          <div className="p-2 text-white text-[14px]">
             <h3>Day</h3>
             <p>{day}</p>
           </div>
-          <div className="p-2 text-white text-[.625rem]">
+          <div className="p-2 text-white text-[14px]">
             <h3>Episode</h3>
             <p>{episode}</p>
           </div>

@@ -65,7 +65,7 @@ export default function JsonInputCanvas({
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
         {/* Top action toolbar */}
         <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+          <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
             <HiCode className="text-blue-600 text-sm" />
             <span>JSON Input Canvas</span>
           </div>
@@ -80,19 +80,19 @@ export default function JsonInputCanvas({
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
             >
               <HiUpload /> Upload
             </button>
             <button
               onClick={onFormat}
-              className="px-2.5 py-1 text-xs font-medium bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-colors"
+              className="px-2.5 py-1 text-sm font-medium bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-colors"
             >
               Format
             </button>
             <button
               onClick={onClear}
-              className="px-2.5 py-1 text-xs font-medium bg-rose-50 text-rose-600 rounded-md hover:bg-rose-100 transition-colors"
+              className="px-2.5 py-1 text-sm font-medium bg-rose-50 text-rose-600 rounded-md hover:bg-rose-100 transition-colors"
             >
               Clear
             </button>
@@ -102,7 +102,7 @@ export default function JsonInputCanvas({
         <div className="p-5 space-y-4">
           {/* Selector row */}
           <div className="flex flex-col gap-1.5 max-w-xs">
-            <label className="text-xs font-semibold text-slate-500">
+            <label className="text-sm font-semibold text-slate-500">
               Select Question Rank
             </label>
             <select
@@ -112,7 +112,7 @@ export default function JsonInputCanvas({
                 setQuestionRank(e.target.value);
                 setRankId(e.target.value);
               }}
-              className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-blue-500"
+              className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:border-blue-500"
             >
               {ranksData &&
                 [...ranksData, { rankName: "Select Rank", id: "" }]
@@ -138,7 +138,7 @@ export default function JsonInputCanvas({
             value={jsonText}
             onChange={(e) => setJsonText(e.target.value)}
             placeholder={`[\n  {\n    "questionText": "What is the primary color of EduFlow?",\n    "options": ["Blue", "Red", "Green", "Yellow"],\n    "answer": 0,\n    "answerDescription": "Blue represents trust...",\n    "difficulty": "easy",\n    "rankId": "xxxkeyt..."\n  }\n]`}
-            className="w-full h-96 p-4 font-mono text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-slate-700 resize-none leading-relaxed"
+            className="w-full h-96 p-4 font-mono text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-slate-700 resize-none leading-relaxed"
           />
         </div>
       </div>
