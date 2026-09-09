@@ -445,6 +445,28 @@ export const getLastFiveRewards = async (detailsId: string) => {
 export const getTotalRewards = async (detailsId: string) => {
   return await axiosUser.get(`reward/total/${detailsId}`);
 };
+
+/**
+ * Get total rewards for today
+ */
+export const getTodayTotalRewards = async () => {
+  return await axiosUser.get(`reward/today/total`);
+};
+
+/**
+ * Get most recent reward
+ */
+export const getMostRecentReward = async () => {
+  return await axiosUser.get(`reward/most-recent`);
+};
+
+/**
+ * Get most recent transaction
+ */
+export const getMostRecentTransaction = async () => {
+  return await axiosUser.get(`transaction/most-recent`);
+};
+
 /**
  * Episode leaderboard
  */

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-// import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import ChartUpIcon from "@/assets/ChartUpIcon";
 import ShieldIcon from "@/assets/ShieldIcon";
@@ -19,7 +19,7 @@ import ProgressBar from "@/components/ui/ProgressBar";
 // import useCountdown from "@/hooks/useCountdown";
 // import { useTime } from "@/hooks/useTime";
 
-import { getRankData, getTime, getUserProfile } from "@/lib/api/apis";
+import { getRankData, getTime, getUserProfile, getMostRecentReward, getMostRecentTransaction } from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import nameResolver from "@/lib/utils/nameResolver";
 
@@ -155,6 +155,47 @@ const Page = () => {
    * USER QUERY
    * ---------------------------- */
   const { data, isLoading, isError, error, userStore } = useUser();
+
+  /* -----------------------------
+   * REWARD & TRANSACTION QUERIES
+   * ---------------------------- */
+  const {
+    data: mostRecentRewardData,
+    isLoading: rewardLoading,
+  } = useQuery({
+    queryKey: ["mostRecentReward"],
+    queryFn: async () => {
+      const res = await getMostRecentReward();
+      console.log(res?.data, "most recent reward data");
+      return res?.data;
+    },
+  });
+
+  const {
+    data: mostRecentTransactionData,
+    isLoading: transactionLoading,
+  } = useQuery({
+    queryKey: ["mostRecentTransaction"],
+    queryFn: async () => {
+      const res = await getMostRecentTransaction();
+      console.log(res?.data, "most recent transaction data");
+      return res?.data;
+    },
+  });
+
+  /* Update rewards from most recent reward data */
+  useEffect(() => {
+    if (mostRecentRewardData?.amount) {
+      setRewards(mostRecentRewardData.amount);
+    }
+  }, [mostRecentRewardData]);
+
+  /* Update payout from most recent transaction data */
+  useEffect(() => {
+    if (mostRecentTransactionData?.amount) {
+      setCurrentPayout(mostRecentTransactionData.amount);
+    }
+  }, [mostRecentTransactionData]);
 
   useEffect(() => {
     setIsMounted(true);

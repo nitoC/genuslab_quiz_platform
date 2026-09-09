@@ -17,6 +17,7 @@ import {
   getAllActiveQuiz,
   getLastFiveWeeksAverageScore,
   getSlotDetails,
+  getTodayTotalRewards,
 } from "@/lib/api/apis";
 import Link from "next/link";
 
@@ -52,7 +53,7 @@ const page = () => {
     isLoading: userLoading,
     isError: userIsError,
     error,
-    storedUser,
+    userStore,
   } = useUser();
   const user = data?.user;
   const rank = data?.user.details.rankName;
@@ -100,6 +101,20 @@ const page = () => {
     },
     enabled: Boolean(!!user?.details?.id),
   });
+
+  const {
+    data: todayRewardsData,
+    isLoading: todayRewardsLoading,
+    isError: todayRewardsError,
+  } = useQuery({
+    queryKey: ["todayTotalRewards"],
+    queryFn: async () => {
+      const res = await getTodayTotalRewards();
+      console.log(res?.data, "today rewards data");
+      return res?.data?.total || 0;
+    },
+  });
+
   console.log(user?.details);
 
   // Base fallback posters for rendering safety
@@ -183,7 +198,7 @@ const page = () => {
       },
     );
   };
-  const reward = 0;
+  const reward = todayRewardsData || 0;
   const formatedReward =
     reward > 0 ? reward.toLocaleString() : reward.toFixed(2);
 
@@ -200,7 +215,7 @@ const page = () => {
                 <MdStars size={30} className="text-purple-600" />
               </div>
               <div>
-                <h3 className="text-grey text-sm">Rewards</h3>
+                <h3 className="text-grey text-sm">Rewards Today</h3>
                 <p className="text-2xl font-bold text-primary">
                   ₦{formatedReward}
                 </p>
