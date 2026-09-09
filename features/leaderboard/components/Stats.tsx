@@ -2,7 +2,6 @@
 
 import GlassCard from "@/components/ui/cards/GlassCard";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
-import CircularProgress from "@/components/ui/progress/Circular";
 import { cn } from "@/lib/utils/cn";
 import SimpleAreaChart from "@/components/ui/charts/CurveArea";
 import { IoMdTrophy } from "react-icons/io";
@@ -56,9 +55,9 @@ interface Performer {
 interface StatsProps {
   // ACTIVITY_DATA: ActivityEntry[];
   BAR_COLORS: string[];
-  maxPoints: number;
-  REFERRAL_DATA: ReferralEntry[];
-  MASTER_DATA: MasterEntry[];
+  // maxPoints: number;
+  // REFERRAL_DATA: ReferralEntry[];
+  // MASTER_DATA: MasterEntry[];
   detailsId: string;
 }
 
@@ -107,6 +106,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
     queryKey: ["user-dashboard", detailsId],
     queryFn: async () => {
       const res = await getUserDashboard(detailsId!);
+      console.log(res, "stats");
       return res.data?.payload;
     },
     enabled: !!detailsId,
@@ -249,36 +249,67 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
           </h2>
 
           {overallLeaderboard.length > 0 ? (
-            <div className="space-y-6">
-              {overallLeaderboard.map((user: Performer, i: number) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="relative">
-                    <CircularProgress
-                      percentage={user.score}
-                      size={45}
-                      strokeWidth={3}
-                      color={user.color}
-                    />
-                    <span className="absolute inset-0 flex items-center justify-center text-[14px] text-white font-bold">
-                      {user.score}
-                    </span>
-                  </div>
-                  <div className="flex-1 text-sm font-medium">
-                    <div className="flex justify-between text-white mb-1">
-                      <span>{user.name}</span>
-                      <span className="text-blue-400 font-mono">
-                        {user.totalXp}
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div className="space-y-5">
+              {overallLeaderboard.map((user: Performer, i: number) => {
+                // Calculate normalized percentage based on max score
+                const scorePercentage = maxLeaderboardScore > 0 
+                  ? (user.score / maxLeaderboardScore) * 100 
+                  : 0;
+                
+                return (
+                  <div key={i} className="flex items-start gap-3">
+                    {/* Rank Badge */}
+                    <div className="flex-shrink-0 mt-0.5">
                       <div
-                        className="h-full bg-blue-500 rounded-full"
-                        style={{ width: `${user.score}%` }}
-                      />
+                        className="flex items-center justify-center w-9 h-9 rounded-full font-bold text-xs text-white border-2 flex-shrink-0"
+                        style={{
+                          borderColor: user.color || '#3b82f6',
+                          backgroundColor: `${user.color || '#3b82f6'}25`,
+                        }}
+                      >
+                        #{user.position}
+                      </div>
+                    </div>
+                    
+                    {/* User Info and Progress */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline gap-2 mb-1.5">
+                        <span className="text-white font-semibold text-sm truncate">
+                          {user.name}
+                        </span>
+                        <span 
+                          className="text-xs font-mono font-bold flex-shrink-0"
+                          style={{ color: user.color || '#3b82f6' }}
+                        >
+                          {user.score}
+                        </span>
+                      </div>
+                      
+                      {/* Progress Bar with normalized percentage */}
+                      <div className="relative h-2 w-full bg-slate-800/60 rounded-full overflow-hidden border border-slate-700/50">
+                        <div
+                          className="h-full rounded-full transition-all duration-500 ease-out"
+                          style={{
+                            width: `${Math.max(scorePercentage, 3)}%`,
+                            backgroundColor: user.color || '#3b82f6',
+                            boxShadow: `0 0 8px ${user.color || '#3b82f6'}80`,
+                          }}
+                        />
+                      </div>
+                      
+                      {/* Score metadata */}
+                      <div className="flex justify-between items-center mt-1 text-xs gap-2">
+                        <span className="text-slate-400">
+                          {user.totalXp} XP
+                        </span>
+                        <span className="text-slate-500">
+                          {scorePercentage.toFixed(1)}% of record
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <EmptyStateCard
@@ -303,19 +334,6 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
               <h2 className="text-3xl font-bold text-white mt-2">
                 Avg: {data.totalAverage}%
               </h2>
-            </div>
-            <div className="relative">
-              <CircularProgress
-                percentage={data.totalAverage}
-                size={80}
-                strokeWidth={6}
-                color="text-[#3b82f6]"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-white font-bold text-lg">
-                  {data.totalAverage}
-                </span>
-              </div>
             </div>
           </div>
           <div className="h-30 w-full mt-4">

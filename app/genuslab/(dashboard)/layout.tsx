@@ -1,6 +1,7 @@
 "use client";
 
 import AdminSidebar from "@/components/layouts/AdminSidebar";
+import AuthProvider from "@/providers/AuthProvider";
 import Provider from "@/providers/QueryProvider";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
@@ -16,7 +17,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         <aside className="grow-0">
           <AdminSidebar />
         </aside>
-        <section className="grow p-8">{children}</section>
+        <section className="grow p-8">
+          <AuthProvider>{children}</AuthProvider>
+        </section>
       </div>
     </Provider>
   );

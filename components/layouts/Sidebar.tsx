@@ -12,6 +12,7 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { logout } from "@/lib/api/apis";
+import { useUser as useUserStore } from "@/store/useUser";
 
 const navLinks = [
   {
@@ -69,7 +70,8 @@ const Sidebar = ({ type }: { type?: string }) => {
       // Axios request to your logout server endpoint
       await logout();
       toast.success("logout successfull");
-      localStorage.clear();
+      // localStorage.clear();
+      useUserStore.setState({ user: null });
     } catch (error) {
       console.error(
         "Server-side logout failed, proceeding with client cleanup:",

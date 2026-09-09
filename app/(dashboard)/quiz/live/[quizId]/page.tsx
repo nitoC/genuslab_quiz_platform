@@ -28,11 +28,10 @@ import { useQuizCountdownTime } from "@/hooks/useTime";
 import { useTimeStore } from "@/features/quiz/store/time.store";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import getLocalStorage from "@/lib/utils/getLocalStorage";
+import useUser from "@/hooks/useUser";
 import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
 import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
 import handleQuizStorage from "@/lib/utils/handleQuizStorage";
-import useUser from "@/hooks/useUser";
 import {
   MobileQuizHeader,
   QuizHeader,
@@ -75,7 +74,7 @@ const QuizPage = () => {
   const { resetTime: setTime } = useTimeStore((state) => state);
   const [speed, setspeed] = useState("_min: _sec");
 
-  const { data: userData, isLoading: userIsLoading } = useUser();
+  const { data: userData, isLoading: userIsLoading, userStore } = useUser();
 
   const {
     data: queryResponse,
@@ -89,8 +88,8 @@ const QuizPage = () => {
   }>({
     queryKey: ["initiate quiz", quizId],
     queryFn: async () => {
-      const userStr = getLocalStorage("user");
-      if (!userStr) {
+      const userId = userData?.user?.details?.id || userStore?.userId;
+      if (!userId) {
         toast.error("user not found");
         throw new Error("user not found");
       }
@@ -99,7 +98,6 @@ const QuizPage = () => {
         toast.error("quiz id not found");
         throw new Error("user not found");
       }
-      const { userId } = JSON.parse(userStr);
       const userDetails = await getUserDetails(userId);
       if (!userDetails) {
         toast.error("user not logged in");
@@ -120,6 +118,7 @@ const QuizPage = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: true,
+    enabled: !!userData?.user,
   });
 
   const data = queryResponse?.data;
@@ -285,8 +284,8 @@ const QuizPage = () => {
 
   useEffect(() => {
     async function verifyAttempt() {
-      const userStr = getLocalStorage("user");
-      if (!userStr) {
+      const userId = userData?.user?.details?.id || userStore?.userId;
+      if (!userId) {
         toast.error("user not found");
         throw new Error("user not found");
       }
@@ -295,7 +294,6 @@ const QuizPage = () => {
         toast.error("quiz id not found");
         throw new Error("user not found");
       }
-      const { userId } = JSON.parse(userStr);
       const userDetails = await getUserDetails(userId);
       if (!userDetails) {
         toast.error("user not logged in");
@@ -330,7 +328,7 @@ const QuizPage = () => {
       }
     }
     verifyAttempt();
-  }, []);
+  }, [userData?.user]);
 
   const progressSegments = Math.max(1, Math.min(10, totalQuestions || 10));
   const activeSeg = totalQuestions

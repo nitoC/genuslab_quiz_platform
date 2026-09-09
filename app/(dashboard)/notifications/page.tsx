@@ -131,13 +131,11 @@ const NotificationsPage = () => {
     const handleIncomingNotification = (newNotice: any) => {
       console.log("Received notification:", newNotice);
 
-      // Prepend the new notification directly to the Query Cache
       queryClient.setQueryData(["notifications", filter], (oldData: any) => {
         if (!oldData) return oldData;
 
         const currentPayload = oldData?.data?.payload || [];
 
-        // Structure the incoming payload to match backend formatting if necessary
         const noticeToAdd = {
           id: newNotice.id || newNotice._id || Date.now(),
           title: newNotice.title || "New Notification",
@@ -162,9 +160,6 @@ const NotificationsPage = () => {
           },
         };
       });
-      // The sound + toast alert for this event is handled globally in
-      // SocketProvider so it fires no matter which dashboard page is open —
-      // this listener only needs to keep this page's own list in sync.
     };
 
     socket.on("notification", handleIncomingNotification);
@@ -200,6 +195,8 @@ const NotificationsPage = () => {
         new Date(),
       );
 
+      const isNoticeRead = notice.isRead ?? notice.read ?? false;
+
       const item: NotificationItem = {
         id: notice.id || notice._id || `${notice.createdAt}-${Math.random()}`,
         icon: getNotificationIcon(notice.type),
@@ -208,8 +205,8 @@ const NotificationsPage = () => {
         description: notice.content || notice.description || "",
         time: groupLabel,
         color: TYPE_COLORS[notice.type] || "bg-slate-500",
-        dot: !notice.isRead && !notice.read,
-        isRead: notice.isRead ?? notice.read ?? false,
+        dot: !isNoticeRead,
+        isRead: isNoticeRead,
       };
 
       const existingGroup = groups.find((g) => g.label === groupLabel);
@@ -239,7 +236,6 @@ const NotificationsPage = () => {
     },
   });
 
-  // Marks a single notification as read the moment its detail modal is opened.
   const markReadMutation = useMutation({
     mutationFn: (id: string) => markNotificationAsRead(id),
     onMutate: (id: string) => {
@@ -284,8 +280,6 @@ const NotificationsPage = () => {
 
   return (
     <Layout>
-      {/* Header */}
-      {/* <Header title="Notifications" backBtn={false} /> */}
       <div className="p-4 md:p-8 space-y-4">
         <div className="flex justify-between items-start md:items-center">
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
@@ -378,7 +372,6 @@ const NotificationsPage = () => {
       </div>
 
       <main className="px-4 md:px-8 pb-8 space-y-8 md:space-y-12 max-w-5xl">
-        {/* Loading Skeleton */}
         {isLoading && (
           <div className="space-y-4">
             <div className="h-4 bg-white/5 rounded-md w-24 animate-pulse" />
@@ -390,7 +383,6 @@ const NotificationsPage = () => {
           </div>
         )}
 
-        {/* Error Glass State */}
         {isError && !isLoading && (
           <GlassCard className="relative overflow-hidden bg-rose-950/20 border-rose-500/20 backdrop-blur-xl p-8 md:p-12 text-center space-y-4">
             <div className="absolute -top-12 -left-12 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -418,7 +410,6 @@ const NotificationsPage = () => {
           </GlassCard>
         )}
 
-        {/* Empty State */}
         {!isLoading && !isError && noticeGroups.length === 0 && (
           <GlassCard className="relative overflow-hidden bg-slate-900/40 border-white/5 backdrop-blur-xl p-10 md:p-16 text-center space-y-4">
             <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none" />
@@ -457,7 +448,6 @@ const NotificationsPage = () => {
           </GlassCard>
         )}
 
-        {/* Notification Groups List */}
         {!isLoading &&
           !isError &&
           noticeGroups.map((group) => (
@@ -475,10 +465,11 @@ const NotificationsPage = () => {
                     key={item.id}
                     className="relative group overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500 ease-out"
                   >
+                    {/* Dynamic Border Indicator: Grey when read, color-coded when unread */}
                     <div
                       className={cn(
-                        "absolute left-0 top-6 bottom-6 w-[3px] rounded-r-full z-10",
-                        item.color,
+                        "absolute left-0 top-6 bottom-6 w-[3px] rounded-r-full z-10 transition-colors duration-300",
+                        item.isRead ? "bg-slate-600/60" : item.color,
                       )}
                     />
 

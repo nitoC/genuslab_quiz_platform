@@ -6,7 +6,9 @@ import useUser from "@/hooks/useUser";
 import SettingsView from "@/features/settings/ui/Settings";
 
 const Skeleton = ({ className = "" }: { className?: string }) => {
-  return <div className={`animate-pulse rounded-xl bg-white/10 ${className}`} />;
+  return (
+    <div className={`animate-pulse rounded-xl bg-white/10 ${className}`} />
+  );
 };
 
 const SettingsSkeleton = () => {
@@ -36,10 +38,10 @@ const SettingsSkeleton = () => {
 };
 
 const SettingsPage = () => {
-  const { data, isLoading, storedUser } = useUser();
+  const { data, isLoading, userStore } = useUser();
   const user = data?.user;
 
-  if (isLoading || !storedUser || !data?.user) {
+  if (isLoading || !userStore || !data?.user) {
     return <SettingsSkeleton />;
   }
 

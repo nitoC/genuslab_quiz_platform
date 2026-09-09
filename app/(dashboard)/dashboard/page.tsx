@@ -154,7 +154,7 @@ const Page = () => {
   /* -----------------------------
    * USER QUERY
    * ---------------------------- */
-  const { data, isLoading, isError, error, storedUser } = useUser();
+  const { data, isLoading, isError, error, userStore } = useUser();
 
   useEffect(() => {
     setIsMounted(true);
@@ -168,7 +168,7 @@ const Page = () => {
   /* -----------------------------
    * LOADING
    * ---------------------------- */
-  if (isLoading || !storedUser) {
+  if (isLoading || !userStore) {
     return <DashboardSkeleton />;
   }
 

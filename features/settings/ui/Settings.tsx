@@ -155,7 +155,7 @@ const AccountSection = ({ user }: any) => {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg bg-blue px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue/90 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-lg bg-blue px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue/90 disabled:opacity-50"
           >
             <MdSave size={14} /> {loading ? "Saving..." : "Save Changes"}
           </button>
@@ -242,7 +242,7 @@ const LinkedAccountsSection = ({ user }: any) => {
         action={
           <Link
             href="/accounts"
-            className="flex items-center gap-1.5 rounded-lg border border-blue/20 bg-blue/10 px-5 py-2.5 text-xs font-bold text-blue transition-all hover:bg-blue/20"
+            className="flex items-center justify-center gap-1.5 rounded-lg border border-blue/20 bg-blue/10 px-5 py-2.5 text-xs font-bold text-blue transition-all hover:bg-blue/20"
           >
             Link Bank Account <MdArrowForward size={14} />
           </Link>

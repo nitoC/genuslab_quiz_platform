@@ -14,8 +14,8 @@ import { IoBookOutline } from "react-icons/io5";
 import { PiMedalFill } from "react-icons/pi";
 
 import { getAttempts } from "@/lib/api/apis"; // adjust path
-import getLocalStorage from "@/lib/utils/getLocalStorage";
 import Link from "next/link";
+import useUser from "@/hooks/useUser";
 
 /* --------------------------------------------------------------------------
  * SKELETON LOADERS
@@ -171,22 +171,8 @@ const PerformancePage = () => {
   const [activeTab, setActiveTab] = useState<"online" | "studio">("online");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Session check
-  const storedUser = useMemo(() => {
-    const user = getLocalStorage("user");
-    if (!user) return null;
-    try {
-      return JSON.parse(user);
-    } catch {
-      return null;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!storedUser) {
-      router.replace("/login");
-    }
-  }, [storedUser, router]);
+  // Get user from store
+  const { userStore, isLoading: userLoading } = useUser();
 
   const {
     data: quizData,

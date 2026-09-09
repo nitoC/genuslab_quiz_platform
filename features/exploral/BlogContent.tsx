@@ -21,8 +21,8 @@ const BlogContent = ({ posts }: { posts: any }) => {
   console.log(postsDup, "dup");
   console.log(subHours("2026-05-05T15:56:00.000Z", 2), "sub hours");
   return (
-    <GlassCard className="lg:col-span-3 p-6 md:p-8">
-      <div className="flex justify-between items-center mb-6 md:mb-8">
+    <GlassCard className="lg:col-span-4 p-6 md:p-8 flex flex-col h-full">
+      <div className="flex justify-between items-center mb-6 md:mb-8 shrink-0">
         <div>
           <p className="text-blue-500 text-[14px] uppercase tracking-widest font-bold">
             Latest Trends
@@ -40,18 +40,18 @@ const BlogContent = ({ posts }: { posts: any }) => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch mt-auto">
         <Link
           href={`${blogUrl}/post/${post.slug.current}`}
           target="__blank"
-          className="relative  group cursor-pointer rounded-3xl overflow-hidden aspect-[16/10] md:aspect-auto"
+          className="relative group cursor-pointer rounded-3xl overflow-hidden min-h-[280px] md:min-h-[320px] flex flex-col"
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
           <ImageWithFallback
             src={post.mainImageUrl}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute bottom-0 left-0 p-6 z-20">
+          <div className="absolute bottom-0 left-0 p-6 z-20 mt-auto">
             <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
               {post.title}
             </h3>
@@ -62,19 +62,19 @@ const BlogContent = ({ posts }: { posts: any }) => {
           </div>
         </Link>
 
-        <div className="space-y-6">
+        <div className="flex flex-col gap-4 h-full">
           {postsDup.map((item: any, i: number) => (
             <Link
               href={`${blogUrl}/post/${item.slug.current}`}
               target="__blank"
               key={i}
-              className="flex hover:text-blue-300 text-white gap-4 group cursor-pointer border-b border-white/5 pb-4 last:border-0"
+              className="flex hover:text-blue-300 text-white gap-4 group cursor-pointer border-b border-white/5 pb-4 last:border-0 flex-1 min-h-[80px]"
             >
               <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
                 {postIcons[i]}
               </div>
-              <div>
-                <h4 className="text-sm md:text-sm font-bold leading-snug">
+              <div className="flex-1">
+                <h4 className="text-sm md:text-sm font-bold leading-snug line-clamp-2">
                   {item.title}
                 </h4>
                 <p className="text-slate-500 text-[14px] mt-1 font-bold uppercase">

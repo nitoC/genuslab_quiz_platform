@@ -65,9 +65,12 @@ const LoginPage = () => {
         email: form.email,
         password: form.password,
       });
-      console.log(resp, "login response");
+      console.log("Login response:", resp.data);
       if (resp?.data?.payload) {
-        localStorage.setItem("user", JSON.stringify(resp.data.payload));
+        // const userData = resp.data.payload;
+        // delete userData.accessToken;
+        // localStorage.setItem("user", JSON.stringify(userData));
+        console.log("User payload:", resp.data.payload);
         user(resp.data.payload);
         toast.success("Logged in successfully");
         router.push("/dashboard");

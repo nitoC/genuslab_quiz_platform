@@ -313,8 +313,8 @@ const ExploralPage = () => {
 
       <main className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-400 mx-auto">
         {/* TOP ROW: Championships & Studio Winner */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
-          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 order-2 lg:order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 order-2 lg:order-1">
             <GlassCard className="p-6 md:p-8 flex flex-col items-center text-center justify-between min-h-[200px] md:min-h-[250px]">
               <div className="bg-emerald-500/10 p-3 md:p-4 rounded-2xl">
                 <MdSettings className="text-emerald-500 text-2xl md:text-3xl" />
@@ -488,9 +488,9 @@ const ExploralPage = () => {
         </div>
 
         {/* MIDDLE ROW: Tech News & Socials */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 md:gap-6">
           {isLoading ? (
-            <GlassCard className="lg:col-span-3 p-6 md:p-8 space-y-4">
+            <GlassCard className="lg:col-span-4 p-6 md:p-8 space-y-4">
               <div className="h-6 bg-white/10 rounded-md w-1/4 animate-pulse mb-6" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[1, 2, 3, 4].map((i) => (
@@ -509,7 +509,7 @@ const ExploralPage = () => {
             <BlogContent posts={data} />
           )}
 
-          <GlassCard className="p-6 md:p-8">
+          <GlassCard className="lg:col-span-2 p-6 md:p-8 space-y-4">
             <h3 className="text-white font-bold flex items-center gap-2 mb-6 md:mb-8">
               <div className="w-1 h-4 bg-blue-500 rounded-full" /> Connect with
               Us

@@ -56,38 +56,38 @@ const BAR_COLORS = [
   "#448fff",
 ];
 
-const REFERRAL_DATA = [
-  { value: 45 },
-  { value: 20 },
-  { value: 35 },
-  { value: 30 },
-  { value: 55 },
-  { value: 40 },
-];
+// const REFERRAL_DATA = [
+//   { value: 45 },
+//   { value: 20 },
+//   { value: 35 },
+//   { value: 30 },
+//   { value: 55 },
+//   { value: 40 },
+// ];
 
-const MASTER_DATA = [
-  { value: 30 },
-  { value: 65 },
-  { value: 45 },
-  { value: 40 },
-  { value: 35 },
-  { value: 30 },
-];
+// const MASTER_DATA = [
+//   { value: 30 },
+//   { value: 65 },
+//   { value: 45 },
+//   { value: 40 },
+//   { value: 35 },
+//   { value: 30 },
+// ];
 
-const ACTIVITY_DATA = [
-  { name: "Bobby", points: 45 },
-  { name: "Emma", points: 58 },
-  { name: "Udred", points: 72 },
-  { name: "Chibyk", points: 85 },
-  { name: "Jane", points: 95 },
-];
+// const ACTIVITY_DATA = [
+//   { name: "Bobby", points: 45 },
+//   { name: "Emma", points: 58 },
+//   { name: "Udred", points: 72 },
+//   { name: "Chibyk", points: 85 },
+//   { name: "Jane", points: 95 },
+// ];
 
 const TABS = ["Stats", "Performance"];
 
 const LeaderboardPage = () => {
   const [activeTab, setActiveTab] = useState("Stats");
 
-  const maxPoints = Math.max(...ACTIVITY_DATA.map((d) => d.points));
+  // const maxPoints = Math.max(...ACTIVITY_DATA.map((d) => d.points));
 
   // replace with the logged in user's detailsId
   const { data, isLoading, isError } = useUser() as {
@@ -141,9 +141,9 @@ const LeaderboardPage = () => {
           >
             <Stats
               // ACTIVITY_DATA={ACTIVITY_DATA}
-              MASTER_DATA={MASTER_DATA}
-              maxPoints={maxPoints}
-              REFERRAL_DATA={REFERRAL_DATA}
+              // MASTER_DATA={MASTER_DATA}
+              // maxPoints={maxPoints}
+              // REFERRAL_DATA={REFERRAL_DATA}
               BAR_COLORS={BAR_COLORS}
               detailsId={detailsId ?? ""}
             />

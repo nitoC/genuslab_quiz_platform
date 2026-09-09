@@ -5,44 +5,47 @@ import getLocalStorage from "@/lib/utils/getLocalStorage";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useUser as useUserStore } from "@/store/useUser";
 
 const useUser = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [storedUser, setStoredUser] = useState<{ userId: string } | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const userStore = useUserStore((state) => state.user);
+  const isInitialized = useUserStore((state) => state.isInitialized);
 
   // 1. Read stored user safely post-hydration
-  useEffect(() => {
-    setIsMounted(true);
-    const user = getLocalStorage("user");
+  // useEffect(() => {
+  //   setIsMounted(true);
+  //   const user = getLocalStorage("user");
 
-    if (user) {
-      try {
-        setStoredUser(JSON.parse(user));
-      } catch {
-        setStoredUser(null);
-      }
-    }
-  }, []);
+  //   if (user) {
+  //     try {
+  //       setStoredUser(JSON.parse(user));
+  //     } catch {
+  //       setStoredUser(null);
+  //     }
+  //   }
+  // }, []);
 
   // 2. Auth Guard: Redirect unauthenticated users immediately
   useEffect(() => {
-    if (isMounted && !storedUser) {
+    if (!isInitialized) return;
+
+    if (!userStore) {
       router.replace("/login");
     }
-  }, [isMounted, storedUser, router]);
+  }, [isInitialized, userStore, router]);
 
   // 3. React Query: Fetches and caches profile data across pages
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: [constants.USER, storedUser?.userId],
-    enabled: !!storedUser?.userId,
+    queryKey: [constants.USER, userStore?.userId],
+    enabled: isInitialized && !!userStore?.userId,
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes cache
     queryFn: async (): Promise<{ user: IUser; rank: any }> => {
       const [userRes, rankRes] = await Promise.all([
-        getUserProfile(storedUser!.userId),
+        getUserProfile(userStore!.userId),
         getRankData(),
       ]);
 
@@ -75,7 +78,7 @@ const useUser = () => {
     }
   }, [pathname, data?.user, router]);
 
-  return { data, isLoading, isError, error, storedUser, refetch };
+  return { data, isLoading, isError, error, userStore, refetch };
 };
 
 export default useUser;

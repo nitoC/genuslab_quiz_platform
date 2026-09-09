@@ -134,7 +134,7 @@ const ProfilePage = () => {
 
   const tab = pageParam.get("tab");
 
-  const { data, isLoading, isError, error, storedUser } = useUser();
+  const { data, isLoading, isError, error, userStore } = useUser();
   const user = data?.user;
   const rank = data?.user.details.rankName;
   const avatar = data?.user.details.avatar;
@@ -143,7 +143,7 @@ const ProfilePage = () => {
   /* ---------- Rewards and Chart Track States ---------- */
 
   /* ----------------------------- LOADING SKELETON ---------------------------- */
-  if (isLoading || !storedUser || !data?.user) {
+  if (isLoading || !userStore || !data?.user) {
     return <ProfileSkeleton />;
   }
   /* ----------------------------- LOADING SKELETON ---------------------------- */
@@ -223,7 +223,9 @@ const ProfilePage = () => {
                 <div className="absolute top-0 left-0 w-full h-full border-4 border-blue border-t-transparent rounded-full -rotate-45" />
                 <span className="text-[14px] md:text-sm font-bold text-primary text-center leading-tight">
                   {exp} <br />
-                  <span className="text-[14px] md:text-[14px] text-grey">XP</span>
+                  <span className="text-[14px] md:text-[14px] text-grey">
+                    XP
+                  </span>
                 </span>
               </div>
             </div>

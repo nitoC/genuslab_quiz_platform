@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import SocketProvider from "@/providers/SocketProvider";
+import AuthProvider from "@/providers/AuthProvider";
 
 const dashLayout = ({ children }: { children: React.ReactNode }) => {
   // Lazily created once per mount — creating a fresh QueryClient on every
@@ -49,7 +50,7 @@ const dashLayout = ({ children }: { children: React.ReactNode }) => {
       <SocketProvider>
         <div className="flex-2" data-theme={"dark"}>
           <Toaster />
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </div>
       </SocketProvider>
     </QueryClientProvider>
