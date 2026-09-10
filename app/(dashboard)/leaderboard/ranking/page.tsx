@@ -10,8 +10,6 @@ import {
   FaTrophy,
   FaMedal,
   FaChevronDown,
-  FaBrain,
-  FaUsers,
   FaCheck,
   FaInbox,
 } from "react-icons/fa";
@@ -179,11 +177,7 @@ const LeaderboardPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const {
-    data: userData,
-    isLoading: userLoading,
-    isError: userError,
-  } = useUser();
+  const { data: userData } = useUser();
   const detailsId = userData?.user?.details?.id || "";
 
   const {
@@ -196,17 +190,22 @@ const LeaderboardPage = () => {
       const leaderboard = await getLeaderboardStats(
         `${type === "quiz" ? "xp" : type}/${timeframe}`,
       );
-      const ranking = await getUserRankings(
-        `${type === "quiz" ? "xp" : type}/${timeframe}/${detailsId}`,
-      );
+
+      let ranking = null;
+      if (detailsId) {
+        const rankingRes = await getUserRankings(
+          `${type === "quiz" ? "xp" : type}/${timeframe}/${detailsId}`,
+        );
+        ranking = rankingRes?.data?.payload ?? null;
+      }
+
       return {
         leaderboard: leaderboard?.data?.payload || [],
-        ranking: ranking?.data?.payload || 0,
+        ranking,
       };
     },
   });
 
-  console.log(data, "leaderboard");
   const selectedTimeframeLabel =
     TIMEFRAMES.find((tf) => tf.value === timeframe)?.label || "Overall";
 
@@ -234,13 +233,22 @@ const LeaderboardPage = () => {
     ? data.leaderboard.filter((u) => u.position > 3)
     : [];
 
+  // Safely extract numeric position from user ranking
+  const userPositionDisplay = (() => {
+    if (!data.ranking) return "--";
+    if (typeof data.ranking === "number" || typeof data.ranking === "string") {
+      return data.ranking;
+    }
+    return data.ranking?.position || data.ranking?.rank || "--";
+  })();
+
   return (
     <Layout>
       <Header title="Leaderboard" backBtn={true} />
 
       <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 max-w-6xl mx-auto">
         {/* CONTROL BAR: TYPE TABS & TIMEFRAME DROPDOWN */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-2 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl relative z-30">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-2 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl relative z-7">
           {/* TYPE SWITCHER TABS */}
           <div className="relative flex items-center p-1 bg-black/20 rounded-xl w-full sm:w-auto border border-white/5">
             <button
@@ -381,7 +389,7 @@ const LeaderboardPage = () => {
                       </h3>
                       <p className="text-blue-400 text-sm font-bold">
                         {type === "quiz" ? "SCORE:" : "REFERRALS:"}{" "}
-                        {(user.score ?? 0).toLocaleString()}{" "}
+                        {(user.score ?? 0).toLocaleString()}
                       </p>
                       <span className="text-[14px] text-gray-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase">
                         {user.rank}
@@ -443,12 +451,7 @@ const LeaderboardPage = () => {
                         <div className="flex items-center gap-4 sm:gap-8">
                           <div className="flex flex-col items-end">
                             <span className="text-white font-bold text-sm">
-                              {
-                                // type === "quiz"
-                                // ? (player.totalXp ?? 0).toLocaleString()
-                                // :
-                                (player.score ?? 0).toLocaleString()
-                              }
+                              {(player.score ?? 0).toLocaleString()}
                             </span>
                             <span className="text-gray-400 text-[14px]">
                               {type === "quiz" ? "Total Score" : "Referrals"}
@@ -471,7 +474,7 @@ const LeaderboardPage = () => {
               <div className="p-4 flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   <span className="text-blue-400 font-bold text-xl">
-                    #{data.ranking ? data.ranking : "--"}
+                    #{userPositionDisplay}
                   </span>
                   <div className="flex flex-col">
                     <span className="text-white font-bold text-sm">

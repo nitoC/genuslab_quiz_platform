@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { IoIosNotifications, IoMdMenu, IoMdSettings } from "react-icons/io";
-import { LuDot } from "react-icons/lu";
+import { MdLogout, MdPerson } from "react-icons/md";
 
 import GlassCard from "../ui/cards/GlassCard";
 import Back from "../ui/buttons/Back";
@@ -13,10 +13,17 @@ import useSidebar from "@/store/useSidebar";
 import useUser from "@/hooks/useUser";
 import { UseNotificationSocket } from "@/hooks/useSocket";
 
-const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
+interface HeaderProps {
+  title?: string;
+  backBtn?: boolean;
+}
+
+const Header = ({ title, backBtn = false }: HeaderProps) => {
   const { data, isLoading } = useUser();
   const [isMounted, setIsMounted] = useState(false);
   const [unRead, setUnRead] = useState(true);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
 
   const socket = UseNotificationSocket(data?.user?.id || "");
@@ -25,72 +32,155 @@ const Header = ({ title, backBtn }: { title?: string; backBtn: boolean }) => {
     setIsMounted(true);
   }, []);
 
-  //  Attach event listeners to the socket safely inside useEffect
   useEffect(() => {
     if (!socket) return;
-
     const handleUnread = (notification: any) => {
-      // console.log("Received notification:", notification);
-      // alert(`New notification: ${notification.message}`);
-      console.log(notification, "notice");
       setUnRead(notification);
     };
-
     socket.on("has-unread", handleUnread);
-
-    // Clean up listener when component unmounts or socket updates
     return () => {
       socket.off("has-unread", handleUnread);
     };
   }, [socket]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [userMenuOpen]);
+
+  const firstName = data?.user?.name ? data.user.name.split(" ")[0] : "User";
+
   return (
-    <div className="sticky top-0 z-20">
+    <header className="sticky top-0 z-10 w-full">
       <GlassCard type="header">
-        <div
-          className={clsx(
-            "w-full flex p-6 items-center",
-            title ? "justify-between" : "justify-end",
-          )}
-        >
-          <h2 className="text-(--primary) font-bold">{title}</h2>
-          <div className="flex gap-4 items-center">
-            {backBtn && <Back text="Back" />}
-            <div className="flex gap-4 md:gap-8 items-center">
-              <Link href="/settings">
-                <IoMdSettings size={30} className="text-primary" />
-              </Link>
-              <Link href="/notifications" className="relative">
-                <IoIosNotifications size={30} className="text-primary" />
-                {unRead && (
-                  <LuDot
-                    size={40}
-                    className="text-red absolute top-[-.8rem] right-[-.8rem]"
-                  />
-                )}
-              </Link>
-              <div className="avatar-header">
-                {isLoading || !isMounted ? (
-                  <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-700 animate-pulse" />
+        <div className="flex w-full items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+          {/* Left Section: Back button & Title */}
+          <div className="flex items-center gap-3 min-w-0">
+            {backBtn && (
+              <div className="flex-shrink-0">
+                <Back text="" />
+              </div>
+            )}
+            {title && (
+              <h1 className="text-base font-bold text-(--primary) sm:text-xl lg:text-2xl truncate tracking-tight">
+                {title}
+              </h1>
+            )}
+          </div>
+
+          {/* Right Section: Interactive Controls */}
+          <div className="flex items-center gap-1.5 sm:gap-3 ml-auto flex-shrink-0">
+            {/* Settings Link */}
+            <Link
+              href="/settings"
+              aria-label="Settings"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <IoMdSettings className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            </Link>
+
+            {/* Notifications Link */}
+            <Link
+              href="/notifications"
+              aria-label="Notifications"
+              className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <IoIosNotifications className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              {unRead && (
+                <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-red-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                </span>
+              )}
+            </Link>
+
+            {/* Profile Menu Trigger & Dropdown Popover */}
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((prev) => !prev)}
+                aria-expanded={userMenuOpen}
+                aria-label="User menu"
+                className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {!isMounted || isLoading ? (
+                  <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gray-300/40 dark:bg-gray-700/40 animate-pulse" />
                 ) : (
                   <Avatar
                     type="explore"
-                    size={40}
+                    size={36}
                     url={data?.user?.details?.avatar}
                   />
                 )}
-              </div>
-              <button
-                onClick={toggleSidebar}
-                className="cursor-pointer cu-lg:hidden"
-              >
-                <IoMdMenu size={30} className="text-primary" />
               </button>
+
+              {/* User Popover Menu */}
+              {userMenuOpen && (
+                <div
+                  role="menu"
+                  aria-orientation="vertical"
+                  className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-white/15 bg-blue-950/95 p-2 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in zoom-in-95 duration-100"
+                >
+                  <div className="px-3 py-2.5 border-b border-white/10 mb-1">
+                    <p className="text-xs text-gray-300 font-medium">
+                      Signed in as
+                    </p>
+                    <p className="text-sm font-semibold text-white truncate">
+                      {firstName}
+                    </p>
+                  </div>
+
+                  <Link
+                    href="/profile"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-200 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    <MdPerson className="h-5 w-5 text-gray-400" />
+                    Profile
+                  </Link>
+
+                  <Link
+                    href="/settings"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-200 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    <IoMdSettings className="h-5 w-5 text-gray-400" />
+                    Settings
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300 border-t border-white/10 mt-1"
+                  >
+                    <MdLogout className="h-5 w-5" />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
+
+            {/* Mobile Navigation Sidebar Toggle */}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label="Toggle navigation menu"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:hidden"
+            >
+              <IoMdMenu className="h-6 w-6 text-primary" />
+            </button>
           </div>
         </div>
       </GlassCard>
-    </div>
+    </header>
   );
 };
 
