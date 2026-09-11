@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { useQuery } from "@tanstack/react-query";
 import { getUserTransactions, getTotalRewards } from "@/lib/api/apis"; // adjust import path to your api file
+import useUser from "@/hooks/useUser";
 
 export type TransactionTypeFilter = "all" | "referral" | "rewards" | "plan";
 
@@ -157,6 +158,9 @@ const getIconForType = (type: string) => {
 };
 
 const TransactionsPage = () => {
+  const { data: userData } = useUser();
+  const detailsId = userData?.user?.details?.id;
+
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("All");
   const [selectedType, setSelectedType] =
@@ -197,12 +201,22 @@ const TransactionsPage = () => {
           limit: 100,
           page: 1,
         });
-        return res?.data?.payload || res?.data || [];
+        return res?.data?.payload?.data || [];
       } catch (err) {
         console.error("Error fetching transactions:", err);
         return err;
       }
     },
+  });
+
+  // Current reward balance (sum of all quiz/referral/rank-unlock rewards)
+  const { data: currentReward, isLoading: isRewardLoading } = useQuery({
+    queryKey: ["totalReward", detailsId],
+    queryFn: async () => {
+      const res = await getTotalRewards(detailsId as string);
+      return res?.data?.payload?.total ?? 0;
+    },
+    enabled: !!detailsId,
   });
 
   // Transform raw API transaction items to match UI interface
@@ -328,12 +342,26 @@ const TransactionsPage = () => {
               Current reward
             </p>
             <h2 className="text-3xl md:text-4xl font-black text-white">
-              ₦0.00
+              {isRewardLoading
+                ? "₦..."
+                : `₦${Number(currentReward || 0).toLocaleString()}`}
             </h2>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-emerald-500 text-[14px] font-bold uppercase">
-                Active Reward
+              <div
+                className={cn(
+                  "w-2 h-2 rounded-full",
+                  currentReward > 0
+                    ? "bg-emerald-500 animate-pulse"
+                    : "bg-slate-500",
+                )}
+              />
+              <span
+                className={cn(
+                  "text-[14px] font-bold uppercase",
+                  currentReward > 0 ? "text-emerald-500" : "text-slate-500",
+                )}
+              >
+                {currentReward > 0 ? "Active Reward" : "No Active Reward"}
               </span>
             </div>
           </div>
