@@ -32,12 +32,13 @@ import nameResolver from "@/lib/utils/nameResolver";
 // import { useSocket } from "@/store/useSocket";
 
 import { AiFillDollarCircle } from "react-icons/ai";
-import { FaCheckCircle, FaTrophy } from "react-icons/fa";
+import { FaCheckCircle, FaLock, FaTrophy } from "react-icons/fa";
 import { IoIosRocket } from "react-icons/io";
 import { MdStars } from "react-icons/md";
 import useUser from "@/hooks/useUser";
 import TimerPop from "@/features/quiz/components/TimerPop";
 import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
+import SubscribeAlert from "@/features/dashboard/alerts/SubscribeAlert";
 
 const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
@@ -290,6 +291,9 @@ const Page = () => {
             </p>
           </div>
 
+          {/* SUBSCRIBE NOTIFICATION */}
+          {!user?.isSubscribed && <SubscribeAlert />}
+
           {/* TOP ROW */}
           <div className="flex flex-col lg:flex-row gap-8 items-stretch">
             {/* PROFILE CARD */}
@@ -476,35 +480,81 @@ const Page = () => {
             </GlassCard>
 
             {/* ONLINE QUIZ EVENT */}
-            <GlassCard>
-              <div className="p-6 flex flex-col gap-4 h-full">
-                <h3 className="text-(--primary) font-semibold flex gap-2">
-                  <FaTrophy className="text-orange-400" />
-                  Online Quiz Event
-                </h3>
 
-                <div>
-                  <h2 className="text-(--primary) font-bold text-xl">
-                    ₦10,000
-                  </h2>
+            {user.isSubscribed ? (
+              <GlassCard>
+                <div className="p-6 flex flex-col gap-4 h-full">
+                  <h3 className="text-(--primary) font-semibold flex gap-2">
+                    <FaTrophy className="text-orange-400" />
+                    Online Quiz Event
+                  </h3>
 
-                  <p className="text-grey text-sm">Reward</p>
+                  <div>
+                    <h2 className="text-(--primary) font-bold text-xl">
+                      ₦10,000
+                    </h2>
+
+                    <p className="text-grey text-sm">Reward</p>
+                  </div>
+
+                  <div className="flex gap-4 text-sm text-grey">
+                    <span>10 Questions</span>
+
+                    <span>5 mins left</span>
+                  </div>
+
+                  <PrimaryButton
+                    type="link"
+                    to={`/quiz/`}
+                    text="Enter Now"
+                    style="bg-green-500 text-white rounded-sm hover:bg-green-400 font-semibold disabled:opacity-50 disabled:pointer-events-none"
+                  />
                 </div>
+              </GlassCard>
+            ) : (
+              <GlassCard className="relative overflow-hidden border border-orange-400/20">
+                {/* subtle glow accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                <div className="flex gap-4 text-sm text-grey">
-                  <span>10 Questions</span>
+                <div className="p-6 flex flex-col gap-4 h-full relative">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-(--primary) font-semibold flex gap-2 items-center">
+                      <FaTrophy className="text-orange-400" />
+                      Online Quiz Event
+                    </h3>
 
-                  <span>5 mins left</span>
+                    <span className="flex items-center gap-1 text-[11px] font-bold text-orange-400 bg-orange-400/10 px-2 py-1 rounded-full">
+                      <FaLock size={10} />
+                      LOCKED
+                    </span>
+                  </div>
+
+                  <div>
+                    <h2 className="text-(--primary) font-bold text-2xl">
+                      ₦10,000
+                    </h2>
+                    <p className="text-grey text-sm">Prize pool</p>
+                  </div>
+
+                  <div className="flex gap-4 text-sm text-grey">
+                    <span>10 Questions</span>
+                    <span>5 mins left</span>
+                  </div>
+
+                  <p className="text-sm text-grey leading-relaxed">
+                    Subscribe to unlock live quiz events and compete for real
+                    cash prizes.
+                  </p>
+
+                  <PrimaryButton
+                    type="link"
+                    to="/pricing"
+                    text="Subscribe to Join"
+                    style="bg-linear-90 from-orange-400 to-orange-500 text-white rounded-sm hover:brightness-110 duration-300 font-semibold disabled:opacity-50 disabled:pointer-events-none mt-auto"
+                  />
                 </div>
-
-                <PrimaryButton
-                  type="link"
-                  to={`/quiz/`}
-                  text="Enter Now"
-                  style="bg-green-500 text-white rounded-sm hover:bg-green-400 font-semibold disabled:opacity-50 disabled:pointer-events-none"
-                />
-              </div>
-            </GlassCard>
+              </GlassCard>
+            )}
 
             {/* RECENT PAYOUT */}
             <GlassCard>

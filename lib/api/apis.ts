@@ -224,8 +224,21 @@ export const createTransaction = async (payload: {
 /**
  * Get all system transactions (Admin only)
  */
-export const getAllTransactions = async () => {
-  const res = await axiosAdmin.get("transaction/all");
+export const getAllTransactions = async (params?: {
+  type?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const { type, status, limit = 10, page = 1 } = params || {};
+
+  const queryParams = new URLSearchParams();
+  if (type) queryParams.append("type", type);
+  if (status) queryParams.append("status", status);
+  if (limit) queryParams.append("limit", limit.toString());
+  if (page) queryParams.append("page", page.toString());
+
+  const res = await axiosAdmin.get(`transaction/all?${queryParams.toString()}`);
   return res;
 };
 
@@ -642,5 +655,66 @@ export const getNextTime = async () => {
 const getRankings = async () => {
   const res = await axiosUser.get("rank/all");
   console.log(res, "rankings response");
+  return res;
+};
+
+//ADMIN PANEL ENDPOINTS (dashboard stats, user management, settings)
+export const getAdminStats = async () => {
+  const res = await axiosAdmin.get("admin/stats");
+  return res;
+};
+
+export const getAdminUserGrowth = async (
+  period: "day" | "week" | "month" = "day",
+) => {
+  const res = await axiosAdmin.get(`admin/stats/growth?period=${period}`);
+  return res;
+};
+
+export const getAdminUsers = async (params?: {
+  search?: string;
+  status?: string;
+  plan?: "premium" | "free";
+  page?: number;
+  limit?: number;
+}) => {
+  const { search, status, plan, limit = 10, page = 1 } = params || {};
+
+  const queryParams = new URLSearchParams();
+  if (search) queryParams.append("search", search);
+  if (status) queryParams.append("status", status);
+  if (plan) queryParams.append("plan", plan);
+  if (limit) queryParams.append("limit", limit.toString());
+  if (page) queryParams.append("page", page.toString());
+
+  const res = await axiosAdmin.get(`admin/users?${queryParams.toString()}`);
+  return res;
+};
+
+export const getAdminUserById = async (id: string) => {
+  const res = await axiosAdmin.get(`admin/users/${id}`);
+  return res;
+};
+
+export const updateAdminUserStatus = async (id: string, status: string) => {
+  const res = await axiosAdmin.patch(`admin/users/${id}/status`, { status });
+  return res;
+};
+
+export const getAdminApprovedBanks = async () => {
+  const res = await axiosAdmin.get("admin/settings/banks");
+  return res;
+};
+
+export const createAdminApprovedBank = async (payload: {
+  bankName: string;
+  bankCode: string;
+}) => {
+  const res = await axiosAdmin.post("admin/settings/banks", payload);
+  return res;
+};
+
+export const deleteAdminApprovedBank = async (id: string) => {
+  const res = await axiosAdmin.delete(`admin/settings/banks/${id}`);
   return res;
 };

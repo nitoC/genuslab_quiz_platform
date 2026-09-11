@@ -96,8 +96,8 @@
   --color-mygrey: #818690;
   /* --color-primary: "#00ADEF"; */
   --color-light: #f9fbfc;
-  --color-dark: "#18181B";
-  --color-accent: "#00D38B";
+  --color-dark: #18181b;
+  --color-accent: #00d38b;
   /* --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -156,6 +156,58 @@
   --background: var(--background-dark-primary);
   --primary: #fff;
   /* --foreground: #ededed; */
+}
+
+/* ==========================================================================
+   Genus Console design tokens — admin dashboard (app/genuslab/**) only.
+   Additive: does not touch the consumer/glassmorphism tokens above.
+   ========================================================================== */
+:root {
+  --admin-primary: #2563eb;
+  --admin-primary-hover: #1d4ed8;
+  --admin-primary-active: #1e40af;
+  --admin-primary-50: #eff6ff;
+  --admin-primary-100: #dbeafe;
+
+  --admin-surface: #ffffff;
+  --admin-border: #e2e8f0;
+  --admin-divider: #f1f5f9;
+  --admin-text-muted: #94a3b8;
+  --admin-text-secondary: #475569;
+  --admin-text-primary: #0f172a;
+
+  --admin-success: #059669;
+  --admin-success-bg: #ecfdf5;
+  --admin-success-text: #047857;
+  --admin-warning: #d97706;
+  --admin-warning-bg: #fffbeb;
+  --admin-warning-text: #92400e;
+  --admin-error: #dc2626;
+  --admin-error-bg: #fef2f2;
+  --admin-error-text: #b91c1c;
+  --admin-info: #2563eb;
+  --admin-info-bg: #eff6ff;
+  --admin-info-text: #1d4ed8;
+  --admin-inactive: #64748b;
+  --admin-inactive-bg: #f1f5f9;
+
+  --admin-radius-sm: 6px;
+  --admin-radius-md: 8px;
+  --admin-radius-lg: 12px;
+
+  --admin-shadow-1: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --admin-shadow-2:
+    0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  --admin-header-height: 64px;
+  --admin-content-max-w: 1440px;
+
+  --font-data: var(--font-plex-mono), "SFMono-Regular", monospace;
+}
+
+.font-data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
 }
 .dash-title {
   font-size: clamp(20px, 4vw, 2rem);

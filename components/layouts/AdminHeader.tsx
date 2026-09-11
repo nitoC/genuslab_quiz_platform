@@ -3,25 +3,33 @@ import useSidebar from "@/store/useSidebar";
 import React from "react";
 import { MdMenu } from "react-icons/md";
 
-const AdminHeader = ({ title }: { title: string }) => {
-  const { toggleSidebar, isOpen } = useSidebar((state) => state) as {
+const AdminHeader = ({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle?: string;
+}) => {
+  const { toggleSidebar } = useSidebar((state) => state) as {
     toggleSidebar: (isOpen?: boolean) => void;
-    isOpen: any;
   };
+
   return (
-    <header className="flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-      <button className="bg-blue-500 hidden md:inline-block hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Logout
-      </button>
+    <header className="flex h-16 items-center justify-between gap-4">
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+          {title}
+        </h1>
+        {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+      </div>
+
       <button
-        onClick={() => {
-          console.log(isOpen);
-          toggleSidebar(true);
-        }}
-        className="p-8 inline-block md:hidden"
+        type="button"
+        onClick={() => toggleSidebar(true)}
+        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 md:hidden"
+        aria-label="Open menu"
       >
-        <MdMenu size={23} />
+        <MdMenu size={22} />
       </button>
     </header>
   );

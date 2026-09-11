@@ -18,7 +18,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
           <AdminSidebar />
         </aside>
         <section className="grow p-8">
-          <AuthProvider>{children}</AuthProvider>
+          <div className="mx-auto w-full max-w-[1440px]">
+            <AuthProvider>{children}</AuthProvider>
+          </div>
         </section>
       </div>
     </Provider>

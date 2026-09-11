@@ -9,7 +9,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
+type PieSlice = {
+  name: string;
+  value: number;
+  color: string;
+  description: string;
+};
+
+const defaultData: PieSlice[] = [
   {
     name: "Premium",
     value: 400,
@@ -102,9 +109,11 @@ const renderActiveShape = ({
 };
 
 export default function CustomActiveShapePieChart({
+  data = defaultData,
   isAnimationActive = true,
   // defaultIndex = 0,
 }: {
+  data?: PieSlice[];
   isAnimationActive?: boolean;
   defaultIndex?: TooltipIndex;
 }) {

@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils/cn";
 
 const AdminCard = ({
   children,
@@ -8,7 +9,14 @@ const AdminCard = ({
   className?: string;
 }) => {
   return (
-    <div className={`shadow/10 p-8 rounded ${className || ""}`}>{children}</div>
+    <div
+      className={cn(
+        "rounded-[12px] border border-slate-200 bg-white p-6 shadow-sm",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 };
 

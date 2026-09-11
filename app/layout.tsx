@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Outfit } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Outfit, IBM_Plex_Mono } from "next/font/google";
 import clsx from "clsx";
 import "./globals.css";
 
@@ -22,6 +22,12 @@ const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
 });
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+});
 export const metadata: Metadata = {
   title: "Genus Lab",
   description:
@@ -41,6 +47,7 @@ export default function RootLayout({
           geistMono.variable,
           inter.variable,
           outfit.variable,
+          plexMono.variable,
           `antialiased`,
         )}
       >

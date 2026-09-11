@@ -1,0 +1,1003 @@
+<title>Genus Console</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --bg:            #f4f6f9;
+    --surface:       #ffffff;
+    --surface-2:     #fbfcfe;
+    --border:        #e2e8f0;
+    --border-soft:   #eef1f5;
+    --divider:       #f1f5f9;
+
+    --text-900:      #0f172a;
+    --text-600:      #475569;
+    --text-400:      #94a3b8;
+    --text-300:      #cbd5e1;
+
+    --primary:       #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-active:#1e40af;
+    --primary-50:    #eff6ff;
+    --primary-100:   #dbeafe;
+
+    --success:       #059669;
+    --success-50:    #ecfdf5;
+    --success-700:   #047857;
+
+    --warning:       #d97706;
+    --warning-50:    #fffbeb;
+    --warning-700:   #92400e;
+
+    --error:         #dc2626;
+    --error-50:      #fef2f2;
+    --error-700:     #b91c1c;
+
+    --info:          #2563eb;
+    --info-50:       #eff6ff;
+    --info-700:      #1d4ed8;
+
+    --inactive:      #64748b;
+    --inactive-50:   #f1f5f9;
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-full: 999px;
+
+    --shadow-1: 0 1px 2px rgba(15,23,42,.04);
+    --shadow-2: 0 4px 12px rgba(15,23,42,.08), 0 1px 2px rgba(15,23,42,.04);
+
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
+
+    --font-ui: "Inter", -apple-system, "Segoe UI", sans-serif;
+    --font-data: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box;}
+  ::selection{background:var(--primary-100);}
+  body{
+    margin:0; background:var(--bg); color:var(--text-900);
+    font-family:var(--font-ui); font-size:14px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{text-wrap:balance; margin:0;}
+  p{margin:0;}
+  a{color:var(--primary); text-decoration:none;}
+  code, .mono{font-family:var(--font-data);}
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  /* ---------- shell ---------- */
+  .shell{display:flex; min-height:100vh;}
+
+  .toc{
+    width:252px; flex:0 0 252px;
+    background:var(--surface); border-right:1px solid var(--border-soft);
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+    padding:var(--space-6) 0 var(--space-8);
+  }
+  .toc-brand{
+    padding:0 var(--space-6) var(--space-5); display:flex; align-items:center; gap:10px;
+    border-bottom:1px solid var(--border-soft); margin-bottom:var(--space-4);
+  }
+  .toc-mark{
+    width:30px; height:30px; border-radius:8px; background:var(--primary);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700; font-size:13px; font-family:var(--font-data);
+    flex:none;
+  }
+  .toc-brand-text .t1{font-size:13px; font-weight:800; color:var(--text-900); letter-spacing:-.01em;}
+  .toc-brand-text .t2{font-size:10.5px; font-weight:600; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;}
+
+  .toc-group{margin-bottom:var(--space-5);}
+  .toc-label{
+    padding:0 var(--space-6); font-size:10.5px; font-weight:700; color:var(--text-400);
+    text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; display:block;
+  }
+  .toc a{
+    display:block; padding:7px var(--space-6); font-size:12.5px; font-weight:500;
+    color:var(--text-600); border-left:2px solid transparent;
+  }
+  .toc a:hover{background:var(--divider); color:var(--text-900);}
+
+  .main{flex:1; min-width:0; padding:var(--space-10) var(--space-12) 120px;}
+  .wrap{max-width:1080px; margin:0 auto;}
+
+  .hero{padding-bottom:var(--space-10); border-bottom:1px solid var(--border); margin-bottom:var(--space-10);}
+  .hero .eyebrow{
+    font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--primary); margin-bottom:var(--space-3); font-family:var(--font-data);
+  }
+  .hero h1{font-size:34px; font-weight:800; letter-spacing:-.015em; color:var(--text-900); margin-bottom:var(--space-3);}
+  .hero p.lede{font-size:15.5px; color:var(--text-600); max-width:660px; line-height:1.65;}
+  .hero .meta{display:flex; gap:var(--space-6); margin-top:var(--space-6); flex-wrap:wrap;}
+  .hero .meta div{font-size:12px; color:var(--text-400);}
+  .hero .meta b{display:block; font-size:13px; color:var(--text-900); font-weight:600; margin-top:2px;}
+
+  section.sec{padding-top:var(--space-12); scroll-margin-top: 20px;}
+  section.sec:first-of-type{padding-top:0;}
+  .sec-head{margin-bottom:var(--space-6);}
+  .sec-num{font-family:var(--font-data); font-size:12px; color:var(--text-400); font-weight:600; margin-bottom:6px;}
+  .sec-head h2{font-size:22px; font-weight:800; color:var(--text-900); letter-spacing:-.01em;}
+  .sec-head p{color:var(--text-600); margin-top:8px; max-width:680px; font-size:13.5px; line-height:1.65;}
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-1);
+  }
+  .pad{padding:var(--space-6);}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:var(--space-6);}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-4);}
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-4);}
+  @media (max-width:900px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr;}}
+
+  .callout{
+    border:1px solid var(--primary-100); background:var(--primary-50); border-radius:var(--radius-md);
+    padding:var(--space-4) var(--space-5); font-size:13px; color:var(--primary-active); line-height:1.6;
+  }
+  .callout b{color:var(--text-900);}
+  .callout.warn{border-color:#fde7ba; background:var(--warning-50); color:var(--warning-700);}
+  .callout.warn b{color:var(--text-900);}
+
+  table.spec{width:100%; border-collapse:collapse; font-size:13px;}
+  table.spec th{
+    text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--text-400); padding:10px 14px; border-bottom:1px solid var(--border); background:var(--surface-2);
+  }
+  table.spec td{padding:11px 14px; border-bottom:1px solid var(--divider); color:var(--text-600); vertical-align:top;}
+  table.spec tr:last-child td{border-bottom:none;}
+  table.spec td.k{color:var(--text-900); font-weight:600; white-space:nowrap;}
+  table.spec td code{background:var(--divider); padding:2px 6px; border-radius:4px; font-size:12px; color:var(--text-900);}
+
+  /* ---------- swatches ---------- */
+  .swatch-row{display:flex; flex-wrap:wrap; gap:var(--space-4);}
+  .swatch{width:132px;}
+  .swatch .chip{height:64px; border-radius:var(--radius-md); border:1px solid var(--border-soft); box-shadow:var(--shadow-1); margin-bottom:8px;}
+  .swatch .name{font-size:12px; font-weight:600; color:var(--text-900);}
+  .swatch .hex{font-family:var(--font-data); font-size:11px; color:var(--text-400);}
+
+  /* ---------- type specimen ---------- */
+  .specimen{border-bottom:1px solid var(--divider); padding:var(--space-5) 0; display:flex; align-items:baseline; gap:var(--space-6);}
+  .specimen:last-child{border-bottom:none;}
+  .specimen .label{width:190px; flex:none;}
+  .specimen .label .n{font-size:12px; font-weight:700; color:var(--text-900);}
+  .specimen .label .m{font-family:var(--font-data); font-size:11px; color:var(--text-400); margin-top:2px;}
+  .specimen .sample{color:var(--text-900); flex:1; text-wrap:balance;}
+
+  /* ---------- spacing ruler ---------- */
+  .ruler{display:flex; align-items:flex-end; gap:14px; padding:var(--space-4) 0;}
+  .ruler .bar{background:var(--primary); border-radius:3px 3px 0 0; width:26px;}
+  .ruler .col{text-align:center; font-family:var(--font-data); font-size:11px; color:var(--text-600);}
+
+  /* ---------- component demos ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 16px; border-radius:var(--radius-md);
+    font-size:13.5px; font-weight:600; border:1px solid transparent; cursor:pointer; font-family:var(--font-ui);
+  }
+  .btn-sm{height:32px; padding:0 12px; font-size:13px;}
+  .btn-lg{height:40px; padding:0 20px; font-size:14px;}
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-hover);}
+  .btn-secondary{background:var(--surface); color:var(--text-900); border-color:var(--border);}
+  .btn-secondary:hover{background:var(--surface-2); border-color:var(--text-300);}
+  .btn-ghost{background:transparent; color:var(--text-600);}
+  .btn-ghost:hover{background:var(--divider); color:var(--text-900);}
+  .btn-destructive{background:var(--error-50); color:var(--error-700); border-color:#fecaca;}
+  .btn-destructive:hover{background:#fee2e2;}
+  .btn-destructive-solid{background:var(--error); color:#fff;}
+  .btn[disabled]{opacity:.45; cursor:not-allowed;}
+  .btn:focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+  .demo-row{display:flex; gap:var(--space-3); align-items:center; flex-wrap:wrap;}
+
+  .badge{
+    display:inline-flex; align-items:center; gap:5px; height:22px; padding:0 10px; border-radius:var(--radius-full);
+    font-size:11.5px; font-weight:700; text-transform:capitalize;
+  }
+  .badge::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .badge-success{background:var(--success-50); color:var(--success-700);}
+  .badge-warning{background:var(--warning-50); color:var(--warning-700);}
+  .badge-error{background:var(--error-50); color:var(--error-700);}
+  .badge-info{background:var(--info-50); color:var(--info-700);}
+  .badge-inactive{background:var(--inactive-50); color:var(--inactive);}
+
+  .field{display:flex; flex-direction:column; gap:6px; width:100%;}
+  .field label{font-size:12.5px; font-weight:600; color:var(--text-600);}
+  .field .shell-in{
+    height:40px; display:flex; align-items:center; border:1px solid var(--border); border-radius:var(--radius-md);
+    background:var(--surface); padding:0 12px; transition:border-color .15s, box-shadow .15s;
+  }
+  .field .shell-in:hover{border-color:var(--text-300);}
+  .field .shell-in.focus{border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-50);}
+  .field .shell-in.err{border-color:#fca5a5;}
+  .field input{border:none; outline:none; background:transparent; font-size:13.5px; width:100%; color:var(--text-900); font-family:var(--font-ui);}
+  .field input::placeholder{color:var(--text-400);}
+  .field .help{font-size:11.5px; color:var(--text-400);}
+  .field .help.err{color:var(--error);}
+
+  .select-demo{position:relative; width:260px;}
+  .select-demo .trigger{
+    height:40px; display:flex; align-items:center; justify-content:space-between; padding:0 12px;
+    border:1px solid var(--primary); border-radius:var(--radius-md); background:var(--surface);
+    font-size:13.5px; color:var(--text-900); box-shadow:0 0 0 3px var(--primary-50); font-weight:500;
+  }
+  .select-demo .trigger svg{transform:rotate(180deg); color:var(--text-400);}
+  .select-demo .menu{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--surface);
+    border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:var(--shadow-2); padding:6px; z-index:2;
+  }
+  .select-demo .opt{
+    display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-radius:6px;
+    font-size:13.5px; color:var(--text-600); cursor:pointer;
+  }
+  .select-demo .opt.sel{background:var(--primary-50); color:var(--primary); font-weight:600;}
+  .select-demo .opt:hover:not(.sel){background:var(--divider);}
+  .select-demo .opt svg{color:var(--primary);}
+
+  .demo-card{border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--surface); box-shadow:var(--shadow-1);}
+  .metric-card{padding:var(--space-5);}
+  .metric-card .top{display:flex; align-items:flex-start; justify-content:space-between;}
+  .metric-icon{width:38px; height:38px; border-radius:9px; background:var(--primary-50); color:var(--primary); display:flex; align-items:center; justify-content:center;}
+  .metric-card .label{font-size:12.5px; font-weight:600; color:var(--text-400); margin-top:var(--space-4);}
+  .metric-card .value{font-family:var(--font-data); font-size:26px; font-weight:700; color:var(--text-900); margin-top:4px;}
+  .metric-card .delta{font-size:12px; color:var(--success-700); font-weight:600; margin-top:6px; display:flex; align-items:center; gap:4px;}
+
+  .demo-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .demo-table thead th{
+    text-align:left; padding:10px 16px; background:var(--surface-2); color:var(--text-400);
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border);
+  }
+  .demo-table tbody td{padding:12px 16px; border-bottom:1px solid var(--divider); color:var(--text-600);}
+  .demo-table tbody tr:hover{background:var(--surface-2);}
+  .demo-table td.num{font-family:var(--font-data); text-align:right; color:var(--text-900); font-weight:500;}
+  .demo-table td.num.neg{color:var(--error-700);}
+  .row-id{font-family:var(--font-data); font-size:12px; color:var(--text-400);}
+  .avatar-chip{width:30px; height:30px; border-radius:50%; background:var(--primary-50); color:var(--primary); display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; margin-right:8px; vertical-align:middle;}
+
+  .layout-diagram{display:flex; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; height:210px;}
+  .ld-sidebar{width:34%; background:var(--surface); border-right:1px solid var(--border); padding:14px; display:flex; flex-direction:column; gap:8px;}
+  .ld-item{height:12px; border-radius:4px; background:var(--divider);}
+  .ld-item.active{background:var(--primary-50); position:relative;}
+  .ld-main{flex:1; background:var(--surface-2); padding:14px; display:flex; flex-direction:column; gap:10px;}
+  .ld-header{height:16px; width:40%; border-radius:4px; background:var(--border);}
+  .ld-cards{display:flex; gap:8px;}
+  .ld-card{flex:1; height:44px; border-radius:6px; background:var(--surface); border:1px solid var(--border);}
+  .ld-chart{flex:1; border-radius:6px; background:var(--surface); border:1px solid var(--border);}
+  .dim-label{position:absolute; font-family:var(--font-data); font-size:10px; color:var(--primary); background:var(--surface); padding:1px 5px; border-radius:3px; border:1px solid var(--primary-100);}
+
+  ul.plain{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px;}
+  ul.plain li{display:flex; gap:10px; font-size:13px; color:var(--text-600); line-height:1.6;}
+  ul.plain li .dot{width:5px; height:5px; border-radius:50%; background:var(--primary); margin-top:7px; flex:none;}
+  ul.plain li b{color:var(--text-900);}
+
+  .keep{color:var(--success-700); font-weight:700;}
+  .refine{color:var(--warning-700); font-weight:700;}
+  .remove{color:var(--error-700); font-weight:700;}
+  .introduce{color:var(--primary); font-weight:700;}
+
+  pre.tokens{
+    background:#0f1522; color:#c7d3ea; border-radius:var(--radius-lg); padding:var(--space-6);
+    font-family:var(--font-data); font-size:12.5px; line-height:1.75; overflow-x:auto;
+  }
+  pre.tokens .c{color:#5b7cae;}
+  pre.tokens .v{color:#7dd3ac;}
+
+  .foot{margin-top:var(--space-12); padding-top:var(--space-6); border-top:1px solid var(--border); color:var(--text-400); font-size:12px;}
+
+  @media (max-width: 860px){
+    .toc{display:none;}
+    .main{padding:var(--space-6) var(--space-4) 80px;}
+    .grid2{grid-template-columns:1fr;}
+  }
+</style>
+
+<div class="shell">
+  <nav class="toc">
+    <div class="toc-brand">
+      <div class="toc-mark">GL</div>
+      <div class="toc-brand-text"><div class="t1">Genus Console</div><div class="t2">Design System</div></div>
+    </div>
+
+    <div class="toc-group">
+      <span class="toc-label">Foundations</span>
+      <a href="#philosophy">01 · Design Philosophy</a>
+      <a href="#color">02 · Color System</a>
+      <a href="#type">03 · Typography</a>
+      <a href="#spacing">04 · Spacing</a>
+      <a href="#radius">05 · Radius &amp; Elevation</a>
+    </div>
+    <div class="toc-group">
+      <span class="toc-label">Structure</span>
+      <a href="#layout">06 · Layout &amp; Grid</a>
+      <a href="#nav">07 · Sidebar &amp; Header</a>
+    </div>
+    <div class="toc-group">
+      <span class="toc-label">Components</span>
+      <a href="#cards">08 · Cards</a>
+      <a href="#tables">09 · Data Tables</a>
+      <a href="#buttons">10 · Buttons</a>
+      <a href="#forms">11 · Forms &amp; Dropdowns</a>
+      <a href="#badges">12 · Badges &amp; Status</a>
+      <a href="#icons">13 · Icons</a>
+      <a href="#charts">14 · Charts</a>
+    </div>
+    <div class="toc-group">
+      <span class="toc-label">Content &amp; Rules</span>
+      <a href="#financial">15 · Financial Data</a>
+      <a href="#states">16 · Interaction States</a>
+      <a href="#responsive">17 · Responsive</a>
+      <a href="#a11y">18 · Accessibility</a>
+      <a href="#alignment">19 · Codebase Alignment</a>
+      <a href="#tokens">20 · Design Tokens</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="wrap">
+
+      <div class="hero">
+        <div class="eyebrow">Internal Reference — v1.0</div>
+        <h1>The Genus Console design system</h1>
+        <p class="lede">A visual style guide for the GenusLab admin console — built from what already exists in <code>app/genuslab/**</code>, refined into one consistent language for dashboards, tables, and forms that handle subscribers, quizzes, transactions, and payouts.</p>
+        <div class="meta">
+          <div>Surface<b>Admin console</b></div>
+          <div>Scope<b>app/genuslab/**</b></div>
+          <div>Grounded in<b>AdminCard, CustomSelect, inputStyles.ts</b></div>
+          <div>Status<b>Documentation only — no code changed</b></div>
+        </div>
+      </div>
+
+      <!-- 01 PHILOSOPHY -->
+      <section class="sec" id="philosophy">
+        <div class="sec-head">
+          <div class="sec-num">01</div>
+          <h2>Design philosophy</h2>
+          <p>The console manages people's money, quiz progress, and payouts. Every screen should read as accurate first, attractive second.</p>
+        </div>
+
+        <div class="grid2">
+          <div class="card pad">
+            <h4 style="font-size:14px; font-weight:700; margin-bottom:10px;">What this system is</h4>
+            <ul class="plain">
+              <li><span class="dot"></span><span><b>Editorial-enterprise:</b> a clean grid, strong type hierarchy, and generous but disciplined whitespace — closer to a banking back-office than a marketing dashboard.</span></li>
+              <li><span class="dot"></span><span><b>Built on what exists:</b> the Slate/Blue palette, <code>AdminCard</code>, and the <code>inputStyles.ts</code> form primitives already in the repo are the foundation — this refines them, not replaces them.</span></li>
+              <li><span class="dot"></span><span><b>Density with clarity:</b> tables and filter bars favour information density; empty states and metrics favour breathing room.</span></li>
+            </ul>
+          </div>
+          <div class="card pad">
+            <h4 style="font-size:14px; font-weight:700; margin-bottom:10px;">What it deliberately avoids</h4>
+            <ul class="plain">
+              <li><span class="dot"></span><span>Dark mode, glassmorphism, glow, and heavy gradients — reserved for the learner-facing quiz app, never the admin console.</span></li>
+              <li><span class="dot"></span><span>Decorative shadows and 16–40px "bubble" radii — the console currently borrows <code>rounded-2xl</code> cards and a 40px-radius modal from the consumer side; both read as consumer, not administrative.</span></li>
+              <li><span class="dot"></span><span>Colour used as the only signal — every status also carries a label and a shape (dot, icon, or badge), never colour alone.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 COLOR -->
+      <section class="sec" id="color">
+        <div class="sec-head">
+          <div class="sec-num">02</div>
+          <h2>Color system</h2>
+          <p>Primary blue, a Slate neutral scale, and five semantic colours. All are already present in <code>globals.css</code> — this section fixes the inconsistencies (a stray typo token, quoted-string hex bugs) and defines the missing hover/active/light pairs.</p>
+        </div>
+
+        <h4 style="font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-400); margin-bottom:12px;">Primary</h4>
+        <div class="swatch-row" style="margin-bottom:28px;">
+          <div class="swatch"><div class="chip" style="background:#2563eb"></div><div class="name">Primary</div><div class="hex">#2563EB</div></div>
+          <div class="swatch"><div class="chip" style="background:#1d4ed8"></div><div class="name">Primary Hover</div><div class="hex">#1D4ED8</div></div>
+          <div class="swatch"><div class="chip" style="background:#1e40af"></div><div class="name">Primary Active</div><div class="hex">#1E40AF</div></div>
+          <div class="swatch"><div class="chip" style="background:#eff6ff; border-color:#dbeafe"></div><div class="name">Primary 50</div><div class="hex">#EFF6FF</div></div>
+          <div class="swatch"><div class="chip" style="background:#dbeafe"></div><div class="name">Primary 100</div><div class="hex">#DBEAFE</div></div>
+        </div>
+
+        <h4 style="font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-400); margin-bottom:12px;">Neutral (Slate)</h4>
+        <div class="swatch-row" style="margin-bottom:28px;">
+          <div class="swatch"><div class="chip" style="background:#f4f6f9; border-color:#e5e9ef"></div><div class="name">Page bg</div><div class="hex">#F4F6F9</div></div>
+          <div class="swatch"><div class="chip" style="background:#ffffff; border-color:#e5e9ef"></div><div class="name">Surface</div><div class="hex">#FFFFFF</div></div>
+          <div class="swatch"><div class="chip" style="background:#f1f5f9"></div><div class="name">Divider</div><div class="hex">#F1F5F9</div></div>
+          <div class="swatch"><div class="chip" style="background:#e2e8f0"></div><div class="name">Border</div><div class="hex">#E2E8F0</div></div>
+          <div class="swatch"><div class="chip" style="background:#94a3b8"></div><div class="name">Muted text</div><div class="hex">#94A3B8</div></div>
+          <div class="swatch"><div class="chip" style="background:#475569"></div><div class="name">Secondary text</div><div class="hex">#475569</div></div>
+          <div class="swatch"><div class="chip" style="background:#0f172a"></div><div class="name">Primary text</div><div class="hex">#0F172A</div></div>
+        </div>
+
+        <h4 style="font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-400); margin-bottom:12px;">Semantic</h4>
+        <div class="swatch-row">
+          <div class="swatch"><div class="chip" style="background:#059669"></div><div class="name">Success / Active</div><div class="hex">#059669</div></div>
+          <div class="swatch"><div class="chip" style="background:#d97706"></div><div class="name">Warning / Pending</div><div class="hex">#D97706</div></div>
+          <div class="swatch"><div class="chip" style="background:#dc2626"></div><div class="name">Error / Suspended</div><div class="hex">#DC2626</div></div>
+          <div class="swatch"><div class="chip" style="background:#2563eb"></div><div class="name">Info</div><div class="hex">#2563EB</div></div>
+          <div class="swatch"><div class="chip" style="background:#64748b"></div><div class="name">Inactive</div><div class="hex">#64748B</div></div>
+        </div>
+
+        <div class="callout warn" style="margin-top:28px;">
+          <b>Fix while adopting this:</b> <code>--color-dark</code> and <code>--color-accent</code> in <code>globals.css</code> are set to literal quoted strings (<code>"#18181B"</code>) instead of hex values, so they resolve to nothing. <code>--color-touquise</code> is a typo for turquoise and duplicates <code>--color-tq</code>. Neither is used by the admin console — safe to delete rather than fix.
+        </div>
+      </section>
+
+      <!-- 03 TYPE -->
+      <section class="sec" id="type">
+        <div class="sec-head">
+          <div class="sec-num">03</div>
+          <h2>Typography</h2>
+          <p>One typeface for interface text, one for data. <b style="color:var(--text-900)">Inter</b> is already the project's declared fallback font and needs no new dependency. <b style="color:var(--text-900)">IBM Plex Mono</b> is introduced specifically for figures — balances, IDs, dates — so a scanning eye can tell "this is a number" from "this is a label" without reading it.</p>
+        </div>
+
+        <div class="card pad" style="margin-bottom:24px;">
+          <div class="specimen">
+            <div class="label"><div class="n">Page heading</div><div class="m">24 / 32 · 800 · -0.01em</div></div>
+            <div class="sample" style="font-size:24px; font-weight:800; letter-spacing:-.01em;">Subscribers</div>
+          </div>
+          <div class="specimen">
+            <div class="label"><div class="n">Section heading</div><div class="m">16 / 24 · 700</div></div>
+            <div class="sample" style="font-size:16px; font-weight:700;">Recent transactions</div>
+          </div>
+          <div class="specimen">
+            <div class="label"><div class="n">Card heading</div><div class="m">14 / 20 · 600</div></div>
+            <div class="sample" style="font-size:14px; font-weight:600;">Approved payout banks</div>
+          </div>
+          <div class="specimen">
+            <div class="label"><div class="n">Body</div><div class="m">14 / 20 · 400</div></div>
+            <div class="sample" style="font-size:14px; font-weight:400; color:var(--text-600);">Suspending this account revokes dashboard access immediately.</div>
+          </div>
+          <div class="specimen">
+            <div class="label"><div class="n">Secondary text</div><div class="m">13 / 18 · 400</div></div>
+            <div class="sample" style="font-size:13px; color:var(--text-400);">Last payout — 3 days ago</div>
+          </div>
+          <div class="specimen">
+            <div class="label"><div class="n">Label / table header</div><div class="m">11 / 16 · 700 · uppercase · 0.05em</div></div>
+            <div class="sample" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-400);">Subscriber · Plan · Status</div>
+          </div>
+          <div class="specimen">
+            <div class="label"><div class="n">Numeric / data</div><div class="m">IBM Plex Mono · 26 / 32 · 700 · tabular</div></div>
+            <div class="sample tabular" style="font-family:var(--font-data); font-size:26px; font-weight:700;">₦24,850,600</div>
+          </div>
+        </div>
+
+        <div class="callout"><b>Rule of thumb:</b> if it will ever be compared against another value in the same column — money, counts, dates, reference IDs — set it in IBM Plex Mono with <code>font-variant-numeric: tabular-nums</code>. Everything else stays in Inter.</div>
+      </section>
+
+      <!-- 04 SPACING -->
+      <section class="sec" id="spacing">
+        <div class="sec-head">
+          <div class="sec-num">04</div>
+          <h2>Spacing scale</h2>
+          <p>A 4px base scale with nine stops. Layout uses <code>gap</code>, not stacked margins.</p>
+        </div>
+        <div class="card pad">
+          <div class="ruler">
+            <div class="col"><div class="bar" style="height:4px"></div>4</div>
+            <div class="col"><div class="bar" style="height:8px"></div>8</div>
+            <div class="col"><div class="bar" style="height:12px"></div>12</div>
+            <div class="col"><div class="bar" style="height:16px"></div>16</div>
+            <div class="col"><div class="bar" style="height:20px"></div>20</div>
+            <div class="col"><div class="bar" style="height:24px"></div>24</div>
+            <div class="col"><div class="bar" style="height:32px"></div>32</div>
+            <div class="col"><div class="bar" style="height:40px"></div>40</div>
+            <div class="col"><div class="bar" style="height:48px"></div>48</div>
+          </div>
+        </div>
+        <table class="spec" style="margin-top:16px;">
+          <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td class="k">space-1</td><td><code>4px</code></td><td>Icon-to-text gap, badge internal padding</td></tr>
+            <tr><td class="k">space-2</td><td><code>8px</code></td><td>Between a label and its input, chip padding</td></tr>
+            <tr><td class="k">space-3</td><td><code>12px</code></td><td>Table cell vertical padding, tight stacks</td></tr>
+            <tr><td class="k">space-4</td><td><code>16px</code></td><td>Card internal gap, KPI grid gap, table cell horizontal padding</td></tr>
+            <tr><td class="k">space-5</td><td><code>20px</code></td><td>Card padding (compact), form field stacks</td></tr>
+            <tr><td class="k">space-6</td><td><code>24px</code></td><td>Card padding (default), gap between sibling cards</td></tr>
+            <tr><td class="k">space-8</td><td><code>32px</code></td><td>Page padding (desktop), gap between page sections</td></tr>
+            <tr><td class="k">space-10</td><td><code>40px</code></td><td>Space above a page's first section</td></tr>
+            <tr><td class="k">space-12</td><td><code>48px</code></td><td>Space around empty states, between major regions</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 05 RADIUS/ELEVATION -->
+      <section class="sec" id="radius">
+        <div class="sec-head">
+          <div class="sec-num">05</div>
+          <h2>Radius &amp; elevation</h2>
+          <p>The console currently mixes a 16px card radius with a 40px modal radius from the consumer app. Standardising on three stops keeps every surface reading as one family.</p>
+        </div>
+        <div class="grid3">
+          <div class="card pad" style="text-align:center;">
+            <div style="width:56px; height:56px; background:var(--primary-50); border:1px solid var(--primary-100); border-radius:6px; margin:0 auto 12px;"></div>
+            <b style="font-size:13px;">sm — 6px</b><div style="font-size:12px; color:var(--text-400); margin-top:2px;">Badges, checkboxes, small chips</div>
+          </div>
+          <div class="card pad" style="text-align:center;">
+            <div style="width:56px; height:56px; background:var(--primary-50); border:1px solid var(--primary-100); border-radius:8px; margin:0 auto 12px;"></div>
+            <b style="font-size:13px;">md — 8px</b><div style="font-size:12px; color:var(--text-400); margin-top:2px;">Buttons, inputs, dropdown menus</div>
+          </div>
+          <div class="card pad" style="text-align:center;">
+            <div style="width:56px; height:56px; background:var(--primary-50); border:1px solid var(--primary-100); border-radius:12px; margin:0 auto 12px;"></div>
+            <b style="font-size:13px;">lg — 12px</b><div style="font-size:12px; color:var(--text-400); margin-top:2px;">Cards, panels, modals</div>
+          </div>
+        </div>
+        <table class="spec" style="margin-top:20px;">
+          <thead><tr><th>Elevation</th><th>Value</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td class="k">shadow-1</td><td><code>0 1px 2px rgba(15,23,42,.04)</code></td><td>Default card / row — a hairline of separation, not a lift</td></tr>
+            <tr><td class="k">shadow-2</td><td><code>0 4px 12px rgba(15,23,42,.08), 0 1px 2px rgba(15,23,42,.04)</code></td><td>Dropdown menus, modals, popovers — anything floating above content</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 06 LAYOUT -->
+      <section class="sec" id="layout">
+        <div class="sec-head">
+          <div class="sec-num">06</div>
+          <h2>Layout &amp; grid</h2>
+          <p>The existing <code>flex</code> shell (fixed sidebar + grow content) is correct and stays. This adds a content max-width so tables don't stretch unreadably wide on large monitors.</p>
+        </div>
+        <div class="layout-diagram" style="position:relative;">
+          <div class="ld-sidebar">
+            <span class="dim-label" style="top:6px; left:6px;">256px</span>
+            <div class="ld-item" style="width:60%; height:16px; margin-bottom:6px;"></div>
+            <div class="ld-item active"></div><div class="ld-item"></div><div class="ld-item"></div><div class="ld-item"></div>
+          </div>
+          <div class="ld-main">
+            <span class="dim-label" style="top:6px; left:6px;">max-width 1440px · padding 32px</span>
+            <div class="ld-header"></div>
+            <div class="ld-cards"><div class="ld-card"></div><div class="ld-card"></div><div class="ld-card"></div><div class="ld-card"></div></div>
+            <div class="ld-chart"></div>
+          </div>
+        </div>
+        <table class="spec" style="margin-top:20px;">
+          <thead><tr><th>Region</th><th>Rule</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Sidebar</td><td>Fixed <code>256px</code> — unchanged from current implementation.</td></tr>
+            <tr><td class="k">Content max-width</td><td><code>1440px</code>, centered. Currently full-bleed; on ultrawide monitors this leaves KPI cards and tables stretched thin.</td></tr>
+            <tr><td class="k">Page padding</td><td><code>32px</code> desktop → <code>24px</code> tablet → <code>16px</code> mobile.</td></tr>
+            <tr><td class="k">Section gap</td><td><code>32px</code> between a page's major blocks (header → KPI row → chart row → table).</td></tr>
+            <tr><td class="k">Grid gap</td><td><code>16px</code> inside a KPI/card grid.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 07 NAV -->
+      <section class="sec" id="nav">
+        <div class="sec-head">
+          <div class="sec-num">07</div>
+          <h2>Sidebar &amp; header</h2>
+          <p>Both components are already well-built (<code>AdminSidebar.tsx</code>, <code>AdminHeader.tsx</code>) — this fixes the one gap: the header currently has no defined height, so its intrinsic height drifts slightly page to page.</p>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Property</th><th>Spec</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Sidebar width</td><td><code>256px</code>, fixed on desktop, off-canvas drawer below <code>768px</code></td></tr>
+            <tr><td class="k">Nav item height</td><td><code>40px</code> (<code>py-2.5</code>), <code>8px</code> gap between items</td></tr>
+            <tr><td class="k">Nav icon size</td><td><code>18px</code>, <code>12px</code> gap to label</td></tr>
+            <tr><td class="k">Active state</td><td><code>bg #EFF6FF</code>, <code>text/icon #2563EB</code>, font-weight 600</td></tr>
+            <tr><td class="k">Hover state</td><td><code>bg #F8FAFC</code>, <code>text #1E293B</code></td></tr>
+            <tr><td class="k">Section grouping</td><td>10px uppercase label, 12px top margin, when the nav grows past 6 items</td></tr>
+            <tr><td class="k">Header height</td><td><b>New:</b> fix at <code>64px</code>, vertically centers title + actions</td></tr>
+            <tr><td class="k">Page title position</td><td>Left-aligned, 24px/800; optional subtitle below at 13px muted</td></tr>
+            <tr><td class="k">Header actions</td><td>Right-aligned: search → notifications → profile, <code>12px</code> gaps</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 08 CARDS -->
+      <section class="sec" id="cards">
+        <div class="sec-head">
+          <div class="sec-num">08</div>
+          <h2>Cards</h2>
+          <p><code>AdminCard</code> is the right primitive — one card component for the whole console. It just needs its radius brought down from <code>rounded-2xl</code> (16px) to the system's <code>lg</code> (12px), and two purpose-built variants: metric and table-container.</p>
+        </div>
+        <div class="grid3" style="margin-bottom:20px;">
+          <div class="demo-card metric-card">
+            <div class="top">
+              <div class="metric-icon">₦</div>
+            </div>
+            <div class="label">Total payouts</div>
+            <div class="value">₦24.8M</div>
+            <div class="delta">↑ 8.4% this month</div>
+          </div>
+          <div class="demo-card pad" style="display:flex; flex-direction:column; gap:8px;">
+            <b style="font-size:13px;">Information card</b>
+            <p style="font-size:12.5px; color:var(--text-600); line-height:1.6;">Context and copy, no metric — settings panels, empty states, help text.</p>
+          </div>
+          <div class="demo-card pad" style="display:flex; flex-direction:column; gap:10px;">
+            <b style="font-size:13px;">Action card</b>
+            <p style="font-size:12.5px; color:var(--text-600);">A card whose primary job is a decision.</p>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-start;">Review request</button>
+          </div>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Property</th><th>Spec</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Radius</td><td><code>12px</code> (was 16px)</td></tr>
+            <tr><td class="k">Border</td><td><code>1px solid #E2E8F0</code></td></tr>
+            <tr><td class="k">Background</td><td><code>#FFFFFF</code></td></tr>
+            <tr><td class="k">Elevation</td><td><code>shadow-1</code> at rest — never lift a card on hover unless it's a clickable KPI link</td></tr>
+            <tr><td class="k">Padding</td><td><code>24px</code> default, <code>20px</code> for dense metric cards, <code>0</code> for table-container cards (the table owns its own cell padding)</td></tr>
+            <tr><td class="k">Header spacing</td><td><code>16px</code> below a card's title before its content starts</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 09 TABLES -->
+      <section class="sec" id="tables">
+        <div class="sec-head">
+          <div class="sec-num">09</div>
+          <h2>Data tables</h2>
+          <p>The <code>users</code> and <code>transactions</code> pages already converge on the same pattern independently — that convergence is the spec. Formalise it once and reuse it everywhere, including <code>quizzes</code> and <code>sessions</code>, which don't have it yet.</p>
+        </div>
+        <div class="demo-card" style="overflow:hidden; margin-bottom:16px;">
+          <table class="demo-table">
+            <thead><tr><th>Subscriber</th><th>Plan</th><th>Status</th><th style="text-align:right;">Balance</th><th>Reference</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="avatar-chip">TA</span>Tolu Adebayo</td>
+                <td><span class="badge badge-warning">Premium</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td class="num tabular">₦482,300.00</td>
+                <td class="row-id">GL-88213-A</td>
+              </tr>
+              <tr>
+                <td><span class="avatar-chip">CO</span>Chika Obi</td>
+                <td><span class="badge badge-inactive">Free</span></td>
+                <td><span class="badge badge-error">Suspended</span></td>
+                <td class="num tabular neg">-₦12,450.00</td>
+                <td class="row-id">GL-88214-A</td>
+              </tr>
+              <tr>
+                <td><span class="avatar-chip">FE</span>Femi Eze</td>
+                <td><span class="badge badge-warning">Premium</span></td>
+                <td><span class="badge badge-info">Pending</span></td>
+                <td class="num tabular">₦1,204,880.00</td>
+                <td class="row-id">GL-88215-A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Property</th><th>Spec</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Header</td><td><code>11px</code> uppercase, 700 weight, <code>#94A3B8</code>, on <code>#FBFCFE</code> background</td></tr>
+            <tr><td class="k">Row height</td><td><code>44px</code> (<code>12px</code> vertical padding + line height)</td></tr>
+            <tr><td class="k">Cell padding</td><td><code>12px 16px</code></td></tr>
+            <tr><td class="k">Row divider</td><td><code>1px solid #F1F5F9</code>, no vertical column rules</td></tr>
+            <tr><td class="k">Row hover</td><td><code>#FBFCFE</code> background</td></tr>
+            <tr><td class="k">Selected row</td><td><code>#EFF6FF</code> background + <code>2px</code> left border in primary</td></tr>
+            <tr><td class="k">Numeric columns</td><td>Right-aligned, IBM Plex Mono, tabular figures</td></tr>
+            <tr><td class="k">Sort indicator</td><td>Chevron next to the header label; active column's header text turns <code>#0F172A</code>, inactive stays muted</td></tr>
+            <tr><td class="k">Pagination</td><td>Left: "Showing 1–10 of 248". Right: Previous / Next, disabled at bounds — matches the current implementation, just needs the count on the left made standard</td></tr>
+            <tr><td class="k">Empty state</td><td>Centered icon (24px, muted) + one line of copy inside the table body, same height as ~3 rows</td></tr>
+            <tr><td class="k">Loading state</td><td>Skeleton rows — <code>animate-pulse</code> bars matching each column's real content width, never a spinner over a blank table</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 10 BUTTONS -->
+      <section class="sec" id="buttons">
+        <div class="sec-head">
+          <div class="sec-num">10</div>
+          <h2>Buttons</h2>
+          <p><code>Secondary.tsx</code>, <code>Danger.tsx</code>, and <code>Success.tsx</code> exist as empty files — this is the spec to fill them in, aligned with the destructive-subtle pattern already built in <code>components/ui/button.tsx</code>.</p>
+        </div>
+        <div class="card pad" style="margin-bottom:16px;">
+          <div class="demo-row">
+            <button class="btn btn-primary">Save changes</button>
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn btn-ghost">Skip</button>
+            <button class="btn btn-destructive">Suspend account</button>
+            <button class="btn btn-destructive-solid">Delete permanently</button>
+            <button class="btn btn-primary" disabled>Processing…</button>
+          </div>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Variant</th><th>Use</th><th>Style</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Primary</td><td>The one main action per view</td><td><code>bg #2563EB</code> → hover <code>#1D4ED8</code> → active <code>#1E40AF</code>, white text</td></tr>
+            <tr><td class="k">Secondary</td><td>Supporting actions beside a primary</td><td>White bg, <code>1px #E2E8F0</code> border, hover bg <code>#FBFCFE</code></td></tr>
+            <tr><td class="k">Ghost</td><td>Low-priority, inline actions (table row menus)</td><td>Transparent, hover bg <code>#F1F5F9</code></td></tr>
+            <tr><td class="k">Destructive (subtle)</td><td>Suspend, deactivate — reversible-ish</td><td><code>bg #FEF2F2</code>, <code>text #B91C1C</code></td></tr>
+            <tr><td class="k">Destructive (solid)</td><td>Final confirm inside a delete dialog only</td><td><code>bg #DC2626</code>, white text</td></tr>
+          </tbody>
+        </table>
+        <table class="spec" style="margin-top:16px;">
+          <thead><tr><th>Size</th><th>Height</th><th>Padding-x</th><th>Font</th></tr></thead>
+          <tbody>
+            <tr><td class="k">sm</td><td><code>32px</code></td><td><code>12px</code></td><td>13px / 600</td></tr>
+            <tr><td class="k">default</td><td><code>36px</code></td><td><code>16px</code></td><td>13.5px / 600</td></tr>
+            <tr><td class="k">lg</td><td><code>40px</code></td><td><code>20px</code></td><td>14px / 600</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 11 FORMS + DROPDOWN -->
+      <section class="sec" id="forms">
+        <div class="sec-head">
+          <div class="sec-num">11</div>
+          <h2>Forms &amp; the custom Select</h2>
+          <p><code>lib/components/ui/FormItems/inputStyles.ts</code> is the best pattern already in the repo — 40–48px inputs, blue focus ring, clean error state. It's currently only used in a couple of forms; the spec below promotes it to every field in the console, and formalises <code>CustomSelect.tsx</code> as the <b>only</b> dropdown component. Native <code>&lt;select&gt;</code> is retired.</p>
+        </div>
+
+        <div class="grid2" style="margin-bottom:20px;">
+          <div class="card pad">
+            <div class="field" style="margin-bottom:16px;">
+              <label>Subscriber email</label>
+              <div class="shell-in focus"><input placeholder="name@example.com" value="tolu.adebayo@mail.com" readonly/></div>
+            </div>
+            <div class="field">
+              <label>Payout amount</label>
+              <div class="shell-in err"><input placeholder="₦0.00" value="₦0.00" readonly/></div>
+              <span class="help err">Enter an amount greater than ₦0.</span>
+            </div>
+          </div>
+          <div class="card pad">
+            <div class="field">
+              <label>Filter by status</label>
+              <div class="select-demo">
+                <div class="trigger">Active
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div class="menu">
+                  <div class="opt">All statuses</div>
+                  <div class="opt sel">Active
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <div class="opt">Pending</div>
+                  <div class="opt">Suspended</div>
+                </div>
+              </div>
+              <span class="help" style="margin-top:24px; display:block;">Native browser <code>&lt;select&gt;</code> menus are not used anywhere in the console — every dropdown, everywhere, is this component.</span>
+            </div>
+          </div>
+        </div>
+
+        <table class="spec">
+          <thead><tr><th>Requirement</th><th>Behaviour</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Trigger</td><td>Same shell as a text input (40px, 8px radius); chevron rotates 180° when open</td></tr>
+            <tr><td class="k">Selected state</td><td>Row highlighted <code>#EFF6FF</code>, primary-coloured text, checkmark icon right-aligned</td></tr>
+            <tr><td class="k">Hover / focus</td><td>Unselected rows get <code>#F1F5F9</code> on hover; the trigger gets the same 3px focus ring as text inputs</td></tr>
+            <tr><td class="k">Disabled</td><td><code>opacity: .6</code>, <code>pointer-events: none</code>, no hover feedback</td></tr>
+            <tr><td class="k">Keyboard</td><td>↑/↓ moves the highlighted option, <code>Enter</code> selects, <code>Esc</code> closes, typing jumps to a matching label (type-ahead)</td></tr>
+            <tr><td class="k">Searchable variant</td><td>For lists over ~12 options (plan tiers are fine without; ministries/departments are not) — a search input pinned to the top of the menu</td></tr>
+            <tr><td class="k">Scroll</td><td>Menu caps at <code>280px</code> height and scrolls internally past ~7 options</td></tr>
+            <tr><td class="k">Click-outside</td><td>Closes the menu; must not also fire the trigger's own click handler</td></tr>
+            <tr><td class="k">Viewport overflow</td><td>Flips to open upward when there isn't <code>280px</code> of room below</td></tr>
+            <tr><td class="k">Long labels</td><td>Truncate with <code>text-overflow: ellipsis</code> in the trigger; wrap normally inside the menu</td></tr>
+            <tr><td class="k">ARIA</td><td><code>role="combobox"</code> on the trigger, <code>aria-expanded</code>, <code>aria-controls</code>; <code>role="listbox"</code>/<code>role="option"</code> with <code>aria-selected</code> in the menu</td></tr>
+            <tr><td class="k">Touch target</td><td>Trigger and each option ≥ <code>40px</code> tall on touch viewports</td></tr>
+            <tr><td class="k">Loading / empty</td><td>A single muted row — "Loading options…" or "No matches" — never a blank menu</td></tr>
+          </tbody>
+        </table>
+        <div class="callout" style="margin-top:16px;"><b>Applies to:</b> status filters, plan/type filters, roles, pagination page-size, report date-range presets, and any single- or multi-select anywhere in the console — all through one component, typed (not <code>any</code>), not fourteen ad-hoc implementations.</div>
+      </section>
+
+      <!-- 12 BADGES -->
+      <section class="sec" id="badges">
+        <div class="sec-head">
+          <div class="sec-num">12</div>
+          <h2>Badges &amp; status</h2>
+          <p>Subtle fill, never a solid saturated pill. Each status keeps the same colour everywhere it appears — a "Suspended" badge on the Users table and on a detail page must match exactly.</p>
+        </div>
+        <div class="card pad">
+          <div class="demo-row">
+            <span class="badge badge-success">Active</span>
+            <span class="badge badge-warning">Pending</span>
+            <span class="badge badge-error">Suspended</span>
+            <span class="badge badge-info">Approved</span>
+            <span class="badge badge-inactive">Inactive</span>
+            <span class="badge badge-success">Completed</span>
+            <span class="badge badge-error">Failed</span>
+            <span class="badge badge-warning">Processing</span>
+          </div>
+        </div>
+        <table class="spec" style="margin-top:16px;">
+          <thead><tr><th>Status</th><th>Background</th><th>Text</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Active / Approved / Completed</td><td><code>#ECFDF5</code></td><td><code>#047857</code></td></tr>
+            <tr><td class="k">Pending / Processing</td><td><code>#FFFBEB</code></td><td><code>#92400E</code></td></tr>
+            <tr><td class="k">Suspended / Rejected / Failed</td><td><code>#FEF2F2</code></td><td><code>#B91C1C</code></td></tr>
+            <tr><td class="k">Info / Under review</td><td><code>#EFF6FF</code></td><td><code>#1D4ED8</code></td></tr>
+            <tr><td class="k">Inactive</td><td><code>#F1F5F9</code></td><td><code>#64748B</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 13 ICONS -->
+      <section class="sec" id="icons">
+        <div class="sec-head">
+          <div class="sec-num">13</div>
+          <h2>Icons</h2>
+          <p>The console currently mixes <code>react-icons/md</code>/<code>fa</code> (navigation, tables) with <code>lucide-react</code> (newer form components). Standardise forward on <b>Lucide</b> only — it already matches the <code>components.json</code> shadcn config and covers every icon currently pulled from react-icons.</p>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Property</th><th>Spec</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Style</td><td>Outline only, 1.75px stroke</td></tr>
+            <tr><td class="k">Navigation size</td><td><code>18px</code></td></tr>
+            <tr><td class="k">Inline / action size</td><td><code>16px</code></td></tr>
+            <tr><td class="k">Icon-to-text gap</td><td><code>8px</code> inline, <code>12px</code> in nav items</td></tr>
+            <tr><td class="k">Colour</td><td>Inherits current text colour — icons never carry their own hardcoded colour outside of status/type chips</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 14 CHARTS -->
+      <section class="sec" id="charts">
+        <div class="sec-head">
+          <div class="sec-num">14</div>
+          <h2>Charts</h2>
+          <p><code>LinePie.tsx</code>'s donut-with-centre-label pattern is good and stays. This gives it (and any line/bar chart added later) one shared visual language instead of picking colours per-chart.</p>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Property</th><th>Spec</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Series colours</td><td>Primary blue <code>#2563EB</code>, then <code>#059669</code>, <code>#D97706</code>, <code>#7C3AED</code> — reuse the semantic palette, don't invent chart-only hues</td></tr>
+            <tr><td class="k">Grid lines</td><td><code>#F1F5F9</code>, horizontal only, no vertical gridlines</td></tr>
+            <tr><td class="k">Axis labels</td><td>12px, <code>#94A3B8</code></td></tr>
+            <tr><td class="k">Line weight</td><td><code>2px</code></td></tr>
+            <tr><td class="k">Area fill opacity</td><td><code>0.08–0.12</code> of the line colour</td></tr>
+            <tr><td class="k">Bar radius</td><td><code>4px</code>, top corners only</td></tr>
+            <tr><td class="k">Tooltip</td><td>Same shell as a card: white, <code>1px #E2E8F0</code> border, <code>shadow-2</code>, <code>8px</code> radius</td></tr>
+            <tr><td class="k">Legend</td><td>8px colour dot + 12px label, positioned below the chart, never overlapping the plot</td></tr>
+            <tr><td class="k">Empty state</td><td>Flat baseline with "No data for this period" centered — never an empty axis with nothing else</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 15 FINANCIAL -->
+      <section class="sec" id="financial">
+        <div class="sec-head">
+          <div class="sec-num">15</div>
+          <h2>Financial &amp; data presentation</h2>
+          <p>This console moves real money. Every rule here exists so a number can't be misread at a glance.</p>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Data type</th><th>Rule</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Currency</td><td><code>₦12,450,000.00</code> — Naira sign, thousands separators, always 2 decimals, IBM Plex Mono, right-aligned in tables</td></tr>
+            <tr><td class="k">Negative values</td><td>Leading minus <b>and</b> <code>#B91C1C</code> colour together — never colour alone (a red-green-blind admin still needs the minus sign)</td></tr>
+            <tr><td class="k">Percentages</td><td>One decimal, signed (<code>+8.4%</code> / <code>-2.1%</code>), paired with an ↑/↓ glyph — never colour-only trend</td></tr>
+            <tr><td class="k">Large numbers (KPI cards)</td><td>Abbreviate to 1 decimal (<code>₦24.8M</code>) with the exact figure available on hover/tooltip</td></tr>
+            <tr><td class="k">Dates</td><td><code>12 Mar 2026</code> in tables; relative form ("3 days ago") only in secondary/caption text, with the exact date on hover</td></tr>
+            <tr><td class="k">IDs / reference numbers</td><td>Mono, muted (<code>#94A3B8</code>), never bolded — a reference number should never compete with the row's real content</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 16 STATES -->
+      <section class="sec" id="states">
+        <div class="sec-head">
+          <div class="sec-num">16</div>
+          <h2>Interaction states</h2>
+        </div>
+        <table class="spec">
+          <thead><tr><th>State</th><th>Treatment</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Hover</td><td>Background shift only (<code>±1</code> neutral step) — never a shadow pop or scale transform on dense elements like table rows</td></tr>
+            <tr><td class="k">Focus (keyboard)</td><td><code>2px solid #2563EB</code> outline, <code>2px</code> offset — always visible, never <code>outline: none</code> without a replacement</td></tr>
+            <tr><td class="k">Active / pressed</td><td>Buttons darken one step further than hover; no translate/scale on financial actions (avoids perceived "bounce" on a payout button)</td></tr>
+            <tr><td class="k">Selected</td><td><code>#EFF6FF</code> background + primary-coloured left border, 2px</td></tr>
+            <tr><td class="k">Disabled</td><td><code>opacity: .45</code>, cursor not-allowed, no hover feedback</td></tr>
+            <tr><td class="k">Loading</td><td>Skeleton blocks shaped like the real content; spinners only inside buttons mid-submit</td></tr>
+            <tr><td class="k">Error</td><td>Border + icon + inline message — colour is the third signal, not the first</td></tr>
+            <tr><td class="k">Empty</td><td>Icon, one sentence, and — where relevant — the action that fixes it ("No approved banks yet — add one below")</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 17 RESPONSIVE -->
+      <section class="sec" id="responsive">
+        <div class="sec-head">
+          <div class="sec-num">17</div>
+          <h2>Responsive behaviour</h2>
+        </div>
+        <table class="spec">
+          <thead><tr><th>Breakpoint</th><th>Behaviour</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Desktop ≥1024px</td><td>Fixed sidebar, up to 4-column KPI grid, full table columns</td></tr>
+            <tr><td class="k">Tablet 768–1023px</td><td>Sidebar collapses to icon-only rail (48px) with tooltips; KPI grid drops to 2 columns; page padding <code>24px</code></td></tr>
+            <tr><td class="k">Mobile &lt;768px</td><td>Sidebar becomes an off-canvas drawer (already implemented); KPI grid single column; page padding <code>16px</code></td></tr>
+            <tr><td class="k">Tables on mobile</td><td>Horizontal scroll inside their own container — never collapse into stacked cards, which hides column relationships</td></tr>
+            <tr><td class="k">Header on mobile</td><td>Title only; search and secondary actions move behind a single overflow icon</td></tr>
+            <tr><td class="k">Touch targets</td><td>Minimum <code>40px</code> for any tappable control on tablet/mobile</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 18 A11Y -->
+      <section class="sec" id="a11y">
+        <div class="sec-head">
+          <div class="sec-num">18</div>
+          <h2>Accessibility</h2>
+        </div>
+        <ul class="plain">
+          <li><span class="dot"></span><span><b>Contrast:</b> every text/background pairing in this guide meets WCAG AA (4.5:1 body text, 3:1 for 18px+/700 headings) — verified against the neutral and semantic tokens above.</span></li>
+          <li><span class="dot"></span><span><b>Colour is never the only signal:</b> status always pairs with a label; negative values always pair with a minus sign; trends always pair with an arrow.</span></li>
+          <li><span class="dot"></span><span><b>Focus order</b> follows visual order — sidebar, header, filters, table, pagination — with a visible 2px ring at every stop.</span></li>
+          <li><span class="dot"></span><span><b>Labels:</b> every input has a real <code>&lt;label&gt;</code> tied via <code>htmlFor</code>, not a placeholder standing in for one.</span></li>
+          <li><span class="dot"></span><span><b>Custom dropdown a11y:</b> full <code>combobox</code>/<code>listbox</code> ARIA pattern (see §11) since it replaces a native, already-accessible <code>&lt;select&gt;</code>.</span></li>
+          <li><span class="dot"></span><span><b>Touch targets</b> ≥40px on touch viewports, ≥24px with 8px spacing on desktop pointer targets.</span></li>
+        </ul>
+      </section>
+
+      <!-- 19 ALIGNMENT -->
+      <section class="sec" id="alignment">
+        <div class="sec-head">
+          <div class="sec-num">19</div>
+          <h2>Codebase alignment</h2>
+          <p>What to keep as-is, refine, standardise, remove, or introduce — scoped to <code>app/genuslab/**</code> and its layout/UI components only.</p>
+        </div>
+        <table class="spec">
+          <tbody>
+            <tr><td class="k" style="width:110px;"><span class="keep">KEEP</span></td><td><code>AdminCard</code>, <code>AdminSidebar</code>, <code>AdminHeader</code>, <code>CustomSelect</code> + <code>inputStyles.ts</code>, the <code>LinePie</code> donut pattern, the users/transactions table+filter+pagination shape, <code>zustand</code> for sidebar state, <code>react-query</code> for data fetching.</td></tr>
+            <tr><td class="k"><span class="refine">REFINE</span></td><td><code>AdminCard</code> radius 16px→12px; give <code>AdminHeader</code> a fixed 64px height; consolidate the two toast libraries to <code>react-hot-toast</code> only for admin surfaces; fix the quoted-string bug on <code>--color-dark</code>/<code>--color-accent</code>.</td></tr>
+            <tr><td class="k"><span class="introduce">STANDARDISE</span></td><td>Extract the repeated table pattern into a shared <code>&lt;DataTable&gt;</code>; extract <code>STATUS_STYLES</code> into a shared <code>&lt;Badge status=&gt;</code>; extract the Previous/Next footer into a shared <code>&lt;Pagination&gt;</code>; give <code>CustomSelect</code> a typed prop interface (currently <code>any</code>) and use it in place of every native <code>&lt;select&gt;</code> in <code>users</code> and <code>transactions</code>.</td></tr>
+            <tr><td class="k"><span class="remove">REMOVE</span></td><td>Empty <code>Secondary.tsx</code>/<code>Danger.tsx</code>/<code>Success.tsx</code> button stubs (replace with the variants in §10); duplicate <code>fadeIn</code> keyframe; the broken <code>linear()</code> gradient tokens; the <code>touquise</code> typo token; <code>react-icons</code> imports in any admin file going forward.</td></tr>
+            <tr><td class="k"><span class="introduce">INTRODUCE</span></td><td>A <code>MetricCard</code> variant of <code>AdminCard</code> (icon chip + big number + delta, §08); an ARIA-complete, searchable version of <code>CustomSelect</code> (§11); IBM Plex Mono as the numeric typeface (§03); the content max-width token (§06).</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 20 TOKENS -->
+      <section class="sec" id="tokens">
+        <div class="sec-head">
+          <div class="sec-num">20</div>
+          <h2>Design tokens</h2>
+          <p>Drop-in additions to <code>app/globals.css</code>'s existing <code>@theme inline</code> block. These extend, not replace, the current tokens.</p>
+        </div>
+<pre class="tokens">:root {
+  <span class="c">/* primary */</span>
+  --color-primary:        <span class="v">#2563eb</span>;
+  --color-primary-hover:  <span class="v">#1d4ed8</span>;
+  --color-primary-active: <span class="v">#1e40af</span>;
+  --color-primary-50:     <span class="v">#eff6ff</span>;
+  --color-primary-100:    <span class="v">#dbeafe</span>;
+
+  <span class="c">/* neutral */</span>
+  --color-page-bg:   <span class="v">#f4f6f9</span>;
+  --color-surface:   <span class="v">#ffffff</span>;
+  --color-divider:   <span class="v">#f1f5f9</span>;
+  --color-border:    <span class="v">#e2e8f0</span>;
+  --text-muted:      <span class="v">#94a3b8</span>;
+  --text-secondary:  <span class="v">#475569</span>;
+  --text-primary:    <span class="v">#0f172a</span>;
+
+  <span class="c">/* semantic */</span>
+  --color-success: <span class="v">#059669</span>;  --color-success-bg: <span class="v">#ecfdf5</span>;  --color-success-text: <span class="v">#047857</span>;
+  --color-warning: <span class="v">#d97706</span>;  --color-warning-bg: <span class="v">#fffbeb</span>;  --color-warning-text: <span class="v">#92400e</span>;
+  --color-error:   <span class="v">#dc2626</span>;  --color-error-bg:   <span class="v">#fef2f2</span>;  --color-error-text:   <span class="v">#b91c1c</span>;
+  --color-info:    <span class="v">#2563eb</span>;  --color-info-bg:    <span class="v">#eff6ff</span>;  --color-info-text:    <span class="v">#1d4ed8</span>;
+  --color-inactive:<span class="v">#64748b</span>;  --color-inactive-bg:<span class="v">#f1f5f9</span>;
+
+  <span class="c">/* radius */</span>
+  --radius-sm: <span class="v">6px</span>;
+  --radius-md: <span class="v">8px</span>;
+  --radius-lg: <span class="v">12px</span>;
+  --radius-full: <span class="v">999px</span>;
+
+  <span class="c">/* elevation */</span>
+  --shadow-1: <span class="v">0 1px 2px rgba(15,23,42,.04)</span>;
+  --shadow-2: <span class="v">0 4px 12px rgba(15,23,42,.08), 0 1px 2px rgba(15,23,42,.04)</span>;
+
+  <span class="c">/* spacing */</span>
+  --space-1: <span class="v">4px</span>;  --space-2: <span class="v">8px</span>;   --space-3: <span class="v">12px</span>;
+  --space-4: <span class="v">16px</span>; --space-5: <span class="v">20px</span>;  --space-6: <span class="v">24px</span>;
+  --space-8: <span class="v">32px</span>; --space-10: <span class="v">40px</span>; --space-12: <span class="v">48px</span>;
+
+  <span class="c">/* layout */</span>
+  --sidebar-width:   <span class="v">256px</span>;
+  --header-height:   <span class="v">64px</span>;
+  --content-max-w:   <span class="v">1440px</span>;
+
+  <span class="c">/* typography */</span>
+  --font-ui:   <span class="v">"Inter", -apple-system, "Segoe UI", sans-serif</span>;
+  --font-data: <span class="v">"IBM Plex Mono", "SFMono-Regular", monospace</span>;
+}</pre>
+      </section>
+
+      <div class="foot">Genus Console design system · v1.0 · Documentation only — no application code was modified in producing this guide.</div>
+    </div>
+  </main>
+</div>
