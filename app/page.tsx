@@ -73,28 +73,32 @@ Potential with
                 <Button
                   handler={() => console.log("hello world login")}
                   text="Join Quiz"
+                  type="link"
+                  url="/login"
                   // cat="linear"
                   Icon={<MdOutlineKeyboardDoubleArrowRight color="#3a94ff" />}
                 />
                 <Button
                   handler={() => console.log("hello world")}
                   text="Watch Live Show"
+                  type="link"
+                  url="https://www.youtube.com/@Genuslab_technologies"
                   // cat="primary"
                 />
               </div>
-              <div className="flex flex-col md:hidden items-stretch gap-[10px] md:justify-center">
-                <button
-                  className=" bg-blue text-white rounded-[32px] px-[30px] py-[.6rem] cursor-pointer"
-                  type="button"
+              <div className="flex flex-col md:hidden items-stretch gap-2.5 md:justify-center">
+                <Link
+                  href="/login"
+                  className=" bg-blue text-white rounded-lg px-7.5 py-[.6rem] cursor-pointer"
                 >
                   Join Quiz
-                </button>
-                <button
-                  className="bg-green text-white  rounded-[16px] px-[30px] py-[10px] cursor-pointer"
-                  type="button"
+                </Link>
+                <Link
+                  href="https://www.youtube.com/@Genuslab_technologies"
+                  className="bg-green text-white  rounded-md px-7.5 py-2.5 cursor-pointer"
                 >
                   Watch Live Show
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -138,7 +142,7 @@ Potential with
         <div className="">
           <div className="flex-container px-4 ">
             <div className="flex max-w-[350px] m-auto  sm:max-w-full md:m-0 justify-center items-center py-[1rem] section-md:py-0 section-md:items-stretch flex-col section-md:flex-row nav-md:justify-between gap-[1rem] rounded-[2rem] bg-[#F5F9FF]">
-              <div className="img-container max-w-[578px] md:min-h-[386px] overflow-hidden rounded-[32px] ">
+              <div className="img-container max-w-[578px] md:min-h-[386px] overflow-hidden rounded-lg ">
                 <Image
                   src={"/images/Student Img.png"}
                   alt="flex image"

@@ -52,6 +52,7 @@ export interface IUser {
   createdAt: string;
   status?: string;
   role?: string;
+  isSubscribed?: boolean;
   referralCode?: string;
   verified: boolean;
   referrals: any[];

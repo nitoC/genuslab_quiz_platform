@@ -19,7 +19,13 @@ import ProgressBar from "@/components/ui/ProgressBar";
 // import useCountdown from "@/hooks/useCountdown";
 // import { useTime } from "@/hooks/useTime";
 
-import { getRankData, getTime, getUserProfile, getMostRecentReward, getMostRecentTransaction } from "@/lib/api/apis";
+import {
+  getRankData,
+  getTime,
+  getUserProfile,
+  getMostRecentReward,
+  getMostRecentTransaction,
+} from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import nameResolver from "@/lib/utils/nameResolver";
 
@@ -155,14 +161,12 @@ const Page = () => {
    * USER QUERY
    * ---------------------------- */
   const { data, isLoading, isError, error, userStore } = useUser();
+  console.log(data, "user");
 
   /* -----------------------------
    * REWARD & TRANSACTION QUERIES
    * ---------------------------- */
-  const {
-    data: mostRecentRewardData,
-    isLoading: rewardLoading,
-  } = useQuery({
+  const { data: mostRecentRewardData, isLoading: rewardLoading } = useQuery({
     queryKey: ["mostRecentReward"],
     queryFn: async () => {
       const res = await getMostRecentReward();
@@ -171,17 +175,15 @@ const Page = () => {
     },
   });
 
-  const {
-    data: mostRecentTransactionData,
-    isLoading: transactionLoading,
-  } = useQuery({
-    queryKey: ["mostRecentTransaction"],
-    queryFn: async () => {
-      const res = await getMostRecentTransaction();
-      console.log(res?.data, "most recent transaction data");
-      return res?.data;
-    },
-  });
+  const { data: mostRecentTransactionData, isLoading: transactionLoading } =
+    useQuery({
+      queryKey: ["mostRecentTransaction"],
+      queryFn: async () => {
+        const res = await getMostRecentTransaction();
+        console.log(res?.data, "most recent transaction data");
+        return res?.data;
+      },
+    });
 
   /* Update rewards from most recent reward data */
   useEffect(() => {

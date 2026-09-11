@@ -27,6 +27,7 @@ import { LuFileKey2 } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { getReferrals, updateProfileData } from "@/lib/api/apis";
 import Link from "next/link";
+import SubscriptionCard from "../cards/Subscripiton";
 
 const AccountTabContent = ({ user }: any) => {
   const [loading, setLoading] = useState(false);
@@ -134,48 +135,7 @@ const AccountTabContent = ({ user }: any) => {
 
       {/* 2. SUBSCRIPTION PLAN CARD */}
       <GlassCard className="p-6 sm:p-8 flex flex-col justify-between gap-6 min-h-[315px]">
-        <div>
-          <div className="flex justify-between items-center border-b border-white/5 pb-4">
-            <div className="flex items-center gap-2">
-              <HiOutlineTv className="text-blue text-xl" />
-              <h3 className="text-base font-bold text-(--primary)">
-                Subscription Plan
-              </h3>
-            </div>
-            <span className="bg-blue/10 border border-blue/20 text-blue text-[14px] font-bold px-3 py-1 rounded-full">
-              Current Plan
-            </span>
-          </div>
-
-          <div className="mt-5 bg-white/[0.02] border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue/5 blur-[50px] rounded-full -mr-10 -mt-10" />
-
-            <div className="flex items-baseline gap-1">
-              <h4 className="text-2xl font-black text-(--primary)">
-                Free Tier
-              </h4>
-              <span className="text-grey text-sm font-medium">$0/month</span>
-            </div>
-
-            <p className="text-grey font-bold mt-4 mb-3 tracking-wide uppercase">
-              Active Benefits
-            </p>
-            <div className="grid grid-cols-2 gap-y-3 gap-x-4">
-              <BenefitItem active={true} text="Demo Quiz" />
-              <BenefitItem active={false} text="7 Daily Quizzes" />
-              <BenefitItem active={false} text="Global Leaderboard" />
-              <BenefitItem active={false} text="Unlimited Quizzes" />
-              <BenefitItem active={false} text="Double XP Boost" />
-            </div>
-          </div>
-        </div>
-
-        <PrimaryButton
-          type="link"
-          to="/pricing"
-          text="Upgrade Plan"
-          style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3.5 w-full text-sm font-bold tracking-wide flex justify-center items-center gap-2 mt-auto"
-        />
+        <SubscriptionCard isSubscribed={user.isSubscribed ?? false} />
       </GlassCard>
 
       {/* 3. SECURITY & PRIVACY CARD */}
@@ -284,20 +244,6 @@ const AccountTabContent = ({ user }: any) => {
 /* -----------------------------
  * SUB-COMPONENT HELPERS
  * ---------------------------- */
-
-const BenefitItem = ({ active, text }: { active: boolean; text: string }) => (
-  <div
-    className={`flex items-center gap-2 ${active ? "text-(--primary)" : "text-grey/40"}`}
-  >
-    <FaCheckCircle
-      className={`shrink-0 ${active ? "text-green-500" : "text-grey/20"}`}
-      size={12}
-    />
-    <span className={!active ? "line-through opacity-80" : "font-medium"}>
-      {text}
-    </span>
-  </div>
-);
 
 const LinkedAccountRow = ({
   icon,
