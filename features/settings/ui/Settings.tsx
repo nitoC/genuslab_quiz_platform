@@ -15,7 +15,12 @@ import {
   MdArrowForward,
   MdVerified,
 } from "react-icons/md";
-import { FaUniversity, FaEnvelope, FaCheckCircle } from "react-icons/fa";
+import {
+  FaUniversity,
+  FaEnvelope,
+  FaCheckCircle,
+  FaCrown,
+} from "react-icons/fa";
 import GlassCard from "@/components/ui/cards/GlassCard";
 
 type TabId = "account" | "bank" | "subscription";
@@ -105,7 +110,9 @@ const SettingsView = ({ user }: { user: any }) => {
           <div className="flex-1 min-w-0 p-6 sm:p-8">
             {activeTab === "account" && <AccountSection user={user} />}
             {activeTab === "bank" && <LinkedAccountsSection user={user} />}
-            {activeTab === "subscription" && <SubscriptionSection />}
+            {activeTab === "subscription" && (
+              <SubscriptionSection user={user} />
+            )}
           </div>
         </div>
       </GlassCard>
@@ -328,14 +335,24 @@ const AccountRow = ({
 /* -----------------------------------------------------------------
  * SUBSCRIPTION — current plan + upgrade CTA
  * ---------------------------------------------------------------- */
-const SubscriptionSection = () => {
-  const benefits = [
-    { active: true, text: "Demo Quiz" },
-    { active: false, text: "7 Daily Quizzes" },
-    { active: false, text: "Global Leaderboard" },
-    { active: false, text: "Unlimited Quizzes" },
-    { active: false, text: "Double XP Boost" },
-  ];
+const SubscriptionSection = ({ user }: any) => {
+  const isSubscribed = !!user?.isSubscribed;
+
+  const benefits = isSubscribed
+    ? [
+        { active: true, text: "Demo Quiz" },
+        { active: true, text: "7 Daily Quizzes" },
+        { active: true, text: "Global Leaderboard" },
+        { active: true, text: "Unlimited Quizzes" },
+        { active: true, text: "Double XP Boost" },
+      ]
+    : [
+        { active: true, text: "Demo Quiz" },
+        { active: false, text: "7 Daily Quizzes" },
+        { active: false, text: "Global Leaderboard" },
+        { active: false, text: "Unlimited Quizzes" },
+        { active: false, text: "Double XP Boost" },
+      ];
 
   return (
     <div>
@@ -344,26 +361,52 @@ const SubscriptionSection = () => {
         subtitle="View your current plan and explore what's next."
       />
 
-      <div className="mt-6 rounded-2xl border border-blue/20 bg-gradient-to-br from-blue/10 via-transparent to-transparent p-6 sm:p-8">
+      <div
+        className={clsx(
+          "mt-6 rounded-2xl border p-6 sm:p-8",
+          isSubscribed
+            ? "border-amber-400/20 bg-gradient-to-br from-amber-400/10 via-transparent to-transparent"
+            : "border-blue/20 bg-gradient-to-br from-blue/10 via-transparent to-transparent",
+        )}
+      >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
-            <span className="inline-block bg-blue/10 border border-blue/20 text-blue text-[12px] font-bold px-3 py-1 rounded-full mb-3">
-              Current Plan
+            <span
+              className={clsx(
+                "inline-flex items-center gap-1.5 text-[12px] font-bold px-3 py-1 rounded-full mb-3 border",
+                isSubscribed
+                  ? "bg-amber-400/10 border-amber-400/30 text-amber-400"
+                  : "bg-blue/10 border-blue/20 text-blue",
+              )}
+            >
+              {isSubscribed && <FaCrown size={11} />}
+              {isSubscribed ? "Premium Member" : "Current Plan"}
             </span>
             <div className="flex items-baseline gap-2">
               <h4 className="text-3xl font-black text-(--primary)">
-                Free Tier
+                {isSubscribed ? "Premium" : "Free Tier"}
               </h4>
-              <span className="text-grey text-sm font-medium">$0/month</span>
+              <span className="text-grey text-sm font-medium">
+                {isSubscribed ? "₦4000/month" : "$0/month"}
+              </span>
             </div>
           </div>
 
-          <PrimaryButton
-            type="link"
-            to="/pricing"
-            text="Upgrade Plan"
-            style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
-          />
+          {isSubscribed ? (
+            <PrimaryButton
+              type="link"
+              to="/subscriptions"
+              text="View Active Subscriptions"
+              style="bg-amber-400 text-black hover:bg-amber-400/90 rounded-xl py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
+            />
+          ) : (
+            <PrimaryButton
+              type="link"
+              to="/pricing"
+              text="Upgrade Plan"
+              style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/5">

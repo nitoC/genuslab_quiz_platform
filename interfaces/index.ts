@@ -44,6 +44,16 @@ export interface IUserDetails {
   rankName?: any;
 }
 
+export interface ISubscription {
+  id: string;
+  name: "FREE" | "PREMIUM";
+  userId: string;
+  price: number;
+  createdAt: string;
+  startAt: string;
+  endAt: string;
+}
+
 export interface IUser {
   id?: string;
   email: string;
@@ -58,7 +68,7 @@ export interface IUser {
   referrals: any[];
   accounts?: any[];
   details: IUserDetails;
-  subscriptions?: any[];
+  subscriptions?: ISubscription[];
   transactions?: any[];
   notifications: any[];
 }

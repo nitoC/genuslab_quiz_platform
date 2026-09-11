@@ -476,6 +476,11 @@ export const getUserSubscription = async () => {
   return res;
 };
 
+export const getUserSubscriptions = async () => {
+  const res = await axiosUser.get(`subscription/mine`);
+  return res;
+};
+
 export const subscribe = async (data: any) => {
   const res = await axiosUser.post("subscription", data);
   return res;
