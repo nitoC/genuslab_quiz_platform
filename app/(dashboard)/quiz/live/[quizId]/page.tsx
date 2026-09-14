@@ -88,7 +88,12 @@ const QuizPage = () => {
   }>({
     queryKey: ["initiate quiz", quizId],
     queryFn: async () => {
-      const userId = userData?.user?.details?.id || userStore?.userId;
+      // getUserDetails() hits `GET user-details/:id`, which looks up
+      // UserDetails by its `userId` foreign key — so this needs the
+      // User's own id, not `user.details.id` (that's the UserDetails
+      // row's own primary key, a different value). Passing the wrong
+      // one made the lookup return nothing downstream.
+      const userId = userData?.user?.id || userStore?.userId;
       if (!userId) {
         toast.error("user not found");
         throw new Error("user not found");
@@ -284,7 +289,12 @@ const QuizPage = () => {
 
   useEffect(() => {
     async function verifyAttempt() {
-      const userId = userData?.user?.details?.id || userStore?.userId;
+      // getUserDetails() hits `GET user-details/:id`, which looks up
+      // UserDetails by its `userId` foreign key — so this needs the
+      // User's own id, not `user.details.id` (that's the UserDetails
+      // row's own primary key, a different value). Passing the wrong
+      // one made the lookup return nothing downstream.
+      const userId = userData?.user?.id || userStore?.userId;
       if (!userId) {
         toast.error("user not found");
         throw new Error("user not found");
@@ -347,11 +357,12 @@ const QuizPage = () => {
 
   if (isError || !data?.questions || totalQuestions === 0) {
     const status = (error as any)?.response?.status;
+    const conflictReason = (error as any)?.response?.data?.message;
     console.log((error as any)?.response, "error res");
     if (status === 409) {
       return (
         <Layout type="quiz">
-          <ActiveSessionModal />
+          <ActiveSessionModal reason={conflictReason} />
         </Layout>
       );
     }
@@ -385,6 +396,7 @@ const QuizPage = () => {
                   totalQuestions={totalQuestions}
                   progressSegments={progressSegments}
                   activeSeg={activeSeg}
+                  avatarUrl={userData?.user?.details?.avatar}
                 />
               </section>
 
@@ -449,7 +461,7 @@ const QuizPage = () => {
                     attemptId={attemptId}
                     // startTime={}
                   />
-                  <Rivals />
+                  {/* <Rivals /> */}
                 </div>
               </div>
 

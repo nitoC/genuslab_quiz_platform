@@ -66,7 +66,7 @@ const page = () => {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["quiz episodes"],
+    queryKey: ["active-quiz-episodes"],
     queryFn: async () => {
       const res = await getAllActiveQuiz();
       console.log(res.data.payload, "quiz data");

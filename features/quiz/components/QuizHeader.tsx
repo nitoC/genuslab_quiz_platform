@@ -9,12 +9,14 @@ export const QuizHeader = ({
   currentQuestionIndex,
   totalQuestions,
   activeSeg,
+  avatarUrl,
 }: {
   currentQuestion: any;
   currentQuestionIndex: number;
   totalQuestions: number;
   progressSegments: number;
   activeSeg: number;
+  avatarUrl?: string;
 }) => {
   return (
     <>
@@ -63,8 +65,12 @@ export const QuizHeader = ({
             +10 XP
           </div>
           <img
-            src="https://i.pravatar.cc/150?u=my"
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border-2 border-white/10 flex-shrink-0"
+            src={avatarUrl || "/images/avatar.png"}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/images/avatar.png";
+            }}
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border-2 border-white/10 flex-shrink-0 object-cover"
             alt="avatar"
           />
         </div>

@@ -225,7 +225,13 @@ const PerformancePage = () => {
     isFetching,
     isError,
   } = useQuery({
-    queryKey: ["quiz episodes"],
+    // Was the literal string "quiz episodes" — identical to the key
+    // quizzes/page.tsx uses for the (unrelated, non-user-specific) active
+    // quiz catalog. React Query caches by key, so the two pages could
+    // serve each other's cached response. Scoped by userId too, so
+    // switching accounts in one browser session (no full reload) can't
+    // serve a previous user's cached attempt history either.
+    queryKey: ["quiz-attempt-history", userStore?.userId],
     queryFn: async () => {
       try {
         const res = await getAttempts(1);

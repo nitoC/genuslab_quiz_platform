@@ -6,11 +6,63 @@ import { FiArrowRight as ArrowRight, FiInfo as Info } from "react-icons/fi";
 
 interface ActiveSessionModalProps {
   onViewDetails?: () => void;
+  /** The backend's actual conflict reason (AttemptGaurd's 409 message) —
+   * "Quiz already completed" / "Quiz session has expired" / "user already
+   * in another session" are three different situations that each need
+   * different copy, not one generic "you have an active session" message
+   * that's actively wrong for the completed/expired cases. */
+  reason?: string;
 }
+
+const describeConflict = (reason?: string) => {
+  const normalized = reason?.toLowerCase() ?? "";
+
+  if (normalized.includes("expired")) {
+    return {
+      title: "Session Expired",
+      body: (
+        <>
+          Your{" "}
+          <span className="text-[#a4bcfc] font-semibold">quiz session</span>{" "}
+          timed out while you were away. It can no longer be completed —
+          check back for the next available episode.
+        </>
+      ),
+    };
+  }
+
+  if (normalized.includes("completed")) {
+    return {
+      title: "Quiz Already Completed",
+      body: (
+        <>
+          You&apos;ve already finished this{" "}
+          <span className="text-[#a4bcfc] font-semibold">quiz</span>. Head
+          back to see your results or try the next one.
+        </>
+      ),
+    };
+  }
+
+  return {
+    title: "Active Session Alert",
+    body: (
+      <>
+        You already have an active{" "}
+        <span className="text-[#a4bcfc] font-semibold">quiz session</span> in
+        progress on another device or tab. Please complete it there before
+        starting a new one.
+      </>
+    ),
+  };
+};
 
 export default function ActiveSessionModal({
   onViewDetails,
+  reason,
 }: ActiveSessionModalProps) {
+  const { title, body } = describeConflict(reason);
+
   return (
     // Backdrop overlay
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -29,15 +81,12 @@ export default function ActiveSessionModal({
 
         {/* Header Alert Title */}
         <h2 className="text-white text-sm font-bold tracking-wide mb-4">
-          Active Session Alert
+          {title}
         </h2>
 
         {/* Context Explainer Paragraph */}
         <p className="text-slate-400 text-sm leading-relaxed max-w-xs mb-8">
-          You already have an active{" "}
-          <span className="text-[#a4bcfc] font-semibold">quiz session</span> in
-          progress. Please complete your current challenge before starting a new
-          one.
+          {body}
         </p>
 
         {/* Primary Call to Action Button */}

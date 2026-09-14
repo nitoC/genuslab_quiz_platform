@@ -65,8 +65,13 @@ const EpisodePerformancePage = () => {
     const slot = slotData.find((s: any) => s.episode === episode);
     if (!slot) return false;
 
-    // 1. Parse base quiz date safely (assuming YYYY-MM-DD string format)
-    const [year, month, day] = date.split("-").map(Number);
+    // 1. Parse base quiz date safely. The `date` query param is built
+    // upstream as `format(activeDate, "dd-MM-yyyy")` (see
+    // quizzes/previous/page.tsx and [...ids]/page.tsx) — NOT "YYYY-MM-DD".
+    // Destructuring this split as [year, month, day] silently swapped year
+    // and day (e.g. "14-09-2026" -> year=14, day=2026), producing a garbage
+    // slot window so `ongoing` was false for virtually every real episode.
+    const [day, month, year] = date.split("-").map(Number);
     if (!year || !month || !day) return false;
 
     // 2. Derive system time object from server payload

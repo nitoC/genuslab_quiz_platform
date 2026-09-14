@@ -101,7 +101,7 @@ const Sidebar = ({ type }: { type?: string }) => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-20 "
+          className="fixed inset-0 bg-black/30 z-25 "
           onClick={toggleSidebar}
         >
           {/* overlay */}
