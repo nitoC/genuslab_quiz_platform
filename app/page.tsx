@@ -75,6 +75,7 @@ Potential with
                   text="Join Quiz"
                   type="link"
                   url="/login"
+                  style={"flex justify-center gap-3"}
                   // cat="linear"
                   Icon={<MdOutlineKeyboardDoubleArrowRight color="#3a94ff" />}
                 />
@@ -82,6 +83,7 @@ Potential with
                   handler={() => console.log("hello world")}
                   text="Watch Live Show"
                   type="link"
+                  style={"flex justify-center gap-3"}
                   url="https://www.youtube.com/@Genuslab_technologies"
                   // cat="primary"
                 />
@@ -89,13 +91,13 @@ Potential with
               <div className="flex flex-col md:hidden items-stretch gap-2.5 md:justify-center">
                 <Link
                   href="/login"
-                  className=" bg-blue text-white rounded-lg px-7.5 py-[.6rem] cursor-pointer"
+                  className=" bg-blue text-center text-white rounded-lg px-7.5 py-[.6rem] cursor-pointer"
                 >
                   Join Quiz
                 </Link>
                 <Link
                   href="https://www.youtube.com/@Genuslab_technologies"
-                  className="bg-green text-white  rounded-md px-7.5 py-2.5 cursor-pointer"
+                  className="bg-green text-center text-white  rounded-md px-7.5 py-2.5 cursor-pointer"
                 >
                   Watch Live Show
                 </Link>
