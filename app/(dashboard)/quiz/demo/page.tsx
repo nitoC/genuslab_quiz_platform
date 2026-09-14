@@ -341,7 +341,7 @@ const QuizPage = () => {
                     handleSubmit={handleSubmit}
                   />
                   {/* Live Rivals Widget */}
-                  <Rivals />
+                  {/* <Rivals /> */}
                 </div>
               </div>
 
