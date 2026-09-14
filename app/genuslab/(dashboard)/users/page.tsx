@@ -3,14 +3,17 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import AdminHeader from "@/components/layouts/AdminHeader";
+import Link from "next/link";
+import AdminPageHeader from "@/components/layouts/AdminPageHeader";
 import AdminCard from "@/components/ui/cards/AdminCard";
+import AdminPagination from "@/components/ui/AdminPagination";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
+import ConfirmDialog from "@/components/ui/modals/ConfirmDialog";
 import { getAdminUsers, updateAdminUserStatus } from "@/lib/api/apis";
 import toast from "react-hot-toast";
 import { FaCrown } from "react-icons/fa";
-import { MdSearch, MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { MdSearch, MdChevronRight } from "react-icons/md";
 
 const STATUS_BADGE: Record<string, BadgeStatus> = {
   active: "success",
@@ -52,6 +55,10 @@ const UsersPageContent = () => {
   const [status, setStatus] = useState("");
   const [plan, setPlan] = useState<"" | "premium" | "free">("");
   const [page, setPage] = useState(1);
+  const [pendingSuspend, setPendingSuspend] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const limit = 10;
 
   useEffect(() => {
@@ -86,17 +93,40 @@ const UsersPageContent = () => {
     onSuccess: () => {
       toast.success("User status updated");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setPendingSuspend(null);
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update user");
+      toast.error(
+        error?.response?.data?.message || "Failed to update user status.",
+      );
     },
   });
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      <AdminHeader
+      <AdminPageHeader
         title="Users"
         subtitle="View and manage every registered Genus Lab user."
+      />
+
+      <ConfirmDialog
+        open={!!pendingSuspend}
+        title="Suspend this user?"
+        description={
+          <>
+            <span className="font-semibold text-slate-700">
+              {pendingSuspend?.name}
+            </span>{" "}
+            will immediately lose access to their account until reactivated.
+          </>
+        }
+        confirmLabel="Suspend User"
+        loading={statusMutation.isPending}
+        onCancel={() => setPendingSuspend(null)}
+        onConfirm={() =>
+          pendingSuspend &&
+          statusMutation.mutate({ id: pendingSuspend.id, status: "suspended" })
+        }
       />
 
       {/* FILTERS */}
@@ -162,13 +192,16 @@ const UsersPageContent = () => {
               ) : isError ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-14 text-center text-red-400">
-                    Failed to load users.
+                    Unable to load users. Please try again.
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-14 text-center text-slate-400">
-                    No users found.
+                    <p className="font-semibold text-slate-500">No users found</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      No users match your current search or filters.
+                    </p>
                   </td>
                 </tr>
               ) : (
@@ -179,9 +212,13 @@ const UsersPageContent = () => {
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">
                           {initials(user.name)}
                         </span>
-                        <div>
-                          <p className="font-bold text-slate-800">{user.name}</p>
-                          <p className="text-slate-400 text-xs">{user.email}</p>
+                        <div className="min-w-0">
+                          <p className="max-w-[200px] truncate font-bold text-slate-800" title={user.name}>
+                            {user.name}
+                          </p>
+                          <p className="max-w-[200px] truncate text-slate-400 text-xs" title={user.email}>
+                            {user.email}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -211,28 +248,36 @@ const UsersPageContent = () => {
                         year: "numeric",
                       })}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      {user.status === "suspended" ? (
-                        <button
-                          disabled={statusMutation.isPending}
-                          onClick={() =>
-                            statusMutation.mutate({ id: user.id, status: "active" })
-                          }
-                          className="text-emerald-600 hover:underline text-xs font-bold disabled:opacity-50"
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-4">
+                        {user.status === "suspended" ? (
+                          <button
+                            disabled={statusMutation.isPending}
+                            onClick={() =>
+                              statusMutation.mutate({ id: user.id, status: "active" })
+                            }
+                            className="text-emerald-600 hover:underline text-xs font-bold disabled:opacity-50"
+                          >
+                            Activate
+                          </button>
+                        ) : (
+                          <button
+                            disabled={statusMutation.isPending}
+                            onClick={() =>
+                              setPendingSuspend({ id: user.id, name: user.name })
+                            }
+                            className="text-red-600 hover:underline text-xs font-bold disabled:opacity-50"
+                          >
+                            Suspend
+                          </button>
+                        )}
+                        <Link
+                          href={`/genuslab/users/${user.id}`}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline"
                         >
-                          Activate
-                        </button>
-                      ) : (
-                        <button
-                          disabled={statusMutation.isPending}
-                          onClick={() =>
-                            statusMutation.mutate({ id: user.id, status: "suspended" })
-                          }
-                          className="text-red-600 hover:underline text-xs font-bold disabled:opacity-50"
-                        >
-                          Suspend
-                        </button>
-                      )}
+                          View <MdChevronRight size={14} />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -241,29 +286,7 @@ const UsersPageContent = () => {
           </table>
         </div>
 
-        {meta && meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
-            <p className="text-xs text-slate-500">
-              Page {meta.page} of {meta.totalPages} · {meta.total} users
-            </p>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 disabled:opacity-40 hover:bg-slate-50"
-              >
-                <MdChevronLeft size={14} /> Previous
-              </button>
-              <button
-                disabled={page >= meta.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 disabled:opacity-40 hover:bg-slate-50"
-              >
-                Next <MdChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-        )}
+        <AdminPagination meta={meta} onPageChange={setPage} itemLabel="users" />
       </AdminCard>
     </div>
   );

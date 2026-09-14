@@ -7,7 +7,7 @@ interface TemplatePanelProps {
   setJsonText: (val: string) => void;
 }
 
-const TEMPLATE_JSON = `[\n  {\n    "questionText": "text",\n    "options": ["a", "b"],\n    "answer": 0,\n    "answerDescription": "text",\n    "difficulty": "easy",\n    "hint": "text",\n    "rankId": "xxxxxkeyt..."\n   }\n]`;
+const TEMPLATE_JSON = `[\n  {\n    "questionText": "text",\n    "options": ["a", "b"],\n    "answer": 0,\n    "answerDescription": "text",\n    "difficulty": "easy",\n    "hint": "text",\n    "rankId": "xxxxxkeyt...",\n    "topic": "text (optional, must match the rank's topics)"\n   }\n]`;
 
 export default function TemplatePanel({ setJsonText }: TemplatePanelProps) {
   const copyTemplate = () => {

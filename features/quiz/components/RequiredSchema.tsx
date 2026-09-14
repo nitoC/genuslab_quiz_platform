@@ -36,6 +36,11 @@ export default function RequiredSchema() {
       required: true,
       desc: "The unique identifier for the question rank (e.g., 'bronze', 'gold').",
     },
+    {
+      field: "topic",
+      required: false,
+      desc: "Must match one of the selected rank's topics. Falls back to the Topic dropdown above when omitted.",
+    },
   ];
 
   return (

@@ -134,7 +134,10 @@ const refreshAccessToken = async (): Promise<string> => {
   return refreshPromise;
 };
 
-const requestInterceptor = async (axiosInstance: AxiosInstance) => {
+const requestInterceptor = async (
+  axiosInstance: AxiosInstance,
+  type?: string,
+) => {
   axiosInstance.interceptors.request.use(
     (config) => {
       const storedUser = useUser.getState().user;
@@ -153,7 +156,10 @@ const requestInterceptor = async (axiosInstance: AxiosInstance) => {
   return axiosInstance;
 };
 
-const responseInterceptor = async (axiosInstance: AxiosInstance) => {
+const responseInterceptor = async (
+  axiosInstance: AxiosInstance,
+  type: string,
+) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -169,7 +175,9 @@ const responseInterceptor = async (axiosInstance: AxiosInstance) => {
         } catch (err) {
           useUser.getState().logout();
           toast.error("user unauthorised");
-          window.location.href = "/login";
+          type === "admin"
+            ? (window.location.href = "genuslab/admin")
+            : (window.location.href = "/login");
           return Promise.reject(err);
         }
       }
@@ -190,8 +198,8 @@ const responseInterceptor = async (axiosInstance: AxiosInstance) => {
 
 requestInterceptor(axiosUser);
 requestInterceptor(axiosAdmin);
-responseInterceptor(axiosUser);
-responseInterceptor(axiosAdmin);
+responseInterceptor(axiosUser, "user");
+responseInterceptor(axiosAdmin, "admin");
 // responseInterceptor(axiosUser);
 
 export { axiosUser, axiosAdmin };

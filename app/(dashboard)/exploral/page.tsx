@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import GlassCard from "@/components/ui/cards/GlassCard";
@@ -52,6 +52,8 @@ import sanityClient from "@/lib/utils/Sanity";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { FaLinkedin, FaTelegram } from "react-icons/fa";
+import useRank from "@/hooks/useRank";
+import { formater } from "@/lib/utils/numFormatter";
 
 // Types
 interface StudioWinner {
@@ -83,6 +85,7 @@ const ExploralPage = () => {
   });
 
   const [studioWinner, setStudioWinner] = useState<StudioWinner | null>(null);
+  const { data: ranks, isLoading: rankIsLoading, isError, error } = useRank();
 
   const query = `*[_type == "post"]
 | order(publishedAt desc)[$start...$end]{
@@ -262,11 +265,48 @@ const ExploralPage = () => {
       Icon: <FaCrown size={23} className="text-green-500" />,
     },
   ];
-
   const [count, setCount] = useState(0);
+
+  const { ranksLength, rankings, filteredRanks, paginationSize }: any =
+    useMemo(() => {
+      if (ranks) {
+        const rankings = ranks.sort((a: any, b: any) => b.rank - a.rank);
+        // .reverse();
+
+        // console.log(rankings, "reversed");
+        const finalRankings = rankings.map((item: any) => {
+          const data = leaderboardRanks.find((rank) => rank.rank === item.rank);
+
+          // console.log(data, "data");
+          const fin = {
+            ...item,
+            status: item.unlocked ? "unlocked" : "locked",
+            Icon: data?.Icon,
+          };
+          // console.log(fin, "final");
+          return fin;
+        });
+
+        const ranksLength = finalRankings.length;
+        const paginationSize = Math.round(ranksLength / 5);
+
+        const filteredRanks = finalRankings.slice(
+          count * paginationSize,
+          count * paginationSize + paginationSize + 1,
+        );
+        return {
+          filteredRanks,
+          rankings: finalRankings,
+          ranksLength,
+          paginationSize,
+        };
+      }
+      return [];
+    }, [ranks, count]);
+
   const [rankData, setrankData] = useState<{
     show: boolean;
-    data: (typeof leaderboardRanks)[0];
+    data: any;
   }>({
     show: false,
     data: leaderboardRanks[0],
@@ -289,23 +329,15 @@ const ExploralPage = () => {
     }
   };
 
-  const handleRankModal = (payload: (typeof leaderboardRanks)[0]) => {
+  const handleRankModal = (payload: (typeof filteredRanks)[0]) => {
     if (payload.status === "unlocked") {
       return router.push("/exploral/rank?rank=" + payload.rank);
     }
     setrankData({
       show: !rankData.show,
-      data: payload as (typeof leaderboardRanks)[0],
+      data: payload as any,
     });
   };
-
-  const ranksLength = leaderboardRanks.length;
-  const paginationSize = Math.round(ranksLength / 5);
-
-  const filteredRanks = leaderboardRanks.slice(
-    count * paginationSize,
-    count * paginationSize + paginationSize + 1,
-  );
 
   return (
     <Layout>
@@ -603,41 +635,43 @@ const ExploralPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredRanks.map((rank) => (
-                  <tr
-                    key={rank?.title}
-                    onClick={() => handleRankModal(rank)}
-                    className="group transition-colors hover:bg-white/5 rounded-xl cursor-pointer"
-                  >
-                    <td className="py-6 px-4 text-slate-500 font-mono text-sm hidden md:table-cell">
-                      {rank.rank.toString().padStart(3, "0")}
-                    </td>
-                    <td className="py-6 px-0 md:px-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-                          {rank.Icon}
+                {filteredRanks &&
+                  filteredRanks.length > 0 &&
+                  filteredRanks.map((rank: any) => (
+                    <tr
+                      key={rank?.rankName}
+                      onClick={() => handleRankModal(rank)}
+                      className="group transition-colors hover:bg-white/5 rounded-xl cursor-pointer"
+                    >
+                      <td className="py-6 px-4 text-slate-500 font-mono text-sm hidden md:table-cell">
+                        {rank.rank.toString().padStart(3, "0")}
+                      </td>
+                      <td className="py-6 px-0 md:px-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                            {rank.Icon}
+                          </div>
+                          <div>
+                            <p className="text-white font-bold text-sm">
+                              {rank.rankName}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-white font-bold text-sm">
-                            {rank.title}
-                          </p>
+                      </td>
+                      <td className="py-6 px-4 text-white text-sm font-bold hidden md:table-cell">
+                        {rank.unlockXp.toLocaleString()} XP
+                      </td>
+                      <td className="py-6 px-4">
+                        <div className="flex justify-end md:justify-center">
+                          {rank.status === "unlocked" ? (
+                            <MdCheckCircle className="text-emerald-500 text-xl" />
+                          ) : (
+                            <MdLock className="text-slate-500 text-xl" />
+                          )}
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-6 px-4 text-white text-sm font-bold hidden md:table-cell">
-                      {rank.pointsToUnlock.toLocaleString()} XP
-                    </td>
-                    <td className="py-6 px-4">
-                      <div className="flex justify-end md:justify-center">
-                        {rank.status === "unlocked" ? (
-                          <MdCheckCircle className="text-emerald-500 text-xl" />
-                        ) : (
-                          <MdLock className="text-slate-500 text-xl" />
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -648,12 +682,12 @@ const ExploralPage = () => {
         <RankUnlockModal
           rank={rankData.data?.rank}
           icon={rankData.data?.Icon}
-          title={rankData.data?.title}
+          title={rankData.data?.rankName}
           unlockStatus={rankData.data?.status}
-          requirementPoints={rankData.data?.pointsToUnlock}
-          unlockReward={rankData.data?.cashReward}
+          requirementPoints={formater(rankData.data?.unlockXp)}
+          unlockReward={formater(rankData.data?.reward)}
           onClose={() => {
-            setrankData({ show: false, data: leaderboardRanks[0] });
+            setrankData({ show: false, data });
           }}
         />
       )}

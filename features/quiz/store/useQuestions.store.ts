@@ -6,6 +6,9 @@ export type DifficultyType = "easy" | "medium" | "hard" | "expert";
 export interface CreateQuestionPayload {
   difficulty: DifficultyType;
   rankId: string;
+  // Matches one of the target rank's `topics` entries (Rank.topics in the
+  // Prisma schema); optional to mirror `Question.topic String?`.
+  topic?: string;
   questionText: string;
   quizId?: string;
   options: string[];

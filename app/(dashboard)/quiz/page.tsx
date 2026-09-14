@@ -16,6 +16,7 @@ import { useSocket } from "@/store/useSocket";
 import LiveQuizModal from "@/components/ui/modals/quizLive";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentActive } from "@/lib/api/apis";
+import useNextQuizCountdown from "@/hooks/useNextQuizCountdown";
 
 const GetReadyModal = () => {
   const [showDemo, setShowDemo] = React.useState(false);
@@ -27,6 +28,7 @@ const GetReadyModal = () => {
     data: quizData,
     isLoading,
     isError,
+    refetch: refetchQuizData,
   } = useQuery({
     queryKey: ["active quiz"],
     queryFn: async () => {
@@ -35,6 +37,22 @@ const GetReadyModal = () => {
       return res?.data?.payload ?? 0;
     },
   });
+
+  const {
+    hours: countdownHours,
+    minutes: countdownMinutes,
+    seconds: countdownSeconds,
+    progress: countdownProgress,
+    isReady: countdownReady,
+  } = useNextQuizCountdown(refetchQuizData);
+
+  const countdownLabel = countdownReady
+    ? countdownHours > 0
+      ? `${String(countdownHours).padStart(2, "0")}:${String(countdownMinutes).padStart(2, "0")}:${String(countdownSeconds).padStart(2, "0")}`
+      : `${String(countdownMinutes).padStart(2, "0")}:${String(countdownSeconds).padStart(2, "0")}`
+    : "--:--";
+
+  const progressPercent = countdownReady ? Math.round(countdownProgress * 100) : 0;
 
   const benefits = [
     {
@@ -344,7 +362,7 @@ const GetReadyModal = () => {
                     Starting in
                   </p>
                   <p className="text-xl font-extrabold tabular-nums text-slate-900">
-                    {isLoading ? "--:--" : "04:52"}
+                    {countdownLabel}
                   </p>
                 </div>
 
@@ -369,12 +387,12 @@ const GetReadyModal = () => {
                       fill="transparent"
                       strokeLinecap="round"
                       strokeDasharray={2 * Math.PI * 20}
-                      strokeDashoffset={2 * Math.PI * 20 * (1 - 0.75)}
-                      className="text-blue-600"
+                      strokeDashoffset={2 * Math.PI * 20 * (1 - progressPercent / 100)}
+                      className="text-blue-600 transition-[stroke-dashoffset] duration-1000 ease-linear"
                     />
                   </svg>
                   <div className="absolute inset-0 grid place-items-center text-[14px] font-extrabold text-blue-600">
-                    75%
+                    {progressPercent}%
                   </div>
                 </div>
               </div>

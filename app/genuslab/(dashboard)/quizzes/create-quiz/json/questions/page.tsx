@@ -19,6 +19,10 @@ export interface QuestionObject {
   difficulty: "easy" | "medium" | "hard";
   hint?: string;
   rankId: string;
+  // Optional per-question override — must be one of the selected rank's
+  // `topics` entries. Falls back to the batch-level topic picker below if
+  // the pasted JSON doesn't set one itself.
+  topic?: string;
 }
 
 function JsonBuilderPage() {
@@ -27,6 +31,7 @@ function JsonBuilderPage() {
 
   const [jsonText, setJsonText] = useState<string>("");
   const [questionRank, setQuestionRank] = useState<string>("");
+  const [questionTopic, setQuestionTopic] = useState<string>("");
   const [parsedQuestions, setParsedQuestions] = useState<QuestionObject[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
@@ -92,16 +97,21 @@ function JsonBuilderPage() {
         return toast.error("incomplete or empty question field");
       setSubmitting(true);
       const payload: IQuestionSubmit[] = parsedQuestions.map((a) => {
+        // A question's own `topic` (from the pasted JSON) wins; otherwise
+        // fall back to the batch-level topic picked alongside the rank.
+        const topic = a.topic || questionTopic || undefined;
         if (id) {
           return {
             ...a,
             rankId: questionRank,
+            topic,
             quizId: id,
           } as IQuestionSubmit;
         }
         return {
           ...a,
           rankId: questionRank,
+          topic,
         } as IQuestionSubmit;
       });
       const res = id
@@ -159,6 +169,8 @@ function JsonBuilderPage() {
                 setJsonText={setJsonText}
                 questionRank={questionRank}
                 setQuestionRank={setQuestionRank}
+                questionTopic={questionTopic}
+                setQuestionTopic={setQuestionTopic}
                 onFormat={handleFormat}
                 handleSubmit={handleSubmit}
                 onClear={() => setJsonText("")}

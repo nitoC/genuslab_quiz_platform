@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import AdminHeader from "@/components/layouts/AdminHeader";
+import AdminPageHeader from "@/components/layouts/AdminPageHeader";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import PerformanceChart from "@/components/ui/charts/CurveArea";
 import CustomActiveShapePieChart from "@/components/ui/charts/LinePie";
-import { getAdminStats, getAdminUserGrowth } from "@/lib/api/apis";
+import {
+  getAdminStats,
+  getAdminUserGrowth,
+  getAdminQuizOverview,
+} from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -15,6 +19,7 @@ import {
   FaUserGroup,
   FaUserPlus,
 } from "react-icons/fa6";
+import { MdQuiz, MdOutlineLiveTv, MdOutlineArchive, MdOutlineBarChart } from "react-icons/md";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -86,6 +91,14 @@ const Page = () => {
     },
   });
 
+  const { data: quizOverview, isLoading: isQuizOverviewLoading } = useQuery({
+    queryKey: ["admin-quiz-overview"],
+    queryFn: async () => {
+      const res = await getAdminQuizOverview();
+      return res?.data?.payload;
+    },
+  });
+
   const fmt = (n?: number) => `₦${Number(n ?? 0).toLocaleString()}`;
   const totalUsers = stats?.totalUsers ?? 0;
   const premiumUsers = stats?.premiumUsers ?? 0;
@@ -143,7 +156,7 @@ const Page = () => {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* HEADER SECTION */}
-      <AdminHeader
+      <AdminPageHeader
         title="Admin Dashboard"
         subtitle="Welcome back! Here's what's happening with Genus Lab today."
       />
@@ -155,6 +168,79 @@ const Page = () => {
             <Card key={index} {...cardData} />
           ))}
         </div>
+      </section>
+
+      {/* QUIZ OVERVIEW */}
+      <section>
+        <AdminCard>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-slate-900">Quiz Overview</h2>
+            <Link
+              href="/genuslab/quizzes"
+              className="text-sm font-semibold text-blue-600 hover:underline"
+            >
+              View all quizzes
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              {
+                icon: <MdQuiz />,
+                label: "Total Quizzes",
+                value: (quizOverview?.totalQuizzes ?? 0).toLocaleString(),
+                color: "text-blue-600",
+                bg: "bg-blue-50",
+              },
+              {
+                icon: <MdOutlineLiveTv />,
+                label: "Live",
+                value: (quizOverview?.liveQuizzes ?? 0).toLocaleString(),
+                color: "text-emerald-600",
+                bg: "bg-emerald-50",
+              },
+              {
+                icon: <MdOutlineArchive />,
+                label: "Completed",
+                value: (quizOverview?.completedQuizzes ?? 0).toLocaleString(),
+                color: "text-slate-600",
+                bg: "bg-slate-100",
+              },
+              {
+                icon: <MdOutlineBarChart />,
+                label: "Total Attempts",
+                value: (quizOverview?.totalAttempts ?? 0).toLocaleString(),
+                color: "text-purple-600",
+                bg: "bg-purple-50",
+              },
+              {
+                icon: <MdOutlineBarChart />,
+                label: "Average Score",
+                value: `${Number(quizOverview?.averageScore ?? 0).toFixed(1)}%`,
+                color: "text-orange-600",
+                bg: "bg-orange-50",
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div
+                  className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg",
+                    item.bg,
+                    item.color,
+                  )}
+                >
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-[14px] text-slate-500">{item.label}</p>
+                  <p className="font-data text-lg font-extrabold text-slate-900">
+                    {isQuizOverviewLoading ? "..." : item.value}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </AdminCard>
       </section>
 
       {/* CHART SECTION */}

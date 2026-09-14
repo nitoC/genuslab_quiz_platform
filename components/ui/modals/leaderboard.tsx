@@ -141,7 +141,10 @@ const RankUnlockModal = ({
         <div className="bg-amber-500/[0.03] border border-amber-500/20 rounded-3xl p-6 relative overflow-hidden group">
           {/* <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/40" /> */}
           <div className="flex items-start gap-3">
-            <MdErrorOutline className="text-amber-500 text-xl mt-0.5" />
+            <MdErrorOutline
+              size={50}
+              className="text-amber-500 text-xl mt-0.5"
+            />
             <div className="space-y-2">
               <h5 className="text-amber-500 text-sm font-black uppercase tracking-widest">
                 Rules of Engagement
@@ -160,12 +163,12 @@ const RankUnlockModal = ({
         {/* Footer Toggle */}
         <div className="mt-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-5 bg-blue-600 rounded-full relative p-1 cursor-pointer">
+            {/* <div className="w-10 h-5 bg-blue-600 rounded-full relative p-1 cursor-pointer">
               <div className="w-3 h-3 bg-white rounded-full ml-auto" />
             </div>
             <span className="text-slate-300 text-sm font-bold">
               Notify me on unlock
-            </span>
+            </span> */}
           </div>
           <button className="text-blue-400 text-sm font-bold hover:underline transition-all">
             Learn More about Ranks

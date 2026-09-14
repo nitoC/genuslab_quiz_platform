@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IoGrid } from "react-icons/io5";
 import { BsQuestionSquareFill } from "react-icons/bs";
-import { FaClock, FaCompass, FaUser } from "react-icons/fa";
+import { FaClock, FaCompass, FaUser, FaUserCheck } from "react-icons/fa";
 import { MdLeaderboard } from "react-icons/md";
 import { BiSolidMessageSquareDots, BiLogOut } from "react-icons/bi";
 import Logo from "../ui/Logo";
@@ -44,6 +44,11 @@ const navLinks = [
     label: "Profile",
     href: "/profile",
     icon: FaUser,
+  },
+  {
+    label: "Subscriptions",
+    href: "/subscriptions",
+    icon: FaUserCheck,
   },
   {
     label: "Support",
@@ -146,7 +151,7 @@ const Sidebar = ({ type }: { type?: string }) => {
 
         {/* Pinned Professional Logout Action */}
         <div className="mt-auto border-t border-white/5 pt-4">
-          <button
+          {/* <button
             onClick={handleLogout}
             disabled={loading}
             className={clsx(
@@ -159,7 +164,7 @@ const Sidebar = ({ type }: { type?: string }) => {
               className={clsx("text-blue", loading && "animate-spin")}
             />
             <span>{loading ? "Logging out..." : "Logout"}</span>
-          </button>
+          </button> */}
         </div>
       </aside>
     </>

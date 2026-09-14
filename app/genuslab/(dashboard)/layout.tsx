@@ -1,27 +1,26 @@
 "use client";
 
 import AdminSidebar from "@/components/layouts/AdminSidebar";
+import AdminTopbar from "@/components/layouts/AdminTopbar";
 import AuthProvider from "@/providers/AuthProvider";
 import Provider from "@/providers/QueryProvider";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
-  // const {isLoading, isError,data} = useQuery({queryKey: ["fetchUserData"], queryFn: });
-
   return (
     <Provider>
       <Toaster />
-      <div className="flex">
-        <aside className="grow-0">
+      <div className="flex min-h-screen flex-col">
+        <AdminTopbar />
+        <div className="flex flex-1">
           <AdminSidebar />
-        </aside>
-        <section className="grow p-8">
-          <div className="mx-auto w-full max-w-[1440px]">
-            <AuthProvider>{children}</AuthProvider>
-          </div>
-        </section>
+          <section className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto w-full max-w-[1440px]">
+              <AuthProvider>{children}</AuthProvider>
+            </div>
+          </section>
+        </div>
       </div>
     </Provider>
   );

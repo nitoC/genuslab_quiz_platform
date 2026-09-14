@@ -215,6 +215,11 @@ const EpisodePerformancePage = () => {
                         <MdAccessTime size={15} className="text-slate-400" />
                         <span>Score: {winner.score}</span>
                       </div>
+
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
+                        <MdPerson size={15} className="text-slate-400" />
+                        <span>{leaderboardList.length} Participants</span>
+                      </div>
                     </div>
 
                     <p className="text-slate-400 text-sm md:text-sm leading-relaxed max-w-xl">

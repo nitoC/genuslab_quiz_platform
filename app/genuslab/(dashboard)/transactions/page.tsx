@@ -3,12 +3,14 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import AdminHeader from "@/components/layouts/AdminHeader";
+import Link from "next/link";
+import AdminPageHeader from "@/components/layouts/AdminPageHeader";
 import AdminCard from "@/components/ui/cards/AdminCard";
+import AdminPagination from "@/components/ui/AdminPagination";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
 import { getAllTransactions } from "@/lib/api/apis";
-import { MdChevronLeft, MdChevronRight, MdReceiptLong } from "react-icons/md";
+import { MdReceiptLong, MdChevronRight } from "react-icons/md";
 import { FaCrown, FaGamepad, FaGift, FaMoneyBillWave } from "react-icons/fa";
 
 const STATUS_BADGE: Record<string, BadgeStatus> = {
@@ -74,7 +76,7 @@ const AdminTransactionsPageContent = () => {
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      <AdminHeader
+      <AdminPageHeader
         title="Transactions"
         subtitle="Every transaction across all users on the platform."
       />
@@ -115,27 +117,33 @@ const AdminTransactionsPageContent = () => {
                 <th className="px-6 py-3.5 font-bold text-right">Amount</th>
                 <th className="px-6 py-3.5 font-bold">Status</th>
                 <th className="px-6 py-3.5 font-bold">User ID</th>
+                <th className="px-6 py-3.5 font-bold text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-14 text-center text-slate-400">
+                  <td colSpan={6} className="px-6 py-14 text-center text-slate-400">
                     Loading transactions...
                   </td>
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-14 text-center text-red-400">
-                    Failed to load transactions.
+                  <td colSpan={6} className="px-6 py-14 text-center text-red-400">
+                    Unable to load transactions. Please try again.
                   </td>
                 </tr>
               ) : transactions.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-14 text-center text-slate-400">
+                  <td colSpan={6} className="px-6 py-14 text-center text-slate-400">
                     <div className="flex flex-col items-center gap-2">
                       <MdReceiptLong size={28} className="text-slate-300" />
-                      No transactions found.
+                      <p className="font-semibold text-slate-500">
+                        No transactions yet
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        There are currently no transactions matching your filters.
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -171,6 +179,14 @@ const AdminTransactionsPageContent = () => {
                     <td className="font-data px-6 py-4 text-xs text-slate-400">
                       {tx.userId}
                     </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        href={`/genuslab/transactions/${tx.id}`}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline"
+                      >
+                        View <MdChevronRight size={14} />
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
@@ -178,29 +194,11 @@ const AdminTransactionsPageContent = () => {
           </table>
         </div>
 
-        {meta && meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
-            <p className="text-xs text-slate-500">
-              Page {meta.page} of {meta.totalPages} · {meta.total} transactions
-            </p>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 disabled:opacity-40 hover:bg-slate-50"
-              >
-                <MdChevronLeft size={14} /> Previous
-              </button>
-              <button
-                disabled={page >= meta.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 disabled:opacity-40 hover:bg-slate-50"
-              >
-                Next <MdChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-        )}
+        <AdminPagination
+          meta={meta}
+          onPageChange={setPage}
+          itemLabel="transactions"
+        />
       </AdminCard>
     </div>
   );

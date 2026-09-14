@@ -10,6 +10,8 @@ interface JsonInputCanvasProps {
   setJsonText: (val: string) => void;
   questionRank: string;
   setQuestionRank: (val: string) => void;
+  questionTopic: string;
+  setQuestionTopic: (val: string) => void;
   onFormat: () => void;
   onClear: () => void;
   handleSubmit: () => void;
@@ -22,6 +24,8 @@ export default function JsonInputCanvas({
   setJsonText,
   questionRank,
   setQuestionRank,
+  questionTopic,
+  setQuestionTopic,
   onFormat,
   onClear,
   handleSubmit,
@@ -45,6 +49,13 @@ export default function JsonInputCanvas({
       return res.data.payload;
     },
   });
+
+  // Topics are scoped per rank (Rank.topics in the schema) — only offer
+  // topics that belong to whichever rank is currently selected above.
+  const selectedRank = ranksData.find((a: any) => a.id === questionRank);
+  const topicOptions: string[] = Array.isArray(selectedRank?.topics)
+    ? selectedRank.topics.filter((t: unknown): t is string => typeof t === "string")
+    : [];
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -111,6 +122,9 @@ export default function JsonInputCanvas({
               onChange={(e) => {
                 setQuestionRank(e.target.value);
                 setRankId(e.target.value);
+                // Topics are scoped per rank — a topic chosen for the
+                // previous rank won't necessarily be valid for the new one.
+                setQuestionTopic("");
               }}
               className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:border-blue-500"
             >
@@ -133,11 +147,34 @@ export default function JsonInputCanvas({
             />
           </div>
 
+          {/* Topic — applied to every question in the batch below, unless a
+              question in the pasted JSON sets its own `topic` field. */}
+          <div className="flex flex-col gap-1.5 max-w-xs">
+            <label className="text-sm font-semibold text-slate-500">
+              Select Question Topic
+            </label>
+            <select
+              value={questionTopic}
+              onChange={(e) => setQuestionTopic(e.target.value)}
+              disabled={topicOptions.length === 0}
+              className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:border-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
+            >
+              <option value="">
+                {topicOptions.length ? "Select Topic" : "Select a rank first"}
+              </option>
+              {topicOptions.map((topic) => (
+                <option value={topic} key={topic}>
+                  {topic}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Textarea Workspace */}
           <textarea
             value={jsonText}
             onChange={(e) => setJsonText(e.target.value)}
-            placeholder={`[\n  {\n    "questionText": "What is the primary color of EduFlow?",\n    "options": ["Blue", "Red", "Green", "Yellow"],\n    "answer": 0,\n    "answerDescription": "Blue represents trust...",\n    "difficulty": "easy",\n    "rankId": "xxxkeyt..."\n  }\n]`}
+            placeholder={`[\n  {\n    "questionText": "What is the primary color of EduFlow?",\n    "options": ["Blue", "Red", "Green", "Yellow"],\n    "answer": 0,\n    "answerDescription": "Blue represents trust...",\n    "difficulty": "easy",\n    "rankId": "xxxkeyt...",\n    "topic": "Optional — overrides the Topic selected above"\n  }\n]`}
             className="w-full h-96 p-4 font-mono text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-slate-700 resize-none leading-relaxed"
           />
         </div>

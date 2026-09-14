@@ -671,6 +671,270 @@ export const getAdminUserGrowth = async (
   return res;
 };
 
+export const getAdminQuizOverview = async () => {
+  const res = await axiosAdmin.get("admin/stats/quizzes");
+  return res;
+};
+
+export const getAdminFinanceOverview = async () => {
+  const res = await axiosAdmin.get("admin/stats/finance");
+  return res;
+};
+
+export interface RankInput {
+  rank: number;
+  rankName: string;
+  unlockXp: number;
+  multiplier: number;
+  reward: number;
+  topics?: string[];
+}
+
+export const getAdminRanks = async () => {
+  const res = await axiosAdmin.get("rank/admin/all");
+  return res;
+};
+
+export const createAdminRank = async (payload: RankInput) => {
+  const res = await axiosAdmin.post("rank/admin", payload);
+  return res;
+};
+
+export const updateAdminRank = async (
+  id: string,
+  payload: Partial<RankInput>,
+) => {
+  const res = await axiosAdmin.patch(`rank/admin/${id}`, payload);
+  return res;
+};
+
+export const deleteAdminRank = async (id: string) => {
+  const res = await axiosAdmin.delete(`rank/admin/${id}`);
+  return res;
+};
+
+export const getAdminSubscriptions = async (params: {
+  plan?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("subscription/admin/all", { params });
+  return res;
+};
+
+export const getAdminSubscriptionSummary = async () => {
+  const res = await axiosAdmin.get("subscription/admin/summary");
+  return res;
+};
+
+export const getSubscriptionById = async (id: string) => {
+  const res = await axiosAdmin.get(`subscription/${id}`);
+  return res;
+};
+
+export const getAdminReferrals = async (params: {
+  verified?: boolean;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("referral/admin/all", { params });
+  return res;
+};
+
+export const getAdminReferralSummary = async () => {
+  const res = await axiosAdmin.get("referral/admin/summary");
+  return res;
+};
+
+export const getAdminReferralById = async (id: string) => {
+  const res = await axiosAdmin.get(`referral/admin/${id}`);
+  return res;
+};
+
+export const getAdminContacts = async (params: {
+  type?: string;
+  read?: boolean;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("contact/admin/all", { params });
+  return res;
+};
+
+export const getAdminContactSummary = async () => {
+  const res = await axiosAdmin.get("contact/admin/summary");
+  return res;
+};
+
+export const getAdminContactById = async (id: string) => {
+  const res = await axiosAdmin.get(`contact/${id}`);
+  return res;
+};
+
+export const markContactAsRead = async (id: string) => {
+  const res = await axiosAdmin.patch(`contact/${id}/read`);
+  return res;
+};
+
+export interface BroadcastNotificationInput {
+  title: string;
+  content: string;
+  actionUrl?: string;
+  audience: "all" | "premium" | "free" | "specific";
+  userIds?: string[];
+}
+
+export const broadcastNotification = async (
+  payload: BroadcastNotificationInput,
+) => {
+  const res = await axiosAdmin.post("notification/admin/broadcast", payload);
+  return res;
+};
+
+export const getAdminNotificationHistory = async (params: {
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("notification/admin/all", { params });
+  return res;
+};
+
+export const getAdminNotificationSummary = async () => {
+  const res = await axiosAdmin.get("notification/admin/summary");
+  return res;
+};
+
+export const getAdminNotificationDetail = async (id: string) => {
+  const res = await axiosAdmin.get(`notification/admin/${id}`);
+  return res;
+};
+
+export const getAdminSessions = async (params: {
+  status?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("session/admin/all", { params });
+  return res;
+};
+
+export const getAdminSessionSummary = async () => {
+  const res = await axiosAdmin.get("session/admin/summary");
+  return res;
+};
+
+export const getAdminSessionById = async (id: string) => {
+  const res = await axiosAdmin.get(`session/admin/${id}`);
+  return res;
+};
+
+export const getAdminUserSessions = async (userId: string) => {
+  const res = await axiosAdmin.get(`session/admin/user/${userId}`);
+  return res;
+};
+
+export const revokeAdminSession = async (id: string) => {
+  const res = await axiosAdmin.patch(`session/admin/${id}/revoke`);
+  return res;
+};
+
+export const getStudioQuizzes = async (params: {
+  status?: string;
+  month?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("studio-quiz", { params });
+  return res;
+};
+
+export const getStudioQuizById = async (id: string) => {
+  const res = await axiosAdmin.get(`studio-quiz/${id}`);
+  return res;
+};
+
+export interface CreateStudioQuizInput {
+  title: string;
+  description?: string;
+  month: string;
+  scheduledAt?: string;
+  mediaUrl?: string;
+  attachmentUrl?: string;
+  autoAssignWinners?: boolean;
+  winnersPerWeek?: number;
+}
+
+export const createStudioQuiz = async (payload: CreateStudioQuizInput) => {
+  const res = await axiosAdmin.post("studio-quiz", payload);
+  return res;
+};
+
+export const updateStudioQuizStatus = async (id: string, status: string) => {
+  const res = await axiosAdmin.patch(`studio-quiz/${id}/status`, { status });
+  return res;
+};
+
+export const deleteStudioQuiz = async (id: string) => {
+  const res = await axiosAdmin.delete(`studio-quiz/${id}`);
+  return res;
+};
+
+export const getStudioQuizWinnersForMonth = async (
+  month: string,
+  winnersPerWeek?: number,
+) => {
+  const res = await axiosAdmin.get(`studio-quiz/winners/month/${month}`, {
+    params: { winnersPerWeek },
+  });
+  return res;
+};
+
+export const getStudioQuizParticipantsForMonth = async (
+  month: string,
+  winnersPerWeek?: number,
+) => {
+  const res = await axiosAdmin.get(`studio-quiz/participants/month/${month}`, {
+    params: { winnersPerWeek },
+  });
+  return res;
+};
+
+export const addStudioQuizParticipant = async (
+  id: string,
+  payload: { userDetailsId: string; week: string; position?: number; score?: number },
+) => {
+  const res = await axiosAdmin.post(`studio-quiz/${id}/participants`, payload);
+  return res;
+};
+
+export const removeStudioQuizParticipant = async (
+  id: string,
+  participantId: string,
+) => {
+  const res = await axiosAdmin.delete(
+    `studio-quiz/${id}/participants/${participantId}`,
+  );
+  return res;
+};
+
+export const uploadStudioQuizResults = async (
+  id: string,
+  payload: {
+    results: {
+      userDetailsId: string;
+      score: number;
+      position?: number;
+      prize?: number;
+      evidenceUrl?: string;
+    }[];
+    markCompleted?: boolean;
+  },
+) => {
+  const res = await axiosAdmin.post(`studio-quiz/${id}/results`, payload);
+  return res;
+};
+
 export const getAdminUsers = async (params?: {
   search?: string;
   status?: string;

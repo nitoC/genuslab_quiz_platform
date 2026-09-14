@@ -271,6 +271,9 @@ export default function QuizDetailsPage({
           | "medium"
           | "hard",
         rankId: ranksData.find((b: any) => b.rankName === a.rankRequirement).id,
+        // Matches one of the selected rank's `topics` entries — see
+        // AdminQuestionCreate.tsx's topic dropdown.
+        topic: a.topic || undefined,
         options: a.options.map((a) => a.text),
         answerDescription: a.explanation,
         quizId: id,

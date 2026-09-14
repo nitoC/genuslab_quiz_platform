@@ -81,6 +81,7 @@ export default function QuestionBuilder({
         questionText: "",
         difficulty: "medium",
         rankRequirement: "Fresh Mind",
+        topic: "",
         options: [],
         explanation: "",
         hint: "",
@@ -268,6 +269,20 @@ const AdminQuestionCard = ({
     value: a.id,
   }));
 
+  // Topics are scoped per rank (Rank.topics in the schema) — look up the
+  // currently selected rank's topic list so the topic dropdown only ever
+  // offers values that are valid for that rank.
+  const selectedRank = rank.find(
+    (a: any) => a.rankName === question.rankRequirement,
+  );
+  const topicOptions: { label: string; value: string }[] = Array.isArray(
+    selectedRank?.topics,
+  )
+    ? selectedRank.topics
+        .filter((t: unknown): t is string => typeof t === "string")
+        .map((t: string) => ({ label: t, value: t }))
+    : [];
+
   console.log(filteredRank, "filtered");
   console.log(question.rankRequirement, "question");
 
@@ -376,10 +391,38 @@ const AdminQuestionCard = ({
               label={question.rankRequirement}
               // value={question.rankRequirement}
               onChange={(value: string) =>
-                updateQuestion(question, "rankRequirement", value)
+                // Topics are scoped per rank, so a topic picked for the
+                // previous rank is no longer valid — clear it in the same
+                // update instead of leaving a stale value behind.
+                updateQuestion(
+                  { ...question, rankRequirement: value },
+                  "topic",
+                  "",
+                )
               }
             />
           </div>
+        </div>
+
+        {/* Topic */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-slate-700">
+            Topic
+          </label>
+
+          <CustomSelect
+            options={topicOptions}
+            placeholder={
+              topicOptions.length
+                ? "Select topic..."
+                : "Select a rank first..."
+            }
+            disabled={topicOptions.length === 0}
+            label={question.topic}
+            onChange={(value: string) =>
+              updateQuestion(question, "topic", value)
+            }
+          />
         </div>
 
         {/* Options */}

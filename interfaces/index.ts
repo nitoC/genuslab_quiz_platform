@@ -9,6 +9,9 @@ export interface IQuestion {
   questionText: string;
   difficulty: "easy" | "medium" | "hard";
   rankRequirement: string;
+  // Must be one of the strings in the selected rank's `topics` list
+  // (Rank.topics in the Prisma schema) — see AdminQuestionCreate.tsx.
+  topic: string;
   options: AnswerOption[];
   explanation: string;
   hint: string;
@@ -20,6 +23,9 @@ export interface IQuestionSubmit {
   questionText: string;
   difficulty: "easy" | "medium" | "hard";
   rankId: string;
+  // Optional to match `Question.topic String?` in the Prisma schema —
+  // used server-side to draw rank/topic-matched quiz questions.
+  topic?: string;
   options: string[];
   answerDescription: string;
   quizId?: string;

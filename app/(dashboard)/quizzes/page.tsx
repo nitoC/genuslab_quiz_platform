@@ -29,6 +29,7 @@ import { deAT } from "date-fns/locale";
 import TimerPop from "@/features/quiz/components/TimerPop";
 import useSlots from "@/hooks/useSlots";
 import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
+import { formater } from "@/lib/utils/numFormatter";
 
 // Active quizzes surface first, archived/expired ones sink to the bottom.
 const statusPriority = (status: string) => {
@@ -378,6 +379,7 @@ const QuizCard = ({
   id,
   time,
   pool,
+  ...quiz
 }: {
   day: string;
   episode: number;
@@ -388,11 +390,9 @@ const QuizCard = ({
   poster: string;
   time: string;
   pool: number;
+  [key: string]: any;
 }) => {
-  const formater = new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    compactDisplay: "short",
-  });
+  const joinedCount = quiz._count?.attempts ?? participants ?? null;
 
   if (!status) return;
   const normalizedStatus = status.toLowerCase();
@@ -446,12 +446,12 @@ const QuizCard = ({
           </div>
         </div>
         <div>
-          {participants ? (
+          {joinedCount ? (
             <p className="text-grey">
               <span className="text-white text-3xl">
-                {formater.format(participants)}
+                {formater(joinedCount)}
               </span>{" "}
-              participants
+              joined
             </p>
           ) : (
             <p className="text-white text-3xl capitalize">{status}</p>
@@ -463,7 +463,7 @@ const QuizCard = ({
         <div>
           <p className="text-sm text-grey">Total Reward</p>
           <p className="text-lg font-bold text-(--primary)">
-            ₦{formater.format(pool)}
+            ₦{formater(pool)}
           </p>
         </div>
         <Link

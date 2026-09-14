@@ -9,7 +9,7 @@ import {
   MdArrowBack,
   MdCancel,
   MdCheckCircle,
-  MdEmojiEvents,
+  MdGroups,
   MdInfo,
   MdReplay,
 } from "react-icons/md";
@@ -19,6 +19,21 @@ import { useQuery } from "@tanstack/react-query";
 import { getAttemptsAnswers } from "@/lib/api/apis";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import { format } from "date-fns";
+
+// Three unequal bars standing in for a podium — reads as "rankings" at a
+// glance without reaching for the same trophy glyph every quiz app uses.
+const PodiumMark = ({ className = "" }: { className?: string }) => (
+  <svg
+    viewBox="0 0 28 22"
+    className={className}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="1" y="9" width="7" height="12" rx="1.5" fill="#C0C6D1" />
+    <rect x="10.5" y="2" width="7" height="19" rx="1.5" fill="#F5B94E" />
+    <rect x="20" y="12" width="7" height="9" rx="1.5" fill="#C97A3D" />
+  </svg>
+);
 
 // Interfaces for structured type-safety matching review properties
 interface OptionReview {
@@ -87,8 +102,14 @@ const QuizReviewPage = () => {
       return res?.data?.payload;
     },
   });
+  const quiz = data?.quiz;
+  const winnersDateStr = quiz?.activeDate
+    ? format(quiz.activeDate, "dd-MM-yyyy")
+    : null;
+  const participantCount = quiz?._count?.attempts;
+
   if (!data || isLoading) return <p> loading.. </p>;
-  const { quizAnswers, userDetailsId, quiz } = data;
+  const { quizAnswers, userDetailsId } = data;
 
   return (
     <>
@@ -106,6 +127,13 @@ const QuizReviewPage = () => {
                   Analyze your attempt performance and read core concept
                   insights.
                 </p>
+                {participantCount !== undefined && (
+                  <p className="flex items-center gap-1.5 text-sm text-slate-400 mt-2">
+                    <MdGroups size={16} className="text-slate-500" />
+                    {participantCount} participant
+                    {participantCount === 1 ? "" : "s"} took this quiz
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <Link
@@ -249,16 +277,22 @@ const QuizReviewPage = () => {
             </div>
           </div>
 
-          {/* Floating Glass Button for Winners */}
-
+          {/* Edge-docked Leaderboard tab: sits flush against the viewport
+              edge like a bookmark and slides fully into view on hover,
+              rather than another floating pill button. */}
           <Link
-            href={`/quizzes/previous/leaderboard?date=${format(quiz?.activeDate, "dd-MM-yyyy")}&episode=${quiz?.episode}`}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3 rounded-full bg-blue-900/60 text-white-300 font-bold text-sm hover:bg-amber-500/20 hover:text-white-200 hover:scale-105 active:scale-95 transition-all duration-300 group"
+            href={`/quizzes/previous/leaderboard?date=${winnersDateStr}&episode=${quiz?.episode}`}
+            className="fixed right-0 top-1/2 z-50 flex -translate-y-1/2 translate-x-9 items-center gap-3 rounded-l-2xl border border-r-0 border-white/10 bg-[#0d1526] py-4 pl-4 pr-5 shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-transform duration-300 ease-out hover:translate-x-0 focus-visible:translate-x-0"
           >
-            <div className="p-1.5 rounded-full bg-white-500/20 border border-blue-500/30 text-white group-hover:bg-blue-500 group-hover:text-slate-900 transition-colors">
-              <MdEmojiEvents size={20} />
-            </div>
-            <span className="tracking-wide">Winners</span>
+            <PodiumMark className="h-7 w-9 shrink-0" />
+            <span className="flex flex-col leading-tight">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Episode
+              </span>
+              <span className="text-sm font-bold text-white">
+                Leaderboard
+              </span>
+            </span>
           </Link>
         </div>
       </Layout>
