@@ -176,7 +176,7 @@ const responseInterceptor = async (
           useUser.getState().logout();
           toast.error("user unauthorised");
           type === "admin"
-            ? (window.location.href = "genuslab/admin")
+            ? (window.location.href = "/genuslab/admin")
             : (window.location.href = "/login");
           return Promise.reject(err);
         }

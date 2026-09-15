@@ -2,6 +2,7 @@
 
 import AdminHeader from "@/components/layouts/AdminHeader";
 import AdminQuiz from "@/components/ui/cards/AdminQuiz";
+import AdminPagination from "@/components/ui/AdminPagination";
 import EmptyQuizState from "@/features/quiz/components/EmptyData";
 import QuizMatrix from "@/features/quiz/components/skeletons/QuizMatrix";
 import { deleteQuiz, getAllQuiz } from "@/lib/api/apis";
@@ -11,9 +12,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa6";
 
+const PAGE_SIZE = 12;
+
 export default function QuizManagementPage() {
   const queryClient = useQueryClient();
   const [active, setActive] = useState("Live Quizzes");
+  const [page, setPage] = useState(1);
 
   const tabs = [
     { name: "Live Quizzes", href: "#", current: false, value: "ACTIVE" },
@@ -23,21 +27,31 @@ export default function QuizManagementPage() {
     { name: "Upcoming Quizzes", href: "#", current: false, value: "UPCOMING" },
   ];
 
-  const {
-    data: quizzes = [],
-    isError,
-    isLoading,
-  } = useQuery({
-    queryKey: ["quizzes", active],
+  const handleTabChange = (tabName: string) => {
+    setActive(tabName);
+    setPage(1);
+  };
+
+  const { data, isError, isLoading } = useQuery({
+    queryKey: ["quizzes", active, page],
     queryFn: async () => {
       const tabVal = tabs.find((a) => a.name === active);
-      const res = await getAllQuiz(tabVal?.value as string);
+      const res = await getAllQuiz(tabVal?.value as string, page, PAGE_SIZE);
       // console.log(res, "res");
-      return res?.data?.payload ?? [];
+      const payload = res?.data?.payload;
+      return {
+        quizzes: payload?.data ?? payload ?? [],
+        meta: payload?.meta,
+      };
     },
   });
 
-  const quizzesTransform = quizzes.sort((a: any, b: any) => a.day - b.day);
+  const quizzes = data?.quizzes ?? [];
+  const meta = data?.meta;
+
+  const quizzesTransform = [...quizzes].sort(
+    (a: any, b: any) => a.day - b.day
+  );
 
   console.log(quizzesTransform);
 
@@ -76,7 +90,7 @@ export default function QuizManagementPage() {
           {tabs.map((tab) => (
             <button
               key={tab.name}
-              onClick={() => setActive(tab.name)}
+              onClick={() => handleTabChange(tab.name)}
               className={`px-4 py-2 cursor-pointer text-sm font-medium rounded-lg transition-colors ${
                 active === tab.name
                   ? "bg-blue-100 text-blue-700"
@@ -126,6 +140,17 @@ export default function QuizManagementPage() {
           </div>
         )}
       </section>
+
+      {/* PAGINATION */}
+      {!isLoading && quizzes.length > 0 && (
+        <div className="px-8">
+          <AdminPagination
+            meta={meta}
+            onPageChange={setPage}
+            itemLabel="quizzes"
+          />
+        </div>
+      )}
 
       {/* BOTTOM DASHED ACTION BANNER */}
       {!isLoading && quizzes.length > 0 && (

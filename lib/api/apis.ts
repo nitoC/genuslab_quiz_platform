@@ -574,8 +574,14 @@ export const fetchQuizDetails = async (id: string) => {
   return res;
 };
 
-export const getAllQuiz = async (query: string) => {
-  const res = await axiosAdmin.get(`quiz/status?status=${query.toUpperCase()}`);
+export const getAllQuiz = async (
+  query: string,
+  page: number = 1,
+  limit: number = 10
+) => {
+  const res = await axiosAdmin.get(
+    `quiz/status?status=${query.toUpperCase()}&page=${page}&limit=${limit}`
+  );
   return res;
 };
 export const getAllActiveQuiz = async () => {
