@@ -193,14 +193,16 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       >
-        <GlassCard className="relative w-full max-w-md overflow-hidden rounded-2xl p-6 shadow-2xl">
+        <GlassCard className="relative w-full max-w-md overflow-hidden rounded-lg p-6 shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-white/10">
-            <h3 className="text-lg font-semibold text-white">Upload Avatar</h3>
+            <h3 className="text-lg font-semibold text-(--primary)">
+              Upload Avatar
+            </h3>
             <button
               onClick={() => handleModal(false)}
               disabled={uploading}
-              className="rounded-full p-1 text-white/70 hover:bg-white/10 hover:text-white transition"
+              className="rounded-full p-1 text-grey hover:bg-white/10 hover:text-(--primary) transition"
             >
               <BiX size={24} />
             </button>
@@ -208,7 +210,7 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
 
           {/* Error Alert */}
           {error && (
-            <div className="mt-4 rounded-lg bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/20">
+            <div className="mt-4 rounded-lg bg-red/10 p-3 text-sm text-red border border-red/20">
               {error}
             </div>
           )}
@@ -219,19 +221,19 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
               <div
                 {...getRootProps()}
                 className={clsx(
-                  "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition cursor-pointer",
+                  "flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 text-center transition cursor-pointer",
                   isDragActive
-                    ? "border-blue-500 bg-blue-500/10"
+                    ? "border-blue bg-blue/10"
                     : "border-white/20 hover:border-white/40 hover:bg-white/5",
                 )}
               >
                 <input {...getInputProps()} />
-                <BiCloudUpload className="mb-2 text-4xl text-white/60" />
-                <p className="text-sm font-medium text-white">
+                <BiCloudUpload className="mb-2 text-4xl text-grey" />
+                <p className="text-sm font-medium text-(--primary)">
                   Drag & drop your photo here, or{" "}
-                  <span className="text-blue-400">browse</span>
+                  <span className="text-blue">browse</span>
                 </p>
-                <p className="mt-1 text-sm text-white/40">
+                <p className="mt-1 text-sm text-grey">
                   PNG, JPG or WEBP (Max. 5 MB)
                 </p>
               </div>
@@ -246,16 +248,16 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
                   />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-medium text-white truncate max-w-[200px]">
+                  <p className="text-sm font-medium text-(--primary) truncate max-w-[200px]">
                     {file?.name}
                   </p>
-                  <p className="text-sm text-white/50">{readableSize}</p>
+                  <p className="text-sm text-grey">{readableSize}</p>
                 </div>
 
                 {!uploading && !success && (
                   <button
                     onClick={removeImage}
-                    className="flex items-center gap-1 text-sm text-red-400 hover:text-red-300 transition"
+                    className="flex items-center gap-1 text-sm text-red hover:text-red/80 transition"
                   >
                     <BiTrash /> Remove
                   </button>
@@ -269,11 +271,11 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
             <div className="mt-4 space-y-1">
               <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
                 <div
-                  className="h-full bg-blue-500 transition-all duration-300 ease-out"
+                  className="h-full bg-blue transition-all duration-300 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-right text-sm text-white/60">{progress}%</p>
+              <p className="text-right text-sm text-grey">{progress}%</p>
             </div>
           )}
 
@@ -282,7 +284,7 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
             <button
               onClick={() => handleModal(false)}
               disabled={uploading}
-              className="rounded-lg px-4 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition disabled:opacity-50"
+              className="rounded-lg px-4 py-2 text-sm text-grey hover:bg-white/10 hover:text-(--primary) transition disabled:opacity-50"
             >
               Cancel
             </button>
@@ -292,8 +294,8 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
               className={clsx(
                 "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition",
                 success
-                  ? "bg-green-500 text-white"
-                  : "bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 disabled:hover:bg-blue-600",
+                  ? "bg-green text-white"
+                  : "bg-blue hover:bg-blue/90 text-white disabled:opacity-50",
               )}
             >
               {uploading ? (

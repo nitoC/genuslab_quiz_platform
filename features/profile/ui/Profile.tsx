@@ -63,12 +63,12 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
   if (isError) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
-        <GlassCard className="p-8 max-w-md w-full border-red-500/20 bg-red-500/5 backdrop-blur-xl text-center flex flex-col items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+        <GlassCard className="p-8 max-w-md w-full border-red/20 bg-red/5 backdrop-blur-xl text-center flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-red/10 border border-red/20 flex items-center justify-center text-red">
             <MdErrorOutline size={30} />
           </div>
           <div>
-            <h3 className="text-white font-bold text-lg mb-1">
+            <h3 className="text-(--primary) font-bold text-lg mb-1">
               Unable to Load Rewards
             </h3>
             <p className="text-grey text-sm leading-relaxed">
@@ -78,7 +78,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
           </div>
           <button
             onClick={() => refetch()}
-            className="mt-2 flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/10 text-sm px-5 py-2.5 rounded-full transition-all duration-200"
+            className="mt-2 flex items-center gap-2 bg-white/10 hover:bg-white/15 text-(--primary) border border-white/10 text-sm px-5 py-2.5 rounded-lg transition-all duration-200"
           >
             <MdRefresh size={16} /> Retry
           </button>
@@ -158,7 +158,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                     <p className="text-grey flex gap-2 items-center uppercase">
-                      <MdStars className="text-orange-400" /> Quiz Winnings
+                      <MdStars className="text-yellow" /> Quiz Winnings
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
                       ₦
@@ -214,7 +214,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                               ) : (
                                 <MdStars
                                   size={18}
-                                  className="text-orange-400"
+                                  className="text-yellow"
                                 />
                               )}
                             </div>
@@ -228,7 +228,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-bold text-green-400">
+                            <p className="text-sm font-bold text-green">
                               +₦
                               {amount.toLocaleString("en-US", {
                                 minimumFractionDigits: 2,
@@ -264,7 +264,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                   text="View Active Quizzes"
                   type="link"
                   to="/quizzes"
-                  style="bg-blue text-white rounded-full px-6 py-2 text-sm font-semibold mt-2"
+                  style="bg-blue text-white rounded-lg px-6 py-2 text-sm font-semibold mt-2"
                 />
               </div>
             )}
@@ -283,12 +283,12 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
             </h4>
             <div className="flex flex-col gap-6">
               <StatRow
-                icon={<FaCheckCircle className="text-green-500" />}
+                icon={<FaCheckCircle className="text-green" />}
                 label="Quizzes Completed"
                 value={user?.details?._count?.quizHistory}
               />
               <StatRow
-                icon={<MdGroups className="text-purple-500" />}
+                icon={<MdGroups className="text-blue" />}
                 label="Referrals"
                 value={user?.referrals?.length ?? 0}
               />

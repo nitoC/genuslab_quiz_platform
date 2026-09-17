@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils/cn";
 import { useQuery } from "@tanstack/react-query";
 import { getUserTransactions, getTotalRewards } from "@/lib/api/apis"; // adjust import path to your api file
 import useUser from "@/hooks/useUser";
+import GlassBadge from "@/components/ui/GlassBadge";
 
 export type TransactionTypeFilter = "all" | "referral" | "rewards" | "plan";
 
@@ -58,10 +59,10 @@ const TransactionItem = ({
 }: TransactionItemProps) => {
   const isCredit = type === "credit";
 
-  const statusStyles = {
-    Completed: "text-emerald-400 bg-emerald-400/10",
-    Processing: "text-amber-400 bg-amber-400/10",
-    Failed: "text-rose-400 bg-rose-400/10",
+  const statusVariant = {
+    Completed: "success" as const,
+    Processing: "warning" as const,
+    Failed: "danger" as const,
   };
 
   return (
@@ -69,15 +70,15 @@ const TransactionItem = ({
       <div className="p-4 md:p-5 flex items-center justify-between gap-3">
         {/* Left Section: Icon & Info */}
         <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
-          <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-xl bg-white/5 border border-white/5">
+          <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-lg bg-white/5 border border-white/5">
             {icon}
           </div>
 
           <div className="min-w-0">
-            <h4 className="text-white font-bold text-sm md:text-base truncate">
+            <h4 className="text-(--primary) font-bold text-sm md:text-base truncate">
               {title}
             </h4>
-            <p className="text-[14px] md:text-sm text-slate-500 truncate mt-0.5">
+            <p className="text-[14px] md:text-sm text-grey truncate mt-0.5">
               {description}
             </p>
           </div>
@@ -86,27 +87,20 @@ const TransactionItem = ({
         {/* Right Section: Amount & Meta */}
         <div className="flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-8 shrink-0">
           <div className="hidden md:flex flex-col text-right">
-            <p className="text-[14px] text-white font-medium">{date}</p>
-            <p className="text-[14px] text-slate-500 uppercase">{time}</p>
+            <p className="text-[14px] text-(--primary) font-medium">{date}</p>
+            <p className="text-[14px] text-grey uppercase">{time}</p>
           </div>
 
           <div className="flex flex-col items-end gap-1.5">
             <p
               className={cn(
                 "font-bold text-sm md:text-base",
-                isCredit ? "text-emerald-400" : "text-rose-400",
+                isCredit ? "text-green" : "text-red",
               )}
             >
               {isCredit ? "+" : "-"}₦{amount}
             </p>
-            <span
-              className={cn(
-                "text-[14px] md:text-[14px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md",
-                statusStyles[status],
-              )}
-            >
-              {status}
-            </span>
+            <GlassBadge variant={statusVariant[status]}>{status}</GlassBadge>
           </div>
         </div>
       </div>
@@ -149,12 +143,11 @@ const mapStatus = (status: string): "Completed" | "Processing" | "Failed" => {
 
 const getIconForType = (type: string) => {
   const lower = type?.toLowerCase() || "";
-  if (lower === "plan") return <FaCrown className="text-blue-400 text-lg" />;
+  if (lower === "plan") return <FaCrown className="text-blue text-lg" />;
   if (lower === "referral")
-    return <MdCardGiftcard className="text-emerald-400 text-xl" />;
-  if (lower === "rewards")
-    return <FaTrophy className="text-emerald-400 text-lg" />;
-  return <FaUniversity className="text-amber-400 text-lg" />;
+    return <MdCardGiftcard className="text-green text-xl" />;
+  if (lower === "rewards") return <FaTrophy className="text-green text-lg" />;
+  return <FaUniversity className="text-yellow text-lg" />;
 };
 
 const TransactionsPage = () => {
@@ -327,21 +320,21 @@ const TransactionsPage = () => {
       <main className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-[1200px] mx-auto">
         {/* Page Intro */}
         <div className="space-y-1">
-          <h2 className="text-white text-xl md:text-2xl font-bold">
+          <h2 className="text-(--primary) text-xl md:text-2xl font-bold">
             Transaction History
           </h2>
-          <p className="text-slate-500 text-sm md:text-sm">
+          <p className="text-grey text-sm md:text-sm">
             Manage and track your financial activities with precision.
           </p>
         </div>
 
         {/* Current Reward Card */}
-        <GlassCard className="w-full md:w-[320px] bg-gradient-to-br from-blue-600/20 to-transparent border-blue-500/20">
+        <GlassCard className="w-full md:w-[320px]">
           <div className="p-6 space-y-3">
-            <p className="text-[14px] md:text-sm text-slate-400 font-bold uppercase tracking-widest">
+            <p className="text-[14px] md:text-sm text-grey font-bold uppercase tracking-widest">
               Current reward
             </p>
-            <h2 className="text-3xl md:text-4xl font-black text-white">
+            <h2 className="text-3xl md:text-4xl font-black text-(--primary)">
               {isRewardLoading
                 ? "₦..."
                 : `₦${Number(currentReward || 0).toLocaleString()}`}
@@ -350,15 +343,13 @@ const TransactionsPage = () => {
               <div
                 className={cn(
                   "w-2 h-2 rounded-full",
-                  currentReward > 0
-                    ? "bg-emerald-500 animate-pulse"
-                    : "bg-slate-500",
+                  currentReward > 0 ? "bg-green" : "bg-grey",
                 )}
               />
               <span
                 className={cn(
                   "text-[14px] font-bold uppercase",
-                  currentReward > 0 ? "text-emerald-500" : "text-slate-500",
+                  currentReward > 0 ? "text-green" : "text-grey",
                 )}
               >
                 {currentReward > 0 ? "Active Reward" : "No Active Reward"}
@@ -376,10 +367,10 @@ const TransactionsPage = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={cn(
-                  "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all cursor-pointer",
+                  "px-5 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all cursor-pointer",
                   activeTab === tab
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                    : "bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10",
+                    ? "bg-blue text-white"
+                    : "bg-white/5 text-grey border border-white/5 hover:bg-white/10",
                 )}
               >
                 {tab}
@@ -391,12 +382,12 @@ const TransactionsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             {/* Search Input */}
             <div className="relative md:col-span-5">
-              <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl" />
+              <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-grey text-xl" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search transactions, IDs..."
-                className="w-full bg-white/5 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm outline-none text-white focus:border-blue-500/50 transition-colors"
+                className="w-full bg-white/5 border border-white/5 rounded-lg pl-11 pr-4 py-3 text-sm outline-none text-(--primary) focus:border-blue/50 transition-colors"
               />
             </div>
 
@@ -405,20 +396,20 @@ const TransactionsPage = () => {
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
-                className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-sm md:text-sm font-bold text-slate-300 flex items-center justify-between outline-none hover:bg-white/10 focus:border-blue-500/50 transition-all cursor-pointer"
+                className="w-full bg-white/5 border border-white/5 rounded-lg px-4 py-3 text-sm md:text-sm font-bold text-grey flex items-center justify-between outline-none hover:bg-white/10 focus:border-blue/50 transition-all cursor-pointer"
               >
                 <span className="truncate">Type: {selectedTypeLabel}</span>
                 <MdExpandMore
                   className={cn(
-                    "text-slate-400 text-lg transition-transform duration-200",
-                    isDropdownOpen && "rotate-180 text-blue-400",
+                    "text-grey text-lg transition-transform duration-200",
+                    isDropdownOpen && "rotate-180 text-blue",
                   )}
                 />
               </button>
 
               {/* Custom Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-xl bg-slate-900/95 border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden py-1 space-y-0.5">
+                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-lg bg-background-dark-secondary border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden py-1 space-y-0.5">
                   {TYPE_OPTIONS.map((opt) => {
                     const isSelected = selectedType === opt.value;
                     return (
@@ -432,13 +423,13 @@ const TransactionsPage = () => {
                         className={cn(
                           "w-full px-4 py-2.5 text-sm font-medium flex items-center justify-between transition-all cursor-pointer text-left",
                           isSelected
-                            ? "bg-blue-600/20 text-blue-400 font-bold"
-                            : "text-slate-300 hover:bg-white/5 hover:text-white",
+                            ? "bg-blue/20 text-blue font-bold"
+                            : "text-grey hover:bg-white/5 hover:text-(--primary)",
                         )}
                       >
                         <span>{opt.label}</span>
                         {isSelected && (
-                          <MdCheck className="text-blue-400 text-base" />
+                          <MdCheck className="text-blue text-base" />
                         )}
                       </button>
                     );
@@ -454,7 +445,7 @@ const TransactionsPage = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-xl px-3 py-3 text-sm font-medium text-slate-300 outline-none focus:border-blue-500/50 transition-colors [color-scheme:dark]"
+                  className="w-full bg-white/5 border border-white/5 rounded-lg px-3 py-3 text-sm font-medium text-grey outline-none focus:border-blue/50 transition-colors [color-scheme:dark]"
                   placeholder="From Date"
                 />
               </div>
@@ -463,7 +454,7 @@ const TransactionsPage = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-xl px-3 py-3 text-sm font-medium text-slate-300 outline-none focus:border-blue-500/50 transition-colors [color-scheme:dark]"
+                  className="w-full bg-white/5 border border-white/5 rounded-lg px-3 py-3 text-sm font-medium text-grey outline-none focus:border-blue/50 transition-colors [color-scheme:dark]"
                   placeholder="To Date"
                 />
               </div>
@@ -475,7 +466,7 @@ const TransactionsPage = () => {
         <div className="space-y-3 min-h-[260px]">
           {isLoading ? (
             <div className="py-12 flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-blue border-t-transparent rounded-full animate-spin" />
             </div>
           ) : filteredTransactions.length > 0 ? (
             filteredTransactions.map((tx) => (
@@ -494,19 +485,19 @@ const TransactionsPage = () => {
           ) : (
             /* Empty State Container */
             <GlassCard className="py-12 px-6 flex flex-col items-center justify-center text-center space-y-4 border-dashed border-white/10">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+              <div className="w-16 h-16 rounded-lg bg-white/5 flex items-center justify-center border border-white/5">
                 {isFiltered ? (
-                  <MdFilterListOff className="text-3xl text-slate-400" />
+                  <MdFilterListOff className="text-3xl text-grey" />
                 ) : (
-                  <MdReceiptLong className="text-3xl text-slate-400" />
+                  <MdReceiptLong className="text-3xl text-grey" />
                 )}
               </div>
 
               <div className="space-y-1 max-w-sm">
-                <h3 className="text-white font-bold text-base md:text-lg">
+                <h3 className="text-(--primary) font-bold text-base md:text-lg">
                   No Transactions Found
                 </h3>
-                <p className="text-slate-500 text-sm md:text-sm">
+                <p className="text-grey text-sm md:text-sm">
                   {isFiltered
                     ? "We couldn't find any transactions matching your current filters."
                     : "You haven't made any transactions yet. Your transaction history will show up here once available."}
@@ -516,7 +507,7 @@ const TransactionsPage = () => {
               {isFiltered && (
                 <button
                   onClick={resetFilters}
-                  className="px-4 py-2 rounded-xl text-sm font-bold text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-lg text-sm font-bold text-blue bg-blue/10 hover:bg-blue/20 transition-all cursor-pointer"
                 >
                   Reset Filters
                 </button>

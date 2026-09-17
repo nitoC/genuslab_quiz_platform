@@ -168,8 +168,6 @@ const ProfilePage = () => {
         {/* HEADER SECTION - Glass Profile Banner */}
         <GlassCard className="overflow-hidden">
           <div className="relative p-6 sm:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue/10 blur-[100px] rounded-full -mr-20 -mt-20 hidden md:block" />
-
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 z-10">
               <div
                 onMouseOver={() => setOverlay(true)}
@@ -190,19 +188,17 @@ const ProfilePage = () => {
                     <HiPhotograph color="#ccc" />
                   </div>
                 )}
-                <span className="absolute bottom-1 right-1 bg-green-500 p-1 rounded-full border-2 border-[#0a121f]">
+                <span className="absolute bottom-1 right-1 bg-green p-1 rounded-full border-2 border-[#0a121f]">
                   <FaPen className="text-white text-[14px] md:text-[14px]" />
                 </span>
               </div>
               <div className="text-center md:text-left">
-                <h1 className="text-xl md:text-2xl font-bold text-primary">
+                <h1 className="text-xl md:text-2xl font-bold text-(--primary)">
                   {userName}
                 </h1>
-                <div className="flex flex-col md:flex-row items-center md:justify-start gap-2 md:gap-3 mt-2">
-                  <span className="text-blue bg-blue/20 px-4 py-1 rounded-full text-[14px] md:text-sm font-bold">
-                    Level {rank?.rank} — {rank?.rankName}
-                  </span>
-                </div>
+                <p className="text-blue text-sm font-semibold mt-1">
+                  Level {rank?.rank} — {rank?.rankName}
+                </p>
               </div>
             </div>
 
@@ -213,20 +209,19 @@ const ProfilePage = () => {
                     ? handleTab("Account")
                     : handleTab("Profile");
                 }}
-                className="bg-white/5 hover:bg-white/10 text-grey text-[14px] md:text-sm py-2 px-6 rounded-full border border-white/10 flex gap-2 items-center transition-all"
+                className="bg-white/5 hover:bg-white/10 text-grey text-[14px] md:text-sm py-2 px-6 rounded-lg border border-white/10 flex gap-2 items-center transition-all"
               >
                 {tab !== "Account" ? <MdEdit /> : <BiUser />}{" "}
                 {tab !== "Account" ? "Edit Profile" : "Profile"}
               </button>
 
-              <div className="relative w-12 h-12 md:w-16 md:h-16 border-4 border-white/5 rounded-full flex items-center justify-center">
-                <div className="absolute top-0 left-0 w-full h-full border-4 border-blue border-t-transparent rounded-full -rotate-45" />
-                <span className="text-[14px] md:text-sm font-bold text-primary text-center leading-tight">
-                  {exp} <br />
-                  <span className="text-[14px] md:text-[14px] text-grey">
-                    XP
-                  </span>
-                </span>
+              <div className="text-center md:text-right shrink-0">
+                <p className="text-xl md:text-2xl font-bold text-(--primary) leading-none whitespace-nowrap">
+                  {exp?.toLocaleString?.() ?? exp}
+                </p>
+                <p className="text-[14px] text-grey uppercase tracking-wider mt-1">
+                  XP
+                </p>
               </div>
             </div>
           </div>
@@ -250,8 +245,8 @@ const ProfilePage = () => {
                   className={clsx(
                     "px-4 md:px-6 py-4 text-md font-bold flex gap-2 items-center shrink-0 border-b-2 transition-colors duration-200",
                     isActive
-                      ? "border-blue text-primary"
-                      : "border-transparent text-grey hover:text-primary",
+                      ? "border-blue text-(--primary)"
+                      : "border-transparent text-grey hover:text-(--primary)",
                   )}
                 >
                   {a.label}{" "}

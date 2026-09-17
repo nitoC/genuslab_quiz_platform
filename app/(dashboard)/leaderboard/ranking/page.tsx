@@ -7,14 +7,8 @@ import GlassCard from "@/components/ui/cards/GlassCard";
 import Avatar from "@/components/ui/Avatar";
 import ClickableUserLink from "@/components/ui/ClickableUserLink";
 import PrimaryButton from "@/components/ui/buttons/Primary";
-import {
-  FaTrophy,
-  FaMedal,
-  FaChevronDown,
-  FaCheck,
-  FaInbox,
-} from "react-icons/fa";
-import { MdStars, MdHourglassTop } from "react-icons/md";
+import { FaTrophy, FaMedal, FaChevronDown, FaCheck, FaInbox } from "react-icons/fa";
+import { MdHourglassTop } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { getLeaderboardStats, getUserRankings } from "@/lib/api/apis";
 import useUser from "@/hooks/useUser";
@@ -50,58 +44,32 @@ const formatSpeed = (seconds: number | null | undefined) => {
 
 const PodiumSkeleton = () => (
   <section className="flex flex-col md:flex-row items-end justify-center gap-6 mt-4">
-    {/* 2nd Place Skeleton */}
-    <div className="order-2 md:order-1 flex flex-col items-center gap-4 w-full md:w-64 animate-pulse">
-      <div className="w-[80px] h-[80px] rounded-full bg-white/10" />
-      <div className="flex flex-col items-center gap-2 w-full">
-        <div className="h-4 w-28 bg-white/10 rounded-md" />
-        <div className="h-3 w-16 bg-white/10 rounded-md" />
-        <div className="h-3 w-12 bg-white/5 rounded-full" />
-      </div>
-      <GlassCard className="w-full">
-        <div className="h-20 md:h-28 flex items-center justify-center">
-          <div className="h-8 w-12 bg-white/10 rounded-md" />
+    {[1, 2, 3].map((i) => (
+      <div
+        key={i}
+        className={`flex flex-col items-center gap-4 w-full md:w-64 animate-pulse ${
+          i === 2 ? "md:order-2 scale-105 md:scale-110 mb-4 md:mb-6" : ""
+        }`}
+      >
+        <div className="w-20 h-20 rounded-full bg-white/10" />
+        <div className="flex flex-col items-center gap-2 w-full">
+          <div className="h-4 w-28 bg-white/10 rounded-md" />
+          <div className="h-3 w-16 bg-white/5 rounded-md" />
         </div>
-      </GlassCard>
-    </div>
-
-    {/* 1st Place Skeleton */}
-    <div className="order-1 md:order-2 flex flex-col items-center gap-4 w-full md:w-64 scale-105 md:scale-110 mb-4 md:mb-6 animate-pulse">
-      <div className="w-[100px] h-[100px] rounded-full bg-white/10" />
-      <div className="flex flex-col items-center gap-2 w-full">
-        <div className="h-5 w-32 bg-white/10 rounded-md" />
-        <div className="h-3.5 w-20 bg-white/10 rounded-md" />
-        <div className="h-3 w-14 bg-white/5 rounded-full" />
+        <GlassCard className="w-full">
+          <div className="h-20 md:h-24 flex items-center justify-center">
+            <div className="h-8 w-12 bg-white/10 rounded-md" />
+          </div>
+        </GlassCard>
       </div>
-      <GlassCard className="w-full">
-        <div className="h-20 md:h-28 flex items-center justify-center">
-          <div className="h-8 w-12 bg-white/10 rounded-md" />
-        </div>
-      </GlassCard>
-    </div>
-
-    {/* 3rd Place Skeleton */}
-    <div className="order-3 flex flex-col items-center gap-4 w-full md:w-64 animate-pulse">
-      <div className="w-[80px] h-[80px] rounded-full bg-white/10" />
-      <div className="flex flex-col items-center gap-2 w-full">
-        <div className="h-4 w-24 bg-white/10 rounded-md" />
-        <div className="h-3 w-16 bg-white/10 rounded-md" />
-        <div className="h-3 w-12 bg-white/5 rounded-full" />
-      </div>
-      <GlassCard className="w-full">
-        <div className="h-20 md:h-28 flex items-center justify-center">
-          <div className="h-8 w-12 bg-white/10 rounded-md" />
-        </div>
-      </GlassCard>
-    </div>
+    ))}
   </section>
 );
 
 const ListSkeleton = () => (
   <section className="flex flex-col gap-4 mt-6">
-    <div className="flex justify-between items-center px-4 animate-pulse">
+    <div className="flex justify-between items-center px-1 animate-pulse">
       <div className="h-5 w-36 bg-white/10 rounded-md" />
-      <div className="h-3 w-20 bg-white/5 rounded-md" />
     </div>
 
     <GlassCard>
@@ -116,18 +84,14 @@ const ListSkeleton = () => (
             <div className="flex items-center gap-4 sm:gap-6">
               <div className="w-6 h-4 bg-white/10 rounded-md" />
               <div className="flex items-center gap-3">
-                <div className="w-[40px] h-[40px] rounded-full bg-white/10" />
+                <div className="w-10 h-10 rounded-full bg-white/10" />
                 <div className="flex flex-col gap-1.5">
                   <div className="h-4 w-28 bg-white/10 rounded-md" />
-                  <div className="h-3 w-16 bg-white/5 rounded-full" />
+                  <div className="h-3 w-16 bg-white/5 rounded-md" />
                 </div>
               </div>
             </div>
-
-            <div className="flex flex-col items-end gap-1.5">
-              <div className="h-4 w-16 bg-white/10 rounded-md" />
-              <div className="h-2.5 w-12 bg-white/5 rounded-md" />
-            </div>
+            <div className="h-4 w-16 bg-white/10 rounded-md" />
           </div>
         ))}
       </div>
@@ -139,26 +103,30 @@ const ListSkeleton = () => (
 
 const EmptyLeaderboard = ({ type }: { type: "quiz" | "referral" }) => (
   <div className="my-8 py-16 px-4 flex flex-col items-center justify-center text-center">
-    <GlassCard className="max-w-md w-full p-8 flex flex-col items-center gap-4 border border-white/10 shadow-2xl">
-      <div className="p-4 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-        <FaInbox size={40} />
-      </div>
+    <GlassCard className="max-w-md w-full">
+      <div className="p-8 flex flex-col items-center gap-4">
+        <div className="p-4 rounded-full bg-white/5 text-grey">
+          <FaInbox size={32} />
+        </div>
 
-      <div className="space-y-1">
-        <h3 className="text-xl font-bold text-white">No Rankings Yet</h3>
-        <p className="text-sm text-gray-400">
-          {type === "quiz"
-            ? "Be the first to complete a quiz and claim the top spot on the leaderboard!"
-            : "No referral rankings found for this timeframe. Invite friends to jump ahead!"}
-        </p>
-      </div>
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold text-(--primary)">
+            No rankings yet
+          </h3>
+          <p className="text-sm text-grey">
+            {type === "quiz"
+              ? "Be the first to complete a quiz and claim the top spot on the leaderboard!"
+              : "No referral rankings found for this timeframe. Invite friends to jump ahead!"}
+          </p>
+        </div>
 
-      <div className="pt-2 w-full">
-        <PrimaryButton
-          type="link"
-          to={type === "quiz" ? "/quizzes" : "/profile?tab=Referral"}
-          text={type === "quiz" ? "Take a Quiz Now" : "Invite Friends"}
-        />
+        <div className="pt-2 w-full">
+          <PrimaryButton
+            type="link"
+            to={type === "quiz" ? "/quizzes" : "/profile?tab=Referral"}
+            text={type === "quiz" ? "Take a Quiz Now" : "Invite Friends"}
+          />
+        </div>
       </div>
     </GlassCard>
   </div>
@@ -240,9 +208,9 @@ const LeaderboardPage = () => {
     : null;
 
   const podiumList = [
-    ...(rank2 ? [{ ...rank2, color: "border-gray-300" }] : []),
-    ...(rank1 ? [{ ...rank1, color: "border-yellow-400" }] : []),
-    ...(rank3 ? [{ ...rank3, color: "border-orange-600" }] : []),
+    ...(rank2 ? [{ ...rank2, ring: "border-white/20" }] : []),
+    ...(rank1 ? [{ ...rank1, ring: "border-yellow" }] : []),
+    ...(rank3 ? [{ ...rank3, ring: "border-orange-400/60" }] : []),
   ];
 
   const restRankings = hasLeaderboardData
@@ -264,25 +232,25 @@ const LeaderboardPage = () => {
 
       <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-8 max-w-6xl mx-auto">
         {/* CONTROL BAR: TYPE TABS & TIMEFRAME DROPDOWN */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-2 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl relative z-7">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-2 rounded-lg bg-white/5 border border-white/10">
           {/* TYPE SWITCHER TABS */}
-          <div className="relative flex items-center p-1 bg-black/20 rounded-xl w-full sm:w-auto border border-white/5">
+          <div className="relative flex items-center p-1 bg-black/20 rounded-md w-full sm:w-auto">
             <button
               onClick={() => setType("quiz")}
-              className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-sm sm:text-sm font-semibold transition-all duration-300 ${
+              className={`flex-1 sm:flex-none flex items-center justify-center px-6 py-2 rounded text-sm font-medium transition-colors ${
                 type === "quiz"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:text-white"
+                  ? "bg-blue/20 text-blue"
+                  : "text-grey hover:text-(--primary)"
               }`}
             >
               Quiz
             </button>
             <button
               onClick={() => setType("referral")}
-              className={`relative z-10 flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-sm sm:text-sm font-semibold transition-all duration-300 ${
+              className={`flex-1 sm:flex-none flex items-center justify-center px-6 py-2 rounded text-sm font-medium transition-colors ${
                 type === "referral"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-400 hover:text-white"
+                  ? "bg-blue/20 text-blue"
+                  : "text-grey hover:text-(--primary)"
               }`}
             >
               Referrals
@@ -294,25 +262,23 @@ const LeaderboardPage = () => {
             <button
               type="button"
               onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="w-full flex items-center justify-between bg-white/10 hover:bg-white/15 active:bg-white/20 text-white text-sm sm:text-sm font-medium px-4 py-2.5 rounded-xl border border-white/15 shadow-lg backdrop-blur-md transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full flex items-center justify-between bg-white/5 hover:bg-white/10 text-(--primary) text-sm font-medium px-4 py-2.5 rounded-md border border-white/10 transition-colors"
             >
               <span className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm">Period:</span>
-                <span className="font-semibold text-white">
-                  {selectedTimeframeLabel}
-                </span>
+                <span className="text-grey">Period:</span>
+                <span className="font-semibold">{selectedTimeframeLabel}</span>
               </span>
               <FaChevronDown
                 size={12}
-                className={`text-gray-400 group-hover:text-white transition-transform duration-300 ${
-                  isDropdownOpen ? "rotate-180 text-blue-400" : ""
+                className={`text-grey transition-transform duration-200 ${
+                  isDropdownOpen ? "rotate-180" : ""
                 }`}
               />
             </button>
 
             {/* DROPDOWN MENU PANEL */}
             {isDropdownOpen && (
-              <div className="absolute right-0 left-0 sm:left-auto sm:w-full mt-2 py-1.5 rounded-xl bg-slate-900/80 backdrop-blur-2xl border border-white/15 shadow-2xl shadow-black/50 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute right-0 left-0 sm:left-auto sm:w-full mt-2 py-1.5 rounded-md bg-blue-950/95 backdrop-blur-xl border border-white/10 shadow-lg z-50 overflow-hidden">
                 {TIMEFRAMES.map((tf) => {
                   const isSelected = timeframe === tf.value;
                   return (
@@ -322,16 +288,14 @@ const LeaderboardPage = () => {
                         setTimeframe(tf.value);
                         setIsDropdownOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm sm:text-sm font-medium transition-colors ${
+                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium transition-colors ${
                         isSelected
-                          ? "bg-blue-600/30 text-blue-300 font-semibold border-l-2 border-blue-500"
-                          : "text-gray-300 hover:bg-white/10 hover:text-white"
+                          ? "text-blue bg-blue/10"
+                          : "text-grey hover:bg-white/5 hover:text-(--primary)"
                       }`}
                     >
                       <span>{tf.label}</span>
-                      {isSelected && (
-                        <FaCheck size={12} className="text-blue-400" />
-                      )}
+                      {isSelected && <FaCheck size={12} />}
                     </button>
                   );
                 })}
@@ -350,9 +314,11 @@ const LeaderboardPage = () => {
 
         {/* ERROR STATE */}
         {isError && (
-          <div className="text-center py-16 text-red-400 font-medium bg-red-500/5 rounded-2xl border border-red-500/10">
-            Failed to load leaderboard data. Please try again later.
-          </div>
+          <GlassCard>
+            <div className="text-center py-12 text-red text-sm font-medium">
+              Failed to load leaderboard data. Please try again later.
+            </div>
+          </GlassCard>
         )}
 
         {/* EMPTY STATE */}
@@ -369,7 +335,7 @@ const LeaderboardPage = () => {
                 {podiumList.map((user) => (
                   <div
                     key={user.position}
-                    className={`flex flex-col items-center gap-4 w-full md:w-64 ${
+                    className={`flex flex-col items-center gap-3 w-full md:w-64 ${
                       user.position === 1
                         ? "order-1 md:order-2 scale-105 md:scale-110 mb-4 md:mb-6"
                         : user.position === 2
@@ -383,48 +349,46 @@ const LeaderboardPage = () => {
                         currentUserDetailsId={detailsId}
                       >
                         <Avatar
-                          size={user.position === 1 ? 100 : 80}
+                          size={user.position === 1 ? 96 : 76}
                           type="main"
                           url={user.avatar || undefined}
-                          color={user.color}
+                          color={user.ring}
                         />
                       </ClickableUserLink>
                       <div
-                        className={`absolute -top-3 -right-2 p-2 rounded-full ${
+                        className={`absolute -top-2 -right-2 p-1.5 rounded-full ${
                           user.position === 1
-                            ? "bg-yellow-400 text-black shadow-lg"
-                            : "bg-white/10 text-white"
+                            ? "bg-yellow text-black"
+                            : "bg-white/10 text-(--primary)"
                         }`}
                       >
                         {user.position === 1 ? (
-                          <FaTrophy size={18} />
+                          <FaTrophy size={14} />
                         ) : (
-                          <FaMedal size={16} />
+                          <FaMedal size={13} />
                         )}
                       </div>
                     </div>
 
                     <div className="text-center">
-                      <h3 className="text-white font-bold capitalize">
+                      <h3 className="text-(--primary) font-semibold capitalize">
                         {user.name}
                       </h3>
-                      <p className="text-blue-400 text-sm font-bold">
-                        {type === "quiz" ? "SCORE:" : "REFERRALS:"}{" "}
-                        {(user.score ?? 0).toLocaleString()}
+                      <p className="text-grey text-[13px]">{user.rank}</p>
+                      <p className="text-blue text-sm font-semibold mt-1">
+                        {(user.score ?? 0).toLocaleString()}{" "}
+                        {type === "quiz" ? "pts" : "referrals"}
                       </p>
                       {type === "quiz" && (
-                        <p className="text-gray-400 text-[14px] font-medium flex items-center justify-center gap-1 mt-0.5">
+                        <p className="text-grey text-[13px] flex items-center justify-center gap-1 mt-0.5">
                           <MdHourglassTop size={12} />
                           {formatSpeed(user.timeInSeconds)}
                         </p>
                       )}
-                      <span className="text-[14px] text-gray-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase">
-                        {user.rank}
-                      </span>
                     </div>
 
                     <GlassCard className="w-full">
-                      <div className="h-20 md:h-28 flex items-center justify-center font-bold text-4xl text-white/20">
+                      <div className="h-16 md:h-20 flex items-center justify-center font-semibold text-3xl text-white/15">
                         #{user.position}
                       </div>
                     </GlassCard>
@@ -436,12 +400,9 @@ const LeaderboardPage = () => {
             {/* RANKINGS LIST (4th place and below) */}
             {restRankings.length > 0 && (
               <section className="flex flex-col gap-4">
-                <div className="flex justify-between items-center px-4">
-                  <h2 className="text-xl font-bold text-white flex gap-2 items-center">
-                    <MdStars className="text-blue-400" /> Global Rankings
-                  </h2>
-                  <span className="text-gray-400 text-sm">Live Updates</span>
-                </div>
+                <h2 className="text-lg font-semibold text-(--primary) px-1">
+                  Full rankings
+                </h2>
 
                 <GlassCard>
                   <div className="flex flex-col">
@@ -455,7 +416,7 @@ const LeaderboardPage = () => {
                         }`}
                       >
                         <div className="flex items-center gap-4 sm:gap-6">
-                          <span className="text-gray-400 font-bold w-6 text-center">
+                          <span className="text-grey font-semibold w-6 text-center">
                             {player.position}
                           </span>
                           <div className="flex items-center gap-3">
@@ -470,12 +431,12 @@ const LeaderboardPage = () => {
                               />
                             </ClickableUserLink>
                             <div>
-                              <h4 className="text-white text-sm font-semibold capitalize">
+                              <h4 className="text-(--primary) text-sm font-semibold capitalize">
                                 {player.name}
                               </h4>
-                              <span className="text-[14px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full uppercase">
+                              <p className="text-grey text-[13px]">
                                 {player.rank}
-                              </span>
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -483,19 +444,19 @@ const LeaderboardPage = () => {
                         <div className="flex items-center gap-4 sm:gap-8">
                           {type === "quiz" && (
                             <div className="hidden sm:flex flex-col items-end">
-                              <span className="text-white font-medium text-sm flex items-center gap-1">
-                                <MdHourglassTop size={13} className="text-gray-400" />
+                              <span className="text-(--primary) font-medium text-sm flex items-center gap-1">
+                                <MdHourglassTop size={13} className="text-grey" />
                                 {formatSpeed(player.timeInSeconds)}
                               </span>
-                              <span className="text-gray-400 text-[14px]">Speed</span>
+                              <span className="text-grey text-[13px]">Speed</span>
                             </div>
                           )}
                           <div className="flex flex-col items-end">
-                            <span className="text-white font-bold text-sm">
+                            <span className="text-(--primary) font-semibold text-sm">
                               {(player.score ?? 0).toLocaleString()}
                             </span>
-                            <span className="text-gray-400 text-[14px]">
-                              {type === "quiz" ? "Total Score" : "Referrals"}
+                            <span className="text-grey text-[13px]">
+                              {type === "quiz" ? "Total score" : "Referrals"}
                             </span>
                           </div>
                         </div>
@@ -511,17 +472,17 @@ const LeaderboardPage = () => {
         {/* PERSISTENT USER FOOTER */}
         {type === "quiz" && (
           <div className="sticky bottom-0 z-10 pt-4">
-            <GlassCard className="border-t-2 border-blue-500/50">
+            <GlassCard>
               <div className="p-4 flex justify-between items-center">
                 <div className="flex items-center gap-4">
-                  <span className="text-blue-400 font-bold text-xl">
+                  <span className="text-blue font-semibold text-xl">
                     #{userPositionDisplay}
                   </span>
                   <div className="flex flex-col">
-                    <span className="text-white font-bold text-sm">
-                      Your Current Rank
+                    <span className="text-(--primary) font-semibold text-sm">
+                      Your current rank
                     </span>
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-grey text-sm">
                       Keep attempting quizzes to boost your position
                     </span>
                   </div>

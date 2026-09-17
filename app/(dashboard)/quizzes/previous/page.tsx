@@ -1,6 +1,7 @@
 "use client";
 
 import GlassCard from "@/components/ui/cards/GlassCard";
+import GlassBadge from "@/components/ui/GlassBadge";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -108,7 +109,7 @@ const TabButton = ({
 
     {/* Tooltip — only relevant (and only rendered visible) when the label
         itself is hidden, i.e. below the 400px breakpoint. */}
-    <span className="pointer-events-none absolute -bottom-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-slate-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 min-[400px]:hidden">
+    <span className="pointer-events-none absolute -bottom-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-background-dark-secondary px-2.5 py-1 text-xs font-medium text-(--primary) opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 min-[400px]:hidden">
       {label}
     </span>
   </button>
@@ -149,10 +150,10 @@ const QuizHistoryCard = ({
   activeDate,
   participantCount,
 }: QuizHistoryCardProps) => {
-  const badgeStyles = {
-    gold: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/10",
-    silver: "bg-white/10 text-slate-400 border border-white/5",
-    default: "bg-blue-500/20 text-blue-400 border border-blue-500/10",
+  const badgeVariant = {
+    gold: "warning" as const,
+    silver: "neutral" as const,
+    default: "info" as const,
   };
 
   const winnersDateStr = activeDate
@@ -165,7 +166,7 @@ const QuizHistoryCard = ({
         {/* Left Side: Thumbnail & Content */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-center flex-1">
           {/* Responsive Thumbnail */}
-          <div className="w-full sm:w-40 h-40 sm:h-28 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/5">
+          <div className="w-full sm:w-40 h-40 sm:h-28 rounded-xl overflow-hidden shrink-0 bg-white/5 border border-white/5">
             <img
               src={image || "/images/q1.png"}
               alt={title}
@@ -176,43 +177,39 @@ const QuizHistoryCard = ({
           {/* Details Stack */}
           <div className="flex flex-col justify-center gap-2.5 flex-1 min-w-0">
             {/* Meta Tags */}
-            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
-              <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-semibold">
-                {episode}
-              </span>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-grey">
+              <span className="font-semibold text-(--primary)">{episode}</span>
               <span>{date}</span>
             </div>
 
             {/* Title */}
-            <h3 className="text-base sm:text-lg font-bold tracking-wide text-white truncate">
+            <h3 className="text-base sm:text-lg font-bold tracking-wide text-(--primary) truncate">
               {title}
             </h3>
 
             {/* Score & Badge Row */}
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-1">
               <div className="flex items-end gap-1.5">
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-400 font-mono leading-none">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-blue font-mono leading-none">
                   {score * 10}%
                 </h2>
-                <span className="text-slate-400 text-[14px] uppercase tracking-wider font-semibold pb-0.5">
+                <span className="text-grey text-[14px] uppercase tracking-wider font-semibold pb-0.5">
                   Score
                 </span>
               </div>
 
               {badge && (
-                <span
-                  className={`flex items-center gap-1.5 text-[14px] sm:text-sm font-semibold px-3 py-1.5 rounded-lg ${
-                    badgeStyles[badge.variant || "default"]
-                  }`}
+                <GlassBadge
+                  variant={badgeVariant[badge.variant || "default"]}
+                  icon={badge.icon}
                 >
-                  {badge.icon && <span className="text-sm">{badge.icon}</span>}
                   {badge.label}
-                </span>
+                </GlassBadge>
               )}
 
               {participantCount !== undefined && (
-                <span className="flex items-center gap-1.5 text-[14px] sm:text-sm font-semibold text-slate-400">
-                  <MdGroups size={16} className="text-slate-500" />
+                <span className="flex items-center gap-1.5 text-[14px] sm:text-sm font-semibold text-grey">
+                  <MdGroups size={16} className="text-grey" />
                   {formater(participantCount)} participant
                   {participantCount === 1 ? "" : "s"}
                 </span>
@@ -226,16 +223,14 @@ const QuizHistoryCard = ({
           {winnersDateStr && rawEpisode && (
             <Link
               href={`previous/leaderboard?date=${winnersDateStr}&episode=${rawEpisode}`}
-              className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-slate-300 transition-colors hover:text-amber-300 md:w-auto md:py-2.5"
+              className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-grey transition-colors hover:text-(--primary) md:w-auto md:py-2.5"
             >
-              {/* <span className="absolute inset-y-0 left-0 w-0.5 bg-amber-500/40 transition-[width] duration-300 group-hover:w-1" /> */}
-              {/* <PodiumMark className="h-5 w-6 shrink-0" /> */}
               Leaderboard
             </Link>
           )}
           <Link
             href={`previous/${quizId}/${did}`}
-            className="w-full md:w-auto bg-white/5 p-3 rounded-xl md:rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition-all active:scale-95 border border-white/5 flex items-center justify-center gap-2 group"
+            className="w-full md:w-auto bg-white/5 p-3 rounded-lg hover:bg-white/10 text-grey hover:text-(--primary) transition-all active:scale-95 border border-white/5 flex items-center justify-center gap-2 group"
           >
             <span className="text-sm font-semibold tracking-wide md:hidden">
               View Details

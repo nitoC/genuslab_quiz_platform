@@ -18,6 +18,7 @@ import {
 import { FaCheckCircle, FaTwitter, FaWhatsapp } from "react-icons/fa";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { HiLockClosed } from "react-icons/hi";
+import GlassBadge from "@/components/ui/GlassBadge";
 
 import useUser from "@/hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
@@ -91,11 +92,9 @@ const ReferralTabContent = ({ user }: { user: any }) => {
       {/* TOP SECTION: DASHBOARD BANNER & ACTION HERO */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left Hero Panel */}
-        <GlassCard className="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full -mr-10 -mt-10" />
-
-          <div className="space-y-2 z-10">
-            <span className="text-green-400 text-sm font-bold uppercase tracking-wide">
+        <GlassCard className="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between">
+          <div className="space-y-2">
+            <span className="text-green text-sm font-bold uppercase tracking-wide">
               Referral Program
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-(--primary) tracking-tight">
@@ -103,7 +102,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5 z-10">
+          <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/5">
             <div>
               <p className="text-grey text-[14px] md:text-sm uppercase tracking-wider mb-1">
                 Total Rewards
@@ -117,7 +116,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
               <p className="text-grey text-[14px] md:text-sm uppercase tracking-wider mb-1">
                 Successful Invites
               </p>
-              <p className="text-2xl md:text-3xl font-black text-green-400">
+              <p className="text-2xl md:text-3xl font-black text-green">
                 {successfulInvites}
               </p>
             </div>
@@ -185,7 +184,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
           </div>
         )}
         {isError && (
-          <div className="py-12 text-center text-sm text-red-400">
+          <div className="py-12 text-center text-sm text-red">
             Failed to load referrals.
           </div>
         )}
@@ -218,7 +217,7 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                     <div className="text-right shrink-0">
                       <p
                         className={`font-bold text-sm ${
-                          row.verified ? "text-green-400" : "text-grey"
+                          row.verified ? "text-green" : "text-grey"
                         }`}
                       >
                         ₦{row.verified ? (1000).toFixed(2) : (0).toFixed(2)}
@@ -230,15 +229,9 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                     <span className="text-grey/60">
                       {formatDate(row.createdAt)}
                     </span>
-                    <span
-                      className={`inline-block px-2.5 py-0.5 rounded-full text-[14px] font-bold ${
-                        row.verified
-                          ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                          : "bg-orange-500/10 text-orange-400 border border-orange-500/20"
-                      }`}
-                    >
+                    <GlassBadge variant={row.verified ? "success" : "warning"}>
                       {row.verified ? "Successful" : "Pending"}
-                    </span>
+                    </GlassBadge>
                   </div>
                 </div>
               ))}
@@ -280,19 +273,15 @@ const ReferralTabContent = ({ user }: { user: any }) => {
                         {formatDate(row.createdAt)}
                       </td>
                       <td className="py-4 px-6">
-                        <span
-                          className={`inline-block px-3 py-1 rounded-full text-[14px] font-bold ${
-                            row.verified
-                              ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                              : "bg-orange-500/10 text-orange-400 border border-orange-500/20"
-                          }`}
+                        <GlassBadge
+                          variant={row.verified ? "success" : "warning"}
                         >
                           {row.verified ? "Successful" : "Pending"}
-                        </span>
+                        </GlassBadge>
                       </td>
                       <td
                         className={`py-4 px-6 text-right font-bold ${
-                          row.verified ? "text-green-400" : "text-grey"
+                          row.verified ? "text-green" : "text-grey"
                         }`}
                       >
                         ₦{row.verified ? (250).toFixed(2) : (0).toFixed(2)}

@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaCrown, FaHistory } from "react-icons/fa";
 import { HiOutlineTv } from "react-icons/hi2";
 import clsx from "clsx";
+import GlassBadge from "@/components/ui/GlassBadge";
 
 const formatNaira = (price: number) =>
   `₦${Number(price || 0).toLocaleString()}`;
@@ -32,14 +33,14 @@ const SubscriptionRow = ({ subscription }: { subscription: ISubscription }) => {
         <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
           <div
             className={clsx(
-              "w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-xl border",
+              "w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-lg border",
               isPremium
-                ? "bg-amber-400/10 border-amber-400/20"
+                ? "bg-yellow/10 border-yellow/20"
                 : "bg-white/5 border-white/5",
             )}
           >
             {isPremium ? (
-              <FaCrown className="text-amber-400 text-lg" />
+              <FaCrown className="text-yellow text-lg" />
             ) : (
               <HiOutlineTv className="text-blue text-xl" />
             )}
@@ -59,16 +60,9 @@ const SubscriptionRow = ({ subscription }: { subscription: ISubscription }) => {
           <p className="font-bold text-sm md:text-base text-(--primary)">
             {formatNaira(subscription.price)}
           </p>
-          <span
-            className={clsx(
-              "text-[11px] md:text-[12px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md",
-              isActive
-                ? "text-emerald-400 bg-emerald-400/10"
-                : "text-grey bg-white/5",
-            )}
-          >
+          <GlassBadge variant={isActive ? "success" : "neutral"}>
             {isActive ? "Active" : "Expired"}
-          </span>
+          </GlassBadge>
         </div>
       </div>
     </GlassCard>
@@ -81,7 +75,7 @@ const SubscriptionsSkeleton = () => (
     <div className="p-4 md:p-8 space-y-4 max-w-[900px] mx-auto">
       <div className="animate-pulse h-6 w-48 bg-white/10 rounded-lg" />
       {[0, 1, 2].map((i) => (
-        <div key={i} className="animate-pulse h-20 w-full bg-white/5 rounded-2xl" />
+        <div key={i} className="animate-pulse h-20 w-full bg-white/5 rounded-lg" />
       ))}
     </div>
   </Layout>
@@ -129,7 +123,7 @@ const SubscriptionsPage = () => {
             ))
           ) : (
             <GlassCard className="py-12 px-6 flex flex-col items-center justify-center text-center space-y-4 border-dashed border-white/10">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
+              <div className="w-16 h-16 rounded-lg bg-white/5 flex items-center justify-center border border-white/5">
                 <FaHistory className="text-3xl text-grey" />
               </div>
 
@@ -147,7 +141,7 @@ const SubscriptionsPage = () => {
                 type="link"
                 to="/pricing"
                 text="View Plans"
-                style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
+                style="bg-blue text-white hover:bg-blue/90 rounded-lg py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
               />
             </GlassCard>
           )}

@@ -1,5 +1,7 @@
 "use client";
 
+import GlassCard from "@/components/ui/cards/GlassCard";
+import GlassBadge from "@/components/ui/GlassBadge";
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
 import ClickableUserLink from "@/components/ui/ClickableUserLink";
@@ -13,14 +15,11 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-// import { useRouter } from "next/router";
 import React, { Suspense, useMemo } from "react";
 import {
   MdMenu,
   MdArrowForward,
   MdEmojiEvents,
-  MdAccessTime,
-  MdAccountBalanceWallet,
   MdMoreHoriz,
   MdPerson,
   MdHourglassTop,
@@ -48,6 +47,17 @@ const formatSpeed = (seconds: number | null | undefined) => {
   const remainingSeconds = totalSeconds % 60;
   return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
 };
+
+// A label/value pair — replaces what used to be 4 separate bordered pill
+// chips (XP, Score, Winning Time, Participants) competing for attention
+// next to each other. These are plain facts about the winner, not
+// statuses, so they read as text with a clear label, not capsules.
+const Stat = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <div>
+    <p className="text-grey text-[13px]">{label}</p>
+    <p className="text-(--primary) font-semibold text-sm mt-0.5">{value}</p>
+  </div>
+);
 
 const EpisodePerformancePage = () => {
   const { toggleSidebar } = useSidebar((state: any) => state);
@@ -107,12 +117,10 @@ const EpisodePerformancePage = () => {
   }, [episode, slotData, sysTime, date]);
 
   if (isLoading || slotLoading || sysTimeLoading || ongoing === undefined) {
-    return <p className="p-6 text-slate-400">Loading leaderboard...</p>;
+    return <p className="p-6 text-grey">Loading leaderboard...</p>;
   }
   if (isError || slotError || sysTimeError) {
-    return (
-      <p className="p-6 text-red-400">Something went wrong fetching data.</p>
-    );
+    return <p className="p-6 text-red">Something went wrong fetching data.</p>;
   }
 
   const leaderboardList: LeaderboardItem[] = data?.payload || [];
@@ -131,24 +139,23 @@ const EpisodePerformancePage = () => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => toggleSidebar()}
-                  className="md:hidden p-2 bg-slate-800 rounded-lg border border-slate-700 text-white"
+                  className="md:hidden p-2 bg-white/5 rounded-md border border-white/10 text-(--primary)"
                 >
                   <MdMenu className="text-xl" />
                 </button>
-                <span className="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <span className="text-sm font-medium text-grey flex items-center gap-1.5">
                   {ongoing && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-green" />
                   )}
-                  {ongoing ? "LIVE LEADERBOARD" : "LIVE RESULTS"}
+                  {ongoing ? "Live leaderboard" : "Final results"}
                 </span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-semibold text-(--primary) tracking-tight">
                 Episode Performance
               </h1>
-              <p className="text-sm md:text-sm text-slate-400 font-medium whitespace-nowrap">
+              <p className="text-sm text-grey whitespace-nowrap">
                 Day {date || "--"}{" "}
-                <span className="text-slate-700 mx-1.5">|</span> Episode{" "}
-                {episode || "--"}
+                <span className="mx-1.5">·</span> Episode {episode || "--"}
               </p>
             </div>
 
@@ -156,46 +163,44 @@ const EpisodePerformancePage = () => {
               onClick={() => {
                 router.back();
               }}
-              className="w-fit shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-sm font-semibold transition-colors whitespace-nowrap"
+              className="w-fit shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white/5 hover:bg-white/10 text-(--primary) border border-white/10 text-sm font-medium transition-colors whitespace-nowrap"
             >
-              <span>VIEW QUIZ ANSWERS</span>
-              <MdArrowForward className="text-base text-slate-400" />
+              <span>View quiz answers</span>
+              <MdArrowForward className="text-base text-grey" />
             </button>
           </div>
 
           {/* Conditional Banner: Ongoing vs Completed Winner Card */}
           {ongoing ? (
-            <div className="bg-slate-900 border border-blue-500/30 rounded-xl p-6 md:p-8 relative overflow-hidden">
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shrink-0 text-blue-400">
-                  <MdHourglassTop size={32} className="animate-spin" />
+            <GlassCard>
+              <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-blue/10 flex items-center justify-center shrink-0 text-blue">
+                  <MdHourglassTop size={26} className="animate-spin" />
                 </div>
-                <div className="flex-1 text-center md:text-left space-y-1">
-                  <div className="inline-block px-2.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-[14px] font-bold tracking-wider text-blue-400 uppercase">
-                    Ongoing Episode
-                  </div>
-                  <h2 className="text-xl md:text-2xl font-bold text-white">
+                <div className="flex-1 text-center md:text-left space-y-1.5">
+                  <GlassBadge variant="info">Ongoing episode</GlassBadge>
+                  <h2 className="text-xl font-semibold text-(--primary) pt-1">
                     Episode is currently in progress
                   </h2>
-                  <p className="text-slate-400 text-sm md:text-sm">
+                  <p className="text-grey text-sm">
                     Scores and positions are updated live. Final winners will be
                     announced once this episode concludes.
                   </p>
                 </div>
               </div>
-            </div>
+            </GlassCard>
           ) : (
             winner && (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 md:p-8">
-                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                  {/* Avatar + Champion Badge */}
-                  <div className="relative shrink-0 flex flex-col items-center">
+              <GlassCard>
+                <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                  {/* Avatar + Champion */}
+                  <div className="relative shrink-0 flex flex-col items-center gap-2">
                     <ClickableUserLink
                       userDetailsId={winner.userDetailsId}
                       currentUserDetailsId={currentDetailsId}
-                      className="relative w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-amber-500/50 p-1 block"
+                      className="relative w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-yellow/50 p-1 block"
                     >
-                      <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-800 flex items-center justify-center">
+                      <div className="relative w-full h-full rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
                         {winner.avatar ? (
                           <Image
                             src={winner.avatar}
@@ -205,75 +210,56 @@ const EpisodePerformancePage = () => {
                             priority
                           />
                         ) : (
-                          <MdPerson className="text-4xl text-slate-500" />
+                          <MdPerson className="text-4xl text-grey" />
                         )}
                       </div>
 
-                      <div className="absolute top-0 right-0 bg-amber-500 text-slate-950 p-1.5 rounded-full border border-slate-900">
+                      <div className="absolute top-0 right-0 bg-yellow text-black p-1.5 rounded-full">
                         <MdEmojiEvents size={16} />
                       </div>
                     </ClickableUserLink>
 
-                    <div className="mt-3 px-3 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-[14px] font-bold tracking-wider text-amber-400">
-                      CHAMPION
-                    </div>
+                    <p className="text-yellow text-xs font-semibold uppercase tracking-wide">
+                      Champion
+                    </p>
                   </div>
 
                   {/* Winner Content */}
-                  <div className="flex-1 text-center md:text-left space-y-3">
+                  <div className="flex-1 text-center md:text-left space-y-4">
                     <div>
-                      <span className="text-sm font-semibold tracking-wider text-slate-400 uppercase">
-                        RANK #{winner.position}
-                      </span>
-                      <h2 className="text-xl md:text-2xl font-bold text-white mt-0.5 capitalize">
-                        Winner: {winner.name}
+                      <p className="text-grey text-sm">Rank #{winner.position}</p>
+                      <h2 className="text-xl md:text-2xl font-semibold text-(--primary) mt-0.5 capitalize">
+                        {winner.name}
                       </h2>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
-                        <MdAccountBalanceWallet
-                          size={15}
-                          className="text-emerald-400 shrink-0"
-                        />
-                        <span>{winner.totalXp} XP</span>
-                      </div>
-
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
-                        <MdAccessTime size={15} className="text-slate-400 shrink-0" />
-                        <span>Score: {winner.score}</span>
-                      </div>
-
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
-                        <MdHourglassTop size={15} className="text-blue-400 shrink-0" />
-                        <span>Winning Time: {formatSpeed(winner.timeInSeconds)}</span>
-                      </div>
-
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
-                        <MdPerson size={15} className="text-slate-400 shrink-0" />
-                        <span>{leaderboardList.length} Participants</span>
-                      </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-white/10 pt-4">
+                      <Stat label="Total XP" value={winner.totalXp} />
+                      <Stat label="Score" value={winner.score} />
+                      <Stat
+                        label="Winning time"
+                        value={formatSpeed(winner.timeInSeconds)}
+                      />
+                      <Stat label="Participants" value={leaderboardList.length} />
                     </div>
 
-                    <p className="text-slate-400 text-sm md:text-sm leading-relaxed max-w-xl">
+                    <p className="text-grey text-sm leading-relaxed max-w-xl">
                       Outstanding performance this episode!{" "}
                       <span className="capitalize">{winner.name}</span> achieved
                       a score of {winner.score}% and secured {winner.totalXp}{" "}
                       total XP.
                     </p>
 
-                    <div className="pt-1">
-                      <Link
-                        href={"/rewards-breakdown"}
-                        target="_blank"
-                        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
-                      >
-                        View Reward Breakdown
-                      </Link>
-                    </div>
+                    <Link
+                      href={"/rewards-breakdown"}
+                      target="_blank"
+                      className="inline-block px-4 py-2 rounded-md bg-blue text-white text-sm font-semibold hover:brightness-110 transition-all"
+                    >
+                      View reward breakdown
+                    </Link>
                   </div>
                 </div>
-              </div>
+              </GlassCard>
             )
           )}
 
@@ -281,18 +267,20 @@ const EpisodePerformancePage = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white">Leaderboard</h3>
-                <span className="text-sm text-slate-500">
-                  — {leaderboardList.length}{" "}
-                  {ongoing ? "Participating" : "Participants"}
+                <h3 className="text-base font-semibold text-(--primary)">
+                  Leaderboard
+                </h3>
+                <span className="text-sm text-grey">
+                  · {leaderboardList.length}{" "}
+                  {ongoing ? "participating" : "participants"}
                 </span>
               </div>
-              <button className="text-slate-500 hover:text-slate-300 p-1">
+              <button className="text-grey hover:text-(--primary) p-1">
                 <MdMoreHoriz size={20} />
               </button>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <GlassCard>
               <div className="overflow-x-auto">
                 {/* min-w forces the table to keep its natural column widths
                     instead of squeezing into the narrow viewport (which was
@@ -300,39 +288,39 @@ const EpisodePerformancePage = () => {
                     gives an actual horizontal scroll on mobile instead. */}
                 <table className="w-full min-w-[720px] text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-800 text-[14px] md:text-sm font-semibold uppercase tracking-wider text-slate-400 bg-slate-950/50">
-                      <th className="py-3 px-5 whitespace-nowrap">RANK</th>
-                      <th className="py-3 px-5 whitespace-nowrap">USER</th>
+                    <tr className="border-b border-white/10 text-[13px] font-medium uppercase tracking-wide text-grey">
+                      <th className="py-3 px-5 whitespace-nowrap">Rank</th>
+                      <th className="py-3 px-5 whitespace-nowrap">User</th>
                       <th className="py-3 px-5 whitespace-nowrap">
-                        WEIGHT SCORE (SCORE * MULTIPLIER)
+                        Weighted score
                       </th>
-                      <th className="py-3 px-5 whitespace-nowrap">SPEED</th>
+                      <th className="py-3 px-5 whitespace-nowrap">Speed</th>
                       <th className="py-3 px-5 text-right whitespace-nowrap">
-                        TOTAL XP
+                        Total XP
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-sm md:text-sm font-medium">
+                  <tbody className="divide-y divide-white/5 text-sm font-medium">
                     {leaderboardList.map((row) => (
                       <tr
                         key={row.position}
                         className={cn(
-                          "hover:bg-slate-800/50 transition-colors",
-                          !ongoing && row.position === 1 && "bg-slate-800/20",
+                          "hover:bg-white/5 transition-colors",
+                          !ongoing && row.position === 1 && "bg-white/[0.03]",
                         )}
                       >
                         {/* Rank */}
                         <td className="py-3.5 px-5 whitespace-nowrap">
                           <span
                             className={cn(
-                              "font-bold text-sm",
+                              "font-semibold text-sm",
                               !ongoing && row.position === 1
-                                ? "text-amber-400"
+                                ? "text-yellow"
                                 : !ongoing && row.position === 2
-                                  ? "text-slate-300"
+                                  ? "text-grey"
                                   : !ongoing && row.position === 3
-                                    ? "text-amber-600"
-                                    : "text-slate-500",
+                                    ? "text-orange-400"
+                                    : "text-grey",
                             )}
                           >
                             #{row.position}
@@ -345,7 +333,7 @@ const EpisodePerformancePage = () => {
                             <ClickableUserLink
                               userDetailsId={row.userDetailsId}
                               currentUserDetailsId={currentDetailsId}
-                              className="w-8 h-8 rounded-full relative overflow-hidden bg-slate-800 border border-slate-700 shrink-0 flex items-center justify-center block"
+                              className="w-8 h-8 rounded-full relative overflow-hidden bg-white/5 border border-white/10 shrink-0 flex items-center justify-center block"
                             >
                               {row.avatar ? (
                                 <Image
@@ -355,37 +343,27 @@ const EpisodePerformancePage = () => {
                                   className="object-cover"
                                 />
                               ) : (
-                                <MdPerson className="text-slate-400 text-base" />
+                                <MdPerson className="text-grey text-base" />
                               )}
                             </ClickableUserLink>
-                            <span className="text-white font-semibold capitalize">
+                            <span className="text-(--primary) font-semibold capitalize">
                               {row.name}
                             </span>
                           </div>
                         </td>
 
-                        {/* Progress Bar & Score */}
-                        <td className="py-3.5 px-5 whitespace-nowrap">
-                          <div className="flex items-center gap-3">
-                            <span className="text-slate-300 font-semibold text-sm shrink-0">
-                              {row.score}
-                            </span>
-                          </div>
+                        {/* Score */}
+                        <td className="py-3.5 px-5 whitespace-nowrap text-(--primary) font-semibold text-sm">
+                          {row.score}
                         </td>
 
                         {/* Speed */}
-                        <td className="py-3.5 px-5 whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1.5 text-slate-300 font-medium">
-                            <MdHourglassTop
-                              size={14}
-                              className="text-slate-500 shrink-0"
-                            />
-                            <span>{formatSpeed(row.timeInSeconds)}</span>
-                          </div>
+                        <td className="py-3.5 px-5 whitespace-nowrap text-grey">
+                          {formatSpeed(row.timeInSeconds)}
                         </td>
 
                         {/* Total XP */}
-                        <td className="py-3.5 px-5 text-right text-slate-300 font-bold whitespace-nowrap">
+                        <td className="py-3.5 px-5 text-right text-(--primary) font-semibold whitespace-nowrap">
                           {row.totalXp} XP
                         </td>
                       </tr>
@@ -393,7 +371,7 @@ const EpisodePerformancePage = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </GlassCard>
           </div>
         </div>
       </div>
@@ -403,9 +381,7 @@ const EpisodePerformancePage = () => {
 
 const PageWrapper = () => {
   return (
-    <Suspense
-      fallback={<p className="p-6 text-slate-400">Loading component...</p>}
-    >
+    <Suspense fallback={<p className="p-6 text-grey">Loading component...</p>}>
       <EpisodePerformancePage />
     </Suspense>
   );

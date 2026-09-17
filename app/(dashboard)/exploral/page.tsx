@@ -357,33 +357,25 @@ const ExploralPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 order-2 lg:order-1">
             <GlassCard className="p-6 md:p-8 flex flex-col items-center text-center justify-between min-h-[200px] md:min-h-[250px]">
-              <div className="bg-emerald-500/10 p-3 md:p-4 rounded-2xl">
-                <MdSettings className="text-emerald-500 text-2xl md:text-3xl" />
+              <div className="bg-green/10 p-3 md:p-4 rounded-lg">
+                <MdSettings className="text-green text-2xl md:text-3xl" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-white font-bold text-base md:text-lg">
+                <h3 className="text-(--primary) font-bold text-base md:text-lg">
                   Genuslab Quiz Challenge
                 </h3>
-                <p className="text-slate-400 text-[14px] md:text-sm">
+                <p className="text-grey text-[14px] md:text-sm">
                   The ultimate flagship competition. High stakes, maximum
                   rewards.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 w-full gap-4 text-center border-t border-white/5 pt-4 mt-2">
-                {/* <div>
-                  <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
-                    Prize Pool
-                  </p>
-                  <p className="text-emerald-500 font-bold text-sm">
-                    {formatCurrency(rewardData.monthly.total)}
-                  </p>
-                </div> */}
                 <div>
-                  <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
+                  <p className="text-grey text-[14px] uppercase font-bold mb-1">
                     Grand Prize
                   </p>
-                  <p className="text-emerald-500 font-bold text-sm">
+                  <p className="text-green font-bold text-sm">
                     {formatCurrency(rewardData.monthly.reward.first)}
                   </p>
                 </div>
@@ -392,13 +384,13 @@ const ExploralPage = () => {
               <div className="flex gap-2 md:gap-3 mt-4">
                 <Link
                   href={"/quiz"}
-                  className="bg-emerald-500/20 hover:bg-emerald-500 duration-200 hover:text-white text-emerald-500 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[14px] font-bold"
+                  className="bg-green/20 hover:bg-green duration-200 hover:text-white text-green px-4 md:px-6 py-1.5 md:py-2 rounded-lg text-[14px] font-bold"
                 >
                   LIVE/DEMO
                 </Link>
                 <Link
                   href="/quizzes"
-                  className="bg-white/5 hover:bg-blue-400 duration-200 hover:text-white text-slate-400 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[14px] font-bold"
+                  className="bg-white/5 hover:bg-blue duration-200 hover:text-white text-grey px-4 md:px-6 py-1.5 md:py-2 rounded-lg text-[14px] font-bold"
                 >
                   Join
                 </Link>
@@ -408,48 +400,28 @@ const ExploralPage = () => {
             {/* Dynamic Tech Championship Card (Disabled / Coming Soon Variant) */}
             <GlassCard
               className={`p-6 md:p-8 flex flex-col items-center text-center justify-between min-h-[200px] md:min-h-[250px] transition-all duration-300 ${
-                techChampionship.comingSoon
-                  ? "bg-slate-900/30 border-white/5 opacity-60 hover:opacity-80 grayscale-[30%]"
-                  : ""
+                techChampionship.comingSoon ? "opacity-60" : ""
               }`}
             >
-              <div
-                className={`p-4 rounded-2xl ${
-                  techChampionship.comingSoon
-                    ? "bg-purple-500/5 text-purple-400/60"
-                    : "bg-purple-500/10 text-purple-500"
-                }`}
-              >
+              <div className="p-4 rounded-lg bg-white/5 text-grey">
                 <MdStars className="text-3xl" />
               </div>
               <div className="space-y-2">
-                <h3
-                  className={`font-bold text-lg ${
-                    techChampionship.comingSoon
-                      ? "text-slate-300"
-                      : "text-white"
-                  }`}
-                >
+                <h3 className="font-bold text-lg text-(--primary)">
                   {techChampionship.title}
                 </h3>
-                <p
-                  className={`text-sm ${
-                    techChampionship.comingSoon
-                      ? "text-slate-500"
-                      : "text-slate-400"
-                  }`}
-                >
+                <p className="text-sm text-grey">
                   {techChampionship.description}
                 </p>
               </div>
               <div className="flex gap-3 mt-4">
                 {techChampionship.comingSoon ? (
-                  <div className="flex items-center gap-2 bg-purple-950/30 text-purple-300/60 px-5 py-2 rounded-full text-[14px] font-extrabold uppercase tracking-widest border border-purple-500/20 backdrop-blur-sm shadow-inner cursor-not-allowed">
-                    <MdHourglassEmpty className="animate-pulse text-sm text-purple-400/80" />
+                  <div className="flex items-center gap-2 bg-white/5 text-grey px-5 py-2 rounded-lg text-[14px] font-bold uppercase tracking-widest border border-white/10 cursor-not-allowed">
+                    <MdHourglassEmpty className="text-sm" />
                     <span>{techChampionship.statusText || "Coming Soon"}</span>
                   </div>
                 ) : (
-                  <button className="bg-purple-500 hover:bg-purple-600 transition-colors text-white px-6 py-2 rounded-full text-[14px] font-bold uppercase">
+                  <button className="bg-blue hover:bg-blue/90 transition-colors text-white px-6 py-2 rounded-lg text-[14px] font-bold uppercase">
                     {techChampionship.statusText || "Join Now"}
                   </button>
                 )}
@@ -459,18 +431,13 @@ const ExploralPage = () => {
 
           {/* Dynamic Studio Winner Card (Disabled / Empty Variant) */}
           <GlassCard
-            className={`p-6 md:p-8 flex flex-col items-center justify-between relative overflow-hidden order-1 lg:order-2 min-h-[250px] transition-all duration-300 ${
-              !studioWinner ? "bg-slate-900/20 border-white/5 opacity-70" : ""
+            className={`p-6 md:p-8 flex flex-col items-center justify-between order-1 lg:order-2 min-h-[250px] transition-all duration-300 ${
+              !studioWinner ? "opacity-70" : ""
             }`}
           >
-            <div
-              className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl ${
-                studioWinner ? "bg-blue-600/20" : "bg-slate-600/10"
-              }`}
-            />
             <p
               className={`text-[14px] font-bold flex items-center gap-2 uppercase tracking-wider ${
-                studioWinner ? "text-blue-500" : "text-slate-500/70"
+                studioWinner ? "text-blue" : "text-grey"
               }`}
             >
               <MdStars /> Current Studio Winner
@@ -481,66 +448,62 @@ const ExploralPage = () => {
                 <div className="relative my-2">
                   <ImageWithFallback
                     src={studioWinner.avatarUrl}
-                    className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover ring-4 ring-blue-500/20"
+                    className="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover ring-4 ring-blue/20"
                   />
-                  <div className="absolute -bottom-2 right-2.5 bg-blue-600 text-[14px] font-black px-2 py-1 rounded text-white border border-white/20">
+                  <div className="absolute -bottom-2 right-2.5 bg-blue text-[14px] font-black px-2 py-1 rounded text-white border border-white/20">
                     #1 RANK
                   </div>
                 </div>
-                <h3 className="text-white font-bold text-xl mt-2">
+                <h3 className="text-(--primary) font-bold text-xl mt-2">
                   {studioWinner.name}
                 </h3>
-                <p className="text-slate-500 mb-4">{studioWinner.rankTitle}</p>
+                <p className="text-grey mb-4">{studioWinner.rankTitle}</p>
                 <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-4">
                   <div>
-                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
+                    <p className="text-grey text-[14px] uppercase font-bold mb-1">
                       Points Won
                     </p>
-                    <p className="text-white font-bold text-sm">
+                    <p className="text-(--primary) font-bold text-sm">
                       {studioWinner.pointsWon.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
+                    <p className="text-grey text-[14px] uppercase font-bold mb-1">
                       Prize Pool
                     </p>
-                    <p className="text-emerald-500 font-bold text-sm">
+                    <p className="text-green font-bold text-sm">
                       {studioWinner.prizePool}
                     </p>
                   </div>
                 </div>
               </>
             ) : (
-              /* Sleek Semi-Transparent / Disabled Placeholder State */
+              /* Empty placeholder state */
               <div className="flex flex-col items-center text-center my-auto py-2 w-full">
                 <div className="relative mb-3 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-slate-500/10 rounded-full blur-xl" />
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/[0.03] border border-dashed border-white/10 flex items-center justify-center text-slate-500/60 shadow-inner">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg bg-white/[0.03] border border-dashed border-white/10 flex items-center justify-center text-grey">
                     <MdEmojiEvents size={36} className="opacity-30" />
                   </div>
-                  <span className="absolute -bottom-2 bg-slate-800/80 text-slate-400 text-[14px] font-extrabold px-2 py-0.5 rounded-full border border-white/10 uppercase tracking-widest backdrop-blur-sm">
-                    Pending
-                  </span>
                 </div>
-                <h4 className="text-slate-300 font-semibold text-sm mb-1">
+                <h4 className="text-(--primary) font-semibold text-sm mb-1">
                   No Winner Yet
                 </h4>
-                <p className="text-slate-500 text-[14px] max-w-50 leading-relaxed mb-4">
+                <p className="text-grey text-[14px] max-w-50 leading-relaxed mb-4">
                   Tournament in progress. Be the first to claim top rank!
                 </p>
 
                 <div className="grid grid-cols-2 w-full gap-4 text-center border-t border-white/5 pt-3 opacity-40">
                   <div>
-                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-0.5">
+                    <p className="text-grey text-[14px] uppercase font-bold mb-0.5">
                       Points Won
                     </p>
-                    <p className="text-slate-400 font-bold text-sm">--</p>
+                    <p className="text-grey font-bold text-sm">--</p>
                   </div>
                   <div>
-                    <p className="text-slate-500 text-[14px] uppercase font-bold mb-0.5">
+                    <p className="text-grey text-[14px] uppercase font-bold mb-0.5">
                       Prize Pool
                     </p>
-                    <p className="text-slate-400 font-bold text-sm">
+                    <p className="text-grey font-bold text-sm">
                       {formatCurrency(rewardData.monthly.total)}
                     </p>
                   </div>
@@ -573,9 +536,8 @@ const ExploralPage = () => {
           )}
 
           <GlassCard className="lg:col-span-2 p-6 md:p-8 space-y-4">
-            <h3 className="text-white font-bold flex items-center gap-2 mb-6 md:mb-8">
-              <div className="w-1 h-4 bg-blue-500 rounded-full" /> Connect with
-              Us
+            <h3 className="text-(--primary) font-bold mb-6 md:mb-8">
+              Connect with Us
             </h3>
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               {[
@@ -614,12 +576,12 @@ const ExploralPage = () => {
                   key={i}
                   href={social.ref}
                   target="__blank"
-                  className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center gap-3 hover:bg-white/10 transition-all"
+                  className="bg-white/5 border border-white/10 rounded-lg p-6 flex flex-col items-center gap-3 hover:bg-white/10 transition-all"
                 >
-                  <div className="text-white text-xl md:text-2xl">
+                  <div className="text-(--primary) text-xl md:text-2xl">
                     {social.icon}
                   </div>
-                  <span className="text-slate-400 text-[14px] md:text-[14px] font-bold uppercase tracking-tighter">
+                  <span className="text-grey text-[14px] font-bold uppercase tracking-tighter">
                     {social.label}
                   </span>
                 </Link>
@@ -632,22 +594,22 @@ const ExploralPage = () => {
         <GlassCard className="static p-6 md:p-10">
           <div className="flex justify-between items-center mb-8 md:mb-10">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-white">
+              <h2 className="text-xl md:text-2xl font-bold text-(--primary)">
                 Leaderboard Ranks
               </h2>
-              <p className="text-slate-500 text-[14px] md:text-sm mt-1">
+              <p className="text-grey text-[14px] md:text-sm mt-1">
                 Ascend through the hierarchy of knowledge.
               </p>
             </div>
             <div className="flex gap-2">
               <button
-                className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-grey"
                 onClick={() => handleRankClick("dec", paginationSize)}
               >
                 <FaArrowLeft size={12} />
               </button>
               <button
-                className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/10 flex items-center justify-center text-slate-400"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-white/10 flex items-center justify-center text-grey"
                 onClick={() => handleRankClick("inc", paginationSize)}
               >
                 <FaArrowLeft size={12} className="rotate-180" />
@@ -658,7 +620,7 @@ const ExploralPage = () => {
           <div className="w-full">
             <table className="w-full text-left">
               <thead className="hidden md:table-header-group">
-                <tr className="text-slate-500 text-[14px] uppercase font-bold tracking-widest border-b border-white/5">
+                <tr className="text-grey text-[14px] uppercase font-bold tracking-widest border-b border-white/5">
                   <th className="pb-6 px-4">Rank ID</th>
                   <th className="pb-6 px-4">Designation</th>
                   <th className="pb-6 px-4">Unlock Requirements</th>
@@ -672,32 +634,32 @@ const ExploralPage = () => {
                     <tr
                       key={rank?.rankName}
                       onClick={() => handleRankModal(rank)}
-                      className="group transition-colors hover:bg-white/5 rounded-xl cursor-pointer"
+                      className="group transition-colors hover:bg-white/5 cursor-pointer"
                     >
-                      <td className="py-6 px-4 text-slate-500 font-mono text-sm hidden md:table-cell">
+                      <td className="py-6 px-4 text-grey font-mono text-sm hidden md:table-cell">
                         {rank.rank.toString().padStart(3, "0")}
                       </td>
                       <td className="py-6 px-0 md:px-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-white/5 text-blue flex items-center justify-center">
                             {rank.Icon}
                           </div>
                           <div>
-                            <p className="text-white font-bold text-sm">
+                            <p className="text-(--primary) font-bold text-sm">
                               {rank.rankName}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="py-6 px-4 text-white text-sm font-bold hidden md:table-cell">
+                      <td className="py-6 px-4 text-(--primary) text-sm font-bold hidden md:table-cell">
                         {rank.unlockXp.toLocaleString()} XP
                       </td>
                       <td className="py-6 px-4">
                         <div className="flex justify-end md:justify-center">
                           {rank.status === "unlocked" ? (
-                            <MdCheckCircle className="text-emerald-500 text-xl" />
+                            <MdCheckCircle className="text-green text-xl" />
                           ) : (
-                            <MdLock className="text-slate-500 text-xl" />
+                            <MdLock className="text-grey text-xl" />
                           )}
                         </div>
                       </td>

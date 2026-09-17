@@ -1,6 +1,7 @@
 import { FaCheckCircle, FaCrown } from "react-icons/fa";
 import { HiOutlineTv } from "react-icons/hi2";
 import PrimaryButton from "@/components/ui/buttons/Primary";
+import GlassBadge from "@/components/ui/GlassBadge";
 
 const FREE_BENEFITS = [
   { text: "Demo Quiz", active: true },
@@ -24,18 +25,16 @@ const SubscriptionCard = ({ isSubscribed }: { isSubscribed: boolean }) => {
         name: "Premium",
         price: "₦4000/month",
         badge: "Premium Member",
-        badgeStyle: "bg-amber-400/10 border border-amber-400/30 text-amber-400",
-        icon: <FaCrown className="text-amber-400 text-lg" />,
-        glow: "bg-amber-400/10",
+        badgeVariant: "warning" as const,
+        icon: <FaCrown className="text-yellow text-lg" />,
         benefits: PREMIUM_BENEFITS,
       }
     : {
         name: "Free Tier",
         price: "₦0/month",
         badge: "Current Plan",
-        badgeStyle: "bg-blue/10 border border-blue/20 text-blue",
+        badgeVariant: "info" as const,
         icon: <HiOutlineTv className="text-blue text-xl" />,
-        glow: "bg-blue/5",
         benefits: FREE_BENEFITS,
       };
 
@@ -49,18 +48,10 @@ const SubscriptionCard = ({ isSubscribed }: { isSubscribed: boolean }) => {
               Subscription Plan
             </h3>
           </div>
-          <span
-            className={`text-[14px] font-bold px-3 py-1 rounded-full ${plan.badgeStyle}`}
-          >
-            {plan.badge}
-          </span>
+          <GlassBadge variant={plan.badgeVariant}>{plan.badge}</GlassBadge>
         </div>
 
-        <div className="mt-5 bg-white/[0.02] border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-          <div
-            className={`absolute top-0 right-0 w-32 h-32 blur-[50px] rounded-full -mr-10 -mt-10 ${plan.glow}`}
-          />
-
+        <div className="mt-5 bg-white/[0.02] border border-white/5 rounded-lg p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-1">
               <h4 className="text-2xl font-black text-(--primary)">
@@ -92,7 +83,7 @@ const SubscriptionCard = ({ isSubscribed }: { isSubscribed: boolean }) => {
         type="link"
         to="/pricing"
         text={isSubscribed ? "See Pricing" : "Upgrade Plan"}
-        style="bg-blue text-white hover:bg-blue/90 rounded-xl py-3.5 w-full text-sm font-bold tracking-wide flex justify-center items-center gap-2 mt-5"
+        style="bg-blue text-white hover:bg-blue/90 rounded-lg py-3.5 w-full text-sm font-bold tracking-wide flex justify-center items-center gap-2 mt-5"
       />
     </div>
   );
@@ -103,7 +94,7 @@ const BenefitItem = ({ active, text }: { active: boolean; text: string }) => (
     className={`flex items-center gap-2 ${active ? "text-(--primary)" : "text-grey/40"}`}
   >
     <FaCheckCircle
-      className={`shrink-0 ${active ? "text-green-500" : "text-grey/20"}`}
+      className={`shrink-0 ${active ? "text-green" : "text-grey/20"}`}
       size={12}
     />
     <span className={!active ? "line-through opacity-80" : "font-medium"}>

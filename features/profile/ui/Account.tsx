@@ -28,6 +28,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getReferrals, updateProfileData } from "@/lib/api/apis";
 import Link from "next/link";
 import SubscriptionCard from "../cards/Subscripiton";
+import GlassBadge from "@/components/ui/GlassBadge";
 
 const AccountTabContent = ({ user }: any) => {
   const [loading, setLoading] = useState(false);
@@ -212,7 +213,7 @@ const AccountTabContent = ({ user }: any) => {
 
         <div className="flex flex-col gap-3">
           <LinkedAccountRow
-            icon={<FaEnvelope className="text-grey-500" size={14} />}
+            icon={<FaEnvelope className="text-grey" size={14} />}
             title="Email Account"
             subtitle={personalInfo.email}
             status="Linked"
@@ -262,7 +263,7 @@ const LinkedAccountRow = ({
 }) => (
   <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex flex-wrap justify-between items-center gap-3">
     <div className="flex items-center gap-3 min-w-0">
-      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-white shrink-0">
+      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-(--primary) shrink-0">
         {icon}
       </div>
       <div className="space-y-0.5 min-w-0">
@@ -280,15 +281,13 @@ const LinkedAccountRow = ({
           Update
         </Link>
       )}
-      <span
-        className={`px-3 py-1 rounded-lg text-[14px] font-bold tracking-wide transition-all select-none ${
-          status === "Linked"
-            ? "bg-green-500/10 text-green-400 border border-green-500/10"
-            : "bg-blue text-white hover:bg-blue/90 cursor-pointer shadow-sm"
-        }`}
-      >
-        {status}
-      </span>
+      {status === "Linked" ? (
+        <GlassBadge variant="success">Linked</GlassBadge>
+      ) : (
+        <button className="bg-blue text-white hover:bg-blue/90 px-3 py-1 rounded-lg text-xs font-bold tracking-wide transition-all shadow-sm">
+          Connect
+        </button>
+      )}
     </div>
   </div>
 );
