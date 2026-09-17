@@ -11,7 +11,7 @@ import Back from "../ui/buttons/Back";
 import Avatar from "../ui/Avatar";
 import useSidebar from "@/store/useSidebar";
 import useUser from "@/hooks/useUser";
-import { UseNotificationSocket } from "@/hooks/useSocket";
+import { useSocket } from "@/store/useSocket";
 
 interface HeaderProps {
   title?: string;
@@ -26,7 +26,11 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
 
-  const socket = UseNotificationSocket(data?.user?.id || "");
+  // The single notification socket connection is owned by SocketProvider
+  // (mounted once at the dashboard layout level, so it survives page
+  // navigation) — Header just reads it back out of the shared store rather
+  // than opening a second connection of its own.
+  const socket = useSocket((state: any) => state.socket);
 
   useEffect(() => {
     setIsMounted(true);

@@ -1,7 +1,9 @@
 "use client";
 
+import GlassCard from "@/components/ui/cards/GlassCard";
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
+import PrimaryButton from "@/components/ui/buttons/Primary";
 import useSidebar from "@/store/useSidebar";
 import React, { useState } from "react";
 import {
@@ -12,7 +14,6 @@ import {
   MdDateRange,
   MdCalendarMonth,
   MdInfoOutline,
-  MdArrowForward,
 } from "react-icons/md";
 
 export const rewardData = {
@@ -43,325 +44,324 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+// Shared "1st/2nd/3rd place" row — a glass-consistent neutral chip (white/5
+// on top of GlassCard's own translucent surface) instead of a solid slate
+// block, so it reads as one material with the card around it.
+const PlaceRow = ({ label, amount }: { label: string; amount: number }) => (
+  <div className="flex items-center justify-between py-2.5 px-3 rounded-md bg-white/5 border border-white/10">
+    <span className="font-medium text-grey">{label}</span>
+    <span className="font-semibold text-(--primary)">
+      {formatCurrency(amount)}
+    </span>
+  </div>
+);
+
 const RewardBreakdownPage = () => {
   const { toggleSidebar } = useSidebar((state: any) => state);
   const [activeTab, setActiveTab] = useState<"all" | "episodes" | "referral">(
     "all",
   );
 
+  const tabs = [
+    { key: "all" as const, label: "All Rewards" },
+    { key: "episodes" as const, label: "Leaderboard Pools" },
+    { key: "referral" as const, label: "Referrals" },
+  ];
+
   return (
     <Layout>
       <Header title="Reward Structure" backBtn={true} />
-      <div className="min-h-screen pb-20 text-slate-200">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 pt-6 space-y-6">
+      <div className="min-h-screen pb-24">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 pt-8 space-y-10 md:space-y-12">
           {/* Header section */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-            <div className="space-y-1">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/10">
+            <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => toggleSidebar()}
-                  className="md:hidden p-1.5 bg-slate-800 rounded border border-slate-700 text-slate-300 hover:text-white"
+                  className="md:hidden p-1.5 bg-white/5 rounded border border-white/10 text-grey hover:text-(--primary)"
                   aria-label="Toggle Navigation Sidebar"
                 >
                   <MdMenu className="text-lg" />
                 </button>
-                <span className="text-sm font-medium uppercase tracking-wide text-slate-400">
+                <span className="text-sm font-medium uppercase tracking-wide text-grey">
                   Performance & Incentives
                 </span>
               </div>
-              <h1 className="text-2xl font-semibold text-white tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-semibold text-(--primary) tracking-tight">
                 Reward Breakdown
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-grey max-w-md leading-relaxed">
                 Transparent payout structure for competitive episodes and user
                 referrals.
               </p>
             </div>
 
             {/* Segmented Control Filter */}
-            <div className="inline-flex bg-slate-900 border border-slate-800 p-1 rounded-md self-start sm:self-auto">
-              <button
-                onClick={() => setActiveTab("all")}
-                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                  activeTab === "all"
-                    ? "bg-slate-800 text-white font-semibold"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                All Rewards
-              </button>
-              <button
-                onClick={() => setActiveTab("episodes")}
-                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                  activeTab === "episodes"
-                    ? "bg-slate-800 text-white font-semibold"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                Leaderboard Pools
-              </button>
-              <button
-                onClick={() => setActiveTab("referral")}
-                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                  activeTab === "referral"
-                    ? "bg-slate-800 text-white font-semibold"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                Referrals
-              </button>
+            <div className="inline-flex flex-wrap gap-1 bg-white/5 border border-white/10 backdrop-blur-xl p-1 rounded-lg self-start sm:self-auto">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-3.5 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === tab.key
+                      ? "bg-blue/20 text-blue font-semibold"
+                      : "text-grey hover:text-(--primary)"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Metric Summary Bar */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
-                <MdToday size={16} className="text-slate-400" />
-                <span>Daily Pool</span>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <GlassCard>
+              <div className="p-5">
+                <div className="flex items-center gap-2 text-grey text-sm font-medium mb-2.5">
+                  <span className="bg-white/5 p-1.5 rounded-md text-blue">
+                    <MdToday size={16} />
+                  </span>
+                  <span>Daily Pool</span>
+                </div>
+                <p className="text-xl font-bold text-(--primary) tracking-tight">
+                  {formatCurrency(rewardData.daily.total)}
+                </p>
               </div>
-              <p className="text-lg font-bold text-white tracking-tight">
-                {formatCurrency(rewardData.daily.total)}
-              </p>
-            </div>
+            </GlassCard>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
-                <MdDateRange size={16} className="text-slate-400" />
-                <span>Weekly Pool</span>
+            <GlassCard>
+              <div className="p-5">
+                <div className="flex items-center gap-2 text-grey text-sm font-medium mb-2.5">
+                  <span className="bg-white/5 p-1.5 rounded-md text-blue">
+                    <MdDateRange size={16} />
+                  </span>
+                  <span>Weekly Pool</span>
+                </div>
+                <p className="text-xl font-bold text-(--primary) tracking-tight">
+                  {formatCurrency(rewardData.weekly.total)}
+                </p>
               </div>
-              <p className="text-lg font-bold text-white tracking-tight">
-                {formatCurrency(rewardData.weekly.total)}
-              </p>
-            </div>
+            </GlassCard>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
-                <MdCalendarMonth size={16} className="text-amber-500/90" />
-                <span>Monthly Jackpot</span>
+            <GlassCard>
+              <div className="p-5">
+                <div className="flex items-center gap-2 text-grey text-sm font-medium mb-2.5">
+                  <span className="bg-amber-500/10 p-1.5 rounded-md text-amber-400">
+                    <MdCalendarMonth size={16} />
+                  </span>
+                  <span>Monthly Jackpot</span>
+                </div>
+                <p className="text-xl font-bold text-(--primary) tracking-tight">
+                  {formatCurrency(rewardData.monthly.total)}
+                </p>
               </div>
-              <p className="text-lg font-bold text-white tracking-tight">
-                {formatCurrency(rewardData.monthly.total)}
-              </p>
-            </div>
+            </GlassCard>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-md p-3.5">
-              <div className="flex items-center gap-2 text-slate-400 text-sm font-medium mb-1">
-                <MdGroupAdd size={16} className="text-emerald-500/90" />
-                <span>Referral Payout</span>
+            <GlassCard>
+              <div className="p-5">
+                <div className="flex items-center gap-2 text-grey text-sm font-medium mb-2.5">
+                  <span className="bg-emerald-500/10 p-1.5 rounded-md text-emerald-400">
+                    <MdGroupAdd size={16} />
+                  </span>
+                  <span>Referral Payout</span>
+                </div>
+                <p className="text-xl font-bold text-(--primary) tracking-tight">
+                  {formatCurrency(rewardData.referral)}{" "}
+                  <span className="text-sm font-normal text-grey">/ user</span>
+                </p>
               </div>
-              <p className="text-lg font-bold text-white tracking-tight">
-                {formatCurrency(rewardData.referral)}{" "}
-                <span className="text-sm font-normal text-slate-400">
-                  / user
-                </span>
-              </p>
-            </div>
+            </GlassCard>
           </div>
 
-          {/* Leaderboard Tier Breakdown Table/Cards */}
+          {/* Leaderboard Tier Breakdown Cards */}
           {(activeTab === "all" || activeTab === "episodes") && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
+            <div className="space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                <h2 className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                   Leaderboard Distributions
                 </h2>
-                <span className="text-sm text-slate-400">
+                <span className="text-sm text-grey">
                   Calculated by final score and completion time
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {/* Daily Tier Card */}
-                <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                      <span className="text-sm font-semibold text-white uppercase tracking-wider">
+                <GlassCard className="flex flex-col">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                      <span className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                         Daily Episodes
                       </span>
-                      <span className="text-[14px] font-medium text-slate-400">
+                      <span className="text-[14px] font-medium text-grey">
                         Top 3 Ranked
                       </span>
                     </div>
 
-                    <div className="my-4">
-                      <span className="text-sm text-slate-400 font-medium block">
+                    <div className="my-5">
+                      <span className="text-sm text-grey font-medium block mb-1">
                         Total Distribution
                       </span>
-                      <span className="text-2xl font-bold text-white tracking-tight">
+                      <span className="text-2xl font-bold text-(--primary) tracking-tight">
                         {formatCurrency(rewardData.daily.total)}
                       </span>
                     </div>
 
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
-                        <span className="font-medium text-slate-300">
-                          1st Place
-                        </span>
-                        <span className="font-semibold text-white">
-                          {formatCurrency(rewardData.daily.reward.first)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
-                        <span className="font-medium text-slate-300">
-                          2nd Place
-                        </span>
-                        <span className="font-semibold text-white">
-                          {formatCurrency(rewardData.daily.reward.second)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
-                        <span className="font-medium text-slate-300">
-                          3rd Place
-                        </span>
-                        <span className="font-semibold text-white">
-                          {formatCurrency(rewardData.daily.reward.third)}
-                        </span>
-                      </div>
+                    <div className="space-y-2.5 text-sm">
+                      <PlaceRow
+                        label="1st Place"
+                        amount={rewardData.daily.reward.first}
+                      />
+                      <PlaceRow
+                        label="2nd Place"
+                        amount={rewardData.daily.reward.second}
+                      />
+                      <PlaceRow
+                        label="3rd Place"
+                        amount={rewardData.daily.reward.third}
+                      />
                     </div>
                   </div>
-                </div>
+                </GlassCard>
 
                 {/* Weekly Tier Card */}
-                <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                      <span className="text-sm font-semibold text-white uppercase tracking-wider">
+                <GlassCard className="flex flex-col">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                      <span className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                         Weekly Championship
                       </span>
-                      <span className="text-[14px] font-medium text-slate-400">
+                      <span className="text-[14px] font-medium text-grey">
                         Top 3 Ranked
                       </span>
                     </div>
 
-                    <div className="my-4">
-                      <span className="text-sm text-slate-400 font-medium block">
+                    <div className="my-5">
+                      <span className="text-sm text-grey font-medium block mb-1">
                         Total Distribution
                       </span>
-                      <span className="text-2xl font-bold text-white tracking-tight">
+                      <span className="text-2xl font-bold text-(--primary) tracking-tight">
                         {formatCurrency(rewardData.weekly.total)}
                       </span>
                     </div>
 
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
-                        <span className="font-medium text-slate-300">
-                          1st Place
-                        </span>
-                        <span className="font-semibold text-white">
-                          {formatCurrency(rewardData.weekly.reward.first)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
-                        <span className="font-medium text-slate-300">
-                          2nd Place
-                        </span>
-                        <span className="font-semibold text-white">
-                          {formatCurrency(rewardData.weekly.reward.second)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded bg-slate-950/60 border border-slate-800/80">
-                        <span className="font-medium text-slate-300">
-                          3rd Place
-                        </span>
-                        <span className="font-semibold text-white">
-                          {formatCurrency(rewardData.weekly.reward.third)}
-                        </span>
-                      </div>
+                    <div className="space-y-2.5 text-sm">
+                      <PlaceRow
+                        label="1st Place"
+                        amount={rewardData.weekly.reward.first}
+                      />
+                      <PlaceRow
+                        label="2nd Place"
+                        amount={rewardData.weekly.reward.second}
+                      />
+                      <PlaceRow
+                        label="3rd Place"
+                        amount={rewardData.weekly.reward.third}
+                      />
                     </div>
                   </div>
-                </div>
+                </GlassCard>
 
                 {/* Monthly Tier Card */}
-                <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                      <span className="text-sm font-semibold text-white uppercase tracking-wider">
+                <GlassCard className="flex flex-col border border-amber-500/20">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                      <span className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                         Monthly Leaderboard
                       </span>
-                      <span className="text-[14px] font-medium text-amber-500">
+                      <span className="text-[14px] font-medium text-amber-400">
                         Winner Takes All
                       </span>
                     </div>
 
-                    <div className="my-4">
-                      <span className="text-sm text-slate-400 font-medium block">
+                    <div className="my-5">
+                      <span className="text-sm text-grey font-medium block mb-1">
                         Grand Prize Pool
                       </span>
-                      <span className="text-2xl font-bold text-white tracking-tight">
+                      <span className="text-2xl font-bold text-(--primary) tracking-tight">
                         {formatCurrency(rewardData.monthly.total)}
                       </span>
                     </div>
 
                     <div className="text-sm">
-                      <div className="flex items-center justify-between p-3 rounded bg-amber-500/10 border border-amber-500/20">
-                        <span className="font-medium text-amber-200">
+                      <div className="flex items-center justify-between p-3.5 rounded-md bg-amber-500/10 border border-amber-500/20">
+                        <span className="font-medium text-amber-300 flex items-center gap-1.5">
+                          <MdEmojiEvents size={16} className="text-amber-400" />
                           1st Place Champion
                         </span>
                         <span className="font-bold text-amber-400">
                           {formatCurrency(rewardData.monthly.reward.first)}
                         </span>
                       </div>
-                      <p className="text-[14px] text-slate-400 mt-3 leading-normal">
+                      <p className="text-[14px] text-grey mt-4 leading-relaxed">
                         Accumulate the highest points across all episodes during
                         the calendar month to claim the monthly jackpot.
                       </p>
                     </div>
                   </div>
-                </div>
+                </GlassCard>
               </div>
             </div>
           )}
 
           {/* Referral Program Section */}
           {(activeTab === "all" || activeTab === "referral") && (
-            <div className="space-y-3">
-              <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
+            <div className="space-y-5">
+              <h2 className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                 Referral Program
               </h2>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-md p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-                      Direct Payout
-                    </span>
-                    <span className="text-sm text-slate-400">
-                      No payout limit
-                    </span>
+              <GlassCard>
+                <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                  <div className="space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                        Direct Payout
+                      </span>
+                      <span className="text-sm font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                        Subscribers Only
+                      </span>
+                      <span className="text-sm text-grey">No payout limit</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-(--primary)">
+                      Earn {formatCurrency(rewardData.referral)} per active
+                      referral
+                    </h3>
+                    <p className="text-sm text-grey max-w-xl leading-relaxed">
+                      Share your invitation code with new participants. Funds
+                      are credited directly to your wallet balance once their
+                      first entry is verified. This reward is only available to
+                      subscribed users — non-subscribed users can still refer
+                      friends but won't earn the cash bonus until they
+                      subscribe.
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-white">
-                    Earn {formatCurrency(rewardData.referral)} per active
-                    referral
-                  </h3>
-                  <p className="text-sm text-slate-400 max-w-xl">
-                    Share your invitation code with new participants. Funds are
-                    credited directly to your wallet balance once their first
-                    entry is verified.
-                  </p>
-                </div>
 
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm font-semibold transition-colors flex items-center gap-1.5 shrink-0">
-                  <span>Invite Users</span>
-                  <MdArrowForward size={15} />
-                </button>
-              </div>
+                  <PrimaryButton
+                    type="link"
+                    to="/profile"
+                    text="Invite Users"
+                    style="px-4 py-2.5 bg-blue text-white rounded-md text-sm font-semibold hover:brightness-110 transition-all inline-flex items-center gap-1.5 shrink-0"
+                  />
+                </div>
+              </GlassCard>
             </div>
           )}
 
           {/* Institutional Note */}
-          <div className="bg-slate-950 border border-slate-800/80 rounded-md p-3.5 flex items-start gap-3 text-sm text-slate-400">
-            <MdInfoOutline
-              size={16}
-              className="text-slate-500 shrink-0 mt-0.5"
-            />
-            <p className="leading-relaxed">
-              Rewards are disbursed automatically following the conclusion and
-              audit of each competition timeframe. In the event of equal score
-              totals, the fastest cumulative submission duration determines
-              ranking.
-            </p>
-          </div>
+          <GlassCard>
+            <div className="p-4 flex items-start gap-3 text-sm text-grey">
+              <MdInfoOutline size={16} className="text-grey shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                Rewards are disbursed automatically following the conclusion
+                and audit of each competition timeframe. In the event of equal
+                score totals, the fastest cumulative submission duration
+                determines ranking.
+              </p>
+            </div>
+          </GlassCard>
         </div>
       </div>
     </Layout>

@@ -30,7 +30,21 @@ interface LeaderboardItem {
   name: string;
   avatar: string | null;
   totalXp: number;
+  timeInSeconds: number | null;
 }
+
+// Formats a raw seconds value as "1m 23s" (or just "45s" under a minute) —
+// null/undefined means the completion time is unknown (e.g. no leaderboard
+// time entry for that user), rendered as an em dash rather than "0s".
+const formatSpeed = (seconds: number | null | undefined) => {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
+    return "—";
+  }
+  const totalSeconds = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+};
 
 const EpisodePerformancePage = () => {
   const { toggleSidebar } = useSidebar((state: any) => state);
@@ -126,7 +140,7 @@ const EpisodePerformancePage = () => {
               <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                 Episode Performance
               </h1>
-              <p className="text-sm md:text-sm text-slate-400 font-medium">
+              <p className="text-sm md:text-sm text-slate-400 font-medium whitespace-nowrap">
                 Day {date || "--"}{" "}
                 <span className="text-slate-700 mx-1.5">|</span> Episode{" "}
                 {episode || "--"}
@@ -137,7 +151,7 @@ const EpisodePerformancePage = () => {
               onClick={() => {
                 router.back();
               }}
-              className="w-fit inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-sm font-semibold transition-colors"
+              className="w-fit shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-sm font-semibold transition-colors whitespace-nowrap"
             >
               <span>VIEW QUIZ ANSWERS</span>
               <MdArrowForward className="text-base text-slate-400" />
@@ -208,21 +222,26 @@ const EpisodePerformancePage = () => {
                     </div>
 
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
                         <MdAccountBalanceWallet
                           size={15}
-                          className="text-emerald-400"
+                          className="text-emerald-400 shrink-0"
                         />
                         <span>{winner.totalXp} XP</span>
                       </div>
 
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
-                        <MdAccessTime size={15} className="text-slate-400" />
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
+                        <MdAccessTime size={15} className="text-slate-400 shrink-0" />
                         <span>Score: {winner.score}</span>
                       </div>
 
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium">
-                        <MdPerson size={15} className="text-slate-400" />
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
+                        <MdHourglassTop size={15} className="text-blue-400 shrink-0" />
+                        <span>Winning Time: {formatSpeed(winner.timeInSeconds)}</span>
+                      </div>
+
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-sm font-medium whitespace-nowrap">
+                        <MdPerson size={15} className="text-slate-400 shrink-0" />
                         <span>{leaderboardList.length} Participants</span>
                       </div>
                     </div>
@@ -266,15 +285,22 @@ const EpisodePerformancePage = () => {
 
             <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                {/* min-w forces the table to keep its natural column widths
+                    instead of squeezing into the narrow viewport (which was
+                    wrapping every cell's text) — overflow-x-auto above then
+                    gives an actual horizontal scroll on mobile instead. */}
+                <table className="w-full min-w-[720px] text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-800 text-[14px] md:text-sm font-semibold uppercase tracking-wider text-slate-400 bg-slate-950/50">
-                      <th className="py-3 px-5">RANK</th>
-                      <th className="py-3 px-5">USER</th>
-                      <th className="py-3 px-5">
+                      <th className="py-3 px-5 whitespace-nowrap">RANK</th>
+                      <th className="py-3 px-5 whitespace-nowrap">USER</th>
+                      <th className="py-3 px-5 whitespace-nowrap">
                         WEIGHT SCORE (SCORE * MULTIPLIER)
                       </th>
-                      <th className="py-3 px-5 text-right">TOTAL XP</th>
+                      <th className="py-3 px-5 whitespace-nowrap">SPEED</th>
+                      <th className="py-3 px-5 text-right whitespace-nowrap">
+                        TOTAL XP
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800 text-sm md:text-sm font-medium">
@@ -287,7 +313,7 @@ const EpisodePerformancePage = () => {
                         )}
                       >
                         {/* Rank */}
-                        <td className="py-3.5 px-5">
+                        <td className="py-3.5 px-5 whitespace-nowrap">
                           <span
                             className={cn(
                               "font-bold text-sm",
@@ -305,7 +331,7 @@ const EpisodePerformancePage = () => {
                         </td>
 
                         {/* User Avatar & Name */}
-                        <td className="py-3.5 px-5">
+                        <td className="py-3.5 px-5 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full relative overflow-hidden bg-slate-800 border border-slate-700 shrink-0 flex items-center justify-center">
                               {row.avatar ? (
@@ -326,16 +352,27 @@ const EpisodePerformancePage = () => {
                         </td>
 
                         {/* Progress Bar & Score */}
-                        <td className="py-3.5 px-5">
-                          <div className="flex items-center gap-3 min-w-35 max-w-50">
+                        <td className="py-3.5 px-5 whitespace-nowrap">
+                          <div className="flex items-center gap-3">
                             <span className="text-slate-300 font-semibold text-sm shrink-0">
                               {row.score}
                             </span>
                           </div>
                         </td>
 
+                        {/* Speed */}
+                        <td className="py-3.5 px-5 whitespace-nowrap">
+                          <div className="inline-flex items-center gap-1.5 text-slate-300 font-medium">
+                            <MdHourglassTop
+                              size={14}
+                              className="text-slate-500 shrink-0"
+                            />
+                            <span>{formatSpeed(row.timeInSeconds)}</span>
+                          </div>
+                        </td>
+
                         {/* Total XP */}
-                        <td className="py-3.5 px-5 text-right text-slate-300 font-bold">
+                        <td className="py-3.5 px-5 text-right text-slate-300 font-bold whitespace-nowrap">
                           {row.totalXp} XP
                         </td>
                       </tr>

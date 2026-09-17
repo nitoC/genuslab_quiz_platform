@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useUser } from "@/store/useUser";
 import { useSocket } from "@/store/useSocket";
 import { UseNotificationSocket } from "@/hooks/useSocket";
@@ -9,36 +9,17 @@ import toast from "react-hot-toast";
 import { playNotificationSound } from "@/lib/utils/playNotificationSound";
 import { MdNotificationsActive } from "react-icons/md";
 
-type SocketInstance = {
-  socket: any;
-  disconnect: () => void;
-};
-
 const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const user = useUser() as { data?: { user?: { id?: string } } } | undefined;
-  const data = user?.data;
+  const userId = useUser((state) => state.user?.userId);
   const { updateSocket } = useSocket() as {
     updateSocket: (socket: any) => void;
   };
   const queryClient = useQueryClient();
-  const [socketData, setSocketData] = useState<any>(null);
-  let socketInstance: SocketInstance | null = null;
+  const socketData = UseNotificationSocket(userId || "");
 
   useEffect(() => {
-    if (data?.user?.id) {
-      const res: any = UseNotificationSocket(data.user.id);
-      const socket = res;
-      //   socketInstance = { socket, disconnect: () => socket.disconnect() };
-      setSocketData(socket);
-      updateSocket(socket);
-    }
-
-    return () => {
-      if (socketData) {
-        socketData.disconnect();
-      }
-    };
-  }, [data?.user?.id]);
+    updateSocket(socketData);
+  }, [socketData, updateSocket]);
 
   // Global "new notification" alert — fires regardless of which dashboard
   // page is open, so the user is always told about it (sound + toast),
@@ -64,7 +45,9 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
                 {newNotice.title || "New Notification"}
               </p>
               <p className="mt-1 text-sm text-slate-300 line-clamp-2">
-                {newNotice.content || newNotice.message || newNotice.description}
+                {newNotice.content ||
+                  newNotice.message ||
+                  newNotice.description}
               </p>
             </div>
           </div>

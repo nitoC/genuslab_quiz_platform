@@ -112,7 +112,7 @@ const page = () => {
     queryFn: async () => {
       const res = await getTodayTotalRewards();
       console.log(res?.data, "today rewards data");
-      return res?.data?.total || 0;
+      return res?.data?.total || res?.data?.payload || 0;
     },
   });
 
@@ -218,7 +218,7 @@ const page = () => {
               <div>
                 <h3 className="text-grey text-sm">Rewards Today</h3>
                 <p className="text-2xl font-bold text-primary">
-                  ₦{formatedReward}
+                  ₦{formater(todayRewardsData)}
                 </p>
               </div>
             </div>

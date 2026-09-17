@@ -17,6 +17,7 @@ import { getAttempts } from "@/lib/api/apis"; // adjust path
 import Link from "next/link";
 import useUser from "@/hooks/useUser";
 import { format } from "date-fns";
+import { formater } from "@/lib/utils/numFormatter";
 
 // Three unequal bars standing in for a podium — reads as "rankings" without
 // reaching for the same trophy glyph every quiz app uses.
@@ -38,26 +39,26 @@ const PodiumMark = ({ className = "" }: { className?: string }) => (
  * -------------------------------------------------------------------------- */
 
 const StatCardSkeleton = () => (
-  <GlassCard className="flex-1 animate-pulse">
-    <div className="p-8 flex justify-between items-center">
+  <GlassCard className="w-full animate-pulse">
+    <div className="p-5 sm:p-8 flex justify-between items-center">
       <div className="flex flex-col gap-2 w-1/2">
         <div className="h-4 bg-white/10 rounded w-3/4"></div>
         <div className="h-8 bg-white/20 rounded w-1/2"></div>
       </div>
-      <div className="bg-white/5 w-14 h-14 rounded-xl"></div>
+      <div className="bg-white/5 w-11 h-11 sm:w-14 sm:h-14 rounded-xl shrink-0"></div>
     </div>
   </GlassCard>
 );
 
 const QuizCardSkeleton = () => (
-  <GlassCard className="animate-pulse">
-    <div className="p-6 flex items-center justify-between">
-      <div className="flex gap-6 items-center flex-1">
+  <GlassCard className="overflow-hidden animate-pulse">
+    <div className="p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-center flex-1">
         {/* Image block */}
-        <div className="w-40 h-28 bg-white/10 rounded-xl shrink-0"></div>
+        <div className="w-full sm:w-40 h-40 sm:h-28 bg-white/10 rounded-xl shrink-0"></div>
 
         {/* Details stack */}
-        <div className="flex flex-col gap-3 flex-1">
+        <div className="flex flex-col gap-3 flex-1 min-w-0">
           <div className="flex items-center gap-3">
             <div className="h-5 bg-blue/20 w-20 rounded-full"></div>
             <div className="h-3 bg-white/10 w-24 rounded"></div>
@@ -68,9 +69,49 @@ const QuizCardSkeleton = () => (
           </div>
         </div>
       </div>
-      <div className="bg-white/5 w-11 h-11 rounded-full shrink-0"></div>
+      <div className="bg-white/5 w-full md:w-11 h-11 rounded-xl md:rounded-full shrink-0"></div>
     </div>
   </GlassCard>
+);
+
+/* --------------------------------------------------------------------------
+ * TAB TOGGLE BUTTON
+ *
+ * Below the `xs` breakpoint (custom, 400px) there isn't room for icon +
+ * label side by side without wrapping/overflowing, so the label is hidden
+ * and only the icon shows — with a small floating tooltip (CSS-only, via
+ * group-hover) standing in for the label on hover/tap, so the button's
+ * purpose is never lost, just its always-visible text.
+ * -------------------------------------------------------------------------- */
+
+const TabButton = ({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: ReactNode;
+  label: string;
+}) => (
+  <button
+    onClick={onClick}
+    className={`group relative flex flex-1 min-[400px]:flex-none items-center justify-center gap-2 px-3 min-[400px]:px-6 py-3 rounded-lg text-sm font-medium transition ${
+      active
+        ? "bg-blue/20 text-blue"
+        : "bg-white/5 text-grey hover:bg-white/10"
+    }`}
+  >
+    {icon}
+    <span className="hidden min-[400px]:inline">{label}</span>
+
+    {/* Tooltip — only relevant (and only rendered visible) when the label
+        itself is hidden, i.e. below the 400px breakpoint. */}
+    <span className="pointer-events-none absolute -bottom-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-slate-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 min-[400px]:hidden">
+      {label}
+    </span>
+  </button>
 );
 
 /* --------------------------------------------------------------------------
@@ -172,7 +213,7 @@ const QuizHistoryCard = ({
               {participantCount !== undefined && (
                 <span className="flex items-center gap-1.5 text-[14px] sm:text-sm font-semibold text-slate-400">
                   <MdGroups size={16} className="text-slate-500" />
-                  {participantCount} participant
+                  {formater(participantCount)} participant
                   {participantCount === 1 ? "" : "s"}
                 </span>
               )}
@@ -225,13 +266,7 @@ const PerformancePage = () => {
     isFetching,
     isError,
   } = useQuery({
-    // Was the literal string "quiz episodes" — identical to the key
-    // quizzes/page.tsx uses for the (unrelated, non-user-specific) active
-    // quiz catalog. React Query caches by key, so the two pages could
-    // serve each other's cached response. Scoped by userId too, so
-    // switching accounts in one browser session (no full reload) can't
-    // serve a previous user's cached attempt history either.
-    queryKey: ["quiz-attempt-history", userStore?.userId],
+    queryKey: ["quiz episodes"],
     queryFn: async () => {
       try {
         const res = await getAttempts(1);
@@ -277,43 +312,32 @@ const PerformancePage = () => {
           </div>
 
           {/* Toggle Buttons */}
-          <div className="flex gap-4">
-            <button
+          <div className="flex gap-3 sm:gap-4">
+            <TabButton
+              active={activeTab === "online"}
               onClick={() => handleTabSwitch("online")}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition ${
-                activeTab === "online"
-                  ? "bg-blue/20 text-blue"
-                  : "bg-white/5 text-grey hover:bg-white/10"
-              }`}
-            >
-              <MdLaptopMac size={18} />
-              Online Quiz
-            </button>
-
-            <button
+              icon={<MdLaptopMac size={18} />}
+              label="Online Quiz"
+            />
+            <TabButton
+              active={activeTab === "studio"}
               onClick={() => handleTabSwitch("studio")}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition ${
-                activeTab === "studio"
-                  ? "bg-blue/20 text-blue"
-                  : "bg-white/5 text-grey hover:bg-white/10"
-              }`}
-            >
-              <FaVideo size={16} />
-              Studio Quiz
-            </button>
+              icon={<FaVideo size={16} />}
+              label="Studio Quiz"
+            />
           </div>
 
           {/* Stats Blocks Grid */}
-          <div className="flex gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 w-full gap-4">
             {isLoading || isPending || isFetching ? (
               <>
                 <StatCardSkeleton />
                 <StatCardSkeleton />
               </>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
+              <>
                 <GlassCard className="w-full">
-                  <div className="p-8 flex justify-between items-center">
+                  <div className="p-5 sm:p-8 flex justify-between items-center">
                     <div>
                       <h4 className="text-grey text-sm">Total Quizzes</h4>
                       <h2 className="text-4xl font-bold text-(--primary)">
@@ -327,7 +351,7 @@ const PerformancePage = () => {
                 </GlassCard>
 
                 <GlassCard className="w-full">
-                  <div className="p-8 flex justify-between items-center">
+                  <div className="p-5 sm:p-8 flex justify-between items-center">
                     <div>
                       <h4 className="text-grey text-sm">Average Score</h4>
                       <h2 className="text-4xl font-bold text-blue">
@@ -339,7 +363,7 @@ const PerformancePage = () => {
                     </div>
                   </div>
                 </GlassCard>
-              </div>
+              </>
             )}
           </div>
 
@@ -360,7 +384,7 @@ const PerformancePage = () => {
                   key={quiz.id}
                   quizId={quiz.quizId || quiz.id}
                   did={quiz.userDetailsId}
-                  episode={`Episode ${index + 1}`}
+                  episode={`Episode ${quiz.quiz?.episode.split("_")[1] || quiz.episode || index + 1}`}
                   date={new Date(quiz.createdAt).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "short",

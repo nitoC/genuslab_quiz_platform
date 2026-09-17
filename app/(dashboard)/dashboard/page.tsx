@@ -622,15 +622,21 @@ const Page = () => {
                 </p>
               </div>
 
-              <div className="flex gap-4 items-center">
-                <span className="text-green-400 bg-green-400/10 px-4 py-2 rounded-full text-sm">
-                  Bonus ₦1000
-                </span>
+              <div className="flex flex-wrap gap-4 items-center justify-center sm:justify-end">
+                {/* The ₦1000 referral bonus is a subscriber perk — showing
+                    it to non-subscribed users overpromises a reward they
+                    can't actually earn yet. */}
+                {user.isSubscribed && (
+                  <span className="text-green-400 bg-green-400/10 px-4 py-2 rounded-full text-sm whitespace-nowrap">
+                    Bonus ₦1000
+                  </span>
+                )}
 
                 <PrimaryButton
                   type="link"
                   to="/profile"
                   text="Invite Friends"
+                  style="py-2 px-6 cursor-pointer text-center bg-blue text-white inline-block rounded-sm whitespace-nowrap"
                 />
               </div>
             </div>
