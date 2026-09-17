@@ -12,6 +12,10 @@ import Avatar from "../ui/Avatar";
 import useSidebar from "@/store/useSidebar";
 import useUser from "@/hooks/useUser";
 import { useSocket } from "@/store/useSocket";
+import { logout } from "@/lib/api/apis";
+import toast from "react-hot-toast";
+import { useUser as useUserStore } from "@/store/useUser";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   title?: string;
@@ -25,6 +29,29 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    // if (loading) return;
+    try {
+      // setLoading(true);
+
+      // Axios request to your logout server endpoint
+      await logout();
+      toast.success("logout successfull");
+      // localStorage.clear();
+      useUserStore.setState({ user: null });
+    } catch (error) {
+      console.error(
+        "Server-side logout failed, proceeding with client cleanup:",
+        error,
+      );
+    } finally {
+      // Redirect cleanly to login screen
+      router.push("/login");
+      // setLoading(false);
+    }
+  };
 
   // The single notification socket connection is owned by SocketProvider
   // (mounted once at the dashboard layout level, so it survives page
@@ -162,7 +189,10 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
 
                   <button
                     type="button"
-                    onClick={() => setUserMenuOpen(false)}
+                    onClick={() => {
+                      handleLogout();
+                      setUserMenuOpen(false);
+                    }}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300 border-t border-white/10 mt-1"
                   >
                     <MdLogout className="h-5 w-5" />
