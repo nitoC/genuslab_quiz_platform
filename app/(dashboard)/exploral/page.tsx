@@ -54,6 +54,15 @@ import Link from "next/link";
 import { FaLinkedin, FaTelegram } from "react-icons/fa";
 import useRank from "@/hooks/useRank";
 import { formater } from "@/lib/utils/numFormatter";
+import { rewardData } from "@/app/(dashboard)/rewards-breakdown/page";
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 
 // Types
 interface StudioWinner {
@@ -360,6 +369,26 @@ const ExploralPage = () => {
                   rewards.
                 </p>
               </div>
+
+              <div className="grid grid-cols-1 w-full gap-4 text-center border-t border-white/5 pt-4 mt-2">
+                {/* <div>
+                  <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
+                    Prize Pool
+                  </p>
+                  <p className="text-emerald-500 font-bold text-sm">
+                    {formatCurrency(rewardData.monthly.total)}
+                  </p>
+                </div> */}
+                <div>
+                  <p className="text-slate-500 text-[14px] uppercase font-bold mb-1">
+                    Grand Prize
+                  </p>
+                  <p className="text-emerald-500 font-bold text-sm">
+                    {formatCurrency(rewardData.monthly.reward.first)}
+                  </p>
+                </div>
+              </div>
+
               <div className="flex gap-2 md:gap-3 mt-4">
                 <Link
                   href={"/quiz"}
@@ -511,7 +540,9 @@ const ExploralPage = () => {
                     <p className="text-slate-500 text-[14px] uppercase font-bold mb-0.5">
                       Prize Pool
                     </p>
-                    <p className="text-slate-400 font-bold text-sm">--</p>
+                    <p className="text-slate-400 font-bold text-sm">
+                      {formatCurrency(rewardData.monthly.total)}
+                    </p>
                   </div>
                 </div>
               </div>

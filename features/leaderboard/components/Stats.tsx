@@ -2,6 +2,7 @@
 
 import GlassCard from "@/components/ui/cards/GlassCard";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
+import ClickableUserLink from "@/components/ui/ClickableUserLink";
 import { cn } from "@/lib/utils/cn";
 import SimpleAreaChart from "@/components/ui/charts/CurveArea";
 import { IoMdTrophy } from "react-icons/io";
@@ -27,6 +28,7 @@ interface ActivityEntry {
   score: number;
   avatar?: string;
   color?: string;
+  userDetailsId?: string;
 }
 
 interface ReferralEntry {
@@ -50,7 +52,20 @@ interface Performer {
   score: number;
   totalXp: number;
   userDetailsId: number;
+  timeInSeconds: number | null;
 }
+
+// Formats a raw seconds value as "1m 23s" (or "45s" under a minute) — null
+// means no recorded completion time for that user.
+const formatSpeed = (seconds: number | null | undefined) => {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
+    return "—";
+  }
+  const totalSeconds = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+};
 
 interface StatsProps {
   // ACTIVITY_DATA: ActivityEntry[];
@@ -302,6 +317,9 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                         <span className="text-slate-400">
                           {user.totalXp} XP
                         </span>
+                        <span className="text-slate-400">
+                          {formatSpeed(user.timeInSeconds)}
+                        </span>
                         <span className="text-slate-500">
                           {scorePercentage.toFixed(1)}% of record
                         </span>
@@ -380,16 +398,21 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                     key={i}
                     className="flex flex-col items-center gap-2 w-[40px]"
                   >
-                    <ImageWithFallback
-                      src={user.avatar}
-                      alt={user.name}
-                      className={cn(
-                        "w-8 h-8 rounded-full bg-slate-700 border overflow-hidden",
-                        user.score === dynamicMaxScore
-                          ? "border-sky-400 ring-2 ring-sky-400/30"
-                          : "border-slate-600",
-                      )}
-                    />
+                    <ClickableUserLink
+                      userDetailsId={user.userDetailsId}
+                      currentUserDetailsId={detailsId}
+                    >
+                      <ImageWithFallback
+                        src={user.avatar}
+                        alt={user.name}
+                        className={cn(
+                          "w-8 h-8 rounded-full bg-slate-700 border overflow-hidden",
+                          user.score === dynamicMaxScore
+                            ? "border-sky-400 ring-2 ring-sky-400/30"
+                            : "border-slate-600",
+                        )}
+                      />
+                    </ClickableUserLink>
                     <span className="text-[14px] text-slate-400 font-medium truncate w-full text-center">
                       {user.name}
                     </span>

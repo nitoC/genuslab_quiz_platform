@@ -2,8 +2,10 @@
 
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
+import ClickableUserLink from "@/components/ui/ClickableUserLink";
 import useSlots from "@/hooks/useSlots";
 import useSystemTime from "@/hooks/useSystemTime";
+import useUser from "@/hooks/useUser";
 import { getEpisodeLeaderboard } from "@/lib/api/apis";
 import { cn } from "@/lib/utils/cn";
 import useSidebar from "@/store/useSidebar";
@@ -31,6 +33,7 @@ interface LeaderboardItem {
   avatar: string | null;
   totalXp: number;
   timeInSeconds: number | null;
+  userDetailsId: string;
 }
 
 // Formats a raw seconds value as "1m 23s" (or just "45s" under a minute) —
@@ -50,6 +53,8 @@ const EpisodePerformancePage = () => {
   const { toggleSidebar } = useSidebar((state: any) => state);
   const router = useRouter();
   const QueryParam = useSearchParams();
+  const { data: userData } = useUser();
+  const currentDetailsId = userData?.user?.details?.id;
 
   const date = QueryParam.get("date");
   const episode = QueryParam.get("episode");
@@ -185,7 +190,11 @@ const EpisodePerformancePage = () => {
                 <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                   {/* Avatar + Champion Badge */}
                   <div className="relative shrink-0 flex flex-col items-center">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-amber-500/50 p-1">
+                    <ClickableUserLink
+                      userDetailsId={winner.userDetailsId}
+                      currentUserDetailsId={currentDetailsId}
+                      className="relative w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-amber-500/50 p-1 block"
+                    >
                       <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-800 flex items-center justify-center">
                         {winner.avatar ? (
                           <Image
@@ -203,7 +212,7 @@ const EpisodePerformancePage = () => {
                       <div className="absolute top-0 right-0 bg-amber-500 text-slate-950 p-1.5 rounded-full border border-slate-900">
                         <MdEmojiEvents size={16} />
                       </div>
-                    </div>
+                    </ClickableUserLink>
 
                     <div className="mt-3 px-3 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-[14px] font-bold tracking-wider text-amber-400">
                       CHAMPION
@@ -333,7 +342,11 @@ const EpisodePerformancePage = () => {
                         {/* User Avatar & Name */}
                         <td className="py-3.5 px-5 whitespace-nowrap">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full relative overflow-hidden bg-slate-800 border border-slate-700 shrink-0 flex items-center justify-center">
+                            <ClickableUserLink
+                              userDetailsId={row.userDetailsId}
+                              currentUserDetailsId={currentDetailsId}
+                              className="w-8 h-8 rounded-full relative overflow-hidden bg-slate-800 border border-slate-700 shrink-0 flex items-center justify-center block"
+                            >
                               {row.avatar ? (
                                 <Image
                                   src={row.avatar}
@@ -344,7 +357,7 @@ const EpisodePerformancePage = () => {
                               ) : (
                                 <MdPerson className="text-slate-400 text-base" />
                               )}
-                            </div>
+                            </ClickableUserLink>
                             <span className="text-white font-semibold capitalize">
                               {row.name}
                             </span>

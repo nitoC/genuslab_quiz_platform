@@ -304,6 +304,14 @@ export const getPerformanceStats = async (detailsId: string, day: any) => {
   return await axiosUser.get(`stats/user/${detailsId}/day-performance/${day}`);
 };
 
+/**
+ * Public-facing stats for viewing another user's profile from a
+ * leaderboard avatar click.
+ */
+export const getPublicUserStats = async (detailsId: string) => {
+  return await axiosUser.get(`stats/user/${detailsId}/public`);
+};
+
 export const getLeaderboardStats = async (param: string) => {
   return await axiosUser.get(`leaderboard/${param}`);
 };

@@ -14,6 +14,7 @@ import Layout from "@/components/layouts/Layout";
 import Avatar from "@/components/ui/Avatar";
 import PrimaryButton from "@/components/ui/buttons/Primary";
 import GlassCard from "@/components/ui/cards/GlassCard";
+import GlassBadge from "@/components/ui/GlassBadge";
 import ProgressBar from "@/components/ui/ProgressBar";
 
 // import useCountdown from "@/hooks/useCountdown";
@@ -34,7 +35,6 @@ import nameResolver from "@/lib/utils/nameResolver";
 import { AiFillDollarCircle } from "react-icons/ai";
 import { FaCheckCircle, FaLock, FaTrophy } from "react-icons/fa";
 import { IoIosRocket } from "react-icons/io";
-import { MdStars } from "react-icons/md";
 import useUser from "@/hooks/useUser";
 import TimerPop from "@/features/quiz/components/TimerPop";
 import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
@@ -63,14 +63,12 @@ const DashboardSkeleton = () => {
           <div className="flex flex-col lg:flex-row gap-8">
             <GlassCard className="flex-2">
               <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6">
-                <div className="flex flex-col items-center gap-4">
-                  <Skeleton className="w-24 h-24 rounded-full" />
-                  <Skeleton className="w-32 h-8 rounded-full" />
-                </div>
+                <Skeleton className="w-24 h-24 rounded-full shrink-0" />
 
                 <div className="flex-1 space-y-4">
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <Skeleton className="h-6 w-40" />
+                    <Skeleton className="h-3.5 w-32" />
                     <Skeleton className="h-4 w-56" />
                   </div>
 
@@ -298,33 +296,22 @@ const Page = () => {
           <div className="flex flex-col lg:flex-row gap-8 items-stretch">
             {/* PROFILE CARD */}
             <GlassCard className="flex-2">
-              <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center">
-                <div className="relative">
-                  <Avatar
-                    url={user?.details?.avatar}
-                    size={96}
-                    type="main"
-                    color="border-orange-400"
-                  />
+              <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                <Avatar
+                  url={user?.details?.avatar}
+                  size={96}
+                  type="main"
+                  color="border-white/10"
+                />
 
-                  <h6 className="text-orange-400 whitespace-nowrap py-2 px-4 rounded-full absolute -bottom-4 left-1/2 -translate-x-1/2 text-sm font-bold bg-[#0f127a] flex gap-2 items-center">
-                    <MdStars size={15} />
-
-                    {rank?.rankName || "Fresh Mind"}
-                  </h6>
-                </div>
-
-                <div className="flex flex-2 p-2 sm:p-4 flex-col gap-3 w-full">
+                <div className="flex flex-2 flex-col gap-3 w-full text-center sm:text-left">
                   <div>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      <h3 className="text-(--primary) font-bold text-lg">
-                        {userName}
-                      </h3>
-
-                      <span className="text-blue text-[14px] bg-blue/20 py-2 px-4 rounded-full">
-                        Rank {rank?.rank || 0}
-                      </span>
-                    </div>
+                    <h3 className="text-(--primary) font-semibold text-lg">
+                      {userName}
+                    </h3>
+                    <p className="text-sm text-grey mt-0.5">
+                      {rank?.rankName || "Fresh Mind"} · Rank {rank?.rank || 0}
+                    </p>
 
                     <p className="text-sm text-grey mt-2">
                       Mastering the Genius Quiz Challenge
@@ -332,11 +319,11 @@ const Page = () => {
                   </div>
 
                   <div className="flex justify-between">
-                    <h4 className="text-sm text-(--primary)">
-                      Level {rank?.rank || 0} Progress
+                    <h4 className="text-sm text-grey">
+                      Level {rank?.rank || 0} progress
                     </h4>
 
-                    <h4 className="text-blue text-sm">
+                    <h4 className="text-(--primary) text-sm font-medium">
                       {user?.details?.xp || 0}/{rank?.unlockXp || 0} XP
                     </h4>
                   </div>
@@ -512,21 +499,17 @@ const Page = () => {
                 </div>
               </GlassCard>
             ) : (
-              <GlassCard className="relative overflow-hidden border border-orange-400/20">
-                {/* subtle glow accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-                <div className="p-6 flex flex-col gap-4 h-full relative">
+              <GlassCard>
+                <div className="p-6 flex flex-col gap-4 h-full">
                   <div className="flex items-center justify-between">
                     <h3 className="text-(--primary) font-semibold flex gap-2 items-center">
-                      <FaTrophy className="text-orange-400" />
+                      <FaTrophy className="text-grey" />
                       Online Quiz Event
                     </h3>
 
-                    <span className="flex items-center gap-1 text-[11px] font-bold text-orange-400 bg-orange-400/10 px-2 py-1 rounded-full">
-                      <FaLock size={10} />
-                      LOCKED
-                    </span>
+                    <GlassBadge variant="warning" icon={<FaLock size={10} />}>
+                      Locked
+                    </GlassBadge>
                   </div>
 
                   <div>
@@ -617,21 +600,22 @@ const Page = () => {
                   Invite Friends & Earn More!
                 </h3>
 
-                <p className="text-grey text-sm">
-                  Get credited instantly for every friend you refer to Genuslab.
+                <p className="text-grey text-sm mt-0.5">
+                  {/* The ₦1000 referral bonus is a subscriber perk — showing
+                      it to non-subscribed users overpromises a reward they
+                      can't actually earn yet. */}
+                  {user.isSubscribed ? (
+                    <>
+                      Earn <span className="text-green font-medium">₦1000</span>{" "}
+                      for every friend you refer to Genuslab.
+                    </>
+                  ) : (
+                    "Get credited instantly for every friend you refer to Genuslab."
+                  )}
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-4 items-center justify-center sm:justify-end">
-                {/* The ₦1000 referral bonus is a subscriber perk — showing
-                    it to non-subscribed users overpromises a reward they
-                    can't actually earn yet. */}
-                {user.isSubscribed && (
-                  <span className="text-green-400 bg-green-400/10 px-4 py-2 rounded-full text-sm whitespace-nowrap">
-                    Bonus ₦1000
-                  </span>
-                )}
-
                 <PrimaryButton
                   type="link"
                   to="/profile"

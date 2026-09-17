@@ -5,6 +5,7 @@ import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import Avatar from "@/components/ui/Avatar";
+import ClickableUserLink from "@/components/ui/ClickableUserLink";
 import PrimaryButton from "@/components/ui/buttons/Primary";
 import {
   FaTrophy,
@@ -13,7 +14,7 @@ import {
   FaCheck,
   FaInbox,
 } from "react-icons/fa";
-import { MdStars } from "react-icons/md";
+import { MdStars, MdHourglassTop } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { getLeaderboardStats, getUserRankings } from "@/lib/api/apis";
 import useUser from "@/hooks/useUser";
@@ -26,9 +27,24 @@ interface LeaderboardUser {
   totalXp: number;
   rewardBalance: number;
   rank: string;
+  timeInSeconds: number | null;
+  userDetailsId: string;
 }
 
 type TimeframeType = "daily" | "weekly" | "monthly" | "overall";
+
+// Formats a raw seconds value as "1m 23s" (or "45s" under a minute) — null
+// means no recorded completion time for that user (e.g. referral entries,
+// which aren't timed at all).
+const formatSpeed = (seconds: number | null | undefined) => {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
+    return "—";
+  }
+  const totalSeconds = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+};
 
 /* ================= SKELETON LOADERS ================= */
 
@@ -362,12 +378,17 @@ const LeaderboardPage = () => {
                     }`}
                   >
                     <div className="relative">
-                      <Avatar
-                        size={user.position === 1 ? 100 : 80}
-                        type="main"
-                        url={user.avatar || undefined}
-                        color={user.color}
-                      />
+                      <ClickableUserLink
+                        userDetailsId={user.userDetailsId}
+                        currentUserDetailsId={detailsId}
+                      >
+                        <Avatar
+                          size={user.position === 1 ? 100 : 80}
+                          type="main"
+                          url={user.avatar || undefined}
+                          color={user.color}
+                        />
+                      </ClickableUserLink>
                       <div
                         className={`absolute -top-3 -right-2 p-2 rounded-full ${
                           user.position === 1
@@ -391,6 +412,12 @@ const LeaderboardPage = () => {
                         {type === "quiz" ? "SCORE:" : "REFERRALS:"}{" "}
                         {(user.score ?? 0).toLocaleString()}
                       </p>
+                      {type === "quiz" && (
+                        <p className="text-gray-400 text-[14px] font-medium flex items-center justify-center gap-1 mt-0.5">
+                          <MdHourglassTop size={12} />
+                          {formatSpeed(user.timeInSeconds)}
+                        </p>
+                      )}
                       <span className="text-[14px] text-gray-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase">
                         {user.rank}
                       </span>
@@ -432,11 +459,16 @@ const LeaderboardPage = () => {
                             {player.position}
                           </span>
                           <div className="flex items-center gap-3">
-                            <Avatar
-                              size={40}
-                              type="main"
-                              url={player.avatar || undefined}
-                            />
+                            <ClickableUserLink
+                              userDetailsId={player.userDetailsId}
+                              currentUserDetailsId={detailsId}
+                            >
+                              <Avatar
+                                size={40}
+                                type="main"
+                                url={player.avatar || undefined}
+                              />
+                            </ClickableUserLink>
                             <div>
                               <h4 className="text-white text-sm font-semibold capitalize">
                                 {player.name}
@@ -449,6 +481,15 @@ const LeaderboardPage = () => {
                         </div>
 
                         <div className="flex items-center gap-4 sm:gap-8">
+                          {type === "quiz" && (
+                            <div className="hidden sm:flex flex-col items-end">
+                              <span className="text-white font-medium text-sm flex items-center gap-1">
+                                <MdHourglassTop size={13} className="text-gray-400" />
+                                {formatSpeed(player.timeInSeconds)}
+                              </span>
+                              <span className="text-gray-400 text-[14px]">Speed</span>
+                            </div>
+                          )}
                           <div className="flex flex-col items-end">
                             <span className="text-white font-bold text-sm">
                               {(player.score ?? 0).toLocaleString()}

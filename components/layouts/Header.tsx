@@ -16,6 +16,7 @@ import { logout } from "@/lib/api/apis";
 import toast from "react-hot-toast";
 import { useUser as useUserStore } from "@/store/useUser";
 import { useRouter } from "next/navigation";
+import { ImSpinner11 } from "react-icons/im";
 
 interface HeaderProps {
   title?: string;
@@ -30,10 +31,14 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
   const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleLogout = async () => {
+    if (isSigningOut) return;
     // if (loading) return;
     try {
+      setIsSigningOut(true);
+      console.log("signing out");
       // setLoading(true);
 
       // Axios request to your logout server endpoint
@@ -41,6 +46,8 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
       toast.success("logout successfull");
       // localStorage.clear();
       useUserStore.setState({ user: null });
+      console.log("signing out bottom");
+      router.push("/login");
     } catch (error) {
       console.error(
         "Server-side logout failed, proceeding with client cleanup:",
@@ -48,7 +55,7 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
       );
     } finally {
       // Redirect cleanly to login screen
-      router.push("/login");
+      setIsSigningOut(false);
       // setLoading(false);
     }
   };
@@ -191,11 +198,15 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
                     type="button"
                     onClick={() => {
                       handleLogout();
-                      setUserMenuOpen(false);
+                      // setUserMenuOpen(false);
                     }}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300 border-t border-white/10 mt-1"
                   >
-                    <MdLogout className="h-5 w-5" />
+                    {isSigningOut ? (
+                      <ImSpinner11 className="animate-spin" />
+                    ) : (
+                      <MdLogout className="h-5 w-5" />
+                    )}
                     Logout
                   </button>
                 </div>
@@ -207,7 +218,7 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
               type="button"
               onClick={toggleSidebar}
               aria-label="Toggle navigation menu"
-              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:hidden"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cu-lg:hidden"
             >
               <IoMdMenu className="h-6 w-6 text-primary" />
             </button>
