@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 import {
   FaFacebookF,
   FaInstagram,
@@ -6,6 +9,12 @@ import {
   FaXTwitter,
   FaTiktok,
 } from "react-icons/fa6";
+
+const footerLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "FAQ", href: "/faq" },
+];
 
 export default function Footer() {
   return (
@@ -74,14 +83,14 @@ export default function Footer() {
         </span>
 
         <nav className="order-1 flex flex-wrap items-center gap-8 md:order-2">
-          {["Contact", "Privacy Policy", "Faq"].map((item) => (
-            <a
-              key={item}
-              href="#"
-              className="font-medium transition hover:text-primary"
+          {footerLinks.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="font-medium transition hover:text-blue"
             >
-              {item}
-            </a>
+              {item.label}
+            </Link>
           ))}
         </nav>
       </div>
