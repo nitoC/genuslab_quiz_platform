@@ -24,9 +24,10 @@ import {
   getRankData,
   getTime,
   getUserProfile,
-  getMostRecentReward,
   getMostRecentTransaction,
   getAllActiveQuiz,
+  getTotalRewards,
+  getPublicUserStats,
 } from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import nameResolver from "@/lib/utils/nameResolver";
@@ -166,7 +167,6 @@ const Page = () => {
   // const [Sid, setSid] = useState("");
 
   /* ---------- Rewards and Payout State ---------- */
-  const [rewards, setRewards] = useState<number>(0);
   const [currentPayout, setCurrentPayout] = useState<number>(0);
 
   /* -----------------------------
@@ -175,17 +175,36 @@ const Page = () => {
   const { data, isLoading, isError, error, userStore } = useUser();
   console.log(data, "user");
 
+  const detailsId = data?.user?.details?.id;
+
   /* -----------------------------
    * REWARD & TRANSACTION QUERIES
    * ---------------------------- */
-  const { data: mostRecentRewardData, isLoading: rewardLoading } = useQuery({
-    queryKey: ["mostRecentReward"],
+  const { data: totalRewardsData } = useQuery({
+    queryKey: ["totalRewards", detailsId],
     queryFn: async () => {
-      const res = await getMostRecentReward();
-      console.log(res?.data, "most recent reward data");
-      return res?.data;
+      const res = await getTotalRewards(detailsId as string);
+      return res?.data?.payload;
     },
+    enabled: !!detailsId,
   });
+
+  const { data: publicStatsData } = useQuery({
+    queryKey: ["publicUserStats", detailsId],
+    queryFn: async () => {
+      const res = await getPublicUserStats(detailsId as string);
+      return res?.data?.payload;
+    },
+    enabled: !!detailsId,
+  });
+
+  const totalRewards = totalRewardsData?.total ?? 0;
+  const overallRank = publicStatsData?.overallRank ?? null;
+  const totalParticipants = publicStatsData?.totalParticipants ?? 0;
+  const topPercent =
+    overallRank && totalParticipants > 0
+      ? Math.max(1, Math.ceil((overallRank / totalParticipants) * 100))
+      : null;
 
   const { data: mostRecentTransactionData, isLoading: transactionLoading } =
     useQuery({
@@ -209,13 +228,6 @@ const Page = () => {
     if (!Array.isArray(quizData)) return null;
     return quizData.find((a: any) => a.status === "ACTIVE") ?? null;
   }, [quizData]);
-
-  /* Update rewards from most recent reward data */
-  useEffect(() => {
-    if (mostRecentRewardData?.amount) {
-      setRewards(mostRecentRewardData.amount);
-    }
-  }, [mostRecentRewardData]);
 
   /* Update payout from most recent transaction data */
   useEffect(() => {
@@ -384,22 +396,24 @@ const Page = () => {
                 <div className="flex items-center justify-between">
                   <ChartUpIcon color="#B3B3B3" size={24} />
 
-                  <span className="text-yellow text-sm font-bold px-2 py-1 rounded-b-sm bg-yellow/10">
-                    TOP 5%
-                  </span>
+                  {topPercent !== null && (
+                    <span className="text-yellow text-sm font-bold px-2 py-1 rounded-b-sm bg-yellow/10">
+                      TOP {topPercent}%
+                    </span>
+                  )}
                 </div>
 
-                {rewards > 0 ? (
+                {totalRewards > 0 ? (
                   <>
                     <div className="flex justify-center flex-1 items-center">
                       <ShieldIcon />
                     </div>
 
                     <div className="flex flex-col gap-2 items-center">
-                      <h3 className="text-grey">Current Rewards</h3>
+                      <h3 className="text-grey">Total Rewards</h3>
 
                       <h3 className="font-bold text-lg text-(--primary)">
-                        ₦{rewards.toLocaleString()}
+                        ₦{formater(totalRewards)}
                       </h3>
 
                       <PrimaryButton
@@ -419,6 +433,12 @@ const Page = () => {
                     <p className="text-sm text-grey max-w-[200px]">
                       Climb up the leaderboard rank metrics to start earning.
                     </p>
+                    <PrimaryButton
+                      text="View Rankings"
+                      type="link"
+                      to="/leaderboard"
+                      style="text-(--primary) rounded-sm backdrop-blur-lg hover:bg-white/20 duration-500 bg-white/10 mt-2"
+                    />
                   </div>
                 )}
               </div>

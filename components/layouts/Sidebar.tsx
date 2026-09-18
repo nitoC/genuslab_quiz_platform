@@ -118,7 +118,7 @@ const Sidebar = ({ type }: { type?: string }) => {
         className={clsx(
           type === "mobile"
             ? `cu-lg:hidden duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`
-            : "hidden cu-lg:block",
+            : "hidden cu-lg:flex",
           "p-8 backdrop-blur-3xl bg-[#0f127a33] fixed top-0 left-0 h-dvh w-70 z-30 flex flex-col",
         )}
       >
