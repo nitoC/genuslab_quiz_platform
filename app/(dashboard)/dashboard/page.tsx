@@ -625,24 +625,14 @@ const Page = () => {
                 </h3>
 
                 <p className="text-grey text-sm mt-0.5">
-                  {user.isSubscribed ? (
-                    <>
-                      Earn{" "}
-                      <span className="text-green font-medium font-bold">
-                        ₦{formater(rewardData.referral)}
-                      </span>{" "}
-                      for every friend you refer to Genuslab.
-                    </>
-                  ) : (
-                    <>
-                      Subscribe to earn{" "}
-                      <span className="text-green font-medium">
-                        {formater(rewardData.referral)}
-                      </span>{" "}
-                      for every friend you refer — non-subscribers can still
-                      invite, but won't earn the cash bonus.
-                    </>
-                  )}
+                  Earn{" "}
+                  <span className="text-green font-semibold">
+                    ₦{formater(rewardData.referral)}
+                  </span>{" "}
+                  for every friend you refer to Genuslab.
+                </p>
+                <p className="text-grey/60 text-xs mt-1">
+                  Referral rewards are available to Premium subscribers only.
                 </p>
               </div>
 
