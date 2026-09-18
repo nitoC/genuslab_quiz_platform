@@ -39,7 +39,7 @@ const RankUnlockModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
       {/* Modal Container */}
-      <div className="w-full max-h-[90vh] scroll-hide max-w-lg bg-background-dark-secondary rounded-lg border border-white/10 p-8 relative overflow-x-hidden overflow-y-auto">
+      <div className="w-full max-h-[90vh] scroll-hide max-w-lg bg-(--background-dark-secondary) rounded-lg border border-white/10 p-8 relative overflow-x-hidden overflow-y-auto">
         {/* Header Actions */}
         <div className="flex justify-between items-center mb-2">
           <GlassBadge variant="info">Pioneer Status</GlassBadge>

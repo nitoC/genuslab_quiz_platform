@@ -1,13 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { MdTimer } from "react-icons/md";
-// import { cn } from "@/lib/utils/cn";
-import { MdVolumeUp, MdLocalFireDepartment } from "react-icons/md";
-// import { cn } from "@/lib/utils/cn";
 import Layout from "@/components/layouts/Layout";
 
-// import QuizReviewModal from "@/components/ui/modals/ViewAnswers";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -18,16 +13,12 @@ import {
 } from "@/lib/api/apis";
 import QuizOptions from "@/features/quiz/components/QuizOptions";
 import Timer from "@/features/quiz/components/QuizTimer";
-import Rivals from "@/features/quiz/components/QuizRivals";
 import LiveQuizFooter from "@/features/quiz/components/LiveQuizFooter";
 import SubmitUI from "@/features/quiz/components/SubmitUI";
 import QuizSkeleton from "@/features/quiz/components/skeletons/QuizSkeleton";
 import CalculatingScore from "@/features/quiz/components/CalculatingScore";
-import { formatMMSS } from "@/lib/utils/timer";
-import { useQuizCountdownTime } from "@/hooks/useTime";
 import { useTimeStore } from "@/features/quiz/store/time.store";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import useUser from "@/hooks/useUser";
 import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
 import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
@@ -375,9 +366,9 @@ const QuizPage = () => {
 
   return (
     <Layout type="quiz">
-      <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-emerald-500/30">
-        {/* Main Container - Adjusted padding dynamically for mobile screen efficiency */}
-        <div className="w-full max-w-5xl bg-[#0f1933] rounded-[24px] sm:rounded-[40px] border border-white/5 p-4 sm:p-6 md:p-12 relative overflow-hidden shadow-2xl">
+      <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-green/30">
+        {/* Main Container */}
+        <div className="w-full max-w-5xl bg-(--background-dark-secondary) rounded-lg border border-white/5 p-4 sm:p-6 md:p-12 relative overflow-hidden">
           {!isSubmitted ? (
             <>
               <section>
@@ -404,18 +395,11 @@ const QuizPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
                 <div className="lg:col-span-2 space-y-6 md:space-y-8">
                   <div className="space-y-3 md:space-y-4">
-                    <div className="flex items-start justify-between gap-3">
-                      {/* Fluid scale applied to question text from text-xl up to text-4xl */}
-                      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-snug break-words flex-1">
-                        {currentQuestion?.questionText ??
-                          "Waiting for question..."}
-                      </h1>
-                      {/* <button className="p-2.5 sm:p-3 bg-white/5 rounded-full text-slate-400 hover:text-white transition-colors flex-shrink-0 mt-1">
-                        <MdVolumeUp size={20} className="sm:w-6 sm:h-6" />
-                      </button> */}
-                    </div>
-                    {/* Adjusted inline hint text parameters for mobile layouts */}
-                    <p className="text-slate-500 font-medium text-sm sm:text-sm md:text-base leading-relaxed">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-(--primary) leading-snug break-words">
+                      {currentQuestion?.questionText ??
+                        "Waiting for question..."}
+                    </h1>
+                    <p className="text-grey font-medium text-sm sm:text-sm md:text-base leading-relaxed">
                       Hint: {currentQuestion?.hint}
                     </p>
                   </div>
@@ -443,7 +427,7 @@ const QuizPage = () => {
                         );
                       })
                     ) : (
-                      <div className="text-slate-400 text-sm sm:text-sm">
+                      <div className="text-grey text-sm">
                         Loading options…
                       </div>
                     )}

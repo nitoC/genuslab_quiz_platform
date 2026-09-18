@@ -8,8 +8,8 @@ export const formatMMSS = (seconds: number) => {
 };
 
 export const getTimerColor = (seconds: number) => {
-  if (seconds <= 60) return "text-rose-500";
-  if (seconds <= 300) return "text-amber-400";
+  if (seconds <= 60) return "text-red";
+  if (seconds <= 300) return "text-yellow";
 
-  return "text-emerald-500";
+  return "text-green";
 };

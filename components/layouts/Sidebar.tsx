@@ -13,6 +13,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { logout } from "@/lib/api/apis";
 import { useUser as useUserStore } from "@/store/useUser";
+import { FaBookmark } from "react-icons/fa6";
+import { ImSpinner11 } from "react-icons/im";
 
 const navLinks = [
   {
@@ -24,6 +26,11 @@ const navLinks = [
     label: "Quizzes",
     href: "/quizzes",
     icon: BsQuestionSquareFill,
+  },
+  {
+    label: "Academy",
+    href: "/academy",
+    icon: FaBookmark,
   },
   {
     label: "Leaderboard",
@@ -111,47 +118,44 @@ const Sidebar = ({ type }: { type?: string }) => {
         className={clsx(
           type === "mobile"
             ? `cu-lg:hidden duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`
-            : "hidden cu-lg:block left-0",
-          "p-8 backdrop-blur-3xl bg-[#0f127a33] md:w-fit fixed inset-b-0 h-full w-70 z-30 flex flex-col justify-between",
+            : "hidden cu-lg:block",
+          "p-8 backdrop-blur-3xl bg-[#0f127a33] fixed top-0 left-0 h-dvh w-70 z-30 flex flex-col",
         )}
       >
-        <div>
-          <h1>{isOpen}</h1>
-          <div className="py-4 px-4 flex items-center">
-            <Logo />
-          </div>
-
-          <nav className="mt-4">
-            <ul className="p-0 m-0 flex flex-col gap-1">
-              {navLinks.map(({ label, href, icon: Icon }) => (
-                <li key={href}>
-                  <Link
-                    href={type === "mobile" ? "#" : href}
-                    onClick={(e) => {
-                      if (type === "mobile") {
-                        e.preventDefault();
-                        toggleSidebar();
-                        router.push(href);
-                      }
-                    }}
-                    className={clsx(
-                      defaultStyle,
-                      "white-space-nowrap",
-                      page === href.split("/")[1] && activeStyle,
-                    )}
-                  >
-                    <Icon size={20} className="text-blue" />
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <div className="py-4 px-4 flex items-center shrink-0">
+          <Logo />
         </div>
 
+        <nav className="mt-4 flex-1 min-h-0 overflow-y-auto chat-scrollbar pr-1 -mr-1">
+          <ul className="p-0 m-0 flex flex-col gap-1">
+            {navLinks.map(({ label, href, icon: Icon }) => (
+              <li key={href}>
+                <Link
+                  href={type === "mobile" ? "#" : href}
+                  onClick={(e) => {
+                    if (type === "mobile") {
+                      e.preventDefault();
+                      toggleSidebar();
+                      router.push(href);
+                    }
+                  }}
+                  className={clsx(
+                    defaultStyle,
+                    "whitespace-nowrap",
+                    page === href.split("/")[1] && activeStyle,
+                  )}
+                >
+                  <Icon size={20} className="text-blue" />
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
         {/* Pinned Professional Logout Action */}
-        <div className="mt-auto border-t border-white/5 pt-4">
-          {/* <button
+        <div className="shrink-0 border-t border-white/5 pt-4">
+          <button
             onClick={handleLogout}
             disabled={loading}
             className={clsx(
@@ -159,12 +163,13 @@ const Sidebar = ({ type }: { type?: string }) => {
               "w-full text-left items-center whitespace-nowrap disabled:opacity-50",
             )}
           >
-            <BiLogOut
-              size={20}
-              className={clsx("text-blue", loading && "animate-spin")}
-            />
+            {loading ? (
+              <ImSpinner11 className="animate-spin" />
+            ) : (
+              <BiLogOut size={20} className={clsx("text-red")} />
+            )}
             <span>{loading ? "Logging out..." : "Logout"}</span>
-          </button> */}
+          </button>
         </div>
       </aside>
     </>

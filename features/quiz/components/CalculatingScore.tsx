@@ -67,15 +67,15 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
         {/* Header */}
 
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-2xl border border-emerald-500/20 text-sm font-black uppercase tracking-[0.2em]">
+          <div className="inline-flex items-center gap-2 bg-green/10 text-green px-4 py-2 rounded-lg border border-green/20 text-sm font-bold uppercase tracking-[0.15em]">
             Assessment Complete
           </div>
 
-          <h1 className="mt-6 text-4xl md:text-5xl font-black text-white">
+          <h1 className="mt-6 text-4xl md:text-5xl font-black text-(--primary)">
             Processing Your Results
           </h1>
 
-          <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+          <p className="mt-4 text-grey max-w-xl mx-auto">
             Please wait while we analyze your answers, calculate your
             performance, and prepare your assessment report.
           </p>
@@ -83,7 +83,7 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
 
         {/* Main Card */}
 
-        <div className="mt-12 bg-[#11192e] border border-white/5 rounded-[32px] p-8 md:p-10">
+        <div className="mt-12 bg-(--background-dark-secondary) border border-white/5 rounded-lg p-8 md:p-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Progress Circle */}
 
@@ -110,18 +110,18 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
                     strokeDasharray={circumference}
                     strokeDashoffset={dashOffset}
                     strokeLinecap="round"
-                    className="text-emerald-500 transition-all duration-300"
+                    className="text-green transition-all duration-300"
                   />
                 </svg>
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-6xl font-black text-white">
+                  <span className="text-6xl font-black text-(--primary)">
                     {progress}
                   </span>
 
-                  <span className="text-xl font-bold text-emerald-400">%</span>
+                  <span className="text-xl font-bold text-green">%</span>
 
-                  <span className="mt-2 text-sm uppercase tracking-[0.25em] text-slate-500 font-bold">
+                  <span className="mt-2 text-sm uppercase tracking-[0.25em] text-grey font-bold">
                     Processing
                   </span>
                 </div>
@@ -131,11 +131,11 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
             {/* Analysis Section */}
 
             <div>
-              <h2 className="text-3xl font-black text-white">
+              <h2 className="text-3xl font-black text-(--primary)">
                 Assessment Analysis
               </h2>
 
-              <p className="mt-3 text-slate-400">
+              <p className="mt-3 text-grey">
                 Your submitted answers are being processed and validated before
                 generating the final performance report.
               </p>
@@ -147,22 +147,22 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
                   return (
                     <div
                       key={step.label}
-                      className="flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-2xl p-4"
+                      className="flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-lg p-4"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center">
-                          <Icon size={18} className="text-slate-300" />
+                        <div className="w-11 h-11 rounded-lg bg-white/5 flex items-center justify-center">
+                          <Icon size={18} className="text-grey" />
                         </div>
 
-                        <span className="text-white font-medium">
+                        <span className="text-(--primary) font-medium">
                           {step.label}
                         </span>
                       </div>
 
                       {step.completed ? (
-                        <FaCircleCheck size={20} className="text-emerald-400" />
+                        <FaCircleCheck size={20} className="text-green" />
                       ) : (
-                        <div className="w-5 h-5 rounded-full border-2 border-slate-600 border-t-emerald-500 animate-spin" />
+                        <div className="w-5 h-5 rounded-full border-2 border-white/10 border-t-green animate-spin" />
                       )}
                     </div>
                   );
@@ -173,14 +173,16 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
 
               <div className="mt-8">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-400">Overall Progress</span>
+                  <span className="text-grey">Overall Progress</span>
 
-                  <span className="text-white font-semibold">{progress}%</span>
+                  <span className="text-(--primary) font-semibold">
+                    {progress}%
+                  </span>
                 </div>
 
                 <div className="h-3 bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 transition-all duration-300"
+                    className="h-full bg-green transition-all duration-300"
                     style={{
                       width: `${progress}%`,
                     }}
@@ -194,7 +196,7 @@ const CalculatingScore = ({ onComplete }: CalculatingScoreProps) => {
         {/* Footer Note */}
 
         <div className="text-center mt-8">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-grey">
             This usually takes only a few seconds.
           </p>
         </div>

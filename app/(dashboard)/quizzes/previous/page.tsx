@@ -109,7 +109,7 @@ const TabButton = ({
 
     {/* Tooltip — only relevant (and only rendered visible) when the label
         itself is hidden, i.e. below the 400px breakpoint. */}
-    <span className="pointer-events-none absolute -bottom-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-background-dark-secondary px-2.5 py-1 text-xs font-medium text-(--primary) opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 min-[400px]:hidden">
+    <span className="pointer-events-none absolute -bottom-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-(--background-dark-secondary) px-2.5 py-1 text-xs font-medium text-(--primary) opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 min-[400px]:hidden">
       {label}
     </span>
   </button>

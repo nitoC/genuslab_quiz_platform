@@ -26,6 +26,7 @@ import {
   getUserProfile,
   getMostRecentReward,
   getMostRecentTransaction,
+  getAllActiveQuiz,
 } from "@/lib/api/apis";
 import getLocalStorage from "@/lib/utils/getLocalStorage";
 import nameResolver from "@/lib/utils/nameResolver";
@@ -39,6 +40,18 @@ import useUser from "@/hooks/useUser";
 import TimerPop from "@/features/quiz/components/TimerPop";
 import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
 import SubscribeAlert from "@/features/dashboard/alerts/SubscribeAlert";
+import { rewardData } from "@/app/(dashboard)/rewards-breakdown/page";
+import { formater } from "@/lib/utils/numFormatter";
+
+const DAILY_PRIZES = [
+  { place: "1st", amount: rewardData.daily.reward.first, color: "text-yellow" },
+  { place: "2nd", amount: rewardData.daily.reward.second, color: "text-grey" },
+  {
+    place: "3rd",
+    amount: rewardData.daily.reward.third,
+    color: "text-orange-400",
+  },
+];
 
 const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
@@ -183,6 +196,19 @@ const Page = () => {
         return res?.data;
       },
     });
+
+  const { data: quizData } = useQuery({
+    queryKey: ["active-quiz-episodes"],
+    queryFn: async () => {
+      const res = await getAllActiveQuiz();
+      return res.data.payload;
+    },
+  });
+
+  const nextActive = useMemo(() => {
+    if (!Array.isArray(quizData)) return null;
+    return quizData.find((a: any) => a.status === "ACTIVE") ?? null;
+  }, [quizData]);
 
   /* Update rewards from most recent reward data */
   useEffect(() => {
@@ -331,7 +357,7 @@ const Page = () => {
                   <ProgressBar
                     value={user?.details?.xp || 0}
                     total={rank?.unlockXp || 1}
-                    color="bg-linear-90 from-blue-400 to-teal-800/80"
+                    color="bg-blue"
                   />
 
                   <div className="flex flex-col sm:flex-row gap-3 justify-between pt-4">
@@ -466,78 +492,76 @@ const Page = () => {
               </div>
             </GlassCard>
 
-            {/* ONLINE QUIZ EVENT */}
-
-            {user.isSubscribed ? (
-              <GlassCard>
-                <div className="p-6 flex flex-col gap-4 h-full">
-                  <h3 className="text-(--primary) font-semibold flex gap-2">
-                    <FaTrophy className="text-orange-400" />
+            {/* ONLINE QUIZ EVENT — mirrors the "Today's Prize Pool" card on
+                the Quizzes page: real daily pool total + 1st/2nd/3rd
+                breakdown, instead of a single mismatched reward figure. */}
+            <GlassCard>
+              <div className="p-6 flex flex-col gap-4 h-full">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-(--primary) font-semibold flex gap-2 items-center">
+                    <FaTrophy className="text-yellow" />
                     Online Quiz Event
                   </h3>
 
-                  <div>
-                    <h2 className="text-(--primary) font-bold text-xl">
-                      ₦10,000
-                    </h2>
+                  {!user.isSubscribed && (
+                    <GlassBadge variant="warning" icon={<FaLock size={10} />}>
+                      Locked
+                    </GlassBadge>
+                  )}
+                </div>
 
-                    <p className="text-grey text-sm">Reward</p>
-                  </div>
+                <div>
+                  <p className="text-grey text-sm">Today's Prize Pool</p>
+                  <h2 className="text-(--primary) font-bold text-2xl mt-0.5">
+                    {formater(rewardData.daily.total)}
+                  </h2>
+                </div>
 
-                  <div className="flex gap-4 text-sm text-grey">
-                    <span>10 Questions</span>
+                <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/5">
+                  {DAILY_PRIZES.map((prize) => (
+                    <div key={prize.place} className="text-center">
+                      <p className={`text-xs font-semibold ${prize.color}`}>
+                        {prize.place}
+                      </p>
+                      <p className="text-(--primary) font-bold text-sm mt-0.5">
+                        {formater(prize.amount)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-                    <span>5 mins left</span>
-                  </div>
+                {nextActive && (
+                  <p className="text-sm text-grey">
+                    Episode{" "}
+                    {nextActive?.episode?.toString().split("_")[1] ?? "N/A"}
+                    <span className="mx-1.5">·</span>
+                    10 Questions • 5 mins
+                  </p>
+                )}
 
+                {user.isSubscribed ? (
                   <PrimaryButton
                     type="link"
                     to={`/quiz/`}
                     text="Enter Now"
-                    style="bg-green-500 text-white rounded-sm hover:bg-green-400 font-semibold disabled:opacity-50 disabled:pointer-events-none"
+                    style="bg-green-500 text-white rounded-sm hover:bg-green-400 font-semibold disabled:opacity-50 disabled:pointer-events-none mt-auto"
                   />
-                </div>
-              </GlassCard>
-            ) : (
-              <GlassCard>
-                <div className="p-6 flex flex-col gap-4 h-full">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-(--primary) font-semibold flex gap-2 items-center">
-                      <FaTrophy className="text-grey" />
-                      Online Quiz Event
-                    </h3>
-
-                    <GlassBadge variant="warning" icon={<FaLock size={10} />}>
-                      Locked
-                    </GlassBadge>
-                  </div>
-
-                  <div>
-                    <h2 className="text-(--primary) font-bold text-2xl">
-                      ₦10,000
-                    </h2>
-                    <p className="text-grey text-sm">Prize pool</p>
-                  </div>
-
-                  <div className="flex gap-4 text-sm text-grey">
-                    <span>10 Questions</span>
-                    <span>5 mins left</span>
-                  </div>
-
-                  <p className="text-sm text-grey leading-relaxed">
-                    Subscribe to unlock live quiz events and compete for real
-                    cash prizes.
-                  </p>
-
-                  <PrimaryButton
-                    type="link"
-                    to="/pricing"
-                    text="Subscribe to Join"
-                    style="bg-linear-90 from-orange-400 to-orange-500 text-white rounded-sm hover:brightness-110 duration-300 font-semibold disabled:opacity-50 disabled:pointer-events-none mt-auto"
-                  />
-                </div>
-              </GlassCard>
-            )}
+                ) : (
+                  <>
+                    <p className="text-sm text-grey leading-relaxed">
+                      Subscribe to unlock live quiz events and compete for real
+                      cash prizes.
+                    </p>
+                    <PrimaryButton
+                      type="link"
+                      to="/pricing"
+                      text="Subscribe to Join"
+                      style="bg-blue text-white rounded-sm hover:bg-blue/90 duration-300 font-semibold disabled:opacity-50 disabled:pointer-events-none mt-auto"
+                    />
+                  </>
+                )}
+              </div>
+            </GlassCard>
 
             {/* RECENT PAYOUT */}
             <GlassCard>
@@ -601,16 +625,23 @@ const Page = () => {
                 </h3>
 
                 <p className="text-grey text-sm mt-0.5">
-                  {/* The ₦1000 referral bonus is a subscriber perk — showing
-                      it to non-subscribed users overpromises a reward they
-                      can't actually earn yet. */}
                   {user.isSubscribed ? (
                     <>
-                      Earn <span className="text-green font-medium">₦1000</span>{" "}
+                      Earn{" "}
+                      <span className="text-green font-medium font-bold">
+                        ₦{formater(rewardData.referral)}
+                      </span>{" "}
                       for every friend you refer to Genuslab.
                     </>
                   ) : (
-                    "Get credited instantly for every friend you refer to Genuslab."
+                    <>
+                      Subscribe to earn{" "}
+                      <span className="text-green font-medium">
+                        {formater(rewardData.referral)}
+                      </span>{" "}
+                      for every friend you refer — non-subscribers can still
+                      invite, but won't earn the cash bonus.
+                    </>
                   )}
                 </p>
               </div>

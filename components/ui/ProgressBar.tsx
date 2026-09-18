@@ -1,7 +1,4 @@
-"use client";
-
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
 
 const ProgressBar = ({
   value,
@@ -12,25 +9,19 @@ const ProgressBar = ({
   total: number;
   color: string;
 }) => {
-  const progressRef = useRef<HTMLDivElement>(null);
-  const [progress, setprogress] = useState(0);
-
-  useEffect(() => {
-    console.log(progressRef.current?.clientWidth, "width changed");
-    setprogress((value / total) * (progressRef.current?.clientWidth || 0));
-  }, [progressRef.current?.clientWidth, value, total]);
+  const percent = total > 0 ? Math.min(100, Math.max(0, (value / total) * 100)) : 0;
 
   return (
     <div
-      className="w-full h-2 bg-gray-300/50 rounded-full overflow-hidden"
-      ref={progressRef}
+      className="w-full h-2 bg-white/10 rounded-full overflow-hidden"
+      role="progressbar"
+      aria-valuenow={Math.round(percent)}
+      aria-valuemin={0}
+      aria-valuemax={100}
     >
       <div
-        className={clsx(
-          "h-full rounded-full transition-all duration-300",
-          color,
-        )}
-        style={{ width: progress }}
+        className={clsx("h-full rounded-full transition-all duration-500", color)}
+        style={{ width: `${percent}%` }}
       ></div>
     </div>
   );

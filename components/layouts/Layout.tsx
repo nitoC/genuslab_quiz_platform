@@ -21,9 +21,9 @@ const Layout = ({
   const page = usePathname().split("/")[1];
 
   return (
-    <div className="bg-[url('/background/account.png')] bg-(--background) min-h-screen bg-no-repeat bg-cover">
+    <div className="bg-[url('/background/account.png')] bg-background min-h-screen bg-no-repeat bg-cover">
       {type !== "quiz" && (
-        <div className="hidden cu-lg:block">
+        <div>
           <Sidebar />
         </div>
       )}
@@ -35,7 +35,7 @@ const Layout = ({
       <div
         className={clsx(
           className && className,
-          type !== "quiz" && "cu-lg:ml-62",
+          type !== "quiz" && "cu-lg:ml-70",
         )}
       >
         {/* <RankUnlockModal

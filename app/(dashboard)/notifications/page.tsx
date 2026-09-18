@@ -9,13 +9,11 @@ import {
   markNotificationAsRead,
 } from "@/lib/api/apis";
 import { cn } from "@/lib/utils/cn";
-import useSidebar from "@/store/useSidebar";
 import { useSocket } from "@/store/useSocket";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatRelative } from "date-fns";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
-import { GiH2O } from "react-icons/gi";
 import {
   MdNotificationsActive,
   MdNotificationsNone,
@@ -24,7 +22,6 @@ import {
   MdPersonAdd,
   MdShield,
   MdFilterList,
-  MdMenu,
   MdExpandMore,
   MdCheck,
   MdErrorOutline,
@@ -100,7 +97,6 @@ const NotificationSkeleton = () => (
 );
 
 const NotificationsPage = () => {
-  const { toggleSidebar } = useSidebar((state: any) => state);
   const queryClient = useQueryClient();
   const { socket } = useSocket() as any;
 
@@ -280,20 +276,10 @@ const NotificationsPage = () => {
 
   return (
     <Layout>
+      <Header title="Notifications" backBtn={true} />
       <div className="p-4 md:p-8 space-y-4">
         <div className="flex justify-between items-start md:items-center">
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => toggleSidebar()}
-                className="md:hidden p-2 bg-white/5 rounded-full border border-white/10"
-              >
-                <MdMenu className="text-white text-xl" />
-              </button>
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
-                Notifications
-              </h2>
-            </div>
             {unreadCount > 0 ? (
               <span className="w-fit bg-blue-600/20 text-blue-400 text-[14px] md:text-[14px] font-bold px-3 py-1 rounded-full border border-blue-500/20 uppercase">
                 {unreadCount} Unread

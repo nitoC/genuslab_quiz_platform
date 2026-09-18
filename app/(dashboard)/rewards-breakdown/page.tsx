@@ -4,11 +4,9 @@ import GlassCard from "@/components/ui/cards/GlassCard";
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
 import PrimaryButton from "@/components/ui/buttons/Primary";
-import useSidebar from "@/store/useSidebar";
 import React, { useState } from "react";
 import {
   MdEmojiEvents,
-  MdMenu,
   MdGroupAdd,
   MdToday,
   MdDateRange,
@@ -47,7 +45,13 @@ const formatCurrency = (amount: number) => {
 // Shared "1st/2nd/3rd place" row — a glass-consistent neutral chip (white/5
 // on top of GlassCard's own translucent surface) instead of a solid slate
 // block, so it reads as one material with the card around it.
-const PlaceRow = ({ label, amount }: { label: string; amount: number }) => (
+const PlaceRow = ({
+  label,
+  amount,
+}: {
+  label: React.ReactNode;
+  amount: number;
+}) => (
   <div className="flex items-center justify-between py-2.5 px-3 rounded-md bg-white/5 border border-white/10">
     <span className="font-medium text-grey">{label}</span>
     <span className="font-semibold text-(--primary)">
@@ -57,7 +61,6 @@ const PlaceRow = ({ label, amount }: { label: string; amount: number }) => (
 );
 
 const RewardBreakdownPage = () => {
-  const { toggleSidebar } = useSidebar((state: any) => state);
   const [activeTab, setActiveTab] = useState<"all" | "episodes" | "referral">(
     "all",
   );
@@ -77,13 +80,6 @@ const RewardBreakdownPage = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/10">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => toggleSidebar()}
-                  className="md:hidden p-1.5 bg-white/5 rounded border border-white/10 text-grey hover:text-(--primary)"
-                  aria-label="Toggle Navigation Sidebar"
-                >
-                  <MdMenu className="text-lg" />
-                </button>
                 <span className="text-sm font-medium uppercase tracking-wide text-grey">
                   Performance & Incentives
                 </span>
@@ -98,15 +94,21 @@ const RewardBreakdownPage = () => {
             </div>
 
             {/* Segmented Control Filter */}
-            <div className="inline-flex flex-wrap gap-1 bg-white/5 border border-white/10 backdrop-blur-xl p-1 rounded-lg self-start sm:self-auto">
+            <div
+              role="tablist"
+              className="inline-flex flex-wrap gap-1 bg-white/5 border border-white/10 backdrop-blur-xl p-1 rounded-lg self-start sm:self-auto"
+            >
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-3.5 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`px-3.5 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
                     activeTab === tab.key
                       ? "bg-blue/20 text-blue font-semibold"
-                      : "text-grey hover:text-(--primary)"
+                      : "text-grey hover:text-(--primary) hover:bg-white/5"
                   }`}
                 >
                   {tab.label}
@@ -148,7 +150,7 @@ const RewardBreakdownPage = () => {
             <GlassCard>
               <div className="p-5">
                 <div className="flex items-center gap-2 text-grey text-sm font-medium mb-2.5">
-                  <span className="bg-amber-500/10 p-1.5 rounded-md text-amber-400">
+                  <span className="bg-yellow/10 p-1.5 rounded-md text-yellow">
                     <MdCalendarMonth size={16} />
                   </span>
                   <span>Monthly Jackpot</span>
@@ -162,7 +164,7 @@ const RewardBreakdownPage = () => {
             <GlassCard>
               <div className="p-5">
                 <div className="flex items-center gap-2 text-grey text-sm font-medium mb-2.5">
-                  <span className="bg-emerald-500/10 p-1.5 rounded-md text-emerald-400">
+                  <span className="bg-green/10 p-1.5 rounded-md text-green">
                     <MdGroupAdd size={16} />
                   </span>
                   <span>Referral Payout</span>
@@ -177,7 +179,10 @@ const RewardBreakdownPage = () => {
 
           {/* Leaderboard Tier Breakdown Cards */}
           {(activeTab === "all" || activeTab === "episodes") && (
-            <div className="space-y-5">
+            <div
+              key={`episodes-${activeTab}`}
+              className="space-y-5 animate-in fade-in slide-in-from-bottom-1 duration-300"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <h2 className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                   Leaderboard Distributions
@@ -265,13 +270,13 @@ const RewardBreakdownPage = () => {
                 </GlassCard>
 
                 {/* Monthly Tier Card */}
-                <GlassCard className="flex flex-col border border-amber-500/20">
+                <GlassCard className="flex flex-col">
                   <div className="p-6">
-                    <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 pb-4 border-b border-white/10">
                       <span className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                         Monthly Leaderboard
                       </span>
-                      <span className="text-[14px] font-medium text-amber-400">
+                      <span className="text-[14px] font-medium text-yellow whitespace-nowrap">
                         Winner Takes All
                       </span>
                     </div>
@@ -286,15 +291,15 @@ const RewardBreakdownPage = () => {
                     </div>
 
                     <div className="text-sm">
-                      <div className="flex items-center justify-between p-3.5 rounded-md bg-amber-500/10 border border-amber-500/20">
-                        <span className="font-medium text-amber-300 flex items-center gap-1.5">
-                          <MdEmojiEvents size={16} className="text-amber-400" />
-                          1st Place Champion
-                        </span>
-                        <span className="font-bold text-amber-400">
-                          {formatCurrency(rewardData.monthly.reward.first)}
-                        </span>
-                      </div>
+                      <PlaceRow
+                        label={
+                          <span className="flex items-center gap-1.5">
+                            <MdEmojiEvents size={16} className="text-yellow" />
+                            1st Place Champion
+                          </span>
+                        }
+                        amount={rewardData.monthly.reward.first}
+                      />
                       <p className="text-[14px] text-grey mt-4 leading-relaxed">
                         Accumulate the highest points across all episodes during
                         the calendar month to claim the monthly jackpot.
@@ -308,7 +313,10 @@ const RewardBreakdownPage = () => {
 
           {/* Referral Program Section */}
           {(activeTab === "all" || activeTab === "referral") && (
-            <div className="space-y-5">
+            <div
+              key={`referral-${activeTab}`}
+              className="space-y-5 animate-in fade-in slide-in-from-bottom-1 duration-300"
+            >
               <h2 className="text-sm font-semibold text-(--primary) uppercase tracking-wider">
                 Referral Program
               </h2>
@@ -317,10 +325,10 @@ const RewardBreakdownPage = () => {
                 <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                   <div className="space-y-2.5">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                      <span className="text-sm font-semibold text-green bg-green/10 border border-green/20 px-2 py-0.5 rounded">
                         Direct Payout
                       </span>
-                      <span className="text-sm font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                      <span className="text-sm font-semibold text-yellow bg-yellow/10 border border-yellow/20 px-2 py-0.5 rounded">
                         Subscribers Only
                       </span>
                       <span className="text-sm text-grey">No payout limit</span>

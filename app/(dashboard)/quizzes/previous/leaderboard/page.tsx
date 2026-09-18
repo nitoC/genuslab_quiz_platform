@@ -10,14 +10,12 @@ import useSystemTime from "@/hooks/useSystemTime";
 import useUser from "@/hooks/useUser";
 import { getEpisodeLeaderboard } from "@/lib/api/apis";
 import { cn } from "@/lib/utils/cn";
-import useSidebar from "@/store/useSidebar";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useMemo } from "react";
 import {
-  MdMenu,
   MdArrowForward,
   MdEmojiEvents,
   MdMoreHoriz,
@@ -45,7 +43,9 @@ const formatSpeed = (seconds: number | null | undefined) => {
   const totalSeconds = Math.max(0, Math.round(seconds));
   const minutes = Math.floor(totalSeconds / 60);
   const remainingSeconds = totalSeconds % 60;
-  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+  return minutes > 0
+    ? `${minutes}m ${remainingSeconds}s`
+    : `${remainingSeconds}s`;
 };
 
 // A label/value pair — replaces what used to be 4 separate bordered pill
@@ -60,7 +60,6 @@ const Stat = ({ label, value }: { label: string; value: React.ReactNode }) => (
 );
 
 const EpisodePerformancePage = () => {
-  const { toggleSidebar } = useSidebar((state: any) => state);
   const router = useRouter();
   const QueryParam = useSearchParams();
   const { data: userData } = useUser();
@@ -137,12 +136,6 @@ const EpisodePerformancePage = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => toggleSidebar()}
-                  className="md:hidden p-2 bg-white/5 rounded-md border border-white/10 text-(--primary)"
-                >
-                  <MdMenu className="text-xl" />
-                </button>
                 <span className="text-sm font-medium text-grey flex items-center gap-1.5">
                   {ongoing && (
                     <span className="w-1.5 h-1.5 rounded-full bg-green" />
@@ -154,8 +147,8 @@ const EpisodePerformancePage = () => {
                 Episode Performance
               </h1>
               <p className="text-sm text-grey whitespace-nowrap">
-                Day {date || "--"}{" "}
-                <span className="mx-1.5">·</span> Episode {episode || "--"}
+                Day {date || "--"} <span className="mx-1.5">·</span> Episode{" "}
+                {episode || "--"}
               </p>
             </div>
 
@@ -227,7 +220,9 @@ const EpisodePerformancePage = () => {
                   {/* Winner Content */}
                   <div className="flex-1 text-center md:text-left space-y-4">
                     <div>
-                      <p className="text-grey text-sm">Rank #{winner.position}</p>
+                      <p className="text-grey text-sm">
+                        Rank #{winner.position}
+                      </p>
                       <h2 className="text-xl md:text-2xl font-semibold text-(--primary) mt-0.5 capitalize">
                         {winner.name}
                       </h2>
@@ -240,7 +235,10 @@ const EpisodePerformancePage = () => {
                         label="Winning time"
                         value={formatSpeed(winner.timeInSeconds)}
                       />
-                      <Stat label="Participants" value={leaderboardList.length} />
+                      <Stat
+                        label="Participants"
+                        value={leaderboardList.length}
+                      />
                     </div>
 
                     <p className="text-grey text-sm leading-relaxed max-w-xl">
@@ -252,7 +250,7 @@ const EpisodePerformancePage = () => {
 
                     <Link
                       href={"/rewards-breakdown"}
-                      target="_blank"
+                      // target="_blank"
                       className="inline-block px-4 py-2 rounded-md bg-blue text-white text-sm font-semibold hover:brightness-110 transition-all"
                     >
                       View reward breakdown

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MdChevronRight, MdContrast, MdAcUnit, MdGroups } from "react-icons/md";
+import { MdChevronRight } from "react-icons/md";
 import { cn } from "@/lib/utils/cn";
 
 interface QuizFooterProps {
@@ -25,65 +25,42 @@ const QuizFooter = ({
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
 
   return (
-    <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6">
-      <div className="flex gap-3">
-        {[MdGroups].map((Icon, i) => (
-          <button
-            key={i}
-            className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
-          >
-            <Icon size={20} />
-          </button>
-        ))}
-      </div>
+    <div className="mt-12 flex items-center justify-end gap-3">
+      {currentQuestionIndex > 0 && (
+        <button
+          onClick={onPrev}
+          className="bg-white/5 hover:bg-white/10 text-(--primary) px-5 py-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-colors border border-white/5"
+        >
+          Prev
+        </button>
+      )}
 
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        <div className="text-right">
-          <p className="text-[14px] text-slate-500 font-black uppercase tracking-widest">
-            Potential Reward
-          </p>
-          <p className="text-2xl font-black text-white">+520 XP</p>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
-          {currentQuestionIndex > 0 && (
-            <button
-              onClick={onPrev}
-              className="bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider transition border border-white/5"
-            >
-              Prev
-            </button>
+      {currentQuestionIndex >= totalQuestions - 1 ? (
+        <button
+          onClick={onSubmit}
+          disabled={submitting}
+          className={cn(
+            "bg-green hover:bg-green/90 text-[#020617] px-8 py-4 rounded-lg",
+            "font-bold text-sm uppercase tracking-wider flex items-center gap-3 transition-colors",
+            submitting && "opacity-60 pointer-events-none",
           )}
-
-          {currentQuestionIndex >= totalQuestions - 1 ? (
-            <button
-              onClick={onSubmit}
-              disabled={submitting}
-              className={cn(
-                "bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px]",
-                "font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform",
-                "hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]",
-                submitting && "opacity-60 pointer-events-none",
-              )}
-            >
-              {submitting ? "Submitting..." : "Submit"}
-              <MdChevronRight size={24} />
-            </button>
-          ) : (
-            <button
-              onClick={onNext}
-              disabled={submitting}
-              className={cn(
-                "bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-8 py-4 rounded-[20px] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(16,185,129,0.3)]",
-                submitting && "opacity-40 pointer-events-none",
-              )}
-            >
-              {submitting ? "submitting..." : "Next Question"}
-              <MdChevronRight size={24} />
-            </button>
+        >
+          {submitting ? "Submitting..." : "Submit"}
+          <MdChevronRight size={24} />
+        </button>
+      ) : (
+        <button
+          onClick={onNext}
+          disabled={submitting}
+          className={cn(
+            "bg-green hover:bg-green/90 text-[#020617] px-8 py-4 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center gap-3 transition-colors",
+            submitting && "opacity-40 pointer-events-none",
           )}
-        </div>
-      </div>
+        >
+          {submitting ? "submitting..." : "Next Question"}
+          <MdChevronRight size={24} />
+        </button>
+      )}
     </div>
   );
 };

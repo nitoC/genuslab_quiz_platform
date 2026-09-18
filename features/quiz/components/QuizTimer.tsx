@@ -1,13 +1,11 @@
 "use client";
 import { cn } from "@/lib/utils/cn";
-import { formatMMSS, getTimerColor } from "@/lib/utils/timer";
+import { formatMMSS, getTimerColor, QUIZ_DURATION } from "@/lib/utils/timer";
 import { memo, useEffect, useRef } from "react";
 import { useTimeStore } from "../store/time.store";
 import { useQuizCountdownTime } from "@/hooks/useTime";
 import handleQuizStorage from "@/lib/utils/handleQuizStorage";
 import { submitLiveQuestion } from "@/lib/api/apis";
-
-const timeCountDown = 300;
 
 interface TimerProps {
   isLoading?: boolean;
@@ -38,7 +36,7 @@ const Timer = ({
   );
 
   // SVG calculations
-  const totalSeconds = timeCountDown;
+  const totalSeconds = QUIZ_DURATION;
   const pct = Math.max(0, Math.min(1, timeLeft / totalSeconds));
   const r = 58;
   const c = 2 * Math.PI * r;
@@ -114,7 +112,7 @@ const Timer = ({
   }, [timeLeft, attemptId, type, isLoading, isError, isSubmitted]);
 
   return (
-    <div className="bg-[#11192e] border border-white/5 rounded-[32px] p-8 flex flex-col items-center justify-center text-center">
+    <div className="bg-(--background-dark-secondary) border border-white/5 rounded-lg p-8 flex flex-col items-center justify-center text-center">
       <div className="relative w-32 h-32 mb-4">
         <svg className="w-full h-full -rotate-90">
           <circle
@@ -135,7 +133,7 @@ const Timer = ({
             fill="transparent"
             strokeDasharray={c}
             strokeDashoffset={dashOffset}
-            className="text-emerald-500"
+            className="text-green"
             strokeLinecap="round"
           />
         </svg>
@@ -143,13 +141,13 @@ const Timer = ({
           <span className={cn("text-2xl font-black", getTimerColor(timeLeft))}>
             {formatMMSS(timeLeft)}
           </span>
-          <span className="text-[14px] text-slate-500 font-bold uppercase tracking-widest">
+          <span className="text-[14px] text-grey font-bold uppercase tracking-widest">
             Minutes
           </span>
         </div>
       </div>
 
-      <div className="text-[14px] font-black uppercase tracking-widest text-slate-500">
+      <div className="text-[14px] font-black uppercase tracking-widest text-grey">
         Auto-submit at 00:00
       </div>
     </div>

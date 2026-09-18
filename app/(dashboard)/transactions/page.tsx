@@ -409,7 +409,7 @@ const TransactionsPage = () => {
 
               {/* Custom Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-lg bg-background-dark-secondary border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden py-1 space-y-0.5">
+                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-lg bg-(--background-dark-secondary) border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden py-1 space-y-0.5">
                   {TYPE_OPTIONS.map((opt) => {
                     const isSelected = selectedType === opt.value;
                     return (

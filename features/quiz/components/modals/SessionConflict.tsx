@@ -22,8 +22,7 @@ const describeConflict = (reason?: string) => {
       title: "Session Expired",
       body: (
         <>
-          Your{" "}
-          <span className="text-[#a4bcfc] font-semibold">quiz session</span>{" "}
+          Your <span className="text-blue font-semibold">quiz session</span>{" "}
           timed out while you were away. It can no longer be completed —
           check back for the next available episode.
         </>
@@ -37,8 +36,8 @@ const describeConflict = (reason?: string) => {
       body: (
         <>
           You&apos;ve already finished this{" "}
-          <span className="text-[#a4bcfc] font-semibold">quiz</span>. Head
-          back to see your results or try the next one.
+          <span className="text-blue font-semibold">quiz</span>. Head back to
+          see your results or try the next one.
         </>
       ),
     };
@@ -49,7 +48,7 @@ const describeConflict = (reason?: string) => {
     body: (
       <>
         You already have an active{" "}
-        <span className="text-[#a4bcfc] font-semibold">quiz session</span> in
+        <span className="text-blue font-semibold">quiz session</span> in
         progress on another device or tab. Please complete it there before
         starting a new one.
       </>
@@ -67,43 +66,34 @@ export default function ActiveSessionModal({
     // Backdrop overlay
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       {/* Modal Container */}
-      <div className="w-full max-w-md bg-[#292a3a] border border-white/5 rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center shadow-2xl">
-        {/* Hourglass Icon Wrapper Box */}
-        <div className="relative mb-6">
-          <div className="w-24 h-24 bg-white/[0.04] border border-white/10 rounded-2xl flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
-            <Hourglass size={32} className="text-[#a4bcfc] mb-1" />
-            {/* The distinct green bar under the hourglass */}
-            <div className="w-8 h-[3px] bg-[#3fd18a] rounded-full shadow-[0_0_10px_rgba(63,209,138,0.5)]" />
-          </div>
-          {/* Accent decoration blob mirroring the small glass offset in image_ec166a.png */}
-          <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#3fd18a]/20 blur-[2px]" />
+      <div className="w-full max-w-md bg-(--background-dark-secondary) border border-white/10 rounded-lg p-8 md:p-10 flex flex-col items-center text-center">
+        {/* Icon */}
+        <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center mb-6">
+          <Hourglass size={28} className="text-blue" />
         </div>
 
         {/* Header Alert Title */}
-        <h2 className="text-white text-sm font-bold tracking-wide mb-4">
+        <h2 className="text-(--primary) text-lg font-bold tracking-wide mb-4">
           {title}
         </h2>
 
         {/* Context Explainer Paragraph */}
-        <p className="text-slate-400 text-sm leading-relaxed max-w-xs mb-8">
+        <p className="text-grey text-sm leading-relaxed max-w-xs mb-8">
           {body}
         </p>
 
         {/* Primary Call to Action Button */}
         <Link
           href={"/quizzes"}
-          className="w-full bg-[#a4bcfc] hover:bg-[#8da9fc] text-[#0f1325] font-black text-base py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-[0_4px_20px_rgba(164,188,252,0.25)]"
+          className="w-full bg-blue hover:bg-blue/90 text-white font-bold text-base py-4 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
         >
           <span>Back to Dashboard</span>
           <ArrowRight size={18} style={{ strokeWidth: "2.5px" }} />
         </Link>
 
         {/* Secondary View Details Trigger */}
-        <button
-          //   onClick={onViewDetails || onClose}
-          className="mt-6 flex items-center gap-2 text-slate-400 hover:text-slate-300 font-mono text-sm uppercase tracking-wider transition-colors"
-        >
-          <Info size={14} className="text-slate-400" />
+        <button className="mt-6 flex items-center gap-2 text-grey hover:text-(--primary) font-mono text-sm uppercase tracking-wider transition-colors">
+          <Info size={14} />
           <span>View session details</span>
         </button>
       </div>

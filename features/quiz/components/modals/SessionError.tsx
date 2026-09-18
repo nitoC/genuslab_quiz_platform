@@ -15,25 +15,19 @@ export default function SessionFailureModal({
     // Backdrop overlay
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       {/* Modal Container */}
-      <div className="w-full max-w-xl bg-[#0f111e] border border-white/5 rounded-[24px] p-8 md:p-12 flex flex-col items-center text-center shadow-2xl relative overflow-hidden">
-        {/* Red Circular Failure Icon Wrapper */}
-        <div className="w-20 h-20 bg-[#7a0c11] rounded-full flex items-center justify-center mb-6 shadow-lg">
-          {/* Custom composition replicating a loading/refresh alert style */}
-          <div className="relative text-white font-bold text-xl flex items-center justify-center">
-            <HiOutlineRefresh size={36} className="text-white/90" />
-            <span className="absolute text-sm top-[11px] left-[15px] font-black">
-              !
-            </span>
-          </div>
+      <div className="w-full max-w-xl bg-(--background-dark-secondary) border border-white/10 rounded-lg p-8 md:p-12 flex flex-col items-center text-center">
+        {/* Failure Icon */}
+        <div className="w-16 h-16 bg-red/10 border border-red/20 rounded-lg flex items-center justify-center mb-6 text-red">
+          <HiOutlineRefresh size={28} />
         </div>
 
         {/* Header Title */}
-        <h2 className="text-white text-2xl md:text-3xl font-bold tracking-tight mb-4">
+        <h2 className="text-(--primary) text-2xl md:text-3xl font-bold tracking-tight mb-4">
           Session Load Failure
         </h2>
 
         {/* Description Body */}
-        <p className="text-slate-400 text-base leading-relaxed max-w-md mb-10">
+        <p className="text-grey text-base leading-relaxed max-w-md mb-10">
           We encountered an issue while trying to load your quiz session. Please
           check your connection and try again.
         </p>
@@ -43,7 +37,7 @@ export default function SessionFailureModal({
           {/* Retry Button */}
           <button
             onClick={onRetry}
-            className="bg-[#a4bcfc] hover:bg-[#8da9fc] text-[#0f1325] font-bold text-base py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200"
+            className="bg-blue hover:bg-blue/90 text-white font-bold text-base py-4 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
           >
             <MdRefresh size={22} />
             <span>Retry</span>
@@ -52,7 +46,7 @@ export default function SessionFailureModal({
           {/* Go Back Button */}
           <Link
             href={"/quizzes"}
-            className="bg-[#212433] hover:bg-[#2b2f42] border border-white/5 text-white font-bold text-base py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200"
+            className="bg-white/5 hover:bg-white/10 border border-white/10 text-(--primary) font-bold text-base py-4 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
           >
             <MdArrowBack size={20} />
             <span>Go Back</span>
@@ -62,10 +56,10 @@ export default function SessionFailureModal({
         {/* Contact Support Footer Link */}
         <Link
           href={"/support"}
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-300 text-sm font-medium tracking-wide transition-colors"
+          className="flex items-center gap-2 text-grey hover:text-(--primary) text-sm font-medium tracking-wide transition-colors"
         >
           <span>Contact Support</span>
-          <FiExternalLink size={14} className="text-slate-400" />
+          <FiExternalLink size={14} />
         </Link>
       </div>
     </div>

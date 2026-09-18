@@ -26,7 +26,7 @@ interface HeaderProps {
 const Header = ({ title, backBtn = false }: HeaderProps) => {
   const { data, isLoading } = useUser();
   const [isMounted, setIsMounted] = useState(false);
-  const [unRead, setUnRead] = useState(true);
+  const [unRead, setUnRead] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebar((state: any) => state.toggleSidebar);
@@ -73,6 +73,7 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
   useEffect(() => {
     if (!socket) return;
     const handleUnread = (notification: any) => {
+      console.log(notification, "checking for unread");
       setUnRead(notification);
     };
     socket.on("has-unread", handleUnread);
@@ -120,18 +121,18 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
             <Link
               href="/settings"
               aria-label="Settings"
-              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue"
             >
-              <IoMdSettings className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <IoMdSettings className="h-5 w-5 sm:h-6 sm:w-6 text-(--primary)" />
             </Link>
 
             {/* Notifications Link */}
             <Link
               href="/notifications"
               aria-label="Notifications"
-              className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue"
             >
-              <IoIosNotifications className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <IoIosNotifications className="h-5 w-5 sm:h-6 sm:w-6 text-(--primary)" />
               {unRead && (
                 <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-red-400 opacity-75" />
@@ -147,7 +148,7 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
                 onClick={() => setUserMenuOpen((prev) => !prev)}
                 aria-expanded={userMenuOpen}
                 aria-label="User menu"
-                className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue"
               >
                 {!isMounted || isLoading ? (
                   <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gray-300/40 dark:bg-gray-700/40 animate-pulse" />
@@ -218,9 +219,9 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
               type="button"
               onClick={toggleSidebar}
               aria-label="Toggle navigation menu"
-              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cu-lg:hidden"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl transition-all hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue cu-lg:hidden"
             >
-              <IoMdMenu className="h-6 w-6 text-primary" />
+              <IoMdMenu className="h-6 w-6 text-(--primary)" />
             </button>
           </div>
         </div>

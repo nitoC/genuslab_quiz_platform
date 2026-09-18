@@ -6,9 +6,8 @@ import PrimaryButton from "@/components/ui/buttons/Primary";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import { FaGraduationCap } from "react-icons/fa";
 import { IoMdArrowForward } from "react-icons/io";
-import { MdStars, MdLock } from "react-icons/md";
+import { MdStars, MdLock, MdHistory, MdTrendingUp } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
-import { RiProgress5Line } from "react-icons/ri";
 import ImageWithFallback from "@/components/ui/ImageWithFallback";
 import { useEffect, useMemo, useState } from "react";
 // import { useSocket } from "@/store/useSocket";
@@ -30,6 +29,13 @@ import TimerPop from "@/features/quiz/components/TimerPop";
 import useSlots from "@/hooks/useSlots";
 import { FloatingDemoButton } from "@/components/ui/buttons/FloatingDemo";
 import { formater } from "@/lib/utils/numFormatter";
+import { rewardData } from "@/app/(dashboard)/rewards-breakdown/page";
+
+const DAILY_PRIZES = [
+  { place: "1st", amount: rewardData.daily.reward.first, color: "text-yellow" },
+  { place: "2nd", amount: rewardData.daily.reward.second, color: "text-grey" },
+  { place: "3rd", amount: rewardData.daily.reward.third, color: "text-orange-400" },
+];
 
 // Active quizzes surface first, archived/expired ones sink to the bottom.
 const statusPriority = (status: string) => {
@@ -217,7 +223,7 @@ const page = () => {
               </div>
               <div>
                 <h3 className="text-grey text-sm">Rewards Today</h3>
-                <p className="text-2xl font-bold text-primary">
+                <p className="text-2xl font-bold text-(--primary)">
                   ₦{formater(todayRewardsData)}
                 </p>
               </div>
@@ -229,7 +235,7 @@ const page = () => {
               <div className="flex flex-col gap-1">
                 <h3 className="text-blue font-bold text-lg">Performance</h3>
                 <p className="text-grey">
-                  <span className="text-3xl font-bold text-primary">
+                  <span className="text-3xl font-bold text-(--primary)">
                     {avgLoading ? "--" : avgData}
                   </span>
                   /100
@@ -251,7 +257,7 @@ const page = () => {
         <div>
           <div className="flex gap-4 items-center">
             <FaGraduationCap size={28} className="text-blue" />
-            <h2 className="text-2xl font-bold text-primary">
+            <h2 className="text-2xl font-bold text-(--primary)">
               Upcoming Quizzes
             </h2>
           </div>
@@ -286,10 +292,18 @@ const page = () => {
                   <p className="text-blue text-sm">{rank?.rankName}</p>
                 </div>
               </div>
-              <div>
-                <p className="text-grey text-sm">{exp} XP Earned</p>
-                <div className="w-full bg-white/10 rounded-full h-2 mt-2">
-                  <div className="bg-blue h-2 rounded-full w-[75%]" />
+              <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                <div>
+                  <p className="text-grey text-sm">XP Earned</p>
+                  <p className="text-(--primary) font-bold text-lg">
+                    {formater(exp || 0)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-grey text-sm">Next Rank At</p>
+                  <p className="text-(--primary) font-bold text-lg">
+                    {rank?.unlockXp ? formater(rank.unlockXp) : "--"}
+                  </p>
                 </div>
               </div>
               <PrimaryButton type="link" to="/profile" text="View Profile" />
@@ -297,19 +311,33 @@ const page = () => {
           </GlassCard>
 
           <GlassCard>
-            <div className="p-6 bg-blue/10 flex flex-col gap-6 h-full justify-between">
-              <div className="flex items-center gap-4">
-                <div className="bg-blue p-4 rounded-xl">
-                  <FaPlay className="text-white" />
+            <div className="p-6 flex flex-col gap-5 h-full justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="text-grey text-sm">Today's Prize Pool</p>
+                  <FaPlay className="text-blue text-sm" />
                 </div>
-                <div>
-                  <p className="text-grey text-sm">Estimated Reward</p>
-                  <p className="text-blue font-bold text-xl">₦10,000 Reward</p>
+                <p className="text-(--primary) font-bold text-2xl mt-1">
+                  {formater(rewardData.daily.total)}
+                </p>
+
+                <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-white/5">
+                  {DAILY_PRIZES.map((prize) => (
+                    <div key={prize.place} className="text-center">
+                      <p className={`text-xs font-semibold ${prize.color}`}>
+                        {prize.place}
+                      </p>
+                      <p className="text-(--primary) font-bold text-sm mt-0.5">
+                        {formater(prize.amount)}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
+
               {quizData && nextActive && quizData.length > 0 ? (
                 <div>
-                  <h3 className="text-primary font-semibold">
+                  <h3 className="text-(--primary) font-semibold">
                     Episode{" "}
                     {nextActive?.episode?.toString().split("_")[1] ?? "N/A"}
                   </h3>
@@ -340,18 +368,22 @@ const page = () => {
           <GlassCard>
             <div className="p-6 flex flex-col gap-6 h-full justify-between">
               <div className="flex items-center gap-3">
-                <RiProgress5Line className="text-purple-400" />
+                <MdHistory className="text-blue" />
                 <h3 className="text-(--primary) font-semibold">Past Quizzes</h3>
               </div>
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-purple-400 font-bold">
+              <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                <div>
+                  <p className="text-grey text-sm">Episodes Completed</p>
+                  <p className="text-(--primary) font-bold text-2xl">
                     {data?.user?.details?._count?.quizHistory ?? 0}
-                  </span>
-                  <span className="text-grey">Master Path</span>
+                  </p>
                 </div>
-                <div className="w-full bg-white/10 rounded-full h-2">
-                  <div className="bg-purple-500 h-2 rounded-full w-full" />
+                <div className="text-right">
+                  <p className="text-grey text-sm">Average Score</p>
+                  <p className="text-(--primary) font-bold text-2xl flex items-center gap-1 justify-end">
+                    {avgLoading ? "--" : avgData}
+                    <MdTrendingUp className="text-blue text-lg" />
+                  </p>
                 </div>
               </div>
               <PrimaryButton
