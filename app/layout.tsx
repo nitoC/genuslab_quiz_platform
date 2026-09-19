@@ -32,6 +32,11 @@ export const metadata: Metadata = {
   title: "Genus Lab",
   description:
     "Genus Lab is a quiz app that tests your knowledge on various topics.",
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({
