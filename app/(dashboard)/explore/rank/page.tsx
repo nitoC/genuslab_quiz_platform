@@ -44,7 +44,7 @@ const LeaderboardPage = () => {
           <div className="w-16 h-16 bg-green/10 rounded-lg flex items-center justify-center mb-2 border border-green/20">
             <span className="text-3xl">⚙️</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-black text-(--primary) tracking-tighter">
+          <h1 className="text-3xl md:text-5xl font-black text-primary tracking-tighter">
             FRESH MIND
           </h1>
           <p className="text-grey text-[14px] md:text-sm uppercase tracking-widest font-medium">
@@ -63,7 +63,7 @@ const LeaderboardPage = () => {
               </span>
             </div>
             <div className="text-center">
-              <p className="text-(--primary) font-bold text-sm">Mila Chen</p>
+              <p className="text-primary font-bold text-sm">Mila Chen</p>
               <p className="text-grey text-[14px]">24,100 XP</p>
             </div>
             <GlassCard className="w-28 h-20 md:w-40 md:h-32 flex items-center justify-center opacity-40">
@@ -83,7 +83,7 @@ const LeaderboardPage = () => {
               </span>
             </div>
             <div className="text-center">
-              <p className="text-(--primary) font-bold text-sm">Alex Rivera</p>
+              <p className="text-primary font-bold text-sm">Alex Rivera</p>
               <p className="text-yellow text-[14px] font-bold uppercase">
                 25,400 XP
               </p>
@@ -102,7 +102,7 @@ const LeaderboardPage = () => {
               </span>
             </div>
             <div className="text-center">
-              <p className="text-(--primary) font-bold text-sm">Jordan Smit</p>
+              <p className="text-primary font-bold text-sm">Jordan Smit</p>
               <p className="text-grey text-[14px]">21,850 XP</p>
             </div>
             <GlassCard className="w-28 h-16 md:w-40 md:h-28 flex items-center justify-center opacity-30">
@@ -137,14 +137,14 @@ const LeaderboardPage = () => {
                 {/* User Info */}
                 <div className="col-span-2 flex items-center gap-2">
                   <Avatar size={28} type="main" />
-                  <span className="text-(--primary) text-[14px] md:text-sm font-semibold truncate">
+                  <span className="text-primary text-[14px] md:text-sm font-semibold truncate">
                     {user.name}
                   </span>
                 </div>
 
                 {/* Stats (XP + Progress) */}
                 <div className="col-span-2 flex flex-col gap-1 px-2">
-                  <div className="flex items-center gap-1 text-[14px] font-bold text-(--primary)">
+                  <div className="flex items-center gap-1 text-[14px] font-bold text-primary">
                     <FaBolt className="text-blue text-[14px]" />
                     {user.xp}
                   </div>

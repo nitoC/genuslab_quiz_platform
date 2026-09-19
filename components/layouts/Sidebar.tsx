@@ -43,8 +43,8 @@ const navLinks = [
     icon: FaClock,
   },
   {
-    label: "Exploral",
-    href: "/exploral",
+    label: "Explore",
+    href: "/explore",
     icon: FaCompass,
   },
   {

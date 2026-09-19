@@ -46,7 +46,7 @@ import {
 import { FcMindMap } from "react-icons/fc";
 import { HiMiniCheckBadge } from "react-icons/hi2";
 import RankUnlockModal from "@/components/ui/modals/leaderboard";
-import BlogContent from "@/features/exploral/BlogContent";
+import BlogContent from "@/features/explore/BlogContent";
 import { useRouter } from "next/navigation";
 import sanityClient from "@/lib/utils/Sanity";
 import { useQuery } from "@tanstack/react-query";
@@ -286,7 +286,7 @@ const ExploralPage = () => {
         const finalRankings = rankings.map((item: any) => {
           const data = leaderboardRanks.find((rank) => rank.rank === item.rank);
 
-          // console.log(data, "data");
+          // console.log(data, "data"); exploral
           const fin = {
             ...item,
             status: item.unlocked ? "unlocked" : "locked",
@@ -340,7 +340,7 @@ const ExploralPage = () => {
 
   const handleRankModal = (payload: (typeof filteredRanks)[0]) => {
     if (payload.status === "unlocked") {
-      return router.push("/exploral/rank?rank=" + payload.rank);
+      return router.push("/explore/rank?rank=" + payload.rank);
     }
     setrankData({
       show: !rankData.show,
@@ -350,7 +350,7 @@ const ExploralPage = () => {
 
   return (
     <Layout>
-      <Header title="Exploral" backBtn={false} />
+      <Header title="Explore" backBtn={false} />
 
       <main className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-400 mx-auto">
         {/* TOP ROW: Championships & Studio Winner */}
