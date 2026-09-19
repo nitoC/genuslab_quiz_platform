@@ -101,7 +101,7 @@ export default function Header() {
 
       {/* ── mobile dropdown ──────────────────────────── */}
       <div
-        className={`nav-md:hidden absolute left-0 right-0 top-full overflow-hidden bg-white shadow-lg transition-[height] duration-300 ${
+        className={`nav-md:hidden absolute left-0 right-0 top-full overflow-hidden bg-white z-10 shadow-lg transition-[height] duration-300 ${
           isOpen ? "h-110" : "h-0"
         }`}
       >

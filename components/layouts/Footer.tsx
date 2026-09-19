@@ -6,14 +6,48 @@ import {
   FaFacebookF,
   FaInstagram,
   FaYoutube,
-  FaXTwitter,
   FaTiktok,
+  FaTelegram,
+  FaLinkedinIn,
 } from "react-icons/fa6";
 
 const footerLinks = [
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms of Service", href: "/terms-of-service" },
   { label: "FAQ", href: "/faq" },
+];
+
+const socialLinks = [
+  {
+    icon: FaYoutube,
+    label: "YouTube",
+    href: "https://www.youtube.com/@Genuslab_technologies",
+  },
+  {
+    icon: FaInstagram,
+    label: "Instagram",
+    href: "https://www.instagram.com/genuslabofficial/",
+  },
+  {
+    icon: FaFacebookF,
+    label: "Facebook",
+    href: "https://web.facebook.com/people/Genuslab-Technologies/100089159413660/",
+  },
+  {
+    icon: FaTiktok,
+    label: "TikTok",
+    href: "https://www.tiktok.com/@genus_lab",
+  },
+  {
+    icon: FaTelegram,
+    label: "Telegram",
+    href: "https://t.me/+J_fNo61NeJs3Mjc1",
+  },
+  {
+    icon: FaLinkedinIn,
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/134604192",
+  },
 ];
 
 export default function Footer() {
@@ -58,18 +92,18 @@ export default function Footer() {
 
         {/* social icons */}
         <div className="flex items-center flex-wrap justify-start gap-6 md:justify-end">
-          {[FaFacebookF, FaInstagram, FaYoutube, FaXTwitter, FaTiktok].map(
-            (Icon, i) => (
-              <a
-                key={i}
-                href="#"
-                aria-label="social‑link"
-                className="grid h-14 w-14 place-content-center rounded-full border border-gray-900/80 text-lg transition hover:bg-gray-900 hover:text-white"
-              >
-                <Icon />
-              </a>
-            ),
-          )}
+          {socialLinks.map(({ icon: Icon, label, href }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className="grid h-14 w-14 place-content-center rounded-full border border-gray-900/80 text-lg transition hover:bg-gray-900 hover:text-white"
+            >
+              <Icon />
+            </a>
+          ))}
         </div>
       </div>
 
