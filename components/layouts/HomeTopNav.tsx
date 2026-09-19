@@ -11,7 +11,7 @@ const navLinks = [
   { label: "Home", href: "/", hasArrow: true },
   { label: "Academy", href: "/academy", hasArrow: true },
   { label: "Job Board", href: "/job-board", hasArrow: true },
-  { label: "Quiz Arena", href: "#" },
+  // { label: "Quiz Arena", href: "#" },
   { label: "About", href: "/about" },
 ];
 
