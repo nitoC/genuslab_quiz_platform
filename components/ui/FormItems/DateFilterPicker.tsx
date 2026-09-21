@@ -173,7 +173,9 @@ const DateFilterPicker = ({
         />
         <DatePicker
           selected={selected}
-          onChange={(date) => onChange(date ? format(date, "yyyy-MM-dd") : "")}
+          onChange={(date: Date | null) =>
+            onChange(date ? format(date, "yyyy-MM-dd") : "")
+          }
           placeholderText={placeholder}
           dateFormat="MMM d, yyyy"
           maxDate={maxDate}
