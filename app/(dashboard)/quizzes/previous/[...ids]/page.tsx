@@ -115,7 +115,7 @@ const QuizReviewPage = () => {
     <>
       <Layout>
         <Header title="Quiz questions results" backBtn={false} />
-        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-emerald-500/30 text-white relative">
+        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans selection:bg-green/30 text-white relative">
           <div className="w-full max-w-5xl bg-[#090f1f] rounded-[24px] sm:rounded-[40px] border border-white/5 p-4 sm:p-6 md:p-12 relative overflow-hidden shadow-2xl space-y-8">
             {/* Header Action Row */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/5 pb-6">
@@ -145,7 +145,7 @@ const QuizReviewPage = () => {
                 </Link>
                 <button
                   onClick={() => router.push("/quizzes")}
-                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-[0_4px_20px_rgba(16,185,129,0.2)] transition-all"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-green hover:bg-green/90 text-white rounded-xl font-bold text-sm shadow-[0_4px_20px_rgba(16,185,129,0.2)] transition-all"
                 >
                   <MdReplay size={18} />
                   <span>Retry Quiz</span>
@@ -163,17 +163,17 @@ const QuizReviewPage = () => {
                   >
                     {/* Question Status Banner */}
                     <div className="flex items-center justify-between gap-4">
-                      <span className="text-sm sm:text-sm text-sky-400 font-bold uppercase tracking-wider">
+                      <span className="text-sm sm:text-sm text-blue font-bold uppercase tracking-wider">
                         {item.questionNumber}
                       </span>
 
                       {item.isCorrect ? (
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-sm font-bold">
+                        <div className="flex items-center gap-1.5 text-green text-sm font-bold">
                           <MdCheckCircle size={16} />
                           <span>Correct</span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full text-sm font-bold">
+                        <div className="flex items-center gap-1.5 text-red text-sm font-bold">
                           <MdCancel size={16} />
                           <span>Incorrect</span>
                         </div>
@@ -200,7 +200,7 @@ const QuizReviewPage = () => {
                                 "relative flex items-center gap-4 p-4 rounded-xl border transition-all text-sm sm:text-base font-semibold",
                                 // Correct Choice configuration states
                                 isCorrectChoice &&
-                                  "bg-emerald-500/5 border-emerald-500 text-slate-100 shadow-[0_0_15px_rgba(16,185,129,0.1)]",
+                                  "bg-green/5 border-green text-slate-100 shadow-[0_0_15px_rgba(16,185,129,0.1)]",
                                 // Wrong User Choice state
                                 isUserChoice &&
                                   !isCorrectChoice &&
@@ -216,7 +216,7 @@ const QuizReviewPage = () => {
                                 className={cn(
                                   "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 transition-colors",
                                   isCorrectChoice &&
-                                    "bg-emerald-500 text-slate-900",
+                                    "bg-green text-slate-900",
                                   isUserChoice &&
                                     !isCorrectChoice &&
                                     "bg-red-500 text-white",
@@ -235,7 +235,7 @@ const QuizReviewPage = () => {
                               {isCorrectChoice && (
                                 <MdCheckCircle
                                   size={20}
-                                  className="text-emerald-400 flex-shrink-0"
+                                  className="text-green flex-shrink-0"
                                 />
                               )}
                               {isUserChoice && !isCorrectChoice && (
@@ -247,7 +247,7 @@ const QuizReviewPage = () => {
 
                               {/* Visual Segment Separator Dot Ring Matchers from the Mockup */}
                               {isUserChoice && (
-                                <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#090f1f] border-4 border-pink-500 flex items-center justify-center z-10 hidden md:flex" />
+                                <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#090f1f] border-4 border-white/60 flex items-center justify-center z-10 hidden md:flex" />
                               )}
                             </div>
                           );
@@ -257,13 +257,13 @@ const QuizReviewPage = () => {
 
                     {/* Expert Insight Panel Block */}
                     {item?.question?.answerDescription && (
-                      <div className="flex gap-4 p-4 sm:p-5 bg-[#0a1226] border border-sky-500/10 rounded-2xl text-slate-300">
+                      <div className="flex gap-4 p-4 sm:p-5 bg-[#0a1226] border border-blue/10 rounded-2xl text-slate-300">
                         <MdInfo
                           size={24}
-                          className="text-sky-400 flex-shrink-0 mt-0.5"
+                          className="text-blue flex-shrink-0 mt-0.5"
                         />
                         <div className="space-y-1">
-                          <h4 className="text-sm sm:text-sm font-black uppercase tracking-wider text-sky-400">
+                          <h4 className="text-sm sm:text-sm font-black uppercase tracking-wider text-blue">
                             Description
                           </h4>
                           <p className="text-sm sm:text-sm font-medium leading-relaxed text-slate-400">

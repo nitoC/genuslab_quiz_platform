@@ -3,6 +3,7 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
+import PageLoader from "@/components/ui/PageLoader";
 import { cn } from "@/lib/utils/cn";
 import { FaAngleDoubleRight } from "react-icons/fa";
 
@@ -134,11 +135,7 @@ const LeaderboardPage = () => {
         </div>
 
         {activeTab === "Stats" && (
-          <Suspense
-            fallback={
-              <div className="text-center text-white p-8">Loading...</div>
-            }
-          >
+          <Suspense fallback={<PageLoader theme="dark" fullScreen={false} />}>
             <Stats
               // ACTIVITY_DATA={ACTIVITY_DATA}
               // MASTER_DATA={MASTER_DATA}
@@ -150,11 +147,7 @@ const LeaderboardPage = () => {
           </Suspense>
         )}
         {activeTab === "Performance" && (
-          <Suspense
-            fallback={
-              <div className="text-center text-white p-8">Loading...</div>
-            }
-          >
+          <Suspense fallback={<PageLoader theme="dark" fullScreen={false} />}>
             <Personal detailsId={detailsId ?? ""} />
           </Suspense>
         )}

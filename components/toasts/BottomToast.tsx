@@ -54,11 +54,11 @@ const BottomToast = ({
         </button>
 
         <div className="flex items-center gap-3 min-w-0 flex-1 pr-6">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-400/10 text-amber-400">
-            <IoAlertCircle size={16} color="orange" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 text-yellow">
+            <IoAlertCircle size={16} />
           </span>
           <div className="flex flex-col gap-1 min-w-0">
-            <h6 className="text-primary font-bold text-sm">{data.title}</h6>
+            <h6 className="text-(--primary) font-bold text-sm">{data.title}</h6>
             <p className="text-grey text-xs truncate">{data.description}</p>
           </div>
         </div>

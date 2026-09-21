@@ -15,12 +15,7 @@ import {
   MdArrowForward,
   MdVerified,
 } from "react-icons/md";
-import {
-  FaUniversity,
-  FaEnvelope,
-  FaCheckCircle,
-  FaCrown,
-} from "react-icons/fa";
+import { FaUniversity, FaEnvelope, FaCheckCircle } from "react-icons/fa";
 import GlassCard from "@/components/ui/cards/GlassCard";
 
 type TabId = "account" | "bank" | "subscription";
@@ -184,7 +179,7 @@ const AccountSection = ({ user }: any) => {
           value={personalInfo.email}
           onChange={handleInputChange}
           badge={
-            <span className="flex items-center gap-1 text-[12px] font-bold text-emerald-400">
+            <span className="flex items-center gap-1 text-[12px] font-bold text-green">
               <MdVerified size={12} /> Verified
             </span>
           }
@@ -312,10 +307,8 @@ const AccountRow = ({
     <div className="flex items-center gap-3 shrink-0">
       <span
         className={clsx(
-          "px-3 py-1 rounded-full text-[12px] font-bold tracking-wide border",
-          status === "Linked"
-            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/10"
-            : "bg-amber-500/10 text-amber-400 border-amber-500/10",
+          "text-[12px] font-bold tracking-wide",
+          status === "Linked" ? "text-green" : "text-yellow",
         )}
       >
         {status}
@@ -364,22 +357,17 @@ const SubscriptionSection = ({ user }: any) => {
       <div
         className={clsx(
           "mt-6 rounded-2xl border p-6 sm:p-8",
-          isSubscribed
-            ? "border-amber-400/20 bg-gradient-to-br from-amber-400/10 via-transparent to-transparent"
-            : "border-blue/20 bg-gradient-to-br from-blue/10 via-transparent to-transparent",
+          isSubscribed ? "border-yellow/20" : "border-blue/20",
         )}
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <span
               className={clsx(
-                "inline-flex items-center gap-1.5 text-[12px] font-bold px-3 py-1 rounded-full mb-3 border",
-                isSubscribed
-                  ? "bg-amber-400/10 border-amber-400/30 text-amber-400"
-                  : "bg-blue/10 border-blue/20 text-blue",
+                "text-[12px] font-bold mb-3 block",
+                isSubscribed ? "text-yellow" : "text-blue",
               )}
             >
-              {isSubscribed && <FaCrown size={11} />}
               {isSubscribed ? "Premium Member" : "Current Plan"}
             </span>
             <div className="flex items-baseline gap-2">
@@ -397,7 +385,7 @@ const SubscriptionSection = ({ user }: any) => {
               type="link"
               to="/subscriptions"
               text="View Active Subscriptions"
-              style="bg-amber-400 text-black hover:bg-amber-400/90 rounded-xl py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
+              style="bg-yellow text-black hover:bg-yellow/90 rounded-xl py-3 px-8 text-xs font-bold tracking-wide inline-flex justify-center items-center gap-2"
             />
           ) : (
             <PrimaryButton

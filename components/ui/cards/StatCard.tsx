@@ -12,17 +12,14 @@ export interface StatCardProps {
   secondary?: React.ReactNode;
   trend?: { value: number; label?: string };
   href?: string;
+  // Kept for backward compatibility with existing call sites — every value
+  // now renders identically (one neutral icon treatment). A different color
+  // per metric card ("blue" for one, "purple" for the next) was decorative
+  // variety, not meaning, and several of the old accent pairs (e.g.
+  // amber-600 on amber-50) fell short of accessible contrast. Icons here
+  // are wayfinding, not a way to color-code cards.
   accent?: "blue" | "emerald" | "amber" | "red" | "slate" | "purple";
 }
-
-const ACCENT_CLASSES: Record<NonNullable<StatCardProps["accent"]>, string> = {
-  blue: "bg-blue-50 text-blue-600",
-  emerald: "bg-emerald-50 text-emerald-600",
-  amber: "bg-amber-50 text-amber-600",
-  red: "bg-red-50 text-red-600",
-  slate: "bg-slate-100 text-slate-600",
-  purple: "bg-purple-50 text-purple-600",
-};
 
 // Shared KPI card used across Dashboard-style overview sections (Dashboard,
 // Subscriptions summary, Transactions summary, etc.) so every module's
@@ -34,7 +31,6 @@ const StatCard = ({
   secondary,
   trend,
   href,
-  accent = "blue",
 }: StatCardProps) => {
   const content = (
     <AdminCard
@@ -44,12 +40,7 @@ const StatCard = ({
       )}
     >
       <div className="flex items-start justify-between">
-        <span
-          className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-            ACCENT_CLASSES[accent],
-          )}
-        >
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
           <Icon size={20} />
         </span>
 

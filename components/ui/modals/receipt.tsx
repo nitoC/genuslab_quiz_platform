@@ -1,7 +1,10 @@
 "use client";
 "use client";
 import React, { useRef, useState } from "react";
-import html2canvas from "html2canvas";
+// html2canvas-pro (not vanilla html2canvas) — Tailwind v4's default palette
+// emits modern CSS color functions (oklch/lab) that html2canvas 1.x can't
+// parse and crashes on; this fork adds support for them, same API.
+import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { CheckCircle2, Download, X, ShieldCheck, Loader2 } from "lucide-react";
 

@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
-import { getTransactionById } from "@/lib/api/apis";
+import CustomSelect from "@/components/ui/FormItems/CustomSelect";
+import { getTransactionById, updateTransactionStatus } from "@/lib/api/apis";
 import { MdArrowBack, MdReceiptLong } from "react-icons/md";
 import { FaCrown, FaGamepad, FaGift, FaMoneyBillWave } from "react-icons/fa";
 
@@ -14,6 +16,12 @@ const STATUS_BADGE: Record<string, BadgeStatus> = {
   processing: "warning",
   failed: "error",
 };
+
+const STATUS_OPTIONS = [
+  { label: "Success", value: "success", colorClass: "text-emerald-700" },
+  { label: "Processing", value: "processing", colorClass: "text-amber-700" },
+  { label: "Failed", value: "failed", colorClass: "text-red-700" },
+];
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   plan: <FaCrown className="text-amber-500" size={16} />,
@@ -44,6 +52,7 @@ const InfoRow = ({ label, value }: { label: string; value: React.ReactNode }) =>
 
 export default function TransactionDetailPage() {
   const { transactionId } = useParams<{ transactionId: string }>();
+  const queryClient = useQueryClient();
 
   const { data: tx, isLoading, isError } = useQuery({
     queryKey: ["admin-transaction-detail", transactionId],
@@ -51,6 +60,23 @@ export default function TransactionDetailPage() {
     queryFn: async () => {
       const res = await getTransactionById(transactionId);
       return res?.data?.payload ?? res?.data?.data;
+    },
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: (status: string) =>
+      updateTransactionStatus(transactionId, status),
+    onSuccess: () => {
+      toast.success("Transaction status updated");
+      queryClient.invalidateQueries({
+        queryKey: ["admin-transaction-detail", transactionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-transactions"] });
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message || "Failed to update status",
+      );
     },
   });
 
@@ -107,7 +133,7 @@ export default function TransactionDetailPage() {
             </div>
           </div>
 
-          <div className="text-right">
+          <div className="flex flex-col items-end gap-2 text-right">
             <p className="font-data text-2xl font-extrabold text-slate-900">
               ₦{Number(tx.amount).toLocaleString()}
             </p>
@@ -124,7 +150,17 @@ export default function TransactionDetailPage() {
             Transaction Details
           </h2>
           <InfoRow label="Type" value={<span className="capitalize">{tx.type}</span>} />
-          <InfoRow label="Status" value={<span className="capitalize">{tx.status}</span>} />
+          <div className="flex items-center justify-between border-b border-slate-50 py-2.5">
+            <span className="text-sm text-slate-500">Status</span>
+            <div className="w-40">
+              <CustomSelect
+                options={STATUS_OPTIONS}
+                value={tx.status}
+                loading={statusMutation.isPending}
+                onChange={(value: string) => statusMutation.mutate(value)}
+              />
+            </div>
+          </div>
           <InfoRow label="Amount" value={`₦${Number(tx.amount).toLocaleString()}`} />
           <InfoRow label="Description" value={tx.description || "—"} />
           <InfoRow label="Reference ID" value={tx.id} />

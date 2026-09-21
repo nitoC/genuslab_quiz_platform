@@ -27,7 +27,7 @@ export default function IntegrationWorkflow({
               status === "success"
                 ? "bg-emerald-50 border-emerald-500 text-emerald-600"
                 : status === "error"
-                  ? "bg-rose-50 border-rose-500 text-rose-600"
+                  ? "bg-red-50 border-red-500 text-red-600"
                   : "bg-white border-slate-200 text-slate-400"
             }`}
           >

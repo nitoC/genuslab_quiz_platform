@@ -7,13 +7,26 @@ import Link from "next/link";
 import AdminPageHeader from "@/components/layouts/AdminPageHeader";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import AdminPagination from "@/components/ui/AdminPagination";
+import StatCard from "@/components/ui/cards/StatCard";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
 import ConfirmDialog from "@/components/ui/modals/ConfirmDialog";
-import { getAdminUsers, updateAdminUserStatus } from "@/lib/api/apis";
+import {
+  getAdminUsers,
+  getAdminUserSummary,
+  updateAdminUserStatus,
+} from "@/lib/api/apis";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils/cn";
+import {
+  MdSearch,
+  MdChevronRight,
+  MdOutlinePeople,
+  MdPersonOutline,
+  MdBlock,
+} from "react-icons/md";
 import { FaCrown } from "react-icons/fa";
-import { MdSearch, MdChevronRight } from "react-icons/md";
+import useAdminRole from "@/hooks/useAdminRole";
 
 const STATUS_BADGE: Record<string, BadgeStatus> = {
   active: "success",
@@ -51,6 +64,7 @@ const UsersPage = () => (
 const UsersPageContent = () => {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
+  const { isAdmin } = useAdminRole();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [plan, setPlan] = useState<"" | "premium" | "free">("");
@@ -67,6 +81,14 @@ const UsersPageContent = () => {
       setPlan(planParam);
     }
   }, [searchParams]);
+
+  const { data: summary } = useQuery({
+    queryKey: ["admin-user-summary"],
+    queryFn: async () => {
+      const res = await getAdminUserSummary();
+      return res?.data?.payload;
+    },
+  });
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-users", search, status, plan, page],
@@ -108,6 +130,30 @@ const UsersPageContent = () => {
         title="Users"
         subtitle="View and manage every registered Genus Lab user."
       />
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          icon={MdOutlinePeople}
+          title="Total Users"
+          value={summary?.total?.toLocaleString() ?? "—"}
+        />
+        <StatCard
+          icon={MdPersonOutline}
+          title="Active"
+          value={summary?.active?.toLocaleString() ?? "—"}
+        />
+        <StatCard
+          icon={FaCrown}
+          title="Premium"
+          value={summary?.premium?.toLocaleString() ?? "—"}
+        />
+        <StatCard
+          icon={MdBlock}
+          title="Suspended"
+          value={summary?.suspended?.toLocaleString() ?? "—"}
+          secondary={`${summary?.inactive ?? 0} inactive`}
+        />
+      </div>
 
       <ConfirmDialog
         open={!!pendingSuspend}
@@ -223,15 +269,14 @@ const UsersPageContent = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {user.isSubscribed ? (
-                        <span className="inline-flex items-center gap-1.5 text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full text-xs font-bold">
-                          <FaCrown size={11} /> Premium
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full text-xs font-bold">
-                          Free
-                        </span>
-                      )}
+                      <span
+                        className={cn(
+                          "text-xs font-semibold",
+                          user.isSubscribed ? "text-amber-600" : "text-slate-500",
+                        )}
+                      >
+                        {user.isSubscribed ? "Premium" : "Free"}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-slate-600 font-medium">
                       {user.details?.xp ?? 0}
@@ -250,27 +295,28 @@ const UsersPageContent = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-4">
-                        {user.status === "suspended" ? (
-                          <button
-                            disabled={statusMutation.isPending}
-                            onClick={() =>
-                              statusMutation.mutate({ id: user.id, status: "active" })
-                            }
-                            className="text-emerald-600 hover:underline text-xs font-bold disabled:opacity-50"
-                          >
-                            Activate
-                          </button>
-                        ) : (
-                          <button
-                            disabled={statusMutation.isPending}
-                            onClick={() =>
-                              setPendingSuspend({ id: user.id, name: user.name })
-                            }
-                            className="text-red-600 hover:underline text-xs font-bold disabled:opacity-50"
-                          >
-                            Suspend
-                          </button>
-                        )}
+                        {isAdmin &&
+                          (user.status === "suspended" ? (
+                            <button
+                              disabled={statusMutation.isPending}
+                              onClick={() =>
+                                statusMutation.mutate({ id: user.id, status: "active" })
+                              }
+                              className="text-emerald-600 hover:underline text-xs font-bold disabled:opacity-50"
+                            >
+                              Activate
+                            </button>
+                          ) : (
+                            <button
+                              disabled={statusMutation.isPending}
+                              onClick={() =>
+                                setPendingSuspend({ id: user.id, name: user.name })
+                              }
+                              className="text-red-600 hover:underline text-xs font-bold disabled:opacity-50"
+                            >
+                              Suspend
+                            </button>
+                          ))}
                         <Link
                           href={`/genuslab/users/${user.id}`}
                           className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline"

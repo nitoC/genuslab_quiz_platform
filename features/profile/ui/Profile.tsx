@@ -158,7 +158,7 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                   <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                     <p className="text-grey flex gap-2 items-center uppercase">
-                      <MdStars className="text-yellow" /> Quiz Winnings
+                      <MdStars className="text-blue" /> Quiz Winnings
                     </p>
                     <p className="text-xl font-bold text-(--primary) mt-1">
                       ₦
@@ -208,16 +208,13 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
                           className="p-3.5 flex items-center justify-between hover:bg-white/5 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-blue">
+                            {/* <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-blue">
                               {isReferral ? (
                                 <MdGroups size={18} />
                               ) : (
-                                <MdStars
-                                  size={18}
-                                  className="text-yellow"
-                                />
+                                <MdStars size={18} />
                               )}
-                            </div>
+                            </div> */}
                             <div>
                               <p className="text-sm font-bold text-(--primary)">
                                 {isReferral

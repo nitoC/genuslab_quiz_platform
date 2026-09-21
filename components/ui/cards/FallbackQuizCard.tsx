@@ -3,11 +3,8 @@ import { IoMdLock } from "react-icons/io";
 export const FallbackQuizCard = ({ slotIndex }: { slotIndex: number }) => {
   return (
     <div className="h-90 basis-70 shrink-0 bg-neutral-900/40 border border-dashed border-white/10 p-4 rounded-lg flex flex-col justify-between relative overflow-hidden group select-none">
-      {/* Static abstract geometric accent line to mimic a graphic wrapper */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent pointer-events-none" />
-
       <div>
-        <span className="text-neutral-500 border border-neutral-700 bg-neutral-800/50 font-medium py-1.5 px-3 rounded-full text-sm">
+        <span className="text-neutral-500 font-medium text-sm">
           Slot TBD
         </span>
       </div>

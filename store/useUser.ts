@@ -4,6 +4,7 @@ type User = {
   accessToken: string;
   sessionId: string;
   userId: string;
+  role?: "USER" | "ADMIN" | "SUPPORT" | "ACCOUNTANT";
 };
 
 type UserState = {

@@ -170,7 +170,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
     return (
       <GlassCard className="p-8 flex flex-col items-center justify-center text-center my-6">
         <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-3">
-          <BsExclamationCircle className="text-red-400 text-xl" />
+          <BsExclamationCircle className="text-red text-xl" />
         </div>
         <h3 className="text-lg font-semibold text-white">
           Failed to load statistics
@@ -231,9 +231,9 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
               <p
                 className={clsx(
                   "text-sm mt-1 flex items-center gap-1",
-                  trend === "+" && "text-emerald-400",
-                  trend === "-" && "text-red-400",
-                  trend === "" && "text-gray-400",
+                  trend === "+" && "text-green",
+                  trend === "-" && "text-red",
+                  trend === "" && "text-grey",
                 )}
               >
                 <span className="text-sm">
@@ -408,7 +408,7 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
                         className={cn(
                           "w-8 h-8 rounded-full bg-slate-700 border overflow-hidden",
                           user.score === dynamicMaxScore
-                            ? "border-sky-400 ring-2 ring-sky-400/30"
+                            ? "border-blue ring-2 ring-blue/30"
                             : "border-slate-600",
                         )}
                       />

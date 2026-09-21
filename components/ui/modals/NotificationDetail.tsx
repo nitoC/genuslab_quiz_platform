@@ -79,7 +79,7 @@ export const NotificationDetailModal: React.FC<
               <Clock3 className="w-3.5 h-3.5" />
               {notice.time}
             </span>
-            <span className="inline-flex items-center gap-1.5 text-emerald-400">
+            <span className="inline-flex items-center gap-1.5 text-green">
               <CheckCircle2 className="w-3.5 h-3.5" />
               Marked as read
             </span>

@@ -1,17 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import PrimaryButton from "@/components/ui/buttons/Primary";
 import useUser from "@/hooks/useUser";
-import { getUserSubscriptions } from "@/lib/api/apis";
+import {
+  getUserSubscriptions,
+  getUserSubscriptionById,
+} from "@/lib/api/apis";
 import { ISubscription } from "@/interfaces";
 import { useQuery } from "@tanstack/react-query";
-import { FaCrown, FaHistory } from "react-icons/fa";
-import { HiOutlineTv } from "react-icons/hi2";
-import clsx from "clsx";
+import { FaHistory } from "react-icons/fa";
 import GlassBadge from "@/components/ui/GlassBadge";
+import RecordDetailView from "@/components/ui/modals/RecordDetailView";
 
 const formatNaira = (price: number) =>
   `₦${Number(price || 0).toLocaleString()}`;
@@ -23,49 +26,47 @@ const formatDate = (date: string) =>
     year: "numeric",
   });
 
-const SubscriptionRow = ({ subscription }: { subscription: ISubscription }) => {
+const SubscriptionRow = ({
+  subscription,
+  onClick,
+}: {
+  subscription: ISubscription;
+  onClick: () => void;
+}) => {
   const isPremium = subscription.name === "PREMIUM";
   const isActive = new Date(subscription.endAt) > new Date();
 
   return (
-    <GlassCard className="transition-all hover:bg-white/[0.03]">
-      <div className="p-4 md:p-5 flex items-center justify-between gap-3">
-        <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
-          <div
-            className={clsx(
-              "w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-lg border",
-              isPremium
-                ? "bg-yellow/10 border-yellow/20"
-                : "bg-white/5 border-white/5",
-            )}
-          >
-            {isPremium ? (
-              <FaCrown className="text-yellow text-lg" />
-            ) : (
-              <HiOutlineTv className="text-blue text-xl" />
-            )}
-          </div>
-
-          <div className="min-w-0">
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full text-left cursor-pointer"
+    >
+      <GlassCard className="transition-all hover:bg-white/[0.03]">
+        <div className="p-4 md:p-5 flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
             <h4 className="text-(--primary) font-bold text-sm md:text-base truncate">
               {isPremium ? "Premium Plan" : "Free Tier"}
             </h4>
             <p className="text-[13px] md:text-sm text-grey truncate mt-0.5">
               {formatDate(subscription.startAt)} — {formatDate(subscription.endAt)}
             </p>
+            <p className="text-[12px] text-grey/70 font-mono truncate mt-0.5">
+              Ref: {subscription.id}
+            </p>
+          </div>
+
+          <div className="flex flex-col items-end gap-1.5 shrink-0">
+            <p className="font-bold text-sm md:text-base text-(--primary)">
+              {formatNaira(subscription.price)}
+            </p>
+            <GlassBadge variant={isActive ? "success" : "neutral"}>
+              {isActive ? "Active" : "Expired"}
+            </GlassBadge>
           </div>
         </div>
-
-        <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <p className="font-bold text-sm md:text-base text-(--primary)">
-            {formatNaira(subscription.price)}
-          </p>
-          <GlassBadge variant={isActive ? "success" : "neutral"}>
-            {isActive ? "Active" : "Expired"}
-          </GlassBadge>
-        </div>
-      </div>
-    </GlassCard>
+      </GlassCard>
+    </button>
   );
 };
 
@@ -85,6 +86,10 @@ const SubscriptionsPage = () => {
   const { data: userData, isLoading: isUserLoading, userStore } = useUser();
   const user = userData?.user;
 
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
+    string | null
+  >(null);
+
   const { data: subscriptions, isLoading } = useQuery({
     queryKey: ["subscriptions", "mine"],
     queryFn: async () => {
@@ -93,6 +98,19 @@ const SubscriptionsPage = () => {
     },
     enabled: !!userStore,
   });
+
+  const { data: selectedSubscription, isLoading: isDetailLoading } = useQuery(
+    {
+      queryKey: ["subscriptionDetail", selectedSubscriptionId],
+      queryFn: async () => {
+        const res = await getUserSubscriptionById(
+          selectedSubscriptionId as string,
+        );
+        return res?.data?.payload as ISubscription | undefined;
+      },
+      enabled: !!selectedSubscriptionId,
+    },
+  );
 
   if (isUserLoading || !userStore || !user) {
     return <SubscriptionsSkeleton />;
@@ -119,7 +137,11 @@ const SubscriptionsPage = () => {
             </div>
           ) : subscriptions && subscriptions.length > 0 ? (
             subscriptions.map((sub) => (
-              <SubscriptionRow key={sub.id} subscription={sub} />
+              <SubscriptionRow
+                key={sub.id}
+                subscription={sub}
+                onClick={() => setSelectedSubscriptionId(sub.id)}
+              />
             ))
           ) : (
             <GlassCard className="py-12 px-6 flex flex-col items-center justify-center text-center space-y-4 border-dashed border-white/10">
@@ -147,6 +169,56 @@ const SubscriptionsPage = () => {
           )}
         </div>
       </main>
+
+      {selectedSubscriptionId && (
+        <RecordDetailView
+          open={!!selectedSubscriptionId}
+          onClose={() => setSelectedSubscriptionId(null)}
+          loading={isDetailLoading}
+          documentTitle="Subscription Receipt"
+          subtitle={
+            selectedSubscription?.name === "PREMIUM"
+              ? "Premium Plan"
+              : "Free Tier"
+          }
+          amount={
+            selectedSubscription
+              ? formatNaira(selectedSubscription.price)
+              : undefined
+          }
+          amountLabel="Amount Paid"
+          statusLabel={
+            selectedSubscription
+              ? new Date(selectedSubscription.endAt) > new Date()
+                ? "Active"
+                : "Expired"
+              : undefined
+          }
+          statusVariant={
+            selectedSubscription &&
+            new Date(selectedSubscription.endAt) > new Date()
+              ? "success"
+              : "neutral"
+          }
+          reference={selectedSubscription?.id || selectedSubscriptionId}
+          filename={`Genuslab_Subscription_${selectedSubscriptionId}`}
+          rows={[
+            { label: "Plan", value: selectedSubscription?.name || "—" },
+            {
+              label: "Start Date",
+              value: selectedSubscription
+                ? formatDate(selectedSubscription.startAt)
+                : "—",
+            },
+            {
+              label: "End Date",
+              value: selectedSubscription
+                ? formatDate(selectedSubscription.endAt)
+                : "—",
+            },
+          ]}
+        />
+      )}
     </Layout>
   );
 };

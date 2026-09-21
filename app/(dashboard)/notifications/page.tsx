@@ -53,11 +53,11 @@ interface NotificationGroup {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  general: "bg-slate-500",
-  reward: "bg-emerald-500",
-  system: "bg-purple-500",
-  referral: "bg-blue-500",
-  transaction: "bg-amber-500",
+  general: "bg-grey",
+  reward: "bg-green",
+  system: "bg-grey",
+  referral: "bg-blue",
+  transaction: "bg-yellow",
 };
 
 const filterOptions: Array<{ label: string; value: FilterType }> = [
@@ -69,17 +69,17 @@ const filterOptions: Array<{ label: string; value: FilterType }> = [
 const getNotificationIcon = (type: string) => {
   switch (type?.toLowerCase()) {
     case "reward":
-      return <MdEmojiEvents className="text-emerald-400" />;
+      return <MdEmojiEvents className="text-green" />;
     case "system":
-      return <MdSettings className="text-purple-400" />;
+      return <MdSettings className="text-grey" />;
     case "referral":
-      return <MdPersonAdd className="text-blue-400" />;
+      return <MdPersonAdd className="text-blue" />;
     case "transaction":
-      return <MdReceiptLong className="text-amber-400" />;
+      return <MdReceiptLong className="text-yellow" />;
     case "security":
-      return <MdShield className="text-rose-400" />;
+      return <MdShield className="text-red" />;
     default:
-      return <MdNotificationsActive className="text-blue-400" />;
+      return <MdNotificationsActive className="text-blue" />;
   }
 };
 
@@ -200,7 +200,7 @@ const NotificationsPage = () => {
         subject: notice.subject,
         description: notice.content || notice.description || "",
         time: groupLabel,
-        color: TYPE_COLORS[notice.type] || "bg-slate-500",
+        color: TYPE_COLORS[notice.type] || "bg-grey",
         dot: !isNoticeRead,
         isRead: isNoticeRead,
       };
@@ -281,11 +281,11 @@ const NotificationsPage = () => {
         <div className="flex justify-between items-start md:items-center">
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
             {unreadCount > 0 ? (
-              <span className="w-fit bg-blue-600/20 text-blue-400 text-[14px] md:text-[14px] font-bold px-3 py-1 rounded-full border border-blue-500/20 uppercase">
+              <span className="w-fit text-[14px] font-bold text-blue uppercase">
                 {unreadCount} Unread
               </span>
             ) : (
-              <span className="w-fit bg-slate-800/60 text-slate-400 text-[14px] md:text-[14px] font-bold px-3 py-1 rounded-full border border-white/5 uppercase">
+              <span className="w-fit text-[14px] font-bold text-slate-400 uppercase">
                 {filter} View
               </span>
             )}
@@ -294,7 +294,7 @@ const NotificationsPage = () => {
           <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={handleMarkAllAsRead}
-              className="text-blue-500 md:text-slate-300 text-[14px] md:text-[14px] font-bold md:bg-white/5 md:px-6 md:py-2.5 md:rounded-xl md:border md:border-white/5 hover:bg-white/10 transition-all"
+              className="text-blue md:text-grey text-[14px] md:text-[14px] font-bold md:bg-white/5 md:px-6 md:py-2.5 md:rounded-xl md:border md:border-white/5 hover:bg-white/10 transition-all"
             >
               Mark all as read
             </button>
@@ -304,7 +304,7 @@ const NotificationsPage = () => {
               <button
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
                 className={cn(
-                  "p-2 md:p-2.5 bg-white/5 text-slate-300 rounded-full md:rounded-xl border border-white/10 flex items-center gap-1.5 transition-all hover:bg-white/10 hover:text-white",
+                  "p-2 md:p-2.5 bg-white/5 text-grey rounded-full md:rounded-xl border border-white/10 flex items-center gap-1.5 transition-all hover:bg-white/10 hover:text-white",
                   isDropdownOpen && "bg-white/10 border-white/20 text-white",
                 )}
                 aria-label="Filter Notifications"
@@ -321,7 +321,7 @@ const NotificationsPage = () => {
 
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 z-50 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/10 shadow-2xl p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-2 text-[14px] font-bold uppercase tracking-wider text-slate-500 border-b border-white/5">
+                  <div className="px-3 py-2 text-[14px] font-bold uppercase tracking-wider text-grey border-b border-white/5">
                     Filter By
                   </div>
                   {filterOptions.map((opt) => {
@@ -336,15 +336,15 @@ const NotificationsPage = () => {
                         className={cn(
                           "w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold transition-all text-left",
                           active
-                            ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                            : "text-slate-300 hover:bg-white/5 hover:text-white",
+                            ? "bg-blue/20 text-blue border border-blue/30"
+                            : "text-grey hover:bg-white/5 hover:text-white",
                         )}
                       >
                         <span>{opt.label}</span>
                         {active && (
                           <MdCheck
                             size={16}
-                            className="text-blue-400 shrink-0"
+                            className="text-blue shrink-0"
                           />
                         )}
                       </button>
@@ -370,9 +370,8 @@ const NotificationsPage = () => {
         )}
 
         {isError && !isLoading && (
-          <GlassCard className="relative overflow-hidden bg-rose-950/20 border-rose-500/20 backdrop-blur-xl p-8 md:p-12 text-center space-y-4">
-            <div className="absolute -top-12 -left-12 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto text-rose-400 text-3xl shadow-inner">
+          <GlassCard className="relative overflow-hidden bg-red/10 border-red/20 backdrop-blur-xl p-8 md:p-12 text-center space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-red/10 border border-red/20 flex items-center justify-center mx-auto text-red text-3xl shadow-inner">
               <MdErrorOutline />
             </div>
 
@@ -388,7 +387,7 @@ const NotificationsPage = () => {
 
             <button
               onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 text-sm font-bold transition-all hover:bg-rose-500/30 hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red/20 text-red border border-red/30 text-sm font-bold transition-all hover:bg-red/30 hover:scale-[1.02] active:scale-[0.98]"
             >
               <MdRefresh size={18} />
               Try Again
@@ -397,12 +396,10 @@ const NotificationsPage = () => {
         )}
 
         {!isLoading && !isError && noticeGroups.length === 0 && (
-          <GlassCard className="relative overflow-hidden bg-slate-900/40 border-white/5 backdrop-blur-xl p-10 md:p-16 text-center space-y-4">
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none" />
-
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-slate-400 text-3xl md:text-4xl shadow-xl">
+          <GlassCard className="bg-slate-900/40 border-white/5 backdrop-blur-xl p-10 md:p-16 text-center space-y-4">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-grey text-3xl md:text-4xl shadow-xl">
               {filter === "unread" ? (
-                <MdNotificationsNone className="text-blue-400" />
+                <MdNotificationsNone className="text-blue" />
               ) : (
                 <MdInbox className="text-slate-400" />
               )}
@@ -426,7 +423,7 @@ const NotificationsPage = () => {
             {filter !== "all" && (
               <button
                 onClick={() => setFilter("all")}
-                className="px-5 py-2 rounded-xl bg-white/5 text-slate-300 border border-white/10 text-sm font-bold hover:bg-white/10 hover:text-white transition-all"
+                className="px-5 py-2 rounded-xl bg-white/5 text-grey border border-white/10 text-sm font-bold hover:bg-white/10 hover:text-white transition-all"
               >
                 Clear Filters
               </button>
@@ -439,7 +436,7 @@ const NotificationsPage = () => {
           noticeGroups.map((group) => (
             <div key={group.label} className="space-y-4 md:space-y-6">
               <div className="flex items-center gap-4 px-2">
-                <h2 className="text-slate-500 text-[14px] md:text-sm font-bold uppercase tracking-[0.2em] whitespace-nowrap">
+                <h2 className="text-grey text-[14px] md:text-sm font-bold uppercase tracking-[0.2em] whitespace-nowrap">
                   {group.label}
                 </h2>
                 <div className="h-px w-full bg-white/5 md:hidden" />
@@ -474,21 +471,21 @@ const NotificationsPage = () => {
                                 {item.title}
                               </h3>
                               {item.dot && (
-                                <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                                <div className="w-2 h-2 rounded-full bg-blue shrink-0" />
                               )}
                             </div>
 
                             {item.subject && (
-                              <p className="text-slate-300 text-sm font-medium">
+                              <p className="text-grey text-sm font-medium">
                                 {item.subject}
                               </p>
                             )}
 
-                            <p className="text-slate-500 text-sm md:text-sm italic leading-relaxed">
+                            <p className="text-grey text-sm md:text-sm italic leading-relaxed">
                               Tap "See Details" to view this notice
                             </p>
 
-                            <p className="hidden md:block text-slate-500 text-[14px] font-bold uppercase tracking-wider pt-1">
+                            <p className="hidden md:block text-grey text-[14px] font-bold uppercase tracking-wider pt-1">
                               {item.time}
                             </p>
                           </div>
@@ -496,7 +493,7 @@ const NotificationsPage = () => {
 
                         {/* Mobile Time & Action Button */}
                         <div className="flex items-center justify-between md:justify-end gap-4 mt-2 md:mt-0">
-                          <p className="md:hidden text-slate-500 text-[14px] font-bold uppercase tracking-wider">
+                          <p className="md:hidden text-grey text-[14px] font-bold uppercase tracking-wider">
                             {item.time}
                           </p>
 
@@ -505,8 +502,8 @@ const NotificationsPage = () => {
                             className={cn(
                               "flex items-center gap-1.5 px-5 py-2 md:px-6 md:py-2.5 rounded-xl text-[14px] md:text-sm font-bold transition-all shadow-lg whitespace-nowrap",
                               item.dot
-                                ? "bg-blue-600 text-white hover:bg-blue-500"
-                                : "bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10",
+                                ? "bg-blue text-white hover:bg-blue/90"
+                                : "bg-white/5 text-grey border border-white/10 hover:bg-white/10",
                             )}
                           >
                             <MdVisibility size={14} />

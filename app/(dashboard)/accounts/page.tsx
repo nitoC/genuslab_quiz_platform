@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
+import PageLoader from "@/components/ui/PageLoader";
 import { BankAccount, IBankAccount } from "@/types/bank";
 import { BankAccountCard } from "@/components/ui/cards/bank";
 import { EmptyBankState } from "@/components/ui/BankEmpty";
@@ -72,7 +73,7 @@ export default function ManageBankAccountsPage() {
   };
 
   if (isLoading) {
-    return <div className="p-10">Loading...</div>;
+    return <PageLoader theme="dark" />;
   }
 
   if (isError) {

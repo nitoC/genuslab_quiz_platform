@@ -116,12 +116,8 @@ function PasswordResetSuccessPage() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans">
-      {/* Background Ambient Glow FX */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
-
-      <div className="w-full max-w-xl relative z-10">
+    <main className="min-h-screen w-full bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
+      <div className="w-full max-w-xl">
         {/* Main Card */}
         <div className="rounded-3xl bg-slate-900/80 border border-slate-800/80 shadow-2xl backdrop-blur-xl p-6 sm:p-10 lg:p-12 text-center transition-all">
           {/* Header Brand Bar */}
@@ -139,15 +135,14 @@ function PasswordResetSuccessPage() {
               </span>
             </div>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-400">
               <ShieldCheck className="w-3.5 h-3.5" /> Secure Verification
             </span>
           </div>
 
-          {/* Animated Mail Icon Hero Visual */}
+          {/* Mail icon */}
           <div className="relative mx-auto w-20 h-20 sm:w-24 sm:h-24 mb-8 flex items-center justify-center">
-            <div className="absolute inset-0 bg-blue-500/20 rounded-3xl blur-xl animate-pulse" />
-            <div className="relative w-full h-full rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 border border-blue-400/30">
+            <div className="w-full h-full rounded-2xl bg-blue-600 text-white flex items-center justify-center border border-blue-500/40">
               <Mail className="w-10 h-10 sm:w-12 sm:h-12" />
             </div>
             <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-slate-950 p-1.5 rounded-full ring-4 ring-slate-900">

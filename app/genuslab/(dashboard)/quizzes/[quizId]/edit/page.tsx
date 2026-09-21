@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils/cn";
 import { fetchQuizById, updateQuizData } from "@/lib/api/apis";
 import toast from "react-hot-toast";
 import useQuizData from "@/hooks/useQuizData";
+import AdminCard from "@/components/ui/cards/AdminCard";
+import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 
 // Types derived from Prisma Model
 export type ActiveSlot =
@@ -90,17 +92,14 @@ const STATUS_OPTIONS: QuizStatus[] = [
 export default function EditQuizPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  console.log("heloow");
 
   // Safely get route params on client
   const routeParams = useParams();
-  console.log("heloow", routeParams);
   const quizId = routeParams?.quizId as string;
 
   // Form State
   const [formData, setFormData] = useState<QuizFormData | null>(null);
   const { quiz, isLoading, isError, error } = useQuizData(quizId);
-  console.log(quiz, "quiz");
   // Sync query data to local state
   useEffect(() => {
     if (quiz) {
@@ -312,7 +311,7 @@ export default function EditQuizPage() {
       {/* Main Admin Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Quiz Metadata Card */}
-        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5">
+        <AdminCard className="space-y-5">
           <h2 className="text-slate-900 font-bold text-base border-b border-slate-100 pb-3">
             Quiz Overview & Metadata
           </h2>
@@ -337,17 +336,13 @@ export default function EditQuizPage() {
                 <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Episode
                 </label>
-                <select
+                <CustomSelect
                   value={formData.episode}
-                  onChange={(e) => handleMetaChange("episode", e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-all cursor-pointer font-medium"
-                >
-                  {EPISODE_OPTIONS.map((ep) => (
-                    <option key={ep} value={ep}>
-                      {ep}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value: string) => handleMetaChange("episode", value)}
+                  options={EPISODE_OPTIONS.map((ep) => ({ label: ep, value: ep }))}
+                  placeholder="Select episode"
+                  ariaLabel="Episode"
+                />
               </div>
 
               <div>
@@ -370,34 +365,26 @@ export default function EditQuizPage() {
                 <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Active Slot
                 </label>
-                <select
+                <CustomSelect
                   value={formData.activeAt}
-                  onChange={(e) => handleMetaChange("activeAt", e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-all cursor-pointer font-medium"
-                >
-                  {SLOT_OPTIONS.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value: string) => handleMetaChange("activeAt", value)}
+                  options={SLOT_OPTIONS.map((slot) => ({ label: slot, value: slot }))}
+                  placeholder="Select active slot"
+                  ariaLabel="Active Slot"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Status
                 </label>
-                <select
+                <CustomSelect
                   value={formData.status}
-                  onChange={(e) => handleMetaChange("status", e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-all cursor-pointer font-medium"
-                >
-                  {STATUS_OPTIONS.map((st) => (
-                    <option key={st} value={st}>
-                      {st}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value: string) => handleMetaChange("status", value)}
+                  options={STATUS_OPTIONS.map((st) => ({ label: st, value: st }))}
+                  placeholder="Select status"
+                  ariaLabel="Status"
+                />
               </div>
 
               <div>
@@ -415,7 +402,7 @@ export default function EditQuizPage() {
               </div>
             </div>
           </div>
-        </div>
+        </AdminCard>
 
         {/* Dynamic Questions Builder */}
         <div className="space-y-4">
@@ -433,10 +420,7 @@ export default function EditQuizPage() {
           </div>
 
           {(formData.questions || []).map((q, qIndex) => (
-            <div
-              key={qIndex}
-              className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4"
-            >
+            <AdminCard key={qIndex} className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
                   Question #{qIndex + 1}
@@ -523,7 +507,7 @@ export default function EditQuizPage() {
                   + Add Option
                 </button>
               </div>
-            </div>
+            </AdminCard>
           ))}
         </div>
       </form>

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { axiosSystem } from "@/lib/api/axiosConfig";
 import { useUser } from "@/store/useUser";
+import PageLoader from "@/components/ui/PageLoader";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const pathname = usePathname();
   const setInitialized = useUser((state) => state.setIsInitialized);
   const isInitialized = useUser((state) => state.isInitialized);
   const currentUser = useUser((state) => state.user);
@@ -57,7 +60,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
   }, [currentUser, updateUser, setInitialized]);
 
-  if (!isInitialized) return <p> loading...</p>;
+  if (!isInitialized) {
+    return <PageLoader theme={pathname?.startsWith("/genuslab") ? "light" : "dark"} />;
+  }
 
   return <>{children}</>;
 };

@@ -2,6 +2,7 @@
 
 import GlassCard from "@/components/ui/cards/GlassCard";
 import GlassBadge from "@/components/ui/GlassBadge";
+import Pagination from "@/components/ui/Pagination";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -261,20 +262,20 @@ const PerformancePage = () => {
     isFetching,
     isError,
   } = useQuery({
-    queryKey: ["quiz episodes"],
+    queryKey: ["quiz episodes", currentPage],
     queryFn: async () => {
       try {
-        const res = await getAttempts(1);
-        console.log(res, "response");
+        const res = await getAttempts(currentPage);
         return res.data.payload;
       } catch (err: any) {
         console.error(err?.response?.data ?? err?.message ?? err);
-        return [];
+        return { data: [], meta: undefined };
       }
     },
   });
 
-  const history = quizData;
+  const history = quizData?.data ?? [];
+  const meta = quizData?.meta;
 
   const averageScore = useMemo(() => {
     if (!history || !history.length) return 0;
@@ -408,6 +409,12 @@ const PerformancePage = () => {
               ))
             )}
           </div>
+
+          <Pagination
+            meta={meta}
+            onPageChange={setCurrentPage}
+            itemLabel="quizzes"
+          />
         </div>
       </div>
     </Layout>

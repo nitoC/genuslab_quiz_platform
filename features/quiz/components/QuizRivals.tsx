@@ -2,11 +2,11 @@ const Rivals = () => {
   return (
     <div className="bg-[#11192e] border border-white/5 rounded-[32px] p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-emerald-500 text-[14px] font-black uppercase tracking-widest flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <h3 className="text-green text-[14px] font-black uppercase tracking-widest flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-green animate-pulse" />
           Live Rivals
         </h3>
-        <span className="text-rose-500 text-[14px] font-black uppercase">
+        <span className="text-red text-[14px] font-black uppercase">
           Watch Live
         </span>
       </div>
@@ -43,7 +43,7 @@ const Rivals = () => {
                 {rival.name}
               </span>
             </div>
-            <span className="text-[14px] font-black text-emerald-500/80">
+            <span className="text-[14px] font-black text-green/80">
               {rival.xp}
             </span>
           </div>

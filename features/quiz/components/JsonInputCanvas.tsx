@@ -4,6 +4,7 @@ import { createQuestion, getRankData } from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
 import React, { useRef, useState } from "react";
 import { HiCode, HiUpload } from "react-icons/hi";
+import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 
 interface JsonInputCanvasProps {
   jsonText: string;
@@ -116,29 +117,23 @@ export default function JsonInputCanvas({
             <label className="text-sm font-semibold text-slate-500">
               Select Question Rank
             </label>
-            <select
+            <CustomSelect
               value={questionRank}
-              defaultValue={"Select Rank"}
-              onChange={(e) => {
-                setQuestionRank(e.target.value);
-                setRankId(e.target.value);
+              loading={ranksLoading}
+              onChange={(value: string) => {
+                setQuestionRank(value);
+                setRankId(value);
                 // Topics are scoped per rank — a topic chosen for the
                 // previous rank won't necessarily be valid for the new one.
                 setQuestionTopic("");
               }}
-              className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:border-blue-500"
-            >
-              {ranksData &&
-                [...ranksData, { rankName: "Select Rank", id: "" }]
-                  .reverse()
-                  .map((a: any) => {
-                    return (
-                      <option value={a.id} key={a.id}>
-                        {a.rankName}
-                      </option>
-                    );
-                  })}
-            </select>
+              placeholder="Select Rank"
+              ariaLabel="Question Rank"
+              options={(ranksData ?? []).map((a: any) => ({
+                label: a.rankName,
+                value: a.id,
+              }))}
+            />
             <input
               className="text-sm text-slate-300"
               type="text"
@@ -153,21 +148,14 @@ export default function JsonInputCanvas({
             <label className="text-sm font-semibold text-slate-500">
               Select Question Topic
             </label>
-            <select
+            <CustomSelect
               value={questionTopic}
-              onChange={(e) => setQuestionTopic(e.target.value)}
+              onChange={(value: string) => setQuestionTopic(value)}
               disabled={topicOptions.length === 0}
-              className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:border-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
-            >
-              <option value="">
-                {topicOptions.length ? "Select Topic" : "Select a rank first"}
-              </option>
-              {topicOptions.map((topic) => (
-                <option value={topic} key={topic}>
-                  {topic}
-                </option>
-              ))}
-            </select>
+              placeholder={topicOptions.length ? "Select Topic" : "Select a rank first"}
+              ariaLabel="Question Topic"
+              options={topicOptions.map((topic) => ({ label: topic, value: topic }))}
+            />
           </div>
 
           {/* Textarea Workspace */}

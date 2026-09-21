@@ -95,11 +95,8 @@ const Personal = ({ detailsId }: { detailsId: string }) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Quiz Grade Card */}
-            <GlassCard className="relative p-6 overflow-hidden flex justify-between items-center bg-[#0a0f24]/80 border-slate-800">
-              {/* Background Glow */}
-              <div className="absolute -right-8 -top-8 w-40 h-40 bg-blue-600/10 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="z-10 flex flex-col justify-between h-full space-y-3">
+            <GlassCard className="relative p-6 flex justify-between items-center bg-[#0a0f24]/80 border-slate-800">
+              <div className="flex flex-col justify-between h-full space-y-3">
                 <span className="text-slate-400 text-sm font-medium uppercase tracking-wider">
                   Quiz Average Grade
                 </span>
@@ -112,7 +109,7 @@ const Personal = ({ detailsId }: { detailsId: string }) => {
 
                 <div
                   className={`flex items-center gap-1.5 text-sm font-medium ${
-                    isAboveAverage ? "text-blue-400" : "text-rose-400"
+                    isAboveAverage ? "text-blue" : "text-red"
                   }`}
                 >
                   {isAboveAverage ? (
@@ -130,17 +127,14 @@ const Personal = ({ detailsId }: { detailsId: string }) => {
               </div>
 
               {/* Icon Bubble */}
-              <div className="relative z-10 w-16 h-16 rounded-full bg-blue-950/40 border border-blue-500/20 flex items-center justify-center shadow-inner">
-                <FaGraduationCap className="text-blue-400 text-2xl" />
+              <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                <FaGraduationCap className="text-blue text-2xl" />
               </div>
             </GlassCard>
 
             {/* Ranking Card */}
-            <GlassCard className="relative p-6 overflow-hidden flex justify-between items-center bg-[#0a0f24]/80 border-slate-800">
-              {/* Background Glow */}
-              <div className="absolute -right-8 -top-8 w-40 h-40 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="z-10 flex flex-col justify-between h-full space-y-3">
+            <GlassCard className="relative p-6 flex justify-between items-center bg-[#0a0f24]/80 border-slate-800">
+              <div className="flex flex-col justify-between h-full space-y-3">
                 <span className="text-slate-400 text-sm font-medium uppercase tracking-wider">
                   Ranking
                 </span>
@@ -149,11 +143,11 @@ const Personal = ({ detailsId }: { detailsId: string }) => {
                   {data?.rank ? formatOrdinal(data.rank) : "N/A"}
                 </h3>
 
-                <div className="flex items-center gap-1.5 text-sm font-medium text-emerald-400">
+                <div className="flex items-center gap-1.5 text-sm font-medium text-green">
                   {data?.rankChange && data.rankChange < 0 ? (
                     <>
-                      <FaArrowTrendDown className="text-sm text-rose-400" />
-                      <span className="text-rose-400">
+                      <FaArrowTrendDown className="text-sm text-red" />
+                      <span className="text-red">
                         {Math.abs(data.rankChange)} positions down
                       </span>
                     </>
@@ -167,8 +161,8 @@ const Personal = ({ detailsId }: { detailsId: string }) => {
               </div>
 
               {/* Icon Bubble */}
-              <div className="relative z-10 w-16 h-16 rounded-full bg-amber-950/30 border border-amber-500/20 flex items-center justify-center shadow-inner">
-                <FaTrophy className="text-amber-400 text-xl" />
+              <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                <FaTrophy className="text-blue text-xl" />
               </div>
             </GlassCard>
           </div>

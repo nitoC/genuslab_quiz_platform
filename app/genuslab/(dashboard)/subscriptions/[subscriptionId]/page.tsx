@@ -3,12 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
-import { getSubscriptionById } from "@/lib/api/apis";
+import CustomSelect from "@/components/ui/FormItems/CustomSelect";
+import { getSubscriptionById, updateSubscriptionStatus } from "@/lib/api/apis";
 import { MdArrowBack, MdCardMembership } from "react-icons/md";
 import { FaCrown } from "react-icons/fa";
+
+const LIFECYCLE_STATUS_OPTIONS = [
+  { label: "Active", value: "ACTIVE" },
+  { label: "Expired", value: "EXPIRED" },
+  { label: "Cancelled", value: "CANCELLED" },
+];
 
 const formatDate = (value?: string) =>
   value
@@ -30,6 +38,7 @@ const InfoRow = ({ label, value }: { label: string; value: React.ReactNode }) =>
 
 export default function SubscriptionDetailPage() {
   const { subscriptionId } = useParams<{ subscriptionId: string }>();
+  const queryClient = useQueryClient();
   // Lazy initializer runs once on mount rather than every render — reading
   // the clock directly in the render body is an impure calculation React's
   // compiler flags.
@@ -41,6 +50,23 @@ export default function SubscriptionDetailPage() {
     queryFn: async () => {
       const res = await getSubscriptionById(subscriptionId);
       return res?.data?.payload;
+    },
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: (status: string) =>
+      updateSubscriptionStatus(subscriptionId, status),
+    onSuccess: () => {
+      toast.success("Subscription status updated");
+      queryClient.invalidateQueries({
+        queryKey: ["admin-subscription-detail", subscriptionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-subscriptions"] });
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message || "Failed to update status",
+      );
     },
   });
 
@@ -147,6 +173,17 @@ export default function SubscriptionDetailPage() {
           <InfoRow label="Start date" value={formatDate(sub.startAt)} />
           <InfoRow label="End date" value={formatDate(sub.endAt)} />
           <InfoRow label="Created" value={formatDate(sub.createdAt)} />
+          <div className="flex items-center justify-between py-2.5">
+            <span className="text-sm text-slate-500">Lifecycle Status</span>
+            <div className="w-40">
+              <CustomSelect
+                options={LIFECYCLE_STATUS_OPTIONS}
+                value={sub.status}
+                loading={statusMutation.isPending}
+                onChange={(value: string) => statusMutation.mutate(value)}
+              />
+            </div>
+          </div>
         </AdminCard>
       </div>
     </div>

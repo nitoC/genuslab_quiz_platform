@@ -134,7 +134,7 @@ const LiveQuizModal = ({
                 />
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-orange-100 text-orange-600">
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-blue-100 text-blue-600">
                       <FaChartBar size={16} />
                     </div>
                   }
@@ -142,7 +142,7 @@ const LiveQuizModal = ({
                 />
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-amber-100 text-amber-600">
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-blue-100 text-blue-600">
                       <FaMoneyBillWave size={16} />
                     </div>
                   }

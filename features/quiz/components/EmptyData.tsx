@@ -18,29 +18,8 @@ export default function EmptyQuizState({
 }: EmptyQuizStateProps) {
   return (
     <div className="w-full flex flex-col items-center justify-center text-center py-12 px-4 bg-transparent font-sans">
-      {/* Decorative Custom Illustration Vector Stack */}
-      <div className="relative w-40 h-40 mb-6 flex items-center justify-center">
-        {/* Main Base Card */}
-        <div className="w-28 h-28 bg-white border border-slate-200 rounded-2xl flex flex-col items-center justify-center relative">
-          <LuFileQuestion className="text-4xl text-blue-600 mb-2" />
-
-          {/* Faux UI Lines */}
-          <div className="flex gap-1.5 items-center justify-center w-full mt-1">
-            <span className="w-5 h-1 bg-slate-200 rounded-full" />
-            <span className="w-8 h-1 bg-blue-500 rounded-full" />
-            <span className="w-5 h-1 bg-slate-200 rounded-full" />
-          </div>
-        </div>
-
-        {/* Floating Top Right Green Plus Badge */}
-        <div className="absolute top-3 right-3 w-8 h-8 bg-emerald-400 rounded-lg flex items-center justify-center text-white text-lg font-bold">
-          +
-        </div>
-
-        {/* Floating Bottom Left Purple Document Badge */}
-        <div className="absolute bottom-4 left-3 w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 border border-indigo-200">
-          <HiOutlineDocumentText className="text-sm" />
-        </div>
+      <div className="w-16 h-16 mb-6 rounded-xl bg-slate-100 flex items-center justify-center">
+        <LuFileQuestion className="text-3xl text-slate-500" />
       </div>
 
       {/* Primary Messaging Stack */}

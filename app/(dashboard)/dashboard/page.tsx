@@ -50,7 +50,7 @@ const DAILY_PRIZES = [
   {
     place: "3rd",
     amount: rewardData.daily.reward.third,
-    color: "text-orange-400",
+    color: "text-yellow",
   },
 ];
 
@@ -458,7 +458,7 @@ const Page = () => {
 
                 <div className="flex justify-between items-center rounded-lg p-3">
                   <div className="flex gap-3 items-center">
-                    <span className="w-8 h-8 rounded-full text-purple-600 bg-purple-500/20 flex items-center justify-center">
+                    <span className="w-8 h-8 rounded-full text-blue bg-blue/20 flex items-center justify-center">
                       <IoIosRocket />
                     </span>
 
@@ -471,11 +471,11 @@ const Page = () => {
                   </div>
 
                   {hasAttempts ? (
-                    <span className="text-green-400 text-sm font-bold">
+                    <span className="text-green text-sm font-bold">
                       DONE
                     </span>
                   ) : (
-                    <span className="text-orange-400 text-sm font-bold">
+                    <span className="text-yellow text-sm font-bold">
                       PENDING
                     </span>
                   )}
@@ -483,7 +483,7 @@ const Page = () => {
 
                 <div className="flex justify-between items-center rounded-lg p-3">
                   <div className="flex gap-3 items-center">
-                    <span className="w-8 h-8 rounded-full text-green bg-green-500/20 flex items-center justify-center">
+                    <span className="w-8 h-8 rounded-full text-green bg-green/20 flex items-center justify-center">
                       <AiFillDollarCircle size={20} />
                     </span>
 
@@ -491,11 +491,11 @@ const Page = () => {
                   </div>
 
                   {hasSharedRef ? (
-                    <span className="text-green-400 text-sm font-bold">
+                    <span className="text-green text-sm font-bold">
                       DONE
                     </span>
                   ) : (
-                    <span className="text-orange-400 text-sm font-bold">
+                    <span className="text-yellow text-sm font-bold">
                       PENDING
                     </span>
                   )}
@@ -533,7 +533,7 @@ const Page = () => {
                 <div>
                   <p className="text-grey text-sm">Today's Prize Pool</p>
                   <h2 className="text-(--primary) font-bold text-2xl mt-0.5">
-                    {formater(rewardData.daily.total)}
+                    ₦{formater(rewardData.daily.total)}
                   </h2>
                 </div>
 
@@ -544,7 +544,7 @@ const Page = () => {
                         {prize.place}
                       </p>
                       <p className="text-(--primary) font-bold text-sm mt-0.5">
-                        {formater(prize.amount)}
+                        ₦{formater(prize.amount)}
                       </p>
                     </div>
                   ))}
@@ -564,7 +564,7 @@ const Page = () => {
                     type="link"
                     to={`/quiz/`}
                     text="Enter Now"
-                    style="bg-green-500 text-white rounded-sm hover:bg-green-400 font-semibold disabled:opacity-50 disabled:pointer-events-none mt-auto"
+                    style="bg-green text-white rounded-sm hover:bg-green/90 font-semibold disabled:opacity-50 disabled:pointer-events-none mt-auto"
                   />
                 ) : (
                   <>
@@ -594,7 +594,7 @@ const Page = () => {
                   <FaCheckCircle
                     className={
                       currentPayout > 0
-                        ? "text-green-400"
+                        ? "text-green"
                         : "text-grey opacity-40"
                     }
                   />

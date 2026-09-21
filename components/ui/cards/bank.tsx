@@ -29,7 +29,7 @@ export const BankAccountCard: React.FC<BankAccountCardProps> = ({
                 {account.provider}
               </h4>
               {account.isPrimary && (
-                <span className="inline-flex items-center gap-1 text-[14px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                <span className="inline-flex items-center gap-1 text-[14px] font-medium text-green">
                   <MdCheckCircle size={12} /> Primary
                 </span>
               )}

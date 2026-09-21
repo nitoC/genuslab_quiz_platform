@@ -18,8 +18,8 @@ const QuizResult = ({
   return (
     <div className="py-10">
       <div className="max-w-xl mx-auto text-center">
-        {/* Status Badge */}
-        <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-2xl border border-emerald-500/20 text-sm font-black uppercase tracking-widest">
+        {/* Status */}
+        <div className="text-sm font-black uppercase tracking-widest text-green">
           Completed
         </div>
 
@@ -29,7 +29,7 @@ const QuizResult = ({
         </h2>
 
         {/* Score */}
-        <p className="mt-4 text-7xl md:text-8xl font-black text-emerald-400">
+        <p className="mt-4 text-7xl md:text-8xl font-black text-green">
           {score}%
         </p>
 
@@ -47,7 +47,7 @@ const QuizResult = ({
 
           <button
             onClick={onRetry}
-            className="bg-emerald-500 hover:bg-emerald-400 text-[#020617] px-7 py-3 rounded-[18px] font-black text-sm uppercase tracking-wider transition"
+            className="bg-green hover:bg-green/90 text-[#020617] px-7 py-3 rounded-[18px] font-black text-sm uppercase tracking-wider transition"
           >
             Try Again
           </button>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminCard from "@/components/ui/cards/AdminCard";
+import AdminPagination from "@/components/ui/AdminPagination";
 import ConfirmDialog from "@/components/ui/modals/ConfirmDialog";
 import {
   getAdminApprovedBanks,
@@ -12,6 +13,7 @@ import {
 import toast from "react-hot-toast";
 import { FaTrash, FaUniversity } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
+import { MdSearch } from "react-icons/md";
 
 // Shared between Settings and Finance & Banks — both surface the same
 // approved-bank CRUD, so the logic lives in one place.
@@ -19,20 +21,28 @@ const ApprovedBanksPanel = () => {
   const queryClient = useQueryClient();
   const [bankName, setBankName] = useState("");
   const [bankCode, setBankCode] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const limit = 20;
   const [pendingDelete, setPendingDelete] = useState<{
     id: string;
     bankName: string;
   } | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-approved-banks"],
+    queryKey: ["admin-approved-banks", search, page],
     queryFn: async () => {
-      const res = await getAdminApprovedBanks();
-      return res?.data?.payload ?? [];
+      const res = await getAdminApprovedBanks({
+        search: search || undefined,
+        page,
+        limit,
+      });
+      return res?.data?.payload;
     },
   });
 
-  const banks = data ?? [];
+  const banks = data?.data ?? [];
+  const meta = data?.meta;
 
   const createMutation = useMutation({
     mutationFn: async () => {
@@ -105,6 +115,19 @@ const ApprovedBanksPanel = () => {
             </p>
           </div>
 
+          <div className="relative">
+            <MdSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search by bank name or code..."
+              className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white transition-colors"
+            />
+          </div>
+
           <form
             onSubmit={handleSubmit}
             className="flex flex-col sm:flex-row gap-3"
@@ -138,7 +161,9 @@ const ApprovedBanksPanel = () => {
               </p>
             ) : banks.length === 0 ? (
               <p className="py-6 text-center text-slate-400 text-sm">
-                No approved banks yet.
+                {search
+                  ? "No banks match your search."
+                  : "No approved banks yet."}
               </p>
             ) : (
               banks.map((bank: any) => (
@@ -174,6 +199,8 @@ const ApprovedBanksPanel = () => {
               ))
             )}
           </div>
+
+          <AdminPagination meta={meta} onPageChange={setPage} itemLabel="banks" />
         </div>
       </AdminCard>
     </>

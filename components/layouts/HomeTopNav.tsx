@@ -57,7 +57,7 @@ export default function Header() {
                   className="flex items-center gap-1 transition-colors hover:text-blue"
                 >
                   {l.label}
-                  {l.hasArrow && <IoIosArrowDown />}
+                  {/* {l.hasArrow && <IoIosArrowDown />} */}
                 </Link>
               </li>
             ))}

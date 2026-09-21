@@ -29,28 +29,18 @@ const Card = ({
   icon,
   title,
   value,
-  color,
-  bg,
   href,
 }: {
   icon: React.ReactNode;
   title: string;
   value: string;
-  color: string;
-  bg: string;
   href: string;
 }) => {
   return (
     <Link href={href} className="block">
       <AdminCard className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
         <div className="flex items-center gap-4">
-          <div
-            className={cn(
-              "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl",
-              bg,
-              color,
-            )}
-          >
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl bg-slate-100 text-slate-700">
             {icon}
           </div>
 
@@ -123,32 +113,24 @@ const Page = () => {
       icon: <FaUserGroup />,
       title: "Total Users",
       value: isLoading ? "..." : totalUsers.toLocaleString(),
-      color: "text-blue-600",
-      bg: "bg-blue-50",
       href: "/genuslab/users",
     },
     {
       icon: <FaUserPlus />,
       title: "Premium Users",
       value: isLoading ? "..." : premiumUsers.toLocaleString(),
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
       href: "/genuslab/users?plan=premium",
     },
     {
       icon: <FaMoneyBill />,
       title: "Total Revenue",
       value: isLoading ? "..." : fmt(stats?.totalRevenue),
-      color: "text-orange-600",
-      bg: "bg-orange-50",
       href: "/genuslab/transactions?type=plan",
     },
     {
       icon: <FaPiggyBank />,
       title: "Total Payouts",
       value: isLoading ? "..." : fmt(stats?.totalPayouts),
-      color: "text-purple-600",
-      bg: "bg-purple-50",
       href: "/genuslab/transactions?type=finance",
     },
   ];
@@ -189,46 +171,30 @@ const Page = () => {
                 icon: <MdQuiz />,
                 label: "Total Quizzes",
                 value: (quizOverview?.totalQuizzes ?? 0).toLocaleString(),
-                color: "text-blue-600",
-                bg: "bg-blue-50",
               },
               {
                 icon: <MdOutlineLiveTv />,
                 label: "Live",
                 value: (quizOverview?.liveQuizzes ?? 0).toLocaleString(),
-                color: "text-emerald-600",
-                bg: "bg-emerald-50",
               },
               {
                 icon: <MdOutlineArchive />,
                 label: "Completed",
                 value: (quizOverview?.completedQuizzes ?? 0).toLocaleString(),
-                color: "text-slate-600",
-                bg: "bg-slate-100",
               },
               {
                 icon: <MdOutlineBarChart />,
                 label: "Total Attempts",
                 value: (quizOverview?.totalAttempts ?? 0).toLocaleString(),
-                color: "text-purple-600",
-                bg: "bg-purple-50",
               },
               {
                 icon: <MdOutlineBarChart />,
                 label: "Average Score",
                 value: `${Number(quizOverview?.averageScore ?? 0).toFixed(1)}%`,
-                color: "text-orange-600",
-                bg: "bg-orange-50",
               },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg",
-                    item.bg,
-                    item.color,
-                  )}
-                >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg bg-slate-100 text-slate-700">
                   {item.icon}
                 </div>
                 <div>

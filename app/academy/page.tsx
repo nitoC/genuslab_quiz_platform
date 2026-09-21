@@ -124,10 +124,10 @@ const whyAcademy = [
 const partnerLogos = [Genus, Flutterwave, Paypal, Amazon, Palmpay];
 
 const difficultyColor: Record<string, string> = {
-  Beginner: "bg-green-50 text-green-700",
-  Intermediate: "bg-blue-50 text-blue",
-  Advanced: "bg-amber-50 text-amber-700",
-  Expert: "bg-purple-50 text-purple-700",
+  Beginner: "text-green-700",
+  Intermediate: "text-blue",
+  Advanced: "text-amber-700",
+  Expert: "text-purple-700",
 };
 
 export default function AcademyPage() {
@@ -264,7 +264,7 @@ export default function AcademyPage() {
                   </span>
                   <div>
                     <span
-                      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${difficultyColor[lvl.difficulty]}`}
+                      className={`text-xs font-semibold ${difficultyColor[lvl.difficulty]}`}
                     >
                       Level {lvl.level} · {lvl.difficulty}
                     </span>

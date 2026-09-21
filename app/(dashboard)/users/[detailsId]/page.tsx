@@ -14,11 +14,9 @@ import {
   MdAccountBalanceWallet,
   MdStars,
   MdPersonOff,
-  MdLeaderboard,
   MdChecklistRtl,
   MdGroupAdd,
   MdMilitaryTech,
-  MdCalendarToday,
 } from "react-icons/md";
 import { ReactNode } from "react";
 
@@ -153,8 +151,6 @@ const PublicUserStatsPage = () => {
           <>
             {/* Profile hero */}
             <GlassCard className="relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-blue/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-
               <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
                 {isLoading ? (
                   <div className="w-24 h-24 rounded-full bg-white/10 animate-pulse shrink-0" />
@@ -179,22 +175,19 @@ const PublicUserStatsPage = () => {
                         {data?.name || "Player"}
                       </h1>
 
-                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1.5 mt-3">
                         {data?.rank && (
-                          <span className="inline-flex items-center gap-1.5 text-blue text-sm font-semibold bg-blue/20 py-1.5 px-3 rounded-full">
-                            <MdStars size={14} />
+                          <span className="text-sm font-semibold text-blue">
                             {data.rank}
                           </span>
                         )}
                         {data?.overallRank && (
-                          <span className="inline-flex items-center gap-1.5 text-amber-400 text-sm font-semibold bg-amber-500/10 border border-amber-500/20 py-1.5 px-3 rounded-full">
-                            <MdLeaderboard size={14} />
+                          <span className="text-sm font-semibold text-yellow">
                             Global Rank #{data.overallRank}
                           </span>
                         )}
                         {joinDate && (
-                          <span className="inline-flex items-center gap-1.5 text-grey text-sm py-1.5 px-3 rounded-full bg-white/5">
-                            <MdCalendarToday size={14} />
+                          <span className="text-sm text-grey">
                             Joined {joinDate}
                           </span>
                         )}
@@ -221,7 +214,6 @@ const PublicUserStatsPage = () => {
                     icon={<MdEmojiEvents size={18} />}
                     label="Highest Score"
                     value={`${(data?.highestScore ?? 0) * 10}%`}
-                    accent="bg-amber-500/10 text-amber-400"
                   />
                   <StatCard
                     icon={<MdChecklistRtl size={18} />}
@@ -249,25 +241,21 @@ const PublicUserStatsPage = () => {
                     label="Quiz Episodes Won"
                     value={(data?.quizEpisodesWon ?? 0).toLocaleString()}
                     sublabel={`${data?.winRate ?? 0}% win rate`}
-                    accent="bg-amber-500/10 text-amber-400"
                   />
                   <StatCard
                     icon={<MdCardGiftcard size={18} />}
                     label="Rewards Won This Week"
                     value={formatCurrency(data?.rewardsWonThisWeek ?? 0)}
-                    accent="bg-emerald-500/10 text-emerald-400"
                   />
                   <StatCard
                     icon={<MdAccountBalanceWallet size={18} />}
                     label="Total Rewards Won"
                     value={formatCurrency(data?.totalRewardsWon ?? 0)}
-                    accent="bg-emerald-500/10 text-emerald-400"
                   />
                   <StatCard
                     icon={<MdGroupAdd size={18} />}
                     label="Total Referral Rewards Won"
                     value={formatCurrency(data?.totalReferralRewardsWon ?? 0)}
-                    accent="bg-emerald-500/10 text-emerald-400"
                   />
                 </div>
               )}

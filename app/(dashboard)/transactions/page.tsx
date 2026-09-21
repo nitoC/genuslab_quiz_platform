@@ -1,12 +1,10 @@
 "use client";
 
 import GlassCard from "@/components/ui/cards/GlassCard";
-import { ReactNode, useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
-import { FaCrown, FaTrophy, FaUniversity } from "react-icons/fa";
 import {
-  MdCardGiftcard,
   MdSearch,
   MdReceiptLong,
   MdFilterListOff,
@@ -15,14 +13,20 @@ import {
 } from "react-icons/md";
 import { cn } from "@/lib/utils/cn";
 import { useQuery } from "@tanstack/react-query";
-import { getUserTransactions, getTotalRewards } from "@/lib/api/apis"; // adjust import path to your api file
+import {
+  getUserTransactions,
+  getTotalRewards,
+  getTransactionById,
+} from "@/lib/api/apis"; // adjust import path to your api file
 import useUser from "@/hooks/useUser";
-import GlassBadge from "@/components/ui/GlassBadge";
+import RecordDetailView from "@/components/ui/modals/RecordDetailView";
+import DateFilterPicker from "@/components/ui/FormItems/DateFilterPicker";
 
 export type TransactionTypeFilter = "all" | "referral" | "rewards" | "plan";
 
 export interface Transaction {
   id: string;
+  reference: string;
   title: string;
   description: string;
   date: string; // ISO / YYYY-MM-DD for date filtering logic
@@ -33,10 +37,10 @@ export interface Transaction {
   filterType: "referral" | "rewards" | "plan";
   category: "Subscription" | "Rewards" | "Claimed Rewards";
   status: "Completed" | "Processing" | "Failed";
-  icon: ReactNode;
 }
 
 interface TransactionItemProps {
+  reference: string;
   title: string;
   description: string;
   date: string;
@@ -44,10 +48,17 @@ interface TransactionItemProps {
   amount: string;
   type: "credit" | "debit";
   status: "Completed" | "Processing" | "Failed";
-  icon: ReactNode;
+  onClick: () => void;
 }
 
+const STATUS_TEXT_CLASS: Record<TransactionItemProps["status"], string> = {
+  Completed: "text-green",
+  Processing: "text-yellow",
+  Failed: "text-red",
+};
+
 const TransactionItem = ({
+  reference,
   title,
   description,
   date,
@@ -55,56 +66,51 @@ const TransactionItem = ({
   amount,
   type,
   status,
-  icon,
+  onClick,
 }: TransactionItemProps) => {
   const isCredit = type === "credit";
 
-  const statusVariant = {
-    Completed: "success" as const,
-    Processing: "warning" as const,
-    Failed: "danger" as const,
-  };
-
   return (
-    <GlassCard className="transition-all hover:bg-white/[0.03]">
-      <div className="p-4 md:p-5 flex items-center justify-between gap-3">
-        {/* Left Section: Icon & Info */}
-        <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
-          <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-lg bg-white/5 border border-white/5">
-            {icon}
-          </div>
-
-          <div className="min-w-0">
+    <button type="button" onClick={onClick} className="w-full text-left cursor-pointer">
+      <GlassCard className="transition-all hover:bg-white/[0.03]">
+        <div className="p-4 md:p-5 flex items-center justify-between gap-3">
+          {/* Left Section: Info — no decorative icon, the text already says what this is */}
+          <div className="min-w-0 flex-1">
             <h4 className="text-(--primary) font-bold text-sm md:text-base truncate">
               {title}
             </h4>
             <p className="text-[14px] md:text-sm text-grey truncate mt-0.5">
               {description}
             </p>
-          </div>
-        </div>
-
-        {/* Right Section: Amount & Meta */}
-        <div className="flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-8 shrink-0">
-          <div className="hidden md:flex flex-col text-right">
-            <p className="text-[14px] text-(--primary) font-medium">{date}</p>
-            <p className="text-[14px] text-grey uppercase">{time}</p>
-          </div>
-
-          <div className="flex flex-col items-end gap-1.5">
-            <p
-              className={cn(
-                "font-bold text-sm md:text-base",
-                isCredit ? "text-green" : "text-red",
-              )}
-            >
-              {isCredit ? "+" : "-"}₦{amount}
+            <p className="text-[12px] text-grey/70 font-mono truncate mt-0.5">
+              Ref: {reference}
             </p>
-            <GlassBadge variant={statusVariant[status]}>{status}</GlassBadge>
+          </div>
+
+          {/* Right Section: Amount & Meta */}
+          <div className="flex flex-col md:flex-row items-end md:items-center gap-2 md:gap-8 shrink-0">
+            <div className="hidden md:flex flex-col text-right">
+              <p className="text-[14px] text-(--primary) font-medium">{date}</p>
+              <p className="text-[14px] text-grey uppercase">{time}</p>
+            </div>
+
+            <div className="flex flex-col items-end gap-1.5">
+              <p
+                className={cn(
+                  "font-bold text-sm md:text-base",
+                  isCredit ? "text-green" : "text-red",
+                )}
+              >
+                {isCredit ? "+" : "-"}₦{amount}
+              </p>
+              <span className={cn("text-xs font-semibold", STATUS_TEXT_CLASS[status])}>
+                {status}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-    </GlassCard>
+      </GlassCard>
+    </button>
   );
 };
 
@@ -141,15 +147,6 @@ const mapStatus = (status: string): "Completed" | "Processing" | "Failed" => {
   return "Failed";
 };
 
-const getIconForType = (type: string) => {
-  const lower = type?.toLowerCase() || "";
-  if (lower === "plan") return <FaCrown className="text-blue text-lg" />;
-  if (lower === "referral")
-    return <MdCardGiftcard className="text-green text-xl" />;
-  if (lower === "rewards") return <FaTrophy className="text-green text-lg" />;
-  return <FaUniversity className="text-yellow text-lg" />;
-};
-
 const TransactionsPage = () => {
   const { data: userData } = useUser();
   const detailsId = userData?.user?.details?.id;
@@ -167,6 +164,11 @@ const TransactionsPage = () => {
   // Date range state
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+
+  // Detail view state — which transaction's full-window receipt is open
+  const [selectedTransactionId, setSelectedTransactionId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -212,6 +214,16 @@ const TransactionsPage = () => {
     enabled: !!detailsId,
   });
 
+  // Full detail for whichever transaction's receipt is currently open
+  const { data: selectedTransaction, isLoading: isDetailLoading } = useQuery({
+    queryKey: ["transactionDetail", selectedTransactionId],
+    queryFn: async () => {
+      const res = await getTransactionById(selectedTransactionId as string);
+      return res?.data?.payload;
+    },
+    enabled: !!selectedTransactionId,
+  });
+
   // Transform raw API transaction items to match UI interface
   const rawTransactions: Transaction[] = useMemo(() => {
     if (!Array.isArray(apiResponse)) return [];
@@ -240,6 +252,7 @@ const TransactionsPage = () => {
 
       return {
         id: item.id || item._id,
+        reference: item.providerRef || item.id || item._id,
         title: item.title || "Transaction",
         description: item.description || `ID: #${item.id?.slice(0, 8)}`,
         date: isoDate,
@@ -250,7 +263,6 @@ const TransactionsPage = () => {
         filterType,
         category: mapCategory(item.type),
         status: mapStatus(item.status),
-        icon: getIconForType(item.type),
       };
     });
   }, [apiResponse]);
@@ -440,22 +452,23 @@ const TransactionsPage = () => {
 
             {/* Date Range Selectors */}
             <div className="flex gap-2 md:col-span-4">
-              <div className="relative flex-1">
-                <input
-                  type="date"
+              <div className="min-w-0 flex-1">
+                <DateFilterPicker
+                  theme="dark"
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-lg px-3 py-3 text-sm font-medium text-grey outline-none focus:border-blue/50 transition-colors [color-scheme:dark]"
+                  onChange={setStartDate}
                   placeholder="From Date"
+                  maxDate={endDate ? new Date(endDate) : undefined}
                 />
               </div>
-              <div className="relative flex-1">
-                <input
-                  type="date"
+              <div className="min-w-0 flex-1">
+                <DateFilterPicker
+                  theme="dark"
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-lg px-3 py-3 text-sm font-medium text-grey outline-none focus:border-blue/50 transition-colors [color-scheme:dark]"
+                  onChange={setEndDate}
                   placeholder="To Date"
+                  minDate={startDate ? new Date(startDate) : undefined}
+                  popperPlacement="bottom-end"
                 />
               </div>
             </div>
@@ -472,6 +485,7 @@ const TransactionsPage = () => {
             filteredTransactions.map((tx) => (
               <TransactionItem
                 key={tx.id}
+                reference={tx.reference}
                 title={tx.title}
                 description={tx.description}
                 date={tx.displayDate}
@@ -479,7 +493,7 @@ const TransactionsPage = () => {
                 amount={tx.amount}
                 type={tx.type}
                 status={tx.status}
-                icon={tx.icon}
+                onClick={() => setSelectedTransactionId(tx.id)}
               />
             ))
           ) : (
@@ -516,6 +530,56 @@ const TransactionsPage = () => {
           )}
         </div>
       </main>
+
+      {selectedTransactionId && (
+        <RecordDetailView
+          open={!!selectedTransactionId}
+          onClose={() => setSelectedTransactionId(null)}
+          loading={isDetailLoading}
+          documentTitle="Transaction Receipt"
+          subtitle={selectedTransaction?.title || "Transaction"}
+          amount={
+            selectedTransaction
+              ? `₦${Number(selectedTransaction.amount || 0).toLocaleString()}`
+              : undefined
+          }
+          statusLabel={
+            selectedTransaction ? mapStatus(selectedTransaction.status) : undefined
+          }
+          statusVariant={
+            selectedTransaction
+              ? ({
+                  Completed: "success",
+                  Processing: "warning",
+                  Failed: "danger",
+                } as const)[mapStatus(selectedTransaction.status)]
+              : "neutral"
+          }
+          reference={
+            selectedTransaction?.providerRef ||
+            selectedTransaction?.id ||
+            selectedTransactionId
+          }
+          filename={`Genuslab_Transaction_${
+            selectedTransaction?.providerRef || selectedTransactionId
+          }`}
+          rows={[
+            { label: "Transaction ID", value: selectedTransaction?.id || "—" },
+            {
+              label: "Type",
+              value: (
+                <span className="capitalize">
+                  {selectedTransaction?.type || "—"}
+                </span>
+              ),
+            },
+            {
+              label: "Description",
+              value: selectedTransaction?.description || "—",
+            },
+          ]}
+        />
+      )}
     </Layout>
   );
 };

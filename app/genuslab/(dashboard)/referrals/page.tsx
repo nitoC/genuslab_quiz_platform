@@ -93,16 +93,16 @@ export default function ReferralsPage() {
           <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400">
             Acquisition Source
           </h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col">
             {summary.sourceBreakdown.map((s: any) => (
               <div
                 key={s.source}
-                className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2.5"
+                className="flex items-center justify-between gap-3 border-b border-slate-100 py-2.5 last:border-0"
               >
                 <span className="text-sm font-semibold text-slate-700">
                   {formatSource(s.source)}
                 </span>
-                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-bold text-slate-500">
+                <span className="text-sm font-semibold text-slate-500">
                   {s.count}
                 </span>
               </div>

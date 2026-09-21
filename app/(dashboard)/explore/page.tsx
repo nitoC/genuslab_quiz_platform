@@ -114,7 +114,7 @@ const ExploralPage = () => {
       pointsToUnlock: 21_000,
       cashReward: 100_000,
       status: "unlocked",
-      Icon: <HiMiniCheckBadge size={23} className="text-green-300" />,
+      Icon: <HiMiniCheckBadge size={23} className="text-green" />,
     },
     {
       rank: 19,
@@ -122,7 +122,7 @@ const ExploralPage = () => {
       pointsToUnlock: 63_000,
       cashReward: 200_000,
       status: "locked",
-      Icon: <GiBoxingGlove size={23} className="text-orange-400" />,
+      Icon: <GiBoxingGlove size={23} className="text-grey" />,
     },
     {
       rank: 18,
@@ -130,7 +130,7 @@ const ExploralPage = () => {
       pointsToUnlock: 126_000,
       cashReward: 400_000,
       status: "locked",
-      Icon: <GiExplosionRays size={23} className="text-teal-500" />,
+      Icon: <GiExplosionRays size={23} className="text-grey" />,
     },
     {
       rank: 17,
@@ -138,7 +138,7 @@ const ExploralPage = () => {
       pointsToUnlock: 210_000,
       cashReward: 600_000,
       status: "locked",
-      Icon: <GiAllSeeingEye size={23} className="text-brown-700" />,
+      Icon: <GiAllSeeingEye size={23} className="text-grey" />,
     },
     {
       rank: 16,
@@ -146,7 +146,7 @@ const ExploralPage = () => {
       pointsToUnlock: 315_000,
       cashReward: 900_000,
       status: "locked",
-      Icon: <GiMiddleArrow size={23} className="text-green-600" />,
+      Icon: <GiMiddleArrow size={23} className="text-grey" />,
     },
     {
       rank: 15,
@@ -154,7 +154,7 @@ const ExploralPage = () => {
       pointsToUnlock: 450_000,
       cashReward: 1_200_000,
       status: "locked",
-      Icon: <FaUsers size={23} className="text-pink-600" />,
+      Icon: <FaUsers size={23} className="text-grey" />,
     },
     {
       rank: 14,
@@ -162,7 +162,7 @@ const ExploralPage = () => {
       pointsToUnlock: 630_000,
       cashReward: 1_500_000,
       status: "locked",
-      Icon: <GiSoulVessel size={23} className="text-purple-500" />,
+      Icon: <GiSoulVessel size={23} className="text-grey" />,
     },
     {
       rank: 13,
@@ -178,7 +178,7 @@ const ExploralPage = () => {
       pointsToUnlock: 1_050_000,
       cashReward: 2_200_000,
       status: "locked",
-      Icon: <GiQuicksand size={23} className="text-blue-700" />,
+      Icon: <GiQuicksand size={23} className="text-grey" />,
     },
     {
       rank: 11,
@@ -186,7 +186,7 @@ const ExploralPage = () => {
       pointsToUnlock: 1_260_000,
       cashReward: 2_500_000,
       status: "locked",
-      Icon: <GiSparkSpirit size={23} className="text-indigo-500" />,
+      Icon: <GiSparkSpirit size={23} className="text-grey" />,
     },
     {
       rank: 10,
@@ -194,7 +194,7 @@ const ExploralPage = () => {
       pointsToUnlock: 1_500_000,
       cashReward: 2_800_000,
       status: "locked",
-      Icon: <SiClevercloud size={23} className="text-green-400" />,
+      Icon: <SiClevercloud size={23} className="text-grey" />,
     },
     {
       rank: 9,
@@ -202,7 +202,7 @@ const ExploralPage = () => {
       pointsToUnlock: 1_800_000,
       cashReward: 3_200_000,
       status: "locked",
-      Icon: <GiGiftOfKnowledge size={23} className="text-red-700" />,
+      Icon: <GiGiftOfKnowledge size={23} className="text-grey" />,
     },
     {
       rank: 8,
@@ -210,12 +210,7 @@ const ExploralPage = () => {
       pointsToUnlock: 2_100_000,
       cashReward: 3_600_000,
       status: "locked",
-      Icon: (
-        <GiBlackKnightHelm
-          size={23}
-          className="text-gray-900 dark:text-gray-300"
-        />
-      ),
+      Icon: <GiBlackKnightHelm size={23} className="text-grey" />,
     },
     {
       rank: 7,
@@ -223,7 +218,7 @@ const ExploralPage = () => {
       pointsToUnlock: 2_400_000,
       cashReward: 4_000_000,
       status: "locked",
-      Icon: <FaChessKnight size={23} className="text-orange-500" />,
+      Icon: <FaChessKnight size={23} className="text-grey" />,
     },
     {
       rank: 6,
@@ -231,7 +226,7 @@ const ExploralPage = () => {
       pointsToUnlock: 2_700_000,
       cashReward: 4_400_000,
       status: "locked",
-      Icon: <FaCentos size={23} className="text-green-700" />,
+      Icon: <FaCentos size={23} className="text-grey" />,
     },
     {
       rank: 5,
@@ -239,7 +234,7 @@ const ExploralPage = () => {
       pointsToUnlock: 3_000_000,
       cashReward: 4_800_000,
       status: "locked",
-      Icon: <GiPsychicWaves size={23} className="text-green-500" />,
+      Icon: <GiPsychicWaves size={23} className="text-grey" />,
     },
     {
       rank: 4,
@@ -247,7 +242,7 @@ const ExploralPage = () => {
       pointsToUnlock: 3_300_000,
       cashReward: 5_200_000,
       status: "locked",
-      Icon: <SiPrometheus size={23} className="text-blue-500" />,
+      Icon: <SiPrometheus size={23} className="text-grey" />,
     },
     {
       rank: 3,
@@ -255,7 +250,7 @@ const ExploralPage = () => {
       pointsToUnlock: 3_600_000,
       cashReward: 5_600_000,
       status: "locked",
-      Icon: <GiBrainstorm size={23} className="text-red-600" />,
+      Icon: <GiBrainstorm size={23} className="text-grey" />,
     },
     {
       rank: 2,
@@ -263,7 +258,7 @@ const ExploralPage = () => {
       pointsToUnlock: 4_000_000,
       cashReward: 6_500_000,
       status: "locked",
-      Icon: <SiCoolermaster size={23} className="text-purple-600" />,
+      Icon: <SiCoolermaster size={23} className="text-grey" />,
     },
     {
       rank: 1,
@@ -271,7 +266,7 @@ const ExploralPage = () => {
       pointsToUnlock: 5_000_000,
       cashReward: 10_000_000,
       status: "locked",
-      Icon: <FaCrown size={23} className="text-green-500" />,
+      Icon: <FaCrown size={23} className="text-grey" />,
     },
   ];
   const [count, setCount] = useState(0);

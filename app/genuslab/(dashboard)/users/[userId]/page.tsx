@@ -18,7 +18,6 @@ import {
   MdOutlineDevices,
   MdPerson,
 } from "react-icons/md";
-import { FaCrown } from "react-icons/fa";
 
 const STATUS_BADGE: Record<string, BadgeStatus> = {
   active: "success",
@@ -140,19 +139,18 @@ export default function UserDetailPage() {
                 {user.name}
               </h1>
               <p className="truncate text-sm text-slate-500">{user.email}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                {user.isSubscribed ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-600">
-                    <FaCrown size={11} /> Premium
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500">
-                    Free
-                  </span>
-                )}
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span
+                  className={cn(
+                    "text-xs font-semibold",
+                    user.isSubscribed ? "text-amber-600" : "text-slate-500",
+                  )}
+                >
+                  {user.isSubscribed ? "Premium" : "Free"}
+                </span>
                 {rank && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-2.5 py-1 text-xs font-bold text-purple-600">
-                    <MdMilitaryTech size={12} /> {rank.rankName}
+                  <span className="text-xs font-semibold text-purple-600">
+                    {rank.rankName}
                   </span>
                 )}
                 <span className="text-xs font-semibold text-slate-400">

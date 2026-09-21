@@ -34,7 +34,11 @@ import { rewardData } from "@/app/(dashboard)/rewards-breakdown/page";
 const DAILY_PRIZES = [
   { place: "1st", amount: rewardData.daily.reward.first, color: "text-yellow" },
   { place: "2nd", amount: rewardData.daily.reward.second, color: "text-grey" },
-  { place: "3rd", amount: rewardData.daily.reward.third, color: "text-orange-400" },
+  {
+    place: "3rd",
+    amount: rewardData.daily.reward.third,
+    color: "text-orange-400",
+  },
 ];
 
 // Active quizzes surface first, archived/expired ones sink to the bottom.
@@ -217,9 +221,9 @@ const page = () => {
       <section className="wrapper p-4 md:p-8">
         <div className="flex flex-col md:flex-row gap-6">
           <GlassCard className="flex-1">
-            <div className="bg-purple-600/10 p-6 h-full flex flex-col gap-4">
-              <div className="flex justify-center w-fit rounded-sm items-center p-3 bg-purple-600/10">
-                <MdStars size={30} className="text-purple-600" />
+            <div className="bg-blue/10 p-6 h-full flex flex-col gap-4">
+              <div className="flex justify-center w-fit rounded-sm items-center p-3 bg-blue/10">
+                <MdStars size={30} className="text-blue" />
               </div>
               <div>
                 <h3 className="text-grey text-sm">Rewards Today</h3>
@@ -318,7 +322,7 @@ const page = () => {
                   <FaPlay className="text-blue text-sm" />
                 </div>
                 <p className="text-(--primary) font-bold text-2xl mt-1">
-                  {formater(rewardData.daily.total)}
+                  ₦{formater(rewardData.daily.total)}
                 </p>
 
                 <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-white/5">
@@ -328,7 +332,7 @@ const page = () => {
                         {prize.place}
                       </p>
                       <p className="text-(--primary) font-bold text-sm mt-0.5">
-                        {formater(prize.amount)}
+                        ₦{formater(prize.amount)}
                       </p>
                     </div>
                   ))}
@@ -368,8 +372,8 @@ const page = () => {
           <GlassCard>
             <div className="p-6 flex flex-col gap-6 h-full justify-between">
               <div className="flex items-center gap-3">
-                <MdHistory className="text-blue" />
                 <h3 className="text-(--primary) font-semibold">Past Quizzes</h3>
+                <MdHistory className="text-blue" />
               </div>
               <div className="flex items-center justify-between border-t border-white/5 pt-4">
                 <div>
@@ -454,18 +458,16 @@ const QuizCard = ({
           onClick={handleDisabledClick}
           className="absolute inset-0 bg-black/60 backdrop-blur-[1px] rounded-lg z-6 flex flex-col items-center justify-center cursor-not-allowed transition-all duration-200 hover:bg-black/70"
         >
-          <div className="bg-amber-500/20 border border-amber-500/40 p-3 rounded-full text-amber-400 shadow-lg mb-2">
+          <div className="text-yellow mb-2">
             <MdLock size={28} />
           </div>
-          <span className="text-sm tracking-wider uppercase font-bold text-amber-400 bg-black/40 px-2.5 py-1 rounded">
+          <span className="text-sm tracking-wider uppercase font-bold text-yellow">
             {isUpcoming ? "Upcoming" : "Expired"}
           </span>
         </div>
       )}
 
-      <span className="text-touquise border border-touquise bg-touquise/30 font-bold py-2 px-4 rounded-full text-sm">
-        {time}
-      </span>
+      <span className="text-blue font-bold text-sm">{time}</span>
       <section className="flex flex-col gap-4">
         <div className="flex bg-white/5 backdrop-blur-sm p1 border border-white/30 rounded-sm w-fit">
           <div className="p-2 text-white text-[14px]">

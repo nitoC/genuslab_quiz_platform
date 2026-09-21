@@ -100,7 +100,7 @@ const DemoQuizModal = ({
 
             <div className="relative z-10 px-8 pt-10 pb-8">
               {/* icon */}
-              <div className="mx-auto mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-white text-emerald-700">
+              <div className="mx-auto mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-white text-green">
                 <span className="text-xl font-black">
                   <FaQuestionCircle className="text-green" />
                 </span>
@@ -122,7 +122,7 @@ const DemoQuizModal = ({
               <div className="mt-6 space-y-3">
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-emerald-700">
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-green">
                       <span className="text-sm font-black">⏱</span>
                     </div>
                   }
@@ -130,7 +130,7 @@ const DemoQuizModal = ({
                 />
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-emerald-700">
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-green">
                       <span className="text-sm font-black">≋</span>
                     </div>
                   }
@@ -138,7 +138,7 @@ const DemoQuizModal = ({
                 />
                 <FeatureRow
                   icon={
-                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-emerald-700">
+                    <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/30 text-green">
                       <span className="text-sm font-black">🚀</span>
                     </div>
                   }

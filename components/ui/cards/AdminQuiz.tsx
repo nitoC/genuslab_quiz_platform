@@ -44,8 +44,8 @@ const CourseCard: React.FC<CourseCardProps> = ({
         {/* Top Header Controls Section */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600">
-              • {badge}
+            <span className="text-sm font-semibold text-slate-600">
+              {badge}
             </span>
             <span className="text-sm font-bold text-slate-400">Day {day}</span>
           </div>

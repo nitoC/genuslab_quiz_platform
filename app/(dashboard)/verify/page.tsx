@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import OtpInputWrapper from "@/components/ui/Otp";
 import GlassCard from "@/components/ui/cards/GlassCard";
+import PageLoader from "@/components/ui/PageLoader";
 import useUser from "@/hooks/useUser";
 import { getOtp, verifyEmail } from "@/lib/api/apis";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -184,11 +185,7 @@ function OtpVerificationContent() {
   const isTimerExpired = timeLeft === 0;
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white text-sm">
-        Loading user profile...
-      </div>
-    );
+    return <PageLoader theme="dark" label="Loading user profile..." />;
   }
 
   return (
@@ -214,8 +211,8 @@ function OtpVerificationContent() {
             <div
               className={`w-full p-3 rounded-xl mb-6 text-sm sm:text-sm flex items-center gap-2 text-left border ${
                 statusMessage.type === "success"
-                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                  : "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                  ? "bg-green/20 text-green border-green/30"
+                  : "bg-red/20 text-red border-red/30"
               }`}
             >
               {statusMessage.type === "success" ? (
@@ -243,7 +240,7 @@ function OtpVerificationContent() {
             <div className="flex items-center gap-2 text-sm sm:text-sm font-medium">
               <span className="text-slate-400">Code expires in:</span>
               <span
-                className={`font-mono font-bold ${isTimerExpired ? "text-rose-400" : "text-blue"}`}
+                className={`font-mono font-bold ${isTimerExpired ? "text-red" : "text-blue"}`}
               >
                 {formatTime(timeLeft)}
               </span>
@@ -290,13 +287,7 @@ function OtpVerificationContent() {
 
 export default function OtpVerificationPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white text-sm">
-          Loading...
-        </div>
-      }
-    >
+    <Suspense fallback={<PageLoader theme="dark" />}>
       <OtpVerificationContent />
     </Suspense>
   );

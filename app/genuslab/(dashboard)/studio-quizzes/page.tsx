@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import AdminPageHeader from "@/components/layouts/AdminPageHeader";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import AdminPagination from "@/components/ui/AdminPagination";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
+import MonthYearPicker, {
+  monthKey,
+} from "@/components/ui/FormItems/MonthYearPicker";
+import StatCard from "@/components/ui/cards/StatCard";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
 import ConfirmDialog from "@/components/ui/modals/ConfirmDialog";
 import {
@@ -14,6 +19,7 @@ import {
   createStudioQuiz,
   deleteStudioQuiz,
   CreateStudioQuizInput,
+  getEligibleCandidateForMonth,
 } from "@/lib/api/apis";
 import toast from "react-hot-toast";
 import {
@@ -22,6 +28,10 @@ import {
   MdClose,
   MdChevronRight,
   MdImage,
+  MdPerson,
+  MdSchedule,
+  MdPlayCircle,
+  MdCheckCircle,
 } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 
@@ -191,6 +201,102 @@ const CreateStudioQuizModal = ({
   );
 };
 
+interface EligibleCandidate {
+  userId: string;
+  userDetailsId: string;
+  name: string | null;
+  email: string | null;
+  avatar: string | null;
+  score: number;
+}
+
+const previousMonthDate = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() - 1, 1);
+};
+
+/**
+ * The top scorer of the online quiz's monthly XP leaderboard is who's
+ * eligible to be invited into that month's studio quiz — surfaced here so
+ * an admin creating a session knows who to add before going looking for a
+ * name on the regular leaderboard page. Defaults to last month (the most
+ * recently completed one), with a month picker to check any other month.
+ */
+const EligibleCandidateCard = () => {
+  const [selectedDate, setSelectedDate] = useState<Date>(previousMonthDate);
+  const selectedMonth = monthKey(selectedDate);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["studio-quiz-eligible-candidate", selectedMonth],
+    queryFn: async () => {
+      const res = await getEligibleCandidateForMonth(selectedMonth);
+      return res?.data?.payload as
+        | { monthLabel: string; winner: EligibleCandidate | null }
+        | undefined;
+    },
+  });
+
+  return (
+    <AdminCard className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="font-bold text-slate-900">Eligible Candidate</h3>
+          <p className="text-sm text-slate-500">
+            Top scorer on the online quiz's monthly leaderboard — eligible to
+            take part in that month's studio quiz.
+          </p>
+        </div>
+
+        <div className="w-full sm:w-48">
+          <MonthYearPicker value={selectedDate} onChange={setSelectedDate} />
+        </div>
+      </div>
+
+      <div className="border-t border-slate-100 pt-4">
+        {isLoading ? (
+          <div className="h-14 w-full animate-pulse rounded-lg bg-slate-100" />
+        ) : !data?.winner ? (
+          <p className="py-2 text-sm text-slate-400">
+            No one scored on the online quiz leaderboard in{" "}
+            {data?.monthLabel ?? "that month"}.
+          </p>
+        ) : (
+          <Link
+            href={`/genuslab/users/${data.winner.userId}`}
+            className="group flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-slate-50"
+          >
+            {data.winner.avatar ? (
+              <Image
+                src={data.winner.avatar}
+                alt={data.winner.name || "Candidate avatar"}
+                width={44}
+                height={44}
+                className="h-11 w-11 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                <MdPerson size={22} />
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-semibold text-slate-900">
+                {data.winner.name || "Unnamed user"}
+              </p>
+              <p className="text-sm text-slate-500">
+                {data.winner.score?.toLocaleString()} XP · {data.monthLabel}
+              </p>
+            </div>
+            <MdChevronRight
+              size={20}
+              className="shrink-0 text-slate-300 transition-colors group-hover:text-slate-500"
+            />
+          </Link>
+        )}
+      </div>
+    </AdminCard>
+  );
+};
+
 export default function StudioQuizzesPage() {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState("");
@@ -216,6 +322,25 @@ export default function StudioQuizzesPage() {
 
   const quizzes = data?.data ?? [];
   const meta = data?.meta;
+
+  const { data: metrics } = useQuery({
+    queryKey: ["admin-studio-quizzes-metrics"],
+    queryFn: async () => {
+      const totalOf = async (statusFilter?: string) => {
+        const res = await getStudioQuizzes({ status: statusFilter, limit: 1 });
+        return res?.data?.payload?.meta?.total ?? 0;
+      };
+
+      const [total, upcoming, ongoing, completed] = await Promise.all([
+        totalOf(undefined),
+        totalOf("UPCOMING"),
+        totalOf("ONGOING"),
+        totalOf("COMPLETED"),
+      ]);
+
+      return { total, upcoming, ongoing, completed };
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteStudioQuiz(id),
@@ -246,6 +371,35 @@ export default function StudioQuizzesPage() {
           </button>
         }
       />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          icon={MdEventSeat}
+          title="Total Sessions"
+          value={metrics?.total ?? "—"}
+          accent="blue"
+        />
+        <StatCard
+          icon={MdSchedule}
+          title="Upcoming"
+          value={metrics?.upcoming ?? "—"}
+          accent="amber"
+        />
+        <StatCard
+          icon={MdPlayCircle}
+          title="Ongoing"
+          value={metrics?.ongoing ?? "—"}
+          accent="purple"
+        />
+        <StatCard
+          icon={MdCheckCircle}
+          title="Completed"
+          value={metrics?.completed ?? "—"}
+          accent="emerald"
+        />
+      </div>
+
+      <EligibleCandidateCard />
 
       <CreateStudioQuizModal
         open={createOpen}

@@ -5,6 +5,7 @@ import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
 import Avatar from "@/components/ui/Avatar";
 import GlassCard from "@/components/ui/cards/GlassCard";
+import PageLoader from "@/components/ui/PageLoader";
 import {
   MdEdit,
   MdPerson,
@@ -298,7 +299,7 @@ const ProfilePage = () => {
 
 const page = () => {
   return (
-    <Suspense fallback={<p>loading...</p>}>
+    <Suspense fallback={<PageLoader theme="dark" />}>
       <ProfilePage />
     </Suspense>
   );

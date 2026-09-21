@@ -18,8 +18,10 @@ import {
   MdCardMembership,
   MdChevronRight,
   MdOutlinePeople,
+  MdSearch,
 } from "react-icons/md";
 import { FaCrown } from "react-icons/fa";
+import { cn } from "@/lib/utils/cn";
 
 const PLAN_OPTIONS = [
   { label: "All Plans", value: "" },
@@ -61,6 +63,9 @@ const SubscriptionsPageContent = () => {
   const searchParams = useSearchParams();
   const [plan, setPlan] = useState("");
   const [status, setStatus] = useState("");
+  const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -80,11 +85,22 @@ const SubscriptionsPageContent = () => {
   });
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin-subscriptions", plan, status, page],
+    queryKey: [
+      "admin-subscriptions",
+      plan,
+      status,
+      search,
+      startDate,
+      endDate,
+      page,
+    ],
     queryFn: async () => {
       const res = await getAdminSubscriptions({
         plan: plan || undefined,
         status: status || undefined,
+        search: search || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
         page,
         limit,
       });
@@ -131,28 +147,67 @@ const SubscriptionsPageContent = () => {
         />
       </div>
 
-      <AdminCard className="flex flex-col sm:flex-row gap-3">
-        <div className="w-full sm:w-48">
-          <CustomSelect
-            options={PLAN_OPTIONS}
-            value={plan}
-            placeholder="All Plans"
-            onChange={(value: string) => {
-              setPlan(value);
+      <AdminCard className="flex flex-col gap-3">
+        <div className="relative w-full">
+          <MdSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
               setPage(1);
             }}
+            placeholder="Search by subscription reference..."
+            className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white transition-colors"
           />
         </div>
-        <div className="w-full sm:w-48">
-          <CustomSelect
-            options={STATUS_OPTIONS}
-            value={status}
-            placeholder="All Statuses"
-            onChange={(value: string) => {
-              setStatus(value);
-              setPage(1);
-            }}
-          />
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="w-full sm:w-48">
+            <CustomSelect
+              options={PLAN_OPTIONS}
+              value={plan}
+              placeholder="All Plans"
+              onChange={(value: string) => {
+                setPlan(value);
+                setPage(1);
+              }}
+            />
+          </div>
+          <div className="w-full sm:w-48">
+            <CustomSelect
+              options={STATUS_OPTIONS}
+              value={status}
+              placeholder="All Statuses"
+              onChange={(value: string) => {
+                setStatus(value);
+                setPage(1);
+              }}
+            />
+          </div>
+
+          <div className="w-full sm:w-44">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white"
+            />
+          </div>
+
+          <div className="w-full sm:w-44">
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white"
+            />
+          </div>
         </div>
       </AdminCard>
 
@@ -162,6 +217,7 @@ const SubscriptionsPageContent = () => {
             <thead className="bg-slate-50 text-left text-slate-500 uppercase text-xs">
               <tr>
                 <th className="px-6 py-3.5 font-bold">User</th>
+                <th className="px-6 py-3.5 font-bold">Reference</th>
                 <th className="px-6 py-3.5 font-bold">Plan</th>
                 <th className="px-6 py-3.5 font-bold">Start</th>
                 <th className="px-6 py-3.5 font-bold">End</th>
@@ -173,19 +229,19 @@ const SubscriptionsPageContent = () => {
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-14 text-center text-slate-400">
+                  <td colSpan={8} className="px-6 py-14 text-center text-slate-400">
                     Loading subscriptions...
                   </td>
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-14 text-center text-red-400">
+                  <td colSpan={8} className="px-6 py-14 text-center text-red-400">
                     Unable to load subscriptions. Please try again.
                   </td>
                 </tr>
               ) : subscriptions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-14 text-center text-slate-400">
+                  <td colSpan={8} className="px-6 py-14 text-center text-slate-400">
                     <div className="flex flex-col items-center gap-2">
                       <MdCardMembership size={28} className="text-slate-300" />
                       <p className="font-semibold text-slate-500">
@@ -210,16 +266,18 @@ const SubscriptionsPageContent = () => {
                           {sub.user?.email}
                         </p>
                       </td>
+                      <td className="font-data px-6 py-4 text-xs text-slate-500">
+                        {sub.id}
+                      </td>
                       <td className="px-6 py-4">
-                        {sub.name === "PREMIUM" ? (
-                          <span className="inline-flex items-center gap-1.5 text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full text-xs font-bold">
-                            <FaCrown size={11} /> Premium
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full text-xs font-bold">
-                            Free
-                          </span>
-                        )}
+                        <span
+                          className={cn(
+                            "text-xs font-semibold",
+                            sub.name === "PREMIUM" ? "text-amber-600" : "text-slate-500",
+                          )}
+                        >
+                          {sub.name === "PREMIUM" ? "Premium" : "Free"}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-slate-500">
                         {new Date(sub.startAt).toLocaleDateString("en-US", {

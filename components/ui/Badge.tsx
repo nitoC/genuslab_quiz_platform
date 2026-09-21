@@ -4,13 +4,17 @@ import { cn } from "@/lib/utils/cn";
 export type BadgeStatus = "success" | "warning" | "error" | "info" | "inactive";
 
 const STATUS_CLASSES: Record<BadgeStatus, string> = {
-  success: "bg-emerald-50 text-emerald-700",
-  warning: "bg-amber-50 text-amber-700",
-  error: "bg-red-50 text-red-700",
-  info: "bg-blue-50 text-blue-700",
-  inactive: "bg-slate-100 text-slate-600",
+  success: "text-emerald-700",
+  warning: "text-amber-700",
+  error: "text-red-700",
+  info: "text-blue-700",
+  inactive: "text-slate-500",
 };
 
+// Plain colored-dot + text status indicator — no pill/chip container. A
+// background+border capsule around ordinary status text is decoration, not
+// information; the dot plus the semantic text color already communicate
+// status without needing a shape around it.
 const Badge = ({
   status,
   children,
@@ -23,7 +27,7 @@ const Badge = ({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold capitalize",
+        "inline-flex items-center gap-1.5 text-xs font-semibold capitalize",
         STATUS_CLASSES[status],
         className,
       )}

@@ -19,47 +19,103 @@ import {
   MdNotificationsActive,
   MdOutlineDevices,
   MdSettings,
+  MdAdminPanelSettings,
 } from "react-icons/md";
+import useAdminRole from "@/hooks/useAdminRole";
 
+// `roles` omitted = every staff role can see it (Admin always can, since
+// Admin is a superset). Accountant is scoped to Transactions/Subscriptions
+// (+ read-only Users); Support is scoped to Users (read-only) + its own
+// message queue.
 const navLinks = [
-  { label: "Dashboard", href: "/genuslab/dashboard", icon: MdSpaceDashboard },
-  { label: "Users", href: "/genuslab/users", icon: MdPeople },
-  { label: "Quizzes", href: "/genuslab/quizzes", icon: MdQuiz },
+  {
+    label: "Dashboard",
+    href: "/genuslab/dashboard",
+    icon: MdSpaceDashboard,
+    roles: ["ADMIN"],
+  },
+  {
+    label: "Users",
+    href: "/genuslab/users",
+    icon: MdPeople,
+    roles: ["ADMIN", "ACCOUNTANT", "SUPPORT"],
+  },
+  { label: "Quizzes", href: "/genuslab/quizzes", icon: MdQuiz, roles: ["ADMIN"] },
   {
     label: "Studio Quizzes",
     href: "/genuslab/studio-quizzes",
     icon: MdEventSeat,
+    roles: ["ADMIN"],
   },
-  { label: "Ranks & XP", href: "/genuslab/ranks", icon: MdMilitaryTech },
+  {
+    label: "Ranks & XP",
+    href: "/genuslab/ranks",
+    icon: MdMilitaryTech,
+    roles: ["ADMIN"],
+  },
   {
     label: "Subscriptions",
     href: "/genuslab/subscriptions",
     icon: MdCardMembership,
+    roles: ["ADMIN", "ACCOUNTANT"],
   },
   {
     label: "Transactions",
     href: "/genuslab/transactions",
     icon: MdReceiptLong,
+    roles: ["ADMIN", "ACCOUNTANT"],
   },
-  { label: "Finance & Banks", href: "/genuslab/finance", icon: MdAccountBalance },
+  {
+    label: "Finance & Banks",
+    href: "/genuslab/finance",
+    icon: MdAccountBalance,
+    roles: ["ADMIN"],
+  },
   {
     label: "Support Messages",
     href: "/genuslab/contacts",
     icon: MdSupportAgent,
+    roles: ["ADMIN", "SUPPORT"],
   },
-  { label: "Referrals", href: "/genuslab/referrals", icon: MdShare },
+  {
+    label: "Referrals",
+    href: "/genuslab/referrals",
+    icon: MdShare,
+    roles: ["ADMIN"],
+  },
   {
     label: "Notifications",
     href: "/genuslab/notifications",
     icon: MdNotificationsActive,
+    roles: ["ADMIN"],
   },
-  { label: "Sessions", href: "/genuslab/sessions", icon: MdOutlineDevices },
-  { label: "Settings", href: "/genuslab/settings", icon: MdSettings },
+  {
+    label: "Sessions",
+    href: "/genuslab/sessions",
+    icon: MdOutlineDevices,
+    roles: ["ADMIN"],
+  },
+  {
+    label: "Team & Roles",
+    href: "/genuslab/subadmins",
+    icon: MdAdminPanelSettings,
+    roles: ["ADMIN"],
+  },
+  {
+    label: "Settings",
+    href: "/genuslab/settings",
+    icon: MdSettings,
+    roles: ["ADMIN"],
+  },
 ];
 
 const AdminSidebar = () => {
   const pathname = usePathname();
   const { isOpen, collapsed, toggleSidebar } = useSidebar((state) => state);
+  const { role } = useAdminRole();
+  const visibleLinks = navLinks.filter(
+    (link) => !role || link.roles.includes(role),
+  );
 
   return (
     <>
@@ -102,7 +158,7 @@ const AdminSidebar = () => {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {navLinks.map(({ label, href, icon: Icon }) => {
+          {visibleLinks.map(({ label, href, icon: Icon }) => {
             const active =
               pathname === href || pathname?.startsWith(`${href}/`);
             return (

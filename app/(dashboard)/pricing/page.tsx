@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { PRICING_PLANS } from "@/data/plans";
 import { PricingCard } from "@/components/ui/cards/PricingCard";
 import { Footer } from "@/components/ui/PricingFooter";
 import Layout from "@/components/layouts/Layout";
 import Header from "@/components/layouts/Header";
+import PageLoader from "@/components/ui/PageLoader";
 import useSubscription from "@/hooks/useSubscription";
 import { useFlutterwaveExec as useFlutterExec } from "@/hooks/useFutterwaveExec";
-import { subscribe } from "@/lib/api/apis";
+import {
+  acquireCheckoutLock,
+  releaseCheckoutLock,
+  getUserSubscription,
+  subscribe,
+} from "@/lib/api/apis";
 import { closePaymentModal } from "flutterwave-react-v3";
 import {
   ReceiptModal,
@@ -22,18 +29,44 @@ export default function PricingPage() {
 
   // State for controlling Receipt Modal
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [receiptData, setReceiptData] = useState<TransactionReceiptData | null>(
     null,
   );
 
-  const handleSubscription = () => {
-    setSubmitting(true);
+  const subscribeMutation = useMutation({
+    mutationFn: (payload: { name: string; price: number; txRef: string }) =>
+      subscribe(payload),
+  });
+
+  const handleSubscription = async () => {
+    const hasSubscription = await getUserSubscription();
+    if (hasSubscription.data && hasSubscription.data.payload)
+      return toast.error("user already has an active subscription");
+
+    // Acquire the server-side lock BEFORE opening the Flutterwave popup.
+    // If another session is already mid-checkout for this user, this
+    // rejects immediately and the popup never opens here — that's the only
+    // point where a real duplicate charge can actually be prevented, since
+    // once two popups are open, both charges happen outside our control.
+    try {
+      await acquireCheckoutLock();
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+          "A payment is already in progress for your account.",
+      );
+      return;
+    }
+
     useFlutterwaveExec({
       callback: async (response: any) => {
         try {
           // 1. Sync with backend API
-          await subscribe({ name: "PREMIUM", price: Number(response.amount) });
+          await subscribeMutation.mutateAsync({
+            name: "PREMIUM",
+            price: Number(response.amount),
+            txRef: response.tx_ref,
+          });
           await refetch();
 
           // 2. Prepare receipt payload from response
@@ -60,28 +93,25 @@ export default function PricingPage() {
           toast.error("Subscription failed");
           console.error("Subscription process failed:", error);
         } finally {
-          setSubmitting(false);
           closePaymentModal();
+          await releaseCheckoutLock();
         }
       },
-      onClose: () => {
-        setSubmitting(false);
+      onClose: async () => {
+        await releaseCheckoutLock();
       },
     });
   };
 
   if (isLoading) {
-    return <p className="p-8 text-slate-200">loading...</p>;
+    return <PageLoader theme="dark" />;
   }
 
   return (
     <Layout>
       <Header title="Pricing" backBtn={false} />
-      <div className="min-h-screen text-slate-100 relative overflow-hidden flex flex-col justify-between">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-3xl pointer-events-none" />
-
-        <main className="max-w-6xl mx-auto px-4 md:px-8 pt-12 md:pt-20 space-y-12 relative z-10 w-full">
+      <div className="min-h-screen text-slate-100 flex flex-col justify-between">
+        <main className="max-w-6xl mx-auto px-4 md:px-8 pt-12 md:pt-20 space-y-12 w-full">
           <div className="max-w-2xl">
             <p className="text-sm md:text-base text-slate-300 font-medium leading-relaxed">
               Choose the perfect tier to unlock learning paths, win rewards, and
@@ -96,7 +126,7 @@ export default function PricingPage() {
                 plan={plan}
                 activePlan={data?.data.payload}
                 handleSubscription={handleSubscription}
-                submitting={submitting}
+                submitting={subscribeMutation.isPending}
               />
             ))}
           </div>

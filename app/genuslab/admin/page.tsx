@@ -44,8 +44,18 @@ export default function LoginPage() {
       if (res?.data?.payload) {
         updateUser(res.data.payload);
         toast.success("admin Login successful!");
+
+        // Accountant/Support don't have Dashboard access — land them on the
+        // first page their role can actually see.
+        const landingPage =
+          res.data.payload.role === "ACCOUNTANT"
+            ? "/genuslab/transactions"
+            : res.data.payload.role === "SUPPORT"
+              ? "/genuslab/users"
+              : "/genuslab/dashboard";
+
         setTimeout(() => {
-          router.push("/genuslab/dashboard");
+          router.push(landingPage);
         }, 1500);
       }
     } catch (err) {

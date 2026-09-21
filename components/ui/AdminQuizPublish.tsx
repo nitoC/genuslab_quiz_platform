@@ -36,7 +36,7 @@ export const BasicInfoCard = ({ quiz }: { quiz: IQuiz }) => (
       </button>
     </div>
 
-    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[14px] font-bold uppercase tracking-widest mb-3">
+    <span className="inline-block text-[14px] font-bold uppercase tracking-widest text-blue-600 mb-3">
       Live Quiz
     </span>
 

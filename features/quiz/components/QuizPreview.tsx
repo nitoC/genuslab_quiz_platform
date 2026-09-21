@@ -68,7 +68,7 @@ export default function QuizPreview({
                     >
                       {/* Badge */}
                       <div className="flex justify-between items-center">
-                        <span className="text-[14px] font-bold uppercase tracking-wide bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                        <span className="text-[14px] font-bold uppercase tracking-wide text-blue-700">
                           Question {idx + 1}
                         </span>
 

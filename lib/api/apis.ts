@@ -222,23 +222,42 @@ export const createTransaction = async (payload: {
 };
 
 /**
- * Get all system transactions (Admin only)
+ * Get all system transactions (Admin only) subsc
  */
 export const getAllTransactions = async (params?: {
   type?: string;
   status?: string;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   limit?: number;
 }) => {
-  const { type, status, limit = 10, page = 1 } = params || {};
+  const {
+    type,
+    status,
+    search,
+    startDate,
+    endDate,
+    limit = 10,
+    page = 1,
+  } = params || {};
 
   const queryParams = new URLSearchParams();
   if (type) queryParams.append("type", type);
   if (status) queryParams.append("status", status);
+  if (search) queryParams.append("search", search);
+  if (startDate) queryParams.append("startDate", startDate);
+  if (endDate) queryParams.append("endDate", endDate);
   if (limit) queryParams.append("limit", limit.toString());
   if (page) queryParams.append("page", page.toString());
 
   const res = await axiosAdmin.get(`transaction/all?${queryParams.toString()}`);
+  return res;
+};
+
+export const getAdminTransactionSummary = async () => {
+  const res = await axiosAdmin.get("transaction/admin/summary");
   return res;
 };
 
@@ -247,6 +266,11 @@ export const getAllTransactions = async (params?: {
  */
 export const getTransactionById = async (id: string) => {
   const res = await axiosUser.get(`transaction/${id}`);
+  return res;
+};
+
+export const updateTransactionStatus = async (id: string, status: string) => {
+  const res = await axiosAdmin.patch(`transaction/${id}/status`, { status });
   return res;
 };
 
@@ -502,11 +526,28 @@ export const getUserSubscriptions = async () => {
   return res;
 };
 
-export const subscribe = async (data: any) => {
+export const getUserSubscriptionById = async (id: string) => {
+  const res = await axiosUser.get(`subscription/${id}`);
+  return res;
+};
+
+export const subscribe = async (data: {
+  name: string;
+  price: number;
+  txRef: string;
+}) => {
   const res = await axiosUser.post("subscription", data);
   return res;
 };
 
+export const acquireCheckoutLock = async () => {
+  const res = await axiosUser.post(`subscription/checkout-lock`);
+  return res;
+};
+export const releaseCheckoutLock = async () => {
+  const res = await axiosUser.post(`subscription/checkout-lock/release`);
+  return res;
+};
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
   console.log(payload, "admin login payload");
@@ -585,10 +626,10 @@ export const fetchQuizDetails = async (id: string) => {
 export const getAllQuiz = async (
   query: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ) => {
   const res = await axiosAdmin.get(
-    `quiz/status?status=${query.toUpperCase()}&page=${page}&limit=${limit}`
+    `quiz/status?status=${query.toUpperCase()}&page=${page}&limit=${limit}`,
   );
   return res;
 };
@@ -730,6 +771,9 @@ export const deleteAdminRank = async (id: string) => {
 export const getAdminSubscriptions = async (params: {
   plan?: string;
   status?: string;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   limit?: number;
 }) => {
@@ -744,6 +788,11 @@ export const getAdminSubscriptionSummary = async () => {
 
 export const getSubscriptionById = async (id: string) => {
   const res = await axiosAdmin.get(`subscription/${id}`);
+  return res;
+};
+
+export const updateSubscriptionStatus = async (id: string, status: string) => {
+  const res = await axiosAdmin.patch(`subscription/${id}`, { status });
   return res;
 };
 
@@ -904,6 +953,24 @@ export const getStudioQuizWinnersForMonth = async (
   return res;
 };
 
+/** Top scorer on the ONLINE quiz's monthly leaderboard for the previous
+ * month — the eligible candidate for that month's studio quiz. */
+export const getPreviousMonthEligibleCandidate = async () => {
+  const res = await axiosAdmin.get(
+    "studio-quiz/eligible-candidate/previous-month",
+  );
+  return res;
+};
+
+/** Top scorer on the online quiz's monthly leaderboard for any month
+ * (MM-yyyy) — the eligible candidate for that month's studio quiz. */
+export const getEligibleCandidateForMonth = async (month: string) => {
+  const res = await axiosAdmin.get(
+    `studio-quiz/eligible-candidate/month/${month}`,
+  );
+  return res;
+};
+
 export const getStudioQuizParticipantsForMonth = async (
   month: string,
   winnersPerWeek?: number,
@@ -916,7 +983,12 @@ export const getStudioQuizParticipantsForMonth = async (
 
 export const addStudioQuizParticipant = async (
   id: string,
-  payload: { userDetailsId: string; week: string; position?: number; score?: number },
+  payload: {
+    userDetailsId: string;
+    week: string;
+    position?: number;
+    score?: number;
+  },
 ) => {
   const res = await axiosAdmin.post(`studio-quiz/${id}/participants`, payload);
   return res;
@@ -974,13 +1046,37 @@ export const getAdminUserById = async (id: string) => {
   return res;
 };
 
+export const getAdminUserSummary = async () => {
+  const res = await axiosAdmin.get("admin/users/summary");
+  return res;
+};
+
 export const updateAdminUserStatus = async (id: string, status: string) => {
   const res = await axiosAdmin.patch(`admin/users/${id}/status`, { status });
   return res;
 };
 
-export const getAdminApprovedBanks = async () => {
-  const res = await axiosAdmin.get("admin/settings/banks");
+export const getAdminSubAdmins = async () => {
+  const res = await axiosAdmin.get("admin/subadmins");
+  return res;
+};
+
+export const createAdminSubAdmin = async (data: {
+  name: string;
+  email: string;
+  password: string;
+  role: "USER" | "ACCOUNTANT" | "SUPPORT";
+}) => {
+  const res = await axiosAdmin.post("admin/subadmins", data);
+  return res;
+};
+
+export const getAdminApprovedBanks = async (params?: {
+  search?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("admin/settings/banks", { params });
   return res;
 };
 

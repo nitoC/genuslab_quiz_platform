@@ -46,7 +46,7 @@ export default function RequiredSchema() {
   return (
     <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm space-y-4">
       <div className="flex items-center gap-2 text-slate-800 font-bold text-sm">
-        <HiOutlineDocumentText className="text-teal-600 text-lg" />
+        <HiOutlineDocumentText className="text-slate-600 text-lg" />
         <span>Required Schema</span>
       </div>
 
@@ -57,7 +57,7 @@ export default function RequiredSchema() {
             <div>
               <span className="font-semibold text-slate-800">{rule.field}</span>{" "}
               <span
-                className={`text-[14px] font-bold ${rule.required ? "text-rose-500" : "text-slate-400"}`}
+                className={`text-[14px] font-bold ${rule.required ? "text-red-600" : "text-slate-400"}`}
               >
                 ({rule.required ? "Required" : "Optional"})
               </span>

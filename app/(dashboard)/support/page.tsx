@@ -158,7 +158,7 @@ export default function SupportPage() {
                         className={`p-2 rounded-full shrink-0 ${
                           isUser
                             ? "bg-blue/20 text-blue border border-blue/30"
-                            : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : "bg-green/20 text-green border border-green/30"
                         }`}
                       >
                         {isUser ? <FaUser size={12} /> : <FaRobot size={12} />}

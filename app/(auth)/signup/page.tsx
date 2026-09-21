@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import CustomInput from "@/components/ui/FormItems/CustomInput";
+import PageLoader from "@/components/ui/PageLoader";
 import PasswordInput from "@/components/ui/FormItems/PasswordInput";
 import CustomDropdown from "@/components/ui/FormItems/CustomSelect";
 import CustomDatePicker from "@/components/ui/FormItems/CustomDatePicker";
@@ -364,7 +365,7 @@ function SignUpPage() {
 
 const SuspenseWrapper = () => {
   return (
-    <Suspense fallback={<p>loading...</p>}>
+    <Suspense fallback={<PageLoader theme="light" />}>
       <SignUpPage />
     </Suspense>
   );

@@ -59,22 +59,22 @@ const GetReadyModal = () => {
       title: "Unlock Ranks",
       desc: "Climb the global tier system",
       icon: MdEmojiEvents,
-      color: "text-amber-500",
-      bg: "bg-amber-100",
+      color: "text-blue",
+      bg: "bg-blue-50",
     },
     {
       title: "Earn Rewards",
       desc: "Exclusive EXPs & point rewards",
       icon: MdAccountBalanceWallet,
-      color: "text-yellow-500",
-      bg: "bg-yellow-100",
+      color: "text-blue",
+      bg: "bg-blue-50",
     },
     {
       title: "Learn Skills",
       desc: "Curated educational paths",
       icon: MdSchool,
-      color: "text-indigo-600",
-      bg: "bg-indigo-100",
+      color: "text-blue",
+      bg: "bg-blue-50",
     },
   ];
 

@@ -6,6 +6,7 @@ import RequiredSchema from "@/features/quiz/components/RequiredSchema";
 import QuizPreview from "@/features/quiz/components/QuizPreview";
 import TemplatePanel from "@/features/quiz/components/TemplatePanel";
 import { createQuestion, updateQuiz } from "@/lib/api/apis";
+import PageLoader from "@/components/ui/PageLoader";
 import { IQuestionSubmit } from "@/interfaces";
 import toast, { Toaster } from "react-hot-toast";
 import { useSearchParams } from "next/navigation";
@@ -199,7 +200,7 @@ function JsonBuilderPage() {
 
 export default function page() {
   return (
-    <Suspense fallback={<p>loading...</p>}>
+    <Suspense fallback={<PageLoader theme="light" />}>
       <JsonBuilderPage />
     </Suspense>
   );
