@@ -29,8 +29,8 @@ const gradientCardData = [
     icon: <Group />,
   },
   {
-    text: " Think you’re smart? Prove it. Take on weekly tech quizzes, climb the leaderboard, and win your share of ₦120 million+ in cash, gadgets, and exclusive opportunities. The more correct answers, the more you earn. It's not just learning—it's winning.",
-    heading: "Win ₦120M+ in Prizes",
+    text: " Think you’re smart? Prove it. Take on weekly tech quizzes, climb the leaderboard, and win your share of rewards, gadgets, and exclusive opportunities. The more correct answers, the more you earn. It's not just learning—it's winning.",
+    heading: "Win Rewards",
     icon: <Trophy />,
   },
 ];

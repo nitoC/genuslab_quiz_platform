@@ -61,7 +61,7 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             {/* replace with your real logo asset */}
             <Image
-              src="/images/logo_desktop.png"
+              src="/logo/genusacademy.png"
               alt="GenusLab logo"
               width={216}
               height={65}

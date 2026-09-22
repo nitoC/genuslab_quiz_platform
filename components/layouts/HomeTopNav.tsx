@@ -32,14 +32,14 @@ export default function Header() {
         {/* logo */}
         <Link href="/" className="block">
           <Image
-            src="/images/logo_mobile.png"
+            src="/logo/genusacademy.png"
             alt="logo"
             width={146}
             height={49}
             className="md:hidden"
           />
           <Image
-            src="/images/logo_desktop.png"
+            src="/logo/genusacademy.png"
             alt="logo"
             width={216}
             height={65}
