@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Outfit, IBM_Plex_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Inter,
+  Outfit,
+  IBM_Plex_Mono,
+} from "next/font/google";
 import clsx from "clsx";
 import "./globals.css";
 
@@ -31,7 +37,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Genus Lab",
   description:
-    "Genus Lab is a quiz app that tests your knowledge on various topics.",
+    "Genuslab Academy is an interactive learning and quiz platform where you can test your knowledge, build practical digital skills, compete in quizzes, earn rewards, and grow through structured technology education. Join today and start your journey from learning to earning.",
   icons: {
     icon: "/images/logo.png",
     shortcut: "/images/logo.png",

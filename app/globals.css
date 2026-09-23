@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(50.983% 0.23436 265.668);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -66,13 +66,7 @@
   /* 
   --------------------------------sizes--------------------------------
   */
-  /* Previously 2rem/1rem/0.5rem — every ordinary rounded-lg/md/sm in the
-     app was silently rendering as an oversized, pill-like radius. This is
-     the single biggest driver of the "everything is a rounded capsule"
-     look: a normal card corner and a pill had almost no visual difference.
-     Scaled down to a restrained, standard range so radius can actually
-     communicate hierarchy again (sm < md < lg), rather than every size
-     reading as "very round". */
+
   --radius-lg: 0.75rem;
   --radius-md: 0.5rem;
   --radius-sm: 0.375rem;
@@ -97,7 +91,8 @@
   --breakpoint-xmd: 370px;
   --font-Geist: var(--font-Geist);
   --Oswald: var(--font-Oswald);
-  /* --color-blue: #3a94ff;
+  --color-blue: #3a94ff;
+  /* 
   --color-green: #1eac86;
   --color-pink: #fb40ff; */
   --color-mygrey: #818690;
@@ -686,7 +681,9 @@ a {
   color: #334155;
   border-radius: 999px;
   margin: 0.1rem;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 .dob-datepicker .react-datepicker__day:hover {
   background-color: #eff6ff;
@@ -705,7 +702,8 @@ a {
 .dob-datepicker .react-datepicker__day--keyboard-selected:hover {
   background-color: #1d4ed8;
 }
-.dob-datepicker .react-datepicker__day--today:not(.react-datepicker__day--selected) {
+.dob-datepicker
+  .react-datepicker__day--today:not(.react-datepicker__day--selected) {
   border: 1.5px solid #2563eb;
   line-height: calc(2.4rem - 3px);
 }
@@ -724,7 +722,9 @@ a {
   width: 8px;
   height: 8px;
 }
-.dob-datepicker .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+.dob-datepicker
+  .react-datepicker__navigation:hover
+  .react-datepicker__navigation-icon::before {
   border-color: #2563eb;
 }
 
@@ -779,7 +779,9 @@ a {
   color: #334155;
   border-radius: 999px;
   margin: 0.1rem;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 .filter-datepicker .react-datepicker__day:hover {
   background-color: #eff6ff;
@@ -798,7 +800,8 @@ a {
 .filter-datepicker .react-datepicker__day--keyboard-selected:hover {
   background-color: #1d4ed8;
 }
-.filter-datepicker .react-datepicker__day--today:not(.react-datepicker__day--selected) {
+.filter-datepicker
+  .react-datepicker__day--today:not(.react-datepicker__day--selected) {
   border: 1.5px solid #2563eb;
   line-height: calc(2.2rem - 3px);
 }
@@ -845,7 +848,8 @@ a {
   background-color: transparent;
   color: rgba(255, 255, 255, 0.15);
 }
-.filter-datepicker-dark .react-datepicker__day--today:not(.react-datepicker__day--selected) {
+.filter-datepicker-dark
+  .react-datepicker__day--today:not(.react-datepicker__day--selected) {
   border-color: var(--color-blue);
 }
 .filter-datepicker-dark .filter-datepicker-header {

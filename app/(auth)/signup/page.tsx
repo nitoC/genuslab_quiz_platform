@@ -324,17 +324,21 @@ function SignUpPage() {
                   />
                 </div>
 
-                <label className="flex items-center gap-3 text-sm">
+                <label className="flex items-start gap-3 text-sm">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-primary"
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-blue"
                     checked={agree}
                     onChange={() => setAgree(!agree)}
                   />
-                  <span>
+                  <span className="leading-relaxed">
                     I agree to the{" "}
-                    <Link href="/terms" className="font-medium text-primary">
-                      Terms&nbsp;&amp;&nbsp;Condition
+                    <Link href="/terms-of-service" className="font-medium text-blue">
+                      Terms &amp; Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link href="/privacy-policy" className="font-medium text-blue">
+                      Privacy Policy
                     </Link>
                   </span>
                 </label>

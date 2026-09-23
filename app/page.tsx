@@ -1,5 +1,19 @@
 "use client";
-import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import {
+  MdOutlineKeyboardDoubleArrowRight,
+  MdCode,
+  MdSmartToy,
+  MdCurrencyBitcoin,
+  MdCampaign,
+  MdEventAvailable,
+  MdMenuBook,
+  MdLiveTv,
+  MdOndemandVideo,
+  MdEvent,
+  MdSearch,
+  MdTune,
+  MdBookmarkBorder,
+} from "react-icons/md";
 import Image from "next/image";
 import Gradient from "@/components/ui/cards/Gradient";
 import Group from "@/assets/icons/Group";
@@ -19,26 +33,51 @@ import Button from "@/components/ui/buttons/Linear";
 
 const gradientCardData = [
   {
-    text: " Start building at Genus lab, we train you in cutting-edge techcode, design, AI, and more and pay you to work on real projects while you’re still in training. Why wait years to start earning? Learn by doing. Earn by building. Launch your tech career now. Learn more",
+    text: " Start building at Genus lab, we train you in cutting-edge techcode, design, AI, and more and pay you to work on real projects while you’re still in training. Why wait years to start earning? Learn by doing. Earn by building. Launch your tech career now.",
     heading: "Earn While you learn",
     icon: <GradCap />,
+    accent: "#1EAC86",
   },
   {
     text: " Tap into local opportunities with a global mission. Our regional teams give you hands-on experience, mentorship, and peer collaboration right where you are. Work on real projects, contribute to community-driven solutions, and build your network—all while advancing your tech career.",
     heading: "join a regional Team",
     icon: <Group />,
+    accent: "#3A94FF",
   },
   {
     text: " Think you’re smart? Prove it. Take on weekly tech quizzes, climb the leaderboard, and win your share of rewards, gadgets, and exclusive opportunities. The more correct answers, the more you earn. It's not just learning—it's winning.",
     heading: "Win Rewards",
     icon: <Trophy />,
+    accent: "#1EAC86",
   },
 ];
 
+const academySkills = [
+  { label: "Coding", icon: MdCode },
+  { label: "AI & Machine Learning", icon: MdSmartToy },
+  { label: "Crypto & Blockchain", icon: MdCurrencyBitcoin },
+  { label: "Digital Marketing", icon: MdCampaign },
+];
+
+const studioHighlights = [
+  { label: "Catch us live from the GenusLab Studio", icon: MdLiveTv },
+  {
+    label: "Watch replays of past tech talks, panels, and showcases",
+    icon: MdOndemandVideo,
+  },
+  { label: "See what's coming up next at our PAQC events", icon: MdEvent },
+];
+
+const jobBoardHighlights = [
+  { label: "Browse jobs by category, location, or skill", icon: MdSearch },
+  {
+    label: "Filter by full-time, remote, internships, and more",
+    icon: MdTune,
+  },
+  { label: "Save your favorites and apply directly", icon: MdBookmarkBorder },
+];
+
 export default function Home() {
-  const text = `Unlock Your 
-Potential with
-<span className="text">Cutting-edge</span> Tech Solutions`;
   return (
     <>
       <Header />
@@ -51,7 +90,7 @@ Potential with
                 <br />
                 Potential with
                 <br />
-                <span className="text text-blue ">Cutting-edge</span> Tech
+                <span className="text-blue">Cutting-edge</span> Tech
                 Solutions
               </h1>
               <p className="intro-sub-text text-[1.3rem]">
@@ -106,29 +145,17 @@ Potential with
           </div>
         </div>
       </section>
-      <div className="divider-wrapper border-b border-b-pink px-[2rem] py-[4rem] max-w-[1049px] m-auto rounded-[20px] relative section-md:-translate-y-[calc(10px+4vw)] min-h-[332px] z-[1] bg-white">
+      <div className="divider-wrapper px-[2rem] py-[4rem] max-w-[1049px] m-auto rounded-[20px] relative section-md:-translate-y-[calc(10px+4vw)] min-h-[332px] z-[1] bg-white">
         <div className="divider flex-col md:flex-row flex gap-[1rem] md:gap-0 items-center justify-center ">
-          {gradientCardData.map((a, b) => {
-            if (b === 1) {
-              return (
-                <Gradient
-                  key={a.text}
-                  text={a.text}
-                  heading={a.heading}
-                  active={true}
-                  Icon={a.icon}
-                />
-              );
-            }
-            return (
-              <Gradient
-                key={a.text}
-                text={a.text}
-                heading={a.heading}
-                Icon={a.icon}
-              />
-            );
-          })}
+          {gradientCardData.map((a) => (
+            <Gradient
+              key={a.text}
+              text={a.text}
+              heading={a.heading}
+              Icon={a.icon}
+              accent={a.accent}
+            />
+          ))}
         </div>
       </div>
       <section className=" wrapper py-8 md:py-[6rem] section-container flex flex-col gap-[3rem]">
@@ -159,20 +186,37 @@ Potential with
                   style={{ fontSize: "clamp(20px,8vw, 40px)" }}
                 >
                   <span className="text-blue">Genus Lab</span>
-                  <span style={{ color: "#0DF280" }}> Academy</span>
+                  <span className="text-green"> Academy</span>
                 </h2>
                 <div className="max-w-[515px]">
-                  🚀 Dive into expert-led bootcamps and real-world learning
-                  across:
-                  <ul className="list-disc p-[1rem]">
-                    <li>Coding</li>
-                    <li>AI & Machine</li>
-                    <li>Learning Crypto & Blockchain</li>
-                    <li>Digital Marketing</li>
+                  <p>
+                    Dive into expert-led bootcamps and real-world learning
+                    across:
+                  </p>
+                  <ul className="flex flex-col gap-2.5 py-4">
+                    {academySkills.map(({ label, icon: Icon }) => (
+                      <li key={label} className="flex items-center gap-2.5">
+                        <Icon className="shrink-0 text-blue" size={18} />
+                        <span>{label}</span>
+                      </li>
+                    ))}
                   </ul>
-                  ⏰ Next Bootcamp Starts Soon – Spots are limited! <br />
-                  📚 Browse the Curriculum, read Student Reviews, Join Now to
-                  get started.
+                  <p className="flex items-start gap-2">
+                    <MdEventAvailable
+                      className="mt-0.5 shrink-0 text-blue"
+                      size={18}
+                    />
+                    <span>
+                      Next bootcamp starts soon — spots are limited.
+                    </span>
+                  </p>
+                  <p className="mt-2 flex items-start gap-2">
+                    <MdMenuBook className="mt-0.5 shrink-0 text-blue" size={18} />
+                    <span>
+                      Browse the curriculum, read student reviews, and join
+                      now to get started.
+                    </span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -202,15 +246,16 @@ Potential with
                 className="text-center"
                 style={{ fontSize: "clamp(20px,8vw, 40px)" }}
               >
-                <span className="text-blue">🎥 Studio Events</span>
+                <span className="text-blue">Studio Events</span>
               </h2>
-              <p className="max-w-[515px] p-[1rem]">
-                {" "}
-                🎙️ Catch us LIVE from the GenusLab Studio <br />
-                📼 Watch replays of past tech talks, panels, and showcases{" "}
-                <br />
-                🏆 Upcoming PAQC Events:
-              </p>
+              <ul className="flex w-full max-w-[515px] flex-col gap-3 p-[1rem]">
+                {studioHighlights.map(({ label, icon: Icon }) => (
+                  <li key={label} className="flex items-start gap-2.5">
+                    <Icon className="mt-0.5 shrink-0 text-blue" size={18} />
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
           <div className="wrap-reverse flex gap-[1rem] flex-col-reverse    section-md:flex-row  justify-center md:justify-between">
@@ -219,32 +264,31 @@ Potential with
                 className="text-center"
                 style={{ fontSize: "clamp(20px,8vw, 40px)" }}
               >
-                <span className="text-blue">🔍 Job Board –</span>
+                <span className="text-blue">Job Board</span>
               </h2>
-              <p className="max-w-[515px] p-[1rem]">
-                {" "}
-                💼 Browse jobs by category, location, or skill
-                <br />
-                🕒 Filter by full-time, remote, internships, and more
-                <br />
-                📌 Save your favorites and apply directly{" "}
-                <Link href={"#"}>Learn More</Link>.
-              </p>
+              <ul className="flex w-full max-w-[515px] flex-col gap-3 p-[1rem]">
+                {jobBoardHighlights.map(({ label, icon: Icon }) => (
+                  <li key={label} className="flex items-start gap-2.5">
+                    <Icon className="mt-0.5 shrink-0 text-blue" size={18} />
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link href={"#"} className="text-blue underline">
+                Learn more
+              </Link>
             </div>
             <div className="wrap flex gap-[1rem] flex-col section-md:flex-row  justify-center md:justify-between section-md:items-center">
               <div className="img-wrapper w-[100%] md:min-w-[510px] bg-[url(/images/Job.png)] bg-[#0f101188] bg-blend-overlay bg-cover rounded-[30px] bg-top-center section-md:max-w-[605px] aspect-[578/386]">
                 <div className="item-container flex flex-col justify-center h-full p-[1rem]">
                   <div className="item-text-container max-w-[404px]">
                     <h3 className="text-white text-clamp2">
-                      🔎 Find Your Next Opportunity with GenusLab Jobs
+                      Find Your Next Opportunity with GenusLab Jobs
                     </h3>
                     <Link className="text-white underline" href="#">
                       Learn more
                     </Link>
                   </div>
-                  {/* <div className="icon">
-                    <Play width={100} />
-                  </div> */}
                 </div>
               </div>
             </div>

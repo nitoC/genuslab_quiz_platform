@@ -20,6 +20,7 @@ import {
   deleteStudioQuiz,
   CreateStudioQuizInput,
   getEligibleCandidateForMonth,
+  inviteStudioQuizCandidate,
 } from "@/lib/api/apis";
 import toast from "react-hot-toast";
 import {
@@ -59,7 +60,7 @@ const emptyForm: CreateStudioQuizInput = {
   title: "",
   month: currentMonthKey(),
   mediaUrl: "",
-  autoAssignWinners: true,
+  autoAssignWinners: false,
   winnersPerWeek: 3,
 };
 
@@ -132,11 +133,15 @@ const CreateStudioQuizModal = ({
             <label className="text-sm font-medium text-slate-700">Title</label>
             <input
               value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, title: e.target.value }))
+              }
               placeholder="e.g. September Championship"
               className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white"
             />
-            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+            {errors.title && (
+              <p className="text-xs text-red-500">{errors.title}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -145,16 +150,21 @@ const CreateStudioQuizModal = ({
             </label>
             <input
               value={form.month}
-              onChange={(e) => setForm((f) => ({ ...f, month: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, month: e.target.value }))
+              }
               placeholder="09-2026"
               className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white"
             />
-            {errors.month && <p className="text-xs text-red-500">{errors.month}</p>}
+            {errors.month && (
+              <p className="text-xs text-red-500">{errors.month}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-slate-700">
-              Media URL <span className="font-normal text-slate-400">(optional)</span>
+              Media URL{" "}
+              <span className="font-normal text-slate-400">(optional)</span>
             </label>
             <input
               value={form.mediaUrl}
@@ -166,16 +176,23 @@ const CreateStudioQuizModal = ({
             />
           </div>
 
-          <label className="flex items-center gap-2.5 text-sm text-slate-700">
+          <label className="flex items-start gap-2.5 text-sm text-slate-700">
             <input
               type="checkbox"
               checked={form.autoAssignWinners}
               onChange={(e) =>
                 setForm((f) => ({ ...f, autoAssignWinners: e.target.checked }))
               }
-              className="h-4 w-4 rounded border-slate-300"
+              className="mt-0.5 h-4 w-4 rounded border-slate-300"
             />
-            Automatically compile weekly leaderboard winners as the roster
+            <span>
+              Auto-fill the roster with every weekly leaderboard winner
+              <span className="block text-xs font-normal text-slate-400">
+                Leave unchecked (recommended) — invite the previous month's
+                top scorer, or specific people, from the Eligible Candidate
+                card instead.
+              </span>
+            </span>
           </label>
 
           <div className="mt-2 flex justify-end gap-3">
@@ -215,16 +232,10 @@ const previousMonthDate = () => {
   return new Date(now.getFullYear(), now.getMonth() - 1, 1);
 };
 
-/**
- * The top scorer of the online quiz's monthly XP leaderboard is who's
- * eligible to be invited into that month's studio quiz — surfaced here so
- * an admin creating a session knows who to add before going looking for a
- * name on the regular leaderboard page. Defaults to last month (the most
- * recently completed one), with a month picker to check any other month.
- */
 const EligibleCandidateCard = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(previousMonthDate);
   const selectedMonth = monthKey(selectedDate);
+  const [targetQuizId, setTargetQuizId] = useState("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["studio-quiz-eligible-candidate", selectedMonth],
@@ -233,6 +244,42 @@ const EligibleCandidateCard = () => {
       return res?.data?.payload as
         | { monthLabel: string; winner: EligibleCandidate | null }
         | undefined;
+    },
+  });
+
+  // Only sessions not already completed/cancelled are worth inviting
+  // someone to.
+  const { data: openQuizzes } = useQuery({
+    queryKey: ["studio-quiz-invitable-list"],
+    queryFn: async () => {
+      const [upcoming, ongoing] = await Promise.all([
+        getStudioQuizzes({ status: "UPCOMING", limit: 50 }),
+        getStudioQuizzes({ status: "ONGOING", limit: 50 }),
+      ]);
+      return [
+        ...(upcoming?.data?.payload?.data ?? []),
+        ...(ongoing?.data?.payload?.data ?? []),
+      ];
+    },
+  });
+
+  const quizOptions = (openQuizzes ?? []).map((q: any) => ({
+    label: `${q.title} (${q.month})`,
+    value: q.id,
+  }));
+
+  const inviteMutation = useMutation({
+    mutationFn: () =>
+      inviteStudioQuizCandidate(targetQuizId, data!.winner!.userDetailsId),
+    onSuccess: () => {
+      toast.success(
+        `Invite sent to ${data?.winner?.name || "the candidate"}.`,
+      );
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message || "Failed to send invite.",
+      );
     },
   });
 
@@ -291,6 +338,32 @@ const EligibleCandidateCard = () => {
               className="shrink-0 text-slate-300 transition-colors group-hover:text-slate-500"
             />
           </Link>
+        )}
+
+        {data?.winner && (
+          <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center">
+            <div className="w-full sm:w-64">
+              <CustomSelect
+                options={quizOptions}
+                value={targetQuizId}
+                placeholder={
+                  quizOptions.length
+                    ? "Select a studio quiz to invite to"
+                    : "No upcoming/ongoing studio quiz"
+                }
+                disabled={!quizOptions.length}
+                onChange={(value: string) => setTargetQuizId(value)}
+              />
+            </div>
+            <button
+              type="button"
+              disabled={!targetQuizId || inviteMutation.isPending}
+              onClick={() => inviteMutation.mutate()}
+              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              {inviteMutation.isPending ? "Sending..." : "Send Invite"}
+            </button>
+          </div>
         )}
       </div>
     </AdminCard>
@@ -424,7 +497,9 @@ export default function StudioQuizzesPage() {
         confirmLabel="Delete"
         loading={deleteMutation.isPending}
         onCancel={() => setPendingDelete(null)}
-        onConfirm={() => pendingDelete && deleteMutation.mutate(pendingDelete.id)}
+        onConfirm={() =>
+          pendingDelete && deleteMutation.mutate(pendingDelete.id)
+        }
       />
 
       <AdminCard className="flex flex-col sm:flex-row gap-3">
@@ -444,7 +519,10 @@ export default function StudioQuizzesPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-44 animate-pulse rounded-2xl bg-slate-100" />
+            <div
+              key={i}
+              className="h-44 animate-pulse rounded-2xl bg-slate-100"
+            />
           ))}
         </div>
       ) : isError ? (
@@ -510,7 +588,11 @@ export default function StudioQuizzesPage() {
 
       {meta && meta.totalPages > 1 && (
         <AdminCard className="p-0">
-          <AdminPagination meta={meta} onPageChange={setPage} itemLabel="studio quizzes" />
+          <AdminPagination
+            meta={meta}
+            onPageChange={setPage}
+            itemLabel="studio quizzes"
+          />
         </AdminCard>
       )}
     </div>

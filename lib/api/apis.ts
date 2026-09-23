@@ -165,6 +165,31 @@ export const getRankData = async () => {
   return res;
 };
 
+export const getRankById = async (rankId: string) => {
+  const res = await axiosUser.get(`rank/${rankId}`);
+
+  return res;
+};
+
+export const getRankLeaderboard = async (rankId: string, limit = 20) => {
+  const res = await axiosUser.get(
+    `leaderboard/xp/rank/${rankId}?limit=${limit}`,
+  );
+
+  return res;
+};
+
+export const getRankUserPosition = async (
+  rankId: string,
+  userDetailsId: string,
+) => {
+  const res = await axiosUser.get(
+    `leaderboard/xp/rank/${rankId}/${userDetailsId}`,
+  );
+
+  return res;
+};
+
 export const getQuizSession = async (id: string, userDetailsId: string) => {
   const res = await axiosUser.get(`quiz/session/${id}?did=${userDetailsId}`);
 
@@ -1018,6 +1043,56 @@ export const uploadStudioQuizResults = async (
   },
 ) => {
   const res = await axiosAdmin.post(`studio-quiz/${id}/results`, payload);
+  return res;
+};
+
+/** Invite an eligible candidate to a specific, already-created studio
+ * quiz — sends them an email + in-app notification to accept. */
+export const inviteStudioQuizCandidate = async (
+  id: string,
+  userDetailsId: string,
+) => {
+  const res = await axiosAdmin.post(`studio-quiz/${id}/invite`, {
+    userDetailsId,
+  });
+  return res;
+};
+
+/** Public — powers the accept/decline page reached from the invite email. */
+export const getStudioQuizInviteByToken = async (token: string) => {
+  const res = await axiosSystem.get(`studio-quiz/invite/${token}`);
+  return res;
+};
+
+export const acceptStudioQuizInvite = async (token: string) => {
+  const res = await axiosSystem.post(`studio-quiz/invite/${token}/accept`);
+  return res;
+};
+
+export const declineStudioQuizInvite = async (token: string) => {
+  const res = await axiosSystem.post(`studio-quiz/invite/${token}/decline`);
+  return res;
+};
+
+export interface StudioQuizQuestionInput {
+  question: string;
+  options: string[];
+  answer: string;
+}
+
+export const getStudioQuizQuestions = async (id: string) => {
+  const res = await axiosAdmin.get(`studio-quiz/${id}/questions`);
+  return res;
+};
+
+/** Uploads (replaces) the full 10-question set for a studio quiz. */
+export const uploadStudioQuizQuestions = async (
+  id: string,
+  questions: StudioQuizQuestionInput[],
+) => {
+  const res = await axiosAdmin.post(`studio-quiz/${id}/questions`, {
+    questions,
+  });
   return res;
 };
 

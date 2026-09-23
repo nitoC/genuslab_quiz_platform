@@ -2,36 +2,37 @@ const Gradient = ({
   heading,
   text,
   Icon,
-  active,
+  accent = "#3A94FF",
 }: {
   heading: string;
   text: string;
   Icon?: any;
-  active?: boolean;
+  accent?: string;
 }) => {
   return (
     <div
-      className={`bg-gradient-to-r w-[300px] from-purple-400 via-pink-500 to-blue-500 p-[2px] rounded-[20px] shadow-lg ${
-        active ? "md:scale-120 z-10" : ""
-      }`}
+      className="w-[300px] rounded-[18px] border border-gray-100 bg-white p-6 text-center shadow-sm transition-shadow duration-200 hover:shadow-md md:p-8"
+      style={{ borderTop: `3px solid ${accent}` }}
     >
-      <div className="bg-[#E6FAF9] rounded-[18px] p-6 md:p-8 text-center h-full">
-        <div className="flex justify-center mb-4">
-          {/* Replace with actual icon if available */}
+      {Icon && (
+        <div
+          className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+          style={{ backgroundColor: `${accent}1A` }}
+        >
           {Icon}
-          {/* <span className="text-xl">👥</span> */}
         </div>
-        <h3 className="text-xl font-black mb-3 text-black">{heading}</h3>
-        <p className="text-sm text-gray-800 leading-relaxed">
-          {text}
-          <a
-            href="#"
-            className="text-blue-600 font-medium ml-1 underline whitespace-nowrap"
-          >
-            Learn more
-          </a>
-        </p>
-      </div>
+      )}
+      <h3 className="text-xl font-bold mb-3 text-[#080820]">{heading}</h3>
+      <p className="text-sm text-gray-600 leading-relaxed">
+        {text}
+        <a
+          href="#"
+          className="ml-1 whitespace-nowrap font-medium underline"
+          style={{ color: accent }}
+        >
+          Learn more
+        </a>
+      </p>
     </div>
   );
 };

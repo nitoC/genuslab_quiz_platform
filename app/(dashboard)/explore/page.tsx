@@ -335,7 +335,7 @@ const ExploralPage = () => {
 
   const handleRankModal = (payload: (typeof filteredRanks)[0]) => {
     if (payload.status === "unlocked") {
-      return router.push("/explore/rank?rank=" + payload.rank);
+      return router.push(`/explore/rank/${payload.id}`);
     }
     setrankData({
       show: !rankData.show,

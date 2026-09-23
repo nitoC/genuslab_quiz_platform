@@ -4,12 +4,31 @@ import CustomInput from "@/components/ui/FormItems/CustomInput";
 import PasswordInput from "@/components/ui/FormItems/PasswordInput";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/api/apis";
 import { toast } from "react-toastify";
 import { useUser } from "@/store/useUser";
+
+const REMEMBERED_EMAIL_KEY = "genuslab_remembered_email";
+const REMEMBER_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+const readRememberedEmail = (): string | null => {
+  try {
+    const raw = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if (!raw) return null;
+
+    const { email, expiresAt } = JSON.parse(raw);
+    if (!email || !expiresAt || Date.now() > expiresAt) {
+      localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+      return null;
+    }
+    return email;
+  } catch {
+    return null;
+  }
+};
 
 const LoginPage = () => {
   const router = useRouter();
@@ -17,6 +36,16 @@ const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(false);
+
+  // Pre-fill the remembered email (if any, and not yet expired) on first
+  // load — read from localStorage only client-side, after mount.
+  useEffect(() => {
+    const rememberedEmail = readRememberedEmail();
+    if (rememberedEmail) {
+      setForm((prev) => ({ ...prev, email: rememberedEmail }));
+      setRemember(true);
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -72,6 +101,19 @@ const LoginPage = () => {
         // localStorage.setItem("user", JSON.stringify(userData));
         console.log("User payload:", resp.data.payload);
         user(resp.data.payload);
+
+        if (remember) {
+          localStorage.setItem(
+            REMEMBERED_EMAIL_KEY,
+            JSON.stringify({
+              email: form.email,
+              expiresAt: Date.now() + REMEMBER_DURATION_MS,
+            }),
+          );
+        } else {
+          localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+        }
+
         toast.success("Logged in successfully");
         router.push("/dashboard");
       }
@@ -153,23 +195,25 @@ const LoginPage = () => {
                   showRequirements={false}
                 />
 
-                <p className="mt-2 text-sm flex items-center justify-between">
-                  <label className="flex items-center gap-3 text-sm">
+                <div className="mt-2 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                  <label className="flex items-center gap-2 text-sm">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 accent-primary"
+                      className="h-4 w-4 shrink-0 accent-primary"
                       checked={remember}
                       onChange={() => setRemember(!remember)}
                     />
-                    <span>Remember for 30 days</span>
+                    <span className="whitespace-nowrap">
+                      Remember for 30 days
+                    </span>
                   </label>
                   <Link
                     href="/forgot-password"
-                    className="font-medium text-blue"
+                    className="font-medium text-blue whitespace-nowrap"
                   >
                     Forgot password?
                   </Link>
-                </p>
+                </div>
 
                 <button
                   type="submit"

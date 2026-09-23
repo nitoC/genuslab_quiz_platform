@@ -15,6 +15,9 @@ import {
   removeStudioQuizParticipant,
   uploadStudioQuizResults,
   getAdminUsers,
+  getStudioQuizQuestions,
+  uploadStudioQuizQuestions,
+  StudioQuizQuestionInput,
 } from "@/lib/api/apis";
 import { cn } from "@/lib/utils/cn";
 import toast from "react-hot-toast";
@@ -35,6 +38,15 @@ const STATUS_BADGE: Record<string, BadgeStatus> = {
   CANCELLED: "inactive",
 };
 
+const INVITE_STATUS_BADGE: Record<string, BadgeStatus> = {
+  PENDING: "warning",
+  INVITED: "warning",
+  ACCEPTED: "success",
+  DECLINED: "error",
+  WITHDRAWN: "inactive",
+  EXPIRED: "inactive",
+};
+
 const STATUS_OPTIONS = [
   { label: "Upcoming", value: "UPCOMING" },
   { label: "Ongoing", value: "ONGOING" },
@@ -45,6 +57,7 @@ const STATUS_OPTIONS = [
 const TABS = [
   { key: "overview", label: "Overview" },
   { key: "participants", label: "Participants" },
+  { key: "questions", label: "Questions" },
   { key: "results", label: "Results" },
   { key: "payouts", label: "Payouts" },
 ] as const;
@@ -386,13 +399,14 @@ export default function StudioQuizDetailPage() {
                     <th className="px-6 py-3.5 font-bold text-right">Position</th>
                     <th className="px-6 py-3.5 font-bold text-right">Score</th>
                     <th className="px-6 py-3.5 font-bold">Source</th>
+                    <th className="px-6 py-3.5 font-bold">Invite Status</th>
                     <th className="px-6 py-3.5 font-bold text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {participants.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-14 text-center text-slate-400">
+                      <td colSpan={7} className="px-6 py-14 text-center text-slate-400">
                         No participants on the roster yet.
                       </td>
                     </tr>
@@ -407,7 +421,7 @@ export default function StudioQuizDetailPage() {
                             {p.userDetails?.user?.email}
                           </p>
                         </td>
-                        <td className="px-6 py-4 text-slate-500">{p.week}</td>
+                        <td className="px-6 py-4 text-slate-500">{p.week ?? "—"}</td>
                         <td className="font-data px-6 py-4 text-right text-slate-600">
                           #{p.position}
                         </td>
@@ -417,6 +431,11 @@ export default function StudioQuizDetailPage() {
                         <td className="px-6 py-4">
                           <Badge status={p.isManual ? "warning" : "info"}>
                             {p.isManual ? "Manually Added" : "Auto-Selected"}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge status={INVITE_STATUS_BADGE[p.inviteStatus] || "inactive"}>
+                            {p.inviteStatus}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -443,6 +462,8 @@ export default function StudioQuizDetailPage() {
           </AdminCard>
         </div>
       )}
+
+      {tab === "questions" && <QuestionsTab studioQuizId={studioQuizId} />}
 
       {tab === "results" && (
         <div className="flex flex-col gap-4">
@@ -601,6 +622,188 @@ export default function StudioQuizDetailPage() {
     </div>
   );
 }
+
+const EMPTY_QUESTION: StudioQuizQuestionInput = {
+  question: "",
+  options: ["", "", "", ""],
+  answer: "",
+};
+
+const QUESTION_COUNT = 10;
+
+const QuestionsTab = ({ studioQuizId }: { studioQuizId: string }) => {
+  const queryClient = useQueryClient();
+  const [rows, setRows] = useState<StudioQuizQuestionInput[]>(
+    Array.from({ length: QUESTION_COUNT }, () => ({ ...EMPTY_QUESTION })),
+  );
+  const [hydrated, setHydrated] = useState(false);
+
+  const { data: existing, isLoading } = useQuery({
+    queryKey: ["admin-studio-quiz-questions", studioQuizId],
+    enabled: !!studioQuizId,
+    queryFn: async () => {
+      const res = await getStudioQuizQuestions(studioQuizId);
+      return res?.data?.payload as
+        | { question: string; options: string[]; answer: string }[]
+        | undefined;
+    },
+  });
+
+  // Seed the form from whatever's already saved, once, the first time it loads.
+  if (!hydrated && existing) {
+    if (existing.length === QUESTION_COUNT) {
+      setRows(
+        existing.map((q) => ({
+          question: q.question,
+          options: q.options,
+          answer: q.answer,
+        })),
+      );
+    }
+    setHydrated(true);
+  }
+
+  const updateRow = (index: number, patch: Partial<StudioQuizQuestionInput>) => {
+    setRows((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, ...patch } : row)),
+    );
+  };
+
+  const updateOption = (rowIndex: number, optIndex: number, value: string) => {
+    setRows((prev) =>
+      prev.map((row, i) => {
+        if (i !== rowIndex) return row;
+        const options = [...row.options];
+        const prevValue = options[optIndex];
+        options[optIndex] = value;
+        // Keep the selected answer in sync if the option text it pointed to
+        // just changed.
+        const answer = row.answer === prevValue ? value : row.answer;
+        return { ...row, options, answer };
+      }),
+    );
+  };
+
+  const mutation = useMutation({
+    mutationFn: () => uploadStudioQuizQuestions(studioQuizId, rows),
+    onSuccess: () => {
+      toast.success("Questions saved.");
+      queryClient.invalidateQueries({
+        queryKey: ["admin-studio-quiz-questions", studioQuizId],
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to save questions.");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row.question.trim()) {
+        toast.error(`Question ${i + 1} is missing its text.`);
+        return;
+      }
+      const filledOptions = row.options.filter((o) => o.trim());
+      if (filledOptions.length < 2) {
+        toast.error(`Question ${i + 1} needs at least 2 options.`);
+        return;
+      }
+      if (!row.answer.trim() || !row.options.includes(row.answer)) {
+        toast.error(`Question ${i + 1} needs a correct answer selected.`);
+        return;
+      }
+    }
+
+    mutation.mutate();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-32 animate-pulse rounded-2xl bg-slate-100" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <AdminCard className="flex items-center justify-between">
+        <p className="text-sm text-slate-500">
+          Every studio quiz needs exactly {QUESTION_COUNT} questions. Fill in
+          all {QUESTION_COUNT} below, then save.
+        </p>
+        <button
+          type="submit"
+          disabled={mutation.isPending}
+          className="shrink-0 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {mutation.isPending ? "Saving..." : "Save Questions"}
+        </button>
+      </AdminCard>
+
+      {rows.map((row, index) => (
+        <AdminCard key={index} className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">
+              {index + 1}
+            </span>
+            <input
+              value={row.question}
+              onChange={(e) => updateRow(index, { question: e.target.value })}
+              placeholder={`Question ${index + 1}`}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-blue-400 focus:bg-white"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 pl-8">
+            {row.options.map((opt, optIndex) => (
+              <label
+                key={optIndex}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-xl border px-3.5 py-2.5 transition-colors",
+                  row.answer && row.answer === opt && opt.trim()
+                    ? "border-emerald-300 bg-emerald-50"
+                    : "border-slate-200 bg-slate-50",
+                )}
+              >
+                <input
+                  type="radio"
+                  name={`answer-${index}`}
+                  checked={!!opt.trim() && row.answer === opt}
+                  disabled={!opt.trim()}
+                  onChange={() => updateRow(index, { answer: opt })}
+                  className="h-4 w-4 shrink-0"
+                  aria-label={`Mark option ${optIndex + 1} as the correct answer`}
+                />
+                <input
+                  value={opt}
+                  onChange={(e) => updateOption(index, optIndex, e.target.value)}
+                  placeholder={`Option ${optIndex + 1}`}
+                  className="w-full bg-transparent text-sm outline-none"
+                />
+              </label>
+            ))}
+          </div>
+        </AdminCard>
+      ))}
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={mutation.isPending}
+          className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {mutation.isPending ? "Saving..." : "Save Questions"}
+        </button>
+      </div>
+    </form>
+  );
+};
 
 const AddParticipantForm = ({
   studioQuizId,

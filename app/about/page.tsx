@@ -28,8 +28,14 @@ const pillars = [
 ];
 
 const stats = [
-  { value: "₦15K+", label: "Paid out daily to top quiz performers" },
-  { value: "5 min", label: "Per live episode — speed matters as much as accuracy" },
+  {
+    value: "₦15K",
+    label: "Paid out daily to the top 3, per quiz episode performers",
+  },
+  {
+    value: "5 min",
+    label: "Per live episode — speed matters as much as accuracy",
+  },
   { value: "₦1K", label: "Referral reward per active Premium invite" },
 ];
 
@@ -60,11 +66,10 @@ export default function AboutPage() {
                 Learn. Compete. Get paid to grow.
               </h1>
               <p className="mt-5 max-w-md text-base leading-relaxed text-gray-600">
-                GenusLab is a tech learning and quiz platform built for
-                people who want proof of what they know, not just another
-                course. We turn practical knowledge into real opportunities —
-                bootcamps, live competitions, and cash rewards, all in one
-                place.
+                GenusLab is a tech learning and quiz platform built for people
+                who want proof of what they know, not just another course. We
+                turn practical knowledge into real opportunities — bootcamps,
+                live competitions, and cash rewards, all in one place.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
@@ -181,8 +186,8 @@ export default function AboutPage() {
             Ready to see where you rank?
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-gray-600">
-            Try a free demo quiz, or subscribe to join live episodes and
-            start competing for real prizes.
+            Try a free demo quiz, or subscribe to join live episodes and start
+            competing for real prizes.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

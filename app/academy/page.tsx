@@ -223,8 +223,8 @@ export default function AcademyPage() {
               Academy Course Levels
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-gray-600">
-              Progress through 20 structured levels — from digital foundations
-              to technology leadership.
+              Progress through 20 structured level, from digital foundations to
+              technology leadership.
             </p>
           </div>
 
