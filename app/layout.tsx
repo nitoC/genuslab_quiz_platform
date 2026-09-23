@@ -35,7 +35,7 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
 });
 export const metadata: Metadata = {
-  title: "Genus Lab",
+  title: "Genuslab academy",
   description:
     "Genuslab Academy is an interactive learning and quiz platform where you can test your knowledge, build practical digital skills, compete in quizzes, earn rewards, and grow through structured technology education. Join today and start your journey from learning to earning.",
   icons: {
