@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import useSidebar from "@/store/useSidebar";
 import { useUser as useUserStore } from "@/store/useUser";
-import { getUserProfile, getNotifications, logout } from "@/lib/api/apis";
+import {
+  getAdminOwnProfile,
+  getAdminNotifications,
+  adminLogout,
+} from "@/lib/api/apis";
 import clsx from "clsx";
 import {
   MdMenu,
@@ -38,7 +42,7 @@ const AdminTopbar = () => {
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const res = await getUserProfile(userId as string);
+      const res = await getAdminOwnProfile(userId as string);
       return res.data.user;
     },
   });
@@ -48,7 +52,7 @@ const AdminTopbar = () => {
     enabled: !!userId,
     refetchInterval: 60_000,
     queryFn: async () => {
-      const res = await getNotifications("unread");
+      const res = await getAdminNotifications("unread");
       const payload = res.data?.payload ?? res.data ?? [];
       return Array.isArray(payload) ? payload.length : 0;
     },
@@ -68,7 +72,7 @@ const AdminTopbar = () => {
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      await logout();
+      await adminLogout();
     } catch {
       // ignore — proceed with client-side cleanup regardless
     } finally {

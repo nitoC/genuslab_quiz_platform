@@ -45,6 +45,16 @@ export default function LoginPage() {
         updateUser(res.data.payload);
         toast.success("admin Login successful!");
 
+        // A forced password change takes priority over the normal landing
+        // page — the account was just created with a temporary/generated
+        // password that shouldn't stay usable past this first login.
+        if (res.data.payload.mustChangePassword) {
+          setTimeout(() => {
+            router.push("/genuslab/change-password?first=true");
+          }, 1500);
+          return;
+        }
+
         // Accountant/Support don't have Dashboard access — land them on the
         // first page their role can actually see.
         const landingPage =

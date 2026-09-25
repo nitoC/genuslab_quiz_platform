@@ -67,6 +67,18 @@ export const getNotifications = async (query?: "read" | "unread") => {
   return res;
 };
 
+// Admin-console variant of getNotifications — same route, but issued via
+// axiosAdmin so that if the request 401s on an expired token, the axiosAdmin
+// response interceptor's failure redirect sends the browser to
+// /genuslab/admin instead of the regular user /login page. Used by
+// AdminTopbar, which fires this unconditionally on every admin page load.
+export const getAdminNotifications = async (query?: "read" | "unread") => {
+  const res = await axiosAdmin.get(
+    `notification?${query ? `type=${query}` : ""}`,
+  );
+  return res;
+};
+
 export const markNotificationAsRead = async (id: string) => {
   const res = await axiosUser.patch(`notification/mark-as-read/${id}`);
   console.log(res, "mark notification as read response");
@@ -116,6 +128,15 @@ export const logout = async () => {
   return res;
 };
 
+// Admin-console logout — same route, but issued via axiosAdmin so that if
+// the logout request itself 401s (e.g. an already-expired session), the
+// axiosAdmin response interceptor's failure redirect sends the browser to
+// /genuslab/admin instead of the regular user /login page.
+export const adminLogout = async () => {
+  const res = await axiosAdmin.delete("auth/logout");
+  return res;
+};
+
 export const resetPassword = async (password: string, token: string) => {
   const res = await axiosUser.patch("auth/reset-password", {
     password,
@@ -126,6 +147,15 @@ export const resetPassword = async (password: string, token: string) => {
 
 export const getUserProfile = async (id: string) => {
   const res = await axiosUser.get(`user/profile/${id}`);
+  return res;
+};
+
+// Admin-console variant of getUserProfile — same route, but issued via
+// axiosAdmin so a 401 on an expired token redirects to /genuslab/admin
+// instead of /login. Used by AdminTopbar, which fires this unconditionally
+// on every admin page load.
+export const getAdminOwnProfile = async (id: string) => {
+  const res = await axiosAdmin.get(`user/profile/${id}`);
   return res;
 };
 
@@ -704,8 +734,12 @@ export const deleteBankAccount = async (id: string) => {
 
 //system endpoints
 //SYSTEM ENDPOINTS
+// Was pointed at "system/activity-details", which doesn't exist on the
+// backend (that controller only has /time, /quiz-slots, /episode-slots,
+// /next-quiz) — every call 404'd. The real endpoint, returning
+// { pastDay, currentDay }, lives on the quiz controller.
 export const getQuizDay = async () => {
-  const res = await axiosAdmin.get("system/activity-details");
+  const res = await axiosAdmin.get("quiz/activity-details");
   return res;
 };
 
@@ -790,6 +824,41 @@ export const updateAdminRank = async (
 
 export const deleteAdminRank = async (id: string) => {
   const res = await axiosAdmin.delete(`rank/admin/${id}`);
+  return res;
+};
+
+export const getAdminRewardSummary = async () => {
+  const res = await axiosAdmin.get("admin/rewards/summary");
+  return res;
+};
+
+export const getAdminRewards = async (params?: {
+  search?: string;
+  status?: "claimed" | "unclaimed";
+  source?: "QUIZ" | "REFERRAL" | "RANK_UNLOCK";
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("admin/rewards", { params });
+  return res;
+};
+
+export const updateAdminReward = async (
+  id: string,
+  payload: { claimed: boolean; notes: string },
+) => {
+  const res = await axiosAdmin.patch(`admin/rewards/${id}`, payload);
+  return res;
+};
+
+export const getAdminAuditLogs = async (params?: {
+  entity?: string;
+  entityId?: string;
+  actorId?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("admin/audit-logs", { params });
   return res;
 };
 
@@ -997,30 +1066,39 @@ export const getStudioQuizWinnersForMonth = async (
 };
 
 /** Top scorer on the ONLINE quiz's monthly leaderboard for the previous
- * month — the eligible candidate for that month's studio quiz. */
+ * month — the eligible candidate for that month's studio quiz. Admin-console
+ * route (Admin JWT) — the mobile app uses the separate client-key-guarded
+ * `studio-quiz/eligible-candidate/previous-month` route instead. */
 export const getPreviousMonthEligibleCandidate = async () => {
   const res = await axiosAdmin.get(
-    "studio-quiz/eligible-candidate/previous-month",
+    "studio-quiz/admin/eligible-candidate/previous-month",
   );
   return res;
 };
 
 /** Top scorer on the online quiz's monthly leaderboard for any month
- * (MM-yyyy) — the eligible candidate for that month's studio quiz. */
+ * (MM-yyyy) — the eligible candidate for that month's studio quiz.
+ * Admin-console route (Admin JWT) — the mobile app uses the separate
+ * client-key-guarded `studio-quiz/eligible-candidate/month/:month` route
+ * instead. */
 export const getEligibleCandidateForMonth = async (month: string) => {
   const res = await axiosAdmin.get(
-    `studio-quiz/eligible-candidate/month/${month}`,
+    `studio-quiz/admin/eligible-candidate/month/${month}`,
   );
   return res;
 };
 
+/** Admin-console route (Admin JWT) — the mobile app uses the separate
+ * client-key-guarded `studio-quiz/participants/month/:month` route
+ * instead. */
 export const getStudioQuizParticipantsForMonth = async (
   month: string,
   winnersPerWeek?: number,
 ) => {
-  const res = await axiosAdmin.get(`studio-quiz/participants/month/${month}`, {
-    params: { winnersPerWeek },
-  });
+  const res = await axiosAdmin.get(
+    `studio-quiz/admin/participants/month/${month}`,
+    { params: { winnersPerWeek } },
+  );
   return res;
 };
 
@@ -1159,8 +1237,22 @@ export const createAdminSubAdmin = async (data: {
   email: string;
   password: string;
   role: "USER" | "ACCOUNTANT" | "SUPPORT";
+  requirePasswordChange?: boolean;
 }) => {
   const res = await axiosAdmin.post("admin/subadmins", data);
+  return res;
+};
+
+export const deleteAdminSubAdmin = async (id: string) => {
+  const res = await axiosAdmin.delete(`admin/subadmins/${id}`);
+  return res;
+};
+
+export const changePassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  const res = await axiosAdmin.patch("auth/change-password", data);
   return res;
 };
 

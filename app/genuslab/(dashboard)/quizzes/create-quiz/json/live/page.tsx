@@ -6,7 +6,8 @@ import IntegrationWorkflow from "@/features/quiz/components/IntegrationWorkflow"
 import BatchSummary from "@/features/quiz/components/BatchSummary";
 import DataReferenceGuide from "@/features/quiz/components/DataReferenceGuide";
 import LiveQuizPreview from "@/features/quiz/components/LiveQuizPreview";
-import { createQuiz, createQuizBatch } from "@/lib/api/apis";
+import { createQuiz, createQuizBatch, getQuizDay } from "@/lib/api/apis";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import useRank from "@/hooks/useRank";
@@ -41,6 +42,19 @@ export interface QuizObject {
 
 export default function BulkQuizCreator() {
   const { data, isLoading, isError, error } = useRank();
+
+  // The "day" counter every quiz's `day` field must satisfy (> currentDay -
+  // 2 for a batch to be accepted) — surfaced so admins don't have to guess
+  // or hit a 409 to find out what value is safe to use.
+  const { data: dayInfo } = useQuery({
+    queryKey: ["quiz-activity-details"],
+    queryFn: async () => {
+      const res = await getQuizDay();
+      return res?.data?.payload as
+        | { pastDay: number; currentDay: number; nextDay: number }
+        | undefined;
+    },
+  });
 
   //  Safely handle activeRank state initialization when data is undefined
   const [activeRank, setActiveRank] = useState<Rank | null>(null);
@@ -195,6 +209,23 @@ export default function BulkQuizCreator() {
             of questions.
           </p>
         </div>
+
+        {/* Previous / available-now / next day — same styling as the quiz
+            edit page. dayInfo.currentDay is the value that's safe to use
+            right now in each quiz object's `day` field. */}
+        {dayInfo && (
+          <div className="flex flex-wrap gap-8">
+            <h3 className="text-[1.1rem] text-red-400">
+              Previous Day: {dayInfo.pastDay}
+            </h3>
+            <h3 className="text-[1.1rem] text-blue-400">
+              Available Day (use now): {dayInfo.currentDay}
+            </h3>
+            <h3 className="text-[1.1rem] text-emerald-500">
+              Next Day: {dayInfo.nextDay}
+            </h3>
+          </div>
+        )}
 
         {/* Activation Configuration Field Block */}
         <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">

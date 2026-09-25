@@ -20,6 +20,8 @@ import {
   MdOutlineDevices,
   MdSettings,
   MdAdminPanelSettings,
+  MdCardGiftcard,
+  MdHistory,
 } from "react-icons/md";
 import useAdminRole from "@/hooks/useAdminRole";
 
@@ -66,6 +68,12 @@ const navLinks = [
     roles: ["ADMIN", "ACCOUNTANT"],
   },
   {
+    label: "Rewards",
+    href: "/genuslab/rewards",
+    icon: MdCardGiftcard,
+    roles: ["ADMIN", "ACCOUNTANT"],
+  },
+  {
     label: "Finance & Banks",
     href: "/genuslab/finance",
     icon: MdAccountBalance,
@@ -100,6 +108,12 @@ const navLinks = [
     href: "/genuslab/subadmins",
     icon: MdAdminPanelSettings,
     roles: ["ADMIN"],
+  },
+  {
+    label: "Audit Log",
+    href: "/genuslab/audit-log",
+    icon: MdHistory,
+    roles: ["ADMIN", "ACCOUNTANT"],
   },
   {
     label: "Settings",

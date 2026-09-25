@@ -58,6 +58,37 @@ export default function JsonInputCanvas({
     ? selectedRank.topics.filter((t: unknown): t is string => typeof t === "string")
     : [];
 
+  // Writes the dropdown selections into every question object already
+  // pasted in the textarea, so what's submitted is exactly what's shown —
+  // not a silent fallback applied only at submit time. Leaves the textarea
+  // untouched if it's empty or not valid JSON yet, so it never clobbers a
+  // payload the admin is still mid-edit on.
+  const applyDropdownValuesToJson = (nextRank: string, nextTopic: string) => {
+    if (!jsonText.trim()) return;
+
+    let parsed: any;
+    try {
+      parsed = JSON.parse(jsonText);
+    } catch {
+      return;
+    }
+    if (!Array.isArray(parsed)) return;
+
+    const updated = parsed.map((q: any) => {
+      const next = { ...q };
+      if (nextRank) {
+        next.rankId = nextRank;
+      }
+      if (nextTopic) {
+        next.topic = nextTopic;
+      } else {
+        delete next.topic;
+      }
+      return next;
+    });
+    setJsonText(JSON.stringify(updated, null, 2));
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -126,6 +157,7 @@ export default function JsonInputCanvas({
                 // Topics are scoped per rank — a topic chosen for the
                 // previous rank won't necessarily be valid for the new one.
                 setQuestionTopic("");
+                applyDropdownValuesToJson(value, "");
               }}
               placeholder="Select Rank"
               ariaLabel="Question Rank"
@@ -150,7 +182,10 @@ export default function JsonInputCanvas({
             </label>
             <CustomSelect
               value={questionTopic}
-              onChange={(value: string) => setQuestionTopic(value)}
+              onChange={(value: string) => {
+                setQuestionTopic(value);
+                applyDropdownValuesToJson(questionRank, value);
+              }}
               disabled={topicOptions.length === 0}
               placeholder={topicOptions.length ? "Select Topic" : "Select a rank first"}
               ariaLabel="Question Topic"
