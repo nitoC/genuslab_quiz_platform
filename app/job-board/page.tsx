@@ -44,7 +44,7 @@ export default function JobBoardPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-gray-600">
             We're building a job board that connects GenusLab Academy
-            graduates and quiz champions directly with hiring partners —
+            graduates and quiz champions directly with hiring partners,
             filterable by role, location, and skill. It isn't live yet, but
             it's coming.
           </p>

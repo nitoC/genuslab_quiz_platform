@@ -635,7 +635,7 @@ const sections: PolicySection[] = [
     body: (
       <p>
         For questions, complaints, payment issues, account issues, or enquiries
-        regarding these Terms, contact Genuslab Technologies — Genuslab Academy,
+        regarding these Terms, contact Genuslab Technologies, Genuslab Academy,
         Abuja, Nigeria. Website:{" "}
         <a href="https://genuslabacademy.com" className="font-medium text-blue">
           genuslabacademy.com

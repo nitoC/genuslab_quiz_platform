@@ -25,7 +25,7 @@ const faqGroups: { category: string; icon: IconType; items: { q: string; a: stri
       },
       {
         q: "What's the difference between a demo and a live quiz?",
-        a: "A demo quiz is unlimited practice — it doesn't affect your XP, rank, or rewards. A live quiz runs on a fixed schedule, counts toward the leaderboard, and is where prize pools are won.",
+        a: "A demo quiz is unlimited practice, it doesn't affect your XP, rank, or rewards. A live quiz runs on a fixed schedule, counts toward the leaderboard, and is where prize pools are won.",
       },
       {
         q: "Do I need to subscribe to play?",
@@ -64,7 +64,7 @@ const faqGroups: { category: string; icon: IconType; items: { q: string; a: stri
         a: "Subscription payments are generally non-refundable once access has been activated and used, since digital access begins immediately after payment. Refunds may be considered for duplicate charges, a technical error causing an incorrect charge, or where GenusLab cancels a paid service before it starts. See our Terms & Conditions for the full refund policy.",
       },
       {
-        q: "I was charged twice, or my payment failed but I was still charged — what do I do?",
+        q: "I was charged twice, or my payment failed but I was still charged. What do I do?",
         a: "Contact support with your full name, registered account details, transaction reference, payment date, amount charged, and proof of payment, and we'll investigate with our payment processing partner.",
       },
     ],
@@ -83,7 +83,7 @@ const faqGroups: { category: string; icon: IconType; items: { q: string; a: stri
       },
       {
         q: "Do I need Premium to earn referral rewards?",
-        a: "Yes — referral cash rewards are available to Premium subscribers only. Non-subscribers can still invite friends, but won't earn the cash bonus until they subscribe. Rewards may be cancelled if referral activity involves fake accounts or other fraud.",
+        a: "Yes, referral cash rewards are available to Premium subscribers only. Non-subscribers can still invite friends, but won't earn the cash bonus until they subscribe. Rewards may be cancelled if referral activity involves fake accounts or other fraud.",
       },
     ],
   },

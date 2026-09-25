@@ -13,7 +13,7 @@ const pillars = [
   {
     icon: <GradCap />,
     title: "Learn",
-    body: "Expert-led bootcamps in coding, AI, blockchain, and digital marketing — designed to get you job-ready, not just certificate-ready.",
+    body: "Expert-led bootcamps in coding, AI, blockchain, and digital marketing, designed to get you job-ready, not just certificate-ready.",
   },
   {
     icon: <Trophy />,
@@ -34,7 +34,7 @@ const stats = [
   },
   {
     value: "5 min",
-    label: "Per live episode — speed matters as much as accuracy",
+    label: "Per live episode, speed matters as much as accuracy",
   },
   { value: "₦1K", label: "Referral reward per active Premium invite" },
 ];
@@ -68,7 +68,7 @@ export default function AboutPage() {
               <p className="mt-5 max-w-md text-base leading-relaxed text-gray-600">
                 GenusLab is a tech learning and quiz platform built for people
                 who want proof of what they know, not just another course. We
-                turn practical knowledge into real opportunities — bootcamps,
+                turn practical knowledge into real opportunities: bootcamps,
                 live competitions, and cash rewards, all in one place.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
@@ -168,7 +168,7 @@ export default function AboutPage() {
               </h2>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-600">
                 Too many talented people are stuck waiting for a "big break"
-                that never comes. GenusLab exists to shorten that wait —
+                that never comes. GenusLab exists to shorten that wait by
                 connecting learning directly to income, and giving anyone who
                 shows up and competes a genuine shot at being recognized and
                 rewarded for it.

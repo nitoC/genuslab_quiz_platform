@@ -11,10 +11,18 @@ import {
   FaLinkedinIn,
 } from "react-icons/fa6";
 
-const footerLinks = [
+const quickLinks = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Academy", href: "/academy" },
+  { label: "Job Board", href: "/job-board" },
+  { label: "FAQ", href: "/faq" },
+];
+
+const legalLinks = [
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms of Service", href: "/terms-of-service" },
-  { label: "FAQ", href: "/faq" },
+  { label: "Refund Policy", href: "/refund-policy" },
 ];
 
 const socialLinks = [
@@ -54,9 +62,9 @@ export default function Footer() {
   return (
     <footer className="bg-[#F5F8FC] text-gray-700">
       {/* top section */}
-      <div className="mx-auto flex max-w-7xl flex-col gap-12 px-4 py-20 md:flex-row md:items-start md:justify-between">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-20 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
         {/* brand + newsletter */}
-        <div className="space-y-10">
+        <div className="space-y-10 sm:col-span-2 lg:col-span-1">
           {/* logo */}
           <div className="flex items-center gap-3">
             {/* replace with your real logo asset */}
@@ -69,7 +77,7 @@ export default function Footer() {
           </div>
 
           {/* tagline */}
-          <p className="text-xl font-semibold">“Learn. Build. Evolve.”</p>
+          <p className="text-xl font-semibold">&ldquo;Learn. Build. Evolve.&rdquo;</p>
 
           {/* newsletter */}
           <form
@@ -88,22 +96,78 @@ export default function Footer() {
               Subscribe
             </button>
           </form>
+
+          {/* social icons */}
+          <div className="flex flex-wrap items-center gap-4">
+            {socialLinks.map(({ icon: Icon, label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="grid h-11 w-11 place-content-center rounded-full border border-gray-900/80 text-base transition hover:bg-gray-900 hover:text-white"
+              >
+                <Icon />
+              </a>
+            ))}
+          </div>
         </div>
 
-        {/* social icons */}
-        <div className="flex items-center flex-wrap justify-start gap-6 md:justify-end">
-          {socialLinks.map(({ icon: Icon, label, href }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="grid h-14 w-14 place-content-center rounded-full border border-gray-900/80 text-lg transition hover:bg-gray-900 hover:text-white"
-            >
-              <Icon />
-            </a>
-          ))}
+        {/* quick links */}
+        <div>
+          <h3 className="mb-5 text-sm font-bold uppercase tracking-wide text-gray-900">
+            Quick Links
+          </h3>
+          <ul className="space-y-3 text-sm">
+            {quickLinks.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  className="font-medium transition hover:text-blue"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* legal links */}
+        <div>
+          <h3 className="mb-5 text-sm font-bold uppercase tracking-wide text-gray-900">
+            Legal
+          </h3>
+          <ul className="space-y-3 text-sm">
+            {legalLinks.map((item) => (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  className="font-medium transition hover:text-blue"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* contact */}
+        <div>
+          <h3 className="mb-5 text-sm font-bold uppercase tracking-wide text-gray-900">
+            Contact
+          </h3>
+          <ul className="space-y-3 text-sm">
+            <li>
+              <a
+                href="mailto:support@genuslabtechnologies.com"
+                className="font-medium transition hover:text-blue"
+              >
+                support@genuslabtechnologies.com
+              </a>
+            </li>
+            <li className="font-medium text-gray-600">Abuja, Nigeria</li>
+          </ul>
         </div>
       </div>
 
@@ -111,22 +175,8 @@ export default function Footer() {
       <div className="border-t border-gray-300" />
 
       {/* bottom bar */}
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-10 text-sm md:flex-row">
-        <span className="order-2 text-center text-gray-500 md:order-1 md:text-left">
-          © 2025 GenusLab Technologies. All rights reserved.
-        </span>
-
-        <nav className="order-1 flex flex-wrap items-center gap-8 md:order-2">
-          {footerLinks.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="font-medium transition hover:text-blue"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+      <div className="mx-auto max-w-7xl px-4 py-8 text-center text-sm text-gray-500">
+        &copy; 2026 GenusLab Technologies. All rights reserved.
       </div>
     </footer>
   );

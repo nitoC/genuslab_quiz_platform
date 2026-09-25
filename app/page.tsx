@@ -39,13 +39,13 @@ const gradientCardData = [
     accent: "#1EAC86",
   },
   {
-    text: " Tap into local opportunities with a global mission. Our regional teams give you hands-on experience, mentorship, and peer collaboration right where you are. Work on real projects, contribute to community-driven solutions, and build your network—all while advancing your tech career.",
+    text: " Tap into local opportunities with a global mission. Our regional teams give you hands-on experience, mentorship, and peer collaboration right where you are. Work on real projects, contribute to community-driven solutions, and build your network while advancing your tech career.",
     heading: "join a regional Team",
     icon: <Group />,
     accent: "#3A94FF",
   },
   {
-    text: " Think you’re smart? Prove it. Take on weekly tech quizzes, climb the leaderboard, and win your share of rewards, gadgets, and exclusive opportunities. The more correct answers, the more you earn. It's not just learning—it's winning.",
+    text: " Think you’re smart? Prove it. Take on weekly tech quizzes, climb the leaderboard, and win your share of rewards, gadgets, and exclusive opportunities. The more correct answers, the more you earn. It's not just learning, it's winning.",
     heading: "Win Rewards",
     icon: <Trophy />,
     accent: "#1EAC86",
@@ -158,6 +158,56 @@ export default function Home() {
           ))}
         </div>
       </div>
+      <section className="bg-[#080820] py-16 md:py-24">
+        <div className="wrapper mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 md:grid-cols-2 md:gap-16">
+          <div className="flex flex-col items-start gap-6">
+            <span className="rounded-full bg-yellow px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-[#080820]">
+              About GenusLab
+            </span>
+            <h2 className="text-3xl font-extrabold text-white md:text-5xl">
+              Learn. Compete.
+              <br />
+              Get paid to grow.
+            </h2>
+            <p className="max-w-md text-base leading-relaxed text-gray-300">
+              GenusLab Technologies is a technology and digital education
+              company turning practical knowledge into real opportunities:
+              expert-led bootcamps, live quiz competitions, and cash rewards,
+              all in one ecosystem built for young people across Africa.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {["Learn", "Compete", "Earn"].map((label) => (
+                <span
+                  key={label}
+                  className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-semibold text-white"
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+            <Link
+              href="/about"
+              className="flex items-center gap-2 font-bold text-blue transition hover:text-blue-300"
+            >
+              Learn more about us
+              <MdOutlineKeyboardDoubleArrowRight />
+            </Link>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-md">
+            <div className="absolute -top-4 -left-4 h-full w-full rounded-2xl border-2 border-blue" />
+            <div className="absolute -bottom-4 -right-4 h-full w-full rounded-2xl bg-green/20" />
+            <div className="relative overflow-hidden rounded-2xl border-4 border-white/10 aspect-4/3">
+              <Image
+                src="/images/About.png"
+                alt="GenusLab students learning together"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
       <section className=" wrapper py-8 md:py-[6rem] section-container flex flex-col gap-[3rem]">
         <div className="heading">
           <h2
@@ -207,7 +257,7 @@ export default function Home() {
                       size={18}
                     />
                     <span>
-                      Next bootcamp starts soon — spots are limited.
+                      Next bootcamp starts soon, spots are limited.
                     </span>
                   </p>
                   <p className="mt-2 flex items-start gap-2">
