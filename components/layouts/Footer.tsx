@@ -17,6 +17,7 @@ const quickLinks = [
   { label: "Academy", href: "/academy" },
   { label: "Job Board", href: "/job-board" },
   { label: "FAQ", href: "/faq" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 const legalLinks = [

@@ -865,6 +865,24 @@ export const markContactAsRead = async (id: string) => {
   return res;
 };
 
+export interface ContactMessageInput {
+  name: string;
+  email: string;
+  // Capitalised to match the `Company` column rendered by the admin inbox
+  // (see app/genuslab/(dashboard)/contacts/page.tsx).
+  Company?: string;
+  subject: string;
+  message: string;
+  type?: "message" | "consultation";
+}
+
+// Public, unauthenticated submission from the /contact page. Lands in the same
+// inbox the admin panel reads via `contact/admin/all`.
+export const submitContactMessage = async (payload: ContactMessageInput) => {
+  const res = await axiosSystem.post("contact", payload);
+  return res;
+};
+
 export interface BroadcastNotificationInput {
   title: string;
   content: string;

@@ -13,6 +13,7 @@ const navLinks = [
   { label: "Job Board", href: "/job-board", hasArrow: true },
   // { label: "Quiz Arena", href: "#" },
   { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
@@ -102,7 +103,7 @@ export default function Header() {
       {/* ── mobile dropdown ──────────────────────────── */}
       <div
         className={`nav-md:hidden absolute left-0 right-0 top-full overflow-hidden bg-white z-10 shadow-lg transition-[height] duration-300 ${
-          isOpen ? "h-110" : "h-0"
+          isOpen ? "h-125" : "h-0"
         }`}
       >
         {/* close button */}
