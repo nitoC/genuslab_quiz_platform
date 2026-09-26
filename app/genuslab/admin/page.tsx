@@ -8,11 +8,11 @@ import { toast, ToastContainer } from "react-toastify";
 // import { set } from "react-datepicker/dist/dist/date_utils.js";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useUser } from "@/store/useUser";
+import { useAdminUser } from "@/store/useAdminUser";
 
 export default function LoginPage() {
   const router = useRouter();
-  const updateUser = useUser((state) => state.updateUser);
+  const updateUser = useAdminUser((state) => state.updateUser);
   const [showPassword, setShowPassword] = useState(false);
   const [sending, setSending] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);

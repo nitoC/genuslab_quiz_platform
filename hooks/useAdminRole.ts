@@ -1,12 +1,12 @@
-import { useUser } from "@/store/useUser";
+import { useAdminUser } from "@/store/useAdminUser";
 
 export type AdminRole = "USER" | "ADMIN" | "SUPPORT" | "ACCOUNTANT";
 
 // Central place for role-gating admin UI. Session restore (on refresh) and
-// login both populate `role` on the stored user, so this is available as
-// soon as the admin shell mounts — no extra fetch needed.
+// login both populate `role` on the stored admin user, so this is available
+// as soon as the admin shell mounts — no extra fetch needed.
 const useAdminRole = () => {
-  const role = useUser((state) => state.user?.role);
+  const role = useAdminUser((state) => state.user?.role);
 
   return {
     role,

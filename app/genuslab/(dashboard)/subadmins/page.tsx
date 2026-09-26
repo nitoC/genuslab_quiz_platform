@@ -15,7 +15,7 @@ import {
 import toast from "react-hot-toast";
 import { MdAdminPanelSettings, MdVisibility, MdVisibilityOff, MdContentCopy, MdAutorenew } from "react-icons/md";
 import { FaPlus, FaTrash } from "react-icons/fa6";
-import { useUser } from "@/store/useUser";
+import { useAdminUser as useUser } from "@/store/useAdminUser";
 
 // Cryptographically random, no ambiguous-looking characters (no 0/O, 1/l/I).
 // Guarantees at least one uppercase letter, one digit, and one special

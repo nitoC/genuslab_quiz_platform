@@ -10,6 +10,7 @@ import {
   MdSearch,
   MdClose,
   MdHistory,
+  MdWarningAmber,
 } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
 import AdminPageHeader from "@/components/layouts/AdminPageHeader";
@@ -23,6 +24,7 @@ import {
   getAdminRewards,
   updateAdminReward,
   getAdminAuditLogs,
+  sendRewardBankAccountReminder,
 } from "@/lib/api/apis";
 
 const STATUS_OPTIONS = [
@@ -314,6 +316,64 @@ const AuditTrailModal = ({
   );
 };
 
+// Shown when a claim attempt is blocked because the recipient has no
+// linked payout bank account — offers to nudge them instead of just
+// dead-ending the admin with an error toast.
+const NoBankAccountModal = ({
+  open,
+  reward,
+  sending,
+  onClose,
+  onSendReminder,
+}: {
+  open: boolean;
+  reward: RewardRow | null;
+  sending: boolean;
+  onClose: () => void;
+  onSendReminder: () => void;
+}) => {
+  if (!open || !reward) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4">
+      <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+          <MdWarningAmber size={22} />
+        </div>
+        <h2 className="mt-4 text-lg font-bold text-slate-900">
+          No bank account linked
+        </h2>
+        <p className="mt-2 text-sm text-slate-500">
+          <span className="font-semibold text-slate-700">
+            {reward.userDetails.user.name}
+          </span>{" "}
+          hasn&apos;t added a payout bank account yet, so this reward can&apos;t
+          be marked claimed. Send them a reminder to add one?
+        </p>
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={sending}
+            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSendReminder}
+            disabled={sending}
+            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+          >
+            {sending ? "Sending..." : "Send Reminder"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function RewardsPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
@@ -322,6 +382,9 @@ export default function RewardsPage() {
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<RewardRow | null>(null);
   const [historyFor, setHistoryFor] = useState<string | null>(null);
+  const [noBankAccountFor, setNoBankAccountFor] = useState<RewardRow | null>(
+    null,
+  );
 
   const { data: summary } = useQuery({
     queryKey: ["admin-reward-summary"],
@@ -369,8 +432,26 @@ export default function RewardsPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-reward-summary"] });
     },
     onError: (error: any) => {
+      if (error?.response?.data?.code === "NO_BANK_ACCOUNT_LINKED" && editing) {
+        setNoBankAccountFor(editing);
+        setEditing(null);
+        return;
+      }
       toast.error(
         error?.response?.data?.message || "Failed to update reward.",
+      );
+    },
+  });
+
+  const reminderMutation = useMutation({
+    mutationFn: (id: string) => sendRewardBankAccountReminder(id),
+    onSuccess: () => {
+      toast.success("Reminder sent.");
+      setNoBankAccountFor(null);
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message || "Failed to send reminder.",
       );
     },
   });
@@ -461,6 +542,16 @@ export default function RewardsPage() {
         open={!!historyFor}
         entityId={historyFor}
         onClose={() => setHistoryFor(null)}
+      />
+
+      <NoBankAccountModal
+        open={!!noBankAccountFor}
+        reward={noBankAccountFor}
+        sending={reminderMutation.isPending}
+        onClose={() => setNoBankAccountFor(null)}
+        onSendReminder={() => {
+          if (noBankAccountFor) reminderMutation.mutate(noBankAccountFor.id);
+        }}
       />
 
       <AdminCard className="p-0 overflow-hidden">

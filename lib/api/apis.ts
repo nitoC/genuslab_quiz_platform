@@ -128,12 +128,14 @@ export const logout = async () => {
   return res;
 };
 
-// Admin-console logout — same route, but issued via axiosAdmin so that if
-// the logout request itself 401s (e.g. an already-expired session), the
-// axiosAdmin response interceptor's failure redirect sends the browser to
-// /genuslab/admin instead of the regular user /login page.
+// Admin-console logout — hits its own route (clears the separate
+// 'adminRefreshToken' cookie, not the client's 'refreshToken') and is
+// issued via axiosAdmin so that if the logout request itself 401s (e.g. an
+// already-expired session), the axiosAdmin response interceptor's failure
+// redirect sends the browser to /genuslab/admin instead of the regular
+// user /login page.
 export const adminLogout = async () => {
-  const res = await axiosAdmin.delete("auth/logout");
+  const res = await axiosAdmin.delete("auth/admin/logout");
   return res;
 };
 
@@ -852,6 +854,11 @@ export const getAdminBankAccounts = async (params?: {
   limit?: number;
 }) => {
   const res = await axiosAdmin.get("accounts/admin/bank-accounts", { params });
+  return res;
+};
+
+export const sendRewardBankAccountReminder = async (id: string) => {
+  const res = await axiosAdmin.post(`admin/rewards/${id}/remind-bank-account`);
   return res;
 };
 

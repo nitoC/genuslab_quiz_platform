@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import useSidebar from "@/store/useSidebar";
-import { useUser as useUserStore } from "@/store/useUser";
+import { useAdminUser as useUserStore } from "@/store/useAdminUser";
 import {
   getAdminOwnProfile,
   getAdminNotifications,

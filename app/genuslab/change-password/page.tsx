@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { MdVisibility, MdVisibilityOff, MdLock } from "react-icons/md";
 import toast from "react-hot-toast";
 import { changePassword } from "@/lib/api/apis";
-import { useUser } from "@/store/useUser";
+import { useAdminUser as useUser } from "@/store/useAdminUser";
 
 const PASSWORD_RULE =
   /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;

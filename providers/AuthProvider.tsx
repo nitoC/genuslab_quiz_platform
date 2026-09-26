@@ -4,64 +4,79 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { axiosSystem } from "@/lib/api/axiosConfig";
 import { useUser } from "@/store/useUser";
+import { useAdminUser } from "@/store/useAdminUser";
 import PageLoader from "@/components/ui/PageLoader";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
+  // Admin console and client app each bootstrap from their own cookie
+  // ('adminRefreshToken' vs 'refreshToken') into their own store, so a
+  // session in one never gets overwritten or misread by the other when
+  // both are open in the same browser.
+  const isAdminRoute = !!pathname?.startsWith("/genuslab");
+
   const setInitialized = useUser((state) => state.setIsInitialized);
   const isInitialized = useUser((state) => state.isInitialized);
   const currentUser = useUser((state) => state.user);
   const updateUser = useUser((state) => state.updateUser);
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      console.log("[AuthProvider] Starting initialization...", { currentUser });
+  const setAdminInitialized = useAdminUser((state) => state.setIsInitialized);
+  const isAdminInitialized = useAdminUser((state) => state.isInitialized);
+  const currentAdminUser = useAdminUser((state) => state.user);
+  const updateAdminUser = useAdminUser((state) => state.updateUser);
 
-      // If user is already authenticated from login, skip refresh
+  useEffect(() => {
+    if (isAdminRoute) return;
+
+    const initializeAuth = async () => {
       if (currentUser?.userId) {
-        console.log(
-          "[AuthProvider] User already authenticated, skipping refresh",
-        );
         setInitialized(true);
         return;
       }
 
-      // User is not in state (e.g., page refresh), try to refresh from cookie
       try {
-        console.log("[AuthProvider] Attempting token refresh...");
         const response = await axiosSystem.post("/auth/refresh");
-
-        // console.log("[AuthProvider] Refresh response:", response.data);
-
-        // Only update if we got valid user data with userId
         if (response?.data?.userId) {
-          //   console.log(
-          //     "[AuthProvider] User restored from refresh:",
-          //     response.data.payload,
-          //   );
           updateUser(response.data);
-        } else {
-          console.log("[AuthProvider] Refresh response missing userId");
         }
       } catch (err: any) {
-        // console.log(
-        //   "[AuthProvider] Refresh failed:",
-        //   err.response?.data || err.message,
-        // );
-        // Don't logout - just keep user as null (unauthenticated)
+        // Not authenticated — leave user as null.
       } finally {
-        // console.log(
-        //   "[AuthProvider] Initialization complete, isInitialized = true",
-        // );
         setInitialized(true);
       }
     };
 
     initializeAuth();
-  }, [currentUser, updateUser, setInitialized]);
+  }, [isAdminRoute, currentUser, updateUser, setInitialized]);
 
-  if (!isInitialized) {
-    return <PageLoader theme={pathname?.startsWith("/genuslab") ? "light" : "dark"} />;
+  useEffect(() => {
+    if (!isAdminRoute) return;
+
+    const initializeAdminAuth = async () => {
+      if (currentAdminUser?.userId) {
+        setAdminInitialized(true);
+        return;
+      }
+
+      try {
+        const response = await axiosSystem.post("/auth/admin/refresh");
+        if (response?.data?.userId) {
+          updateAdminUser(response.data);
+        }
+      } catch (err: any) {
+        // Not authenticated — leave admin user as null.
+      } finally {
+        setAdminInitialized(true);
+      }
+    };
+
+    initializeAdminAuth();
+  }, [isAdminRoute, currentAdminUser, updateAdminUser, setAdminInitialized]);
+
+  const ready = isAdminRoute ? isAdminInitialized : isInitialized;
+
+  if (!ready) {
+    return <PageLoader theme={isAdminRoute ? "light" : "dark"} />;
   }
 
   return <>{children}</>;

@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { axiosUser, axiosAdmin, axiosSystem } from "./axiosConfig";
 import toast from "react-hot-toast";
 import { useUser } from "@/store/useUser";
+import { useAdminUser } from "@/store/useAdminUser";
 
 // axiosUser.interceptors.request.use(
 //   (config) => {
@@ -113,34 +114,55 @@ import { useUser } from "@/store/useUser";
 //   },
 // );
 
-let refreshPromise: Promise<string> | null = null;
+// Two fully independent refresh flows — separate in-flight-request guards,
+// separate cookies/endpoints, separate stores — so refreshing an admin
+// session's token can never clobber (or be clobbered by) a concurrent
+// client session's token in the same browser.
+let userRefreshPromise: Promise<string> | null = null;
+let adminRefreshPromise: Promise<string> | null = null;
 
-const refreshAccessToken = async (): Promise<string> => {
-  if (!refreshPromise) {
-    refreshPromise = axiosSystem
+const refreshUserAccessToken = async (): Promise<string> => {
+  if (!userRefreshPromise) {
+    userRefreshPromise = axiosSystem
       .post("/auth/refresh")
       .then((response) => {
-        const newAccessToken = response.data.payload.accessToken;
-
-        useUser.getState().updateUser(response.data.payload);
-
+        const newAccessToken = response.data.accessToken;
+        useUser.getState().updateUser(response.data);
         return newAccessToken;
       })
       .finally(() => {
-        refreshPromise = null;
+        userRefreshPromise = null;
       });
   }
 
-  return refreshPromise;
+  return userRefreshPromise;
+};
+
+const refreshAdminAccessToken = async (): Promise<string> => {
+  if (!adminRefreshPromise) {
+    adminRefreshPromise = axiosSystem
+      .post("/auth/admin/refresh")
+      .then((response) => {
+        const newAccessToken = response.data.accessToken;
+        useAdminUser.getState().updateUser(response.data);
+        return newAccessToken;
+      })
+      .finally(() => {
+        adminRefreshPromise = null;
+      });
+  }
+
+  return adminRefreshPromise;
 };
 
 const requestInterceptor = async (
   axiosInstance: AxiosInstance,
-  type?: string,
+  type: "user" | "admin",
 ) => {
   axiosInstance.interceptors.request.use(
     (config) => {
-      const storedUser = useUser.getState().user;
+      const storedUser =
+        type === "admin" ? useAdminUser.getState().user : useUser.getState().user;
 
       if (storedUser?.accessToken) {
         config.headers.Authorization = `Bearer ${storedUser.accessToken}`;
@@ -158,7 +180,7 @@ const requestInterceptor = async (
 
 const responseInterceptor = async (
   axiosInstance: AxiosInstance,
-  type: string,
+  type: "user" | "admin",
 ) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
@@ -167,17 +189,24 @@ const responseInterceptor = async (
       if (error.response?.status === 401 && !originalRequest?._retry) {
         originalRequest._retry = true;
         try {
-          const response = await refreshAccessToken();
+          const newAccessToken =
+            type === "admin"
+              ? await refreshAdminAccessToken()
+              : await refreshUserAccessToken();
 
-          originalRequest.headers.Authorization = `Bearer ${response}`;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
           return axiosInstance(originalRequest);
         } catch (err) {
-          useUser.getState().logout();
-          toast.error("user unauthorised");
-          type === "admin"
-            ? (window.location.href = "/genuslab/admin")
-            : (window.location.href = "/login");
+          if (type === "admin") {
+            useAdminUser.getState().logout();
+            toast.error("user unauthorised");
+            window.location.href = "/genuslab/admin";
+          } else {
+            useUser.getState().logout();
+            toast.error("user unauthorised");
+            window.location.href = "/login";
+          }
           return Promise.reject(err);
         }
       }
@@ -196,10 +225,9 @@ const responseInterceptor = async (
   return axiosInstance;
 };
 
-requestInterceptor(axiosUser);
-requestInterceptor(axiosAdmin);
+requestInterceptor(axiosUser, "user");
+requestInterceptor(axiosAdmin, "admin");
 responseInterceptor(axiosUser, "user");
 responseInterceptor(axiosAdmin, "admin");
-// responseInterceptor(axiosUser);
 
 export { axiosUser, axiosAdmin };
