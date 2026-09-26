@@ -23,6 +23,9 @@ import Layout from "@/components/layouts/Layout";
 import GlassCard from "@/components/ui/cards/GlassCard";
 import { useSocket } from "@/store/useSocket";
 
+// Longest message a user can send (the backend enforces the same limit).
+const MAX_MESSAGE = 250;
+
 type Sender = "USER" | "AI" | "STAFF" | "SYSTEM";
 type Mode = "AI" | "WAITING" | "HUMAN" | "CLOSED";
 
@@ -148,11 +151,20 @@ export default function SupportPage() {
         );
       }
     } catch (err: any) {
+      // Say what actually went wrong, so it's clear whether to retry,
+      // log in again or wait.
       const status = err?.response?.status;
-      const text =
-        status === 429
-          ? "You're sending messages too quickly. Please wait a moment and try again."
-          : "Sorry, your message couldn't be sent. Please try again.";
+      const text = !err?.response
+        ? "Couldn't reach the server. Check your internet connection and try again in a moment."
+        : status === 429
+          ? "You're sending messages too quickly. Please wait a minute and try again."
+          : status === 401
+            ? "Your session has ended. Please log in again to keep chatting."
+            : status === 400
+              ? `That message couldn't be sent. Keep it under ${MAX_MESSAGE} characters and try again.`
+              : status >= 500
+                ? "Something went wrong on our side. Please try again, or tap Talk to a person."
+                : "Sorry, your message couldn't be sent. Please try again.";
       setMessages((prev) => [
         ...prev.filter((m) => m.id !== replyId),
         { id: replyId, sender: "SYSTEM", content: text },
@@ -330,8 +342,19 @@ export default function SupportPage() {
                 id="support-input"
                 type="text"
                 value={input}
-                maxLength={2000}
-                onChange={(e) => setInput(e.target.value)}
+                // No native maxLength: it cuts pastes silently. onChange trims
+                // to the limit instead and says so.
+                aria-describedby="support-input-count"
+                onChange={(e) => {
+                  const next = e.target.value;
+                  // Pasting past the limit is cut to fit; say so once.
+                  if (next.length > MAX_MESSAGE) {
+                    toast.error(`Messages can be up to ${MAX_MESSAGE} characters`, {
+                      id: "support-limit",
+                    });
+                  }
+                  setInput(next.slice(0, MAX_MESSAGE));
+                }}
                 placeholder={
                   mode === "WAITING" || mode === "HUMAN"
                     ? "Write to our support team..."
@@ -339,6 +362,15 @@ export default function SupportPage() {
                 }
                 className="w-full bg-transparent px-4 py-2.5 text-sm text-(--primary) placeholder-grey outline-none"
               />
+              <span
+                id="support-input-count"
+                aria-live="polite"
+                className={`shrink-0 text-xs tabular-nums ${
+                  input.length >= MAX_MESSAGE ? "text-amber-400" : "text-grey"
+                }`}
+              >
+                {input.length}/{MAX_MESSAGE}
+              </span>
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
