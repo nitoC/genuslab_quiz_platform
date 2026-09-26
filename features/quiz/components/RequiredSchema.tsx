@@ -47,7 +47,7 @@ export default function RequiredSchema({
     {
       field: "topic",
       required: false,
-      desc: "Must match one of the selected rank's topics. Falls back to the Topic dropdown above when omitted.",
+      desc: "Must match one of the selected rank's topics. If you pick a topic in the dropdown above, it replaces this on every question.",
     },
   ];
 

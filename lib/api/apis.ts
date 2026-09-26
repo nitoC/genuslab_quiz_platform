@@ -697,10 +697,17 @@ export const getAllQuiz = async (
   query: string,
   page: number = 1,
   limit: number = 10,
+  filters: { day?: number; search?: string } = {},
 ) => {
-  const res = await axiosAdmin.get(
-    `quiz/status?status=${query.toUpperCase()}&page=${page}&limit=${limit}`,
-  );
+  const res = await axiosAdmin.get("quiz/status", {
+    params: {
+      status: query.toUpperCase(),
+      page,
+      limit,
+      day: filters.day,
+      search: filters.search || undefined,
+    },
+  });
   return res;
 };
 export const getAllActiveQuiz = async () => {

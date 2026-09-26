@@ -8,7 +8,7 @@ import QuizMatrix from "@/features/quiz/components/skeletons/QuizMatrix";
 import { deleteQuiz, getAllQuiz } from "@/lib/api/apis";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa6";
 
@@ -18,6 +18,17 @@ export default function QuizManagementPage() {
   const queryClient = useQueryClient();
   const [active, setActive] = useState("Live Quizzes");
   const [page, setPage] = useState(1);
+  // Filters: exact day number and/or part of the title (debounced).
+  const [dayFilter, setDayFilter] = useState("");
+  const [titleInput, setTitleInput] = useState("");
+  const [titleFilter, setTitleFilter] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setTitleFilter(titleInput.trim());
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [titleInput]);
 
   const tabs = [
     { name: "Live Quizzes", href: "#", current: false, value: "ACTIVE" },
@@ -25,7 +36,11 @@ export default function QuizManagementPage() {
     { name: "Archived", href: "#", current: false, value: "ARCHIVED" },
     { name: "Demo Quizzes", href: "#", current: false, value: "DEMO" },
     { name: "Upcoming Quizzes", href: "#", current: false, value: "UPCOMING" },
+    { name: "All", href: "#", current: false, value: "ALL" },
   ];
+  // Demo questions are a shared pool, not quizzes, so there is no list.
+  const isDemoTab = active === "Demo Quizzes";
+  const day = /^\d+$/.test(dayFilter.trim()) ? Number(dayFilter.trim()) : undefined;
 
   const handleTabChange = (tabName: string) => {
     setActive(tabName);
@@ -33,10 +48,14 @@ export default function QuizManagementPage() {
   };
 
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["quizzes", active, page],
+    queryKey: ["quizzes", active, page, day, titleFilter],
+    enabled: !isDemoTab,
     queryFn: async () => {
       const tabVal = tabs.find((a) => a.name === active);
-      const res = await getAllQuiz(tabVal?.value as string, page, PAGE_SIZE);
+      const res = await getAllQuiz(tabVal?.value as string, page, PAGE_SIZE, {
+        day,
+        search: titleFilter,
+      });
       // console.log(res, "res");
       const payload = res?.data?.payload;
       return {
@@ -49,9 +68,8 @@ export default function QuizManagementPage() {
   const quizzes = data?.quizzes ?? [];
   const meta = data?.meta;
 
-  const quizzesTransform = [...quizzes].sort(
-    (a: any, b: any) => a.day - b.day
-  );
+  // The server already sorts: latest day first, then episode 1 -> 7.
+  const quizzesTransform = quizzes;
 
 
   const deleteMutation = useMutation({
@@ -109,12 +127,57 @@ export default function QuizManagementPage() {
         </Link>
       </div>
 
+      <div className="px-8 flex flex-col sm:flex-row gap-3">
+        <label className="sr-only" htmlFor="quiz-title-filter">Filter by title</label>
+        <input
+          id="quiz-title-filter"
+          value={titleInput}
+          onChange={(e) => setTitleInput(e.target.value)}
+          placeholder="Filter by title..."
+          className="w-full sm:w-72 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+        />
+        <label className="sr-only" htmlFor="quiz-day-filter">Filter by day</label>
+        <input
+          id="quiz-day-filter"
+          inputMode="numeric"
+          value={dayFilter}
+          onChange={(e) => {
+            setDayFilter(e.target.value.replace(/\D/g, ""));
+            setPage(1);
+          }}
+          placeholder="Day number"
+          className="w-full sm:w-36 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+        />
+        {(dayFilter || titleInput) && (
+          <button
+            type="button"
+            onClick={() => {
+              setDayFilter("");
+              setTitleInput("");
+            }}
+            className="text-sm font-semibold text-gray-500 hover:text-gray-800"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+      <div className="p-2" />
       <div className="w-full h-px bg-gray-200" />
       <div className="p-4" />
 
       {/* CORE DISPLAY MATRIX */}
       <section className="px-8">
-        {isLoading ? (
+        {isDemoTab ? (
+          <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600 max-w-2xl">
+            Demo questions aren&apos;t quizzes: they&apos;re one shared pool, and
+            each practice quiz picks 10 at random from it. Add or upload them
+            in the{" "}
+            <Link href="/genuslab/quizzes/create-quiz/json/questions" className="font-semibold text-blue-600 hover:underline">
+              demo question builder
+            </Link>
+            .
+          </div>
+        ) : isLoading ? (
           <QuizMatrix />
         ) : quizzes.length > 0 ? (
           /* 2. LIVE ACTIVE DATA MAP STATE */
@@ -123,11 +186,11 @@ export default function QuizManagementPage() {
               <AdminQuiz
                 key={quiz.id || idx}
                 id={quiz?.id}
-                badge="New"
+                badge={quiz.status}
                 day={quiz.day}
                 title={quiz.title}
-                description={quiz.episode}
-                questions={10}
+                description={`${quiz.episode}${quiz.activeDate ? ` · ${String(quiz.activeDate).slice(0, 10)}` : ""}`}
+                questions={quiz._count?.questions ?? 0}
                 onDelete={handleDelete}
               />
             ))}
@@ -135,13 +198,19 @@ export default function QuizManagementPage() {
         ) : (
           /* 3. EMPTY STATE - Breaks out of layout constraints safely */
           <div className="w-full flex items-center justify-center py-12">
-            <EmptyQuizState title={`No ${active} Added Yet`} />
+            <EmptyQuizState
+              title={
+                day !== undefined || titleFilter
+                  ? "No quizzes match these filters"
+                  : `No ${active} Added Yet`
+              }
+            />
           </div>
         )}
       </section>
 
       {/* PAGINATION */}
-      {!isLoading && quizzes.length > 0 && (
+      {!isDemoTab && !isLoading && quizzes.length > 0 && (
         <div className="px-8">
           <AdminPagination
             meta={meta}

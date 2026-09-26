@@ -3,13 +3,12 @@ import React from "react";
 import { HiOutlineArchive } from "react-icons/hi";
 import {
   HiOutlineTrash,
-  HiOutlineEye,
   HiOutlinePencilSquare,
   HiOutlinePlusCircle,
 } from "react-icons/hi2";
 
 type CourseCardProps = {
-  badge: string;
+  badge: string; // quiz status
   id: string;
   day: string | number;
   title: string;
@@ -18,10 +17,17 @@ type CourseCardProps = {
   onDelete?: (id: string) => void;
   onArchive?: () => void;
   onInsertQuestions?: () => void;
-  onViewDetails?: () => void;
-  onEdit?: () => void;
 };
 
+const STATUS_STYLE: Record<string, string> = {
+  ACTIVE: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  UPCOMING: "bg-blue-50 text-blue-700 ring-blue-200",
+  DRAFT: "bg-amber-50 text-amber-700 ring-amber-200",
+  ARCHIVED: "bg-slate-100 text-slate-500 ring-slate-200",
+};
+
+// Admin quiz card. Not one big link any more: it held other links and
+// buttons, so clicking delete also opened the edit page.
 const CourseCard: React.FC<CourseCardProps> = ({
   badge,
   day,
@@ -32,131 +38,103 @@ const CourseCard: React.FC<CourseCardProps> = ({
   onDelete,
   onArchive,
   onInsertQuestions,
-  onViewDetails,
-  onEdit,
 }) => {
+  const iconBtn =
+    "p-2 rounded-lg text-slate-400 transition-colors duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500";
+
   return (
-    <Link
-      href={`/genuslab/quizzes/${id}/edit`}
-      className="group rounded-2xl w-full max-w-120 bg-white p-5 border border-gray-100 flex flex-col justify-between transition-all duration-200 hover:border-gray-200"
-    >
-      <div>
-        {/* Top Header Controls Section */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-slate-600">
+    <div className="group flex w-full min-w-0 flex-col justify-between rounded-2xl border border-gray-100 bg-white p-5 transition-all duration-200 hover:border-gray-200 hover:shadow-sm">
+      <div className="min-w-0">
+        {/* Status, day, quick actions */}
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ${
+                STATUS_STYLE[badge] ?? STATUS_STYLE.DRAFT
+              }`}
+            >
               {badge}
             </span>
-            <span className="text-sm font-bold text-slate-400">Day {day}</span>
+            <span className="truncate text-sm font-bold text-slate-400">Day {day}</span>
           </div>
 
-          {/* Action Operations Grid with Pure CSS Tooltips */}
-          <div className="flex items-center gap-1">
-            {/* Insert Questions Utility Button */}
-            <div className="relative flex flex-col items-center group/tooltip">
-              <Link
-                href={`/genuslab/quizzes/create-quiz/json/questions?id=${id}`}
-                onClick={onInsertQuestions}
-                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-150 cursor-pointer"
-                aria-label="Insert Questions"
-              >
-                <HiOutlinePlusCircle className="text-xl" />
-              </Link>
-              {/* Tooltip Wrapper Bubble */}
-              <span className="absolute bottom-full mb-2 hidden group-hover/tooltip:flex flex-col items-center pointer-events-none z-10">
-                <span className="relative z-10 p-2 text-sm leading-none text-white whitespace-nowrap bg-slate-800 rounded-md shadow-sm font-medium">
-                  Insert Questions
-                </span>
-                <span className="w-2 h-2 -mt-1 rotate-45 bg-slate-800" />
-              </span>
-            </div>
-
-            {/* Archive Utility Button */}
-            <div className="relative flex flex-col items-center group/tooltip">
+          <div className="flex shrink-0 items-center">
+            {onArchive && (
               <button
                 type="button"
                 onClick={onArchive}
-                className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors duration-150 cursor-pointer"
-                aria-label="Archive Quiz"
+                className={`${iconBtn} hover:bg-amber-50 hover:text-amber-600`}
+                aria-label="Archive quiz"
+                title="Archive quiz"
               >
                 <HiOutlineArchive className="text-xl" />
               </button>
-              {/* Tooltip Wrapper Bubble */}
-              <span className="absolute bottom-full mb-2 hidden group-hover/tooltip:flex flex-col items-center pointer-events-none z-10">
-                <span className="relative z-10 p-2 text-sm leading-none text-white whitespace-nowrap bg-slate-800 rounded-md shadow-sm font-medium">
-                  Archive Quiz
-                </span>
-                <span className="w-2 h-2 -mt-1 rotate-45 bg-slate-800" />
-              </span>
-            </div>
-
-            {/* Delete / Bin Utility Button */}
-            <div className="relative flex flex-col items-center group/tooltip">
+            )}
+            {onDelete && (
               <button
                 type="button"
-                onClick={() => onDelete && onDelete(id)}
-                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-150 cursor-pointer"
-                aria-label="Delete Quiz"
+                onClick={() => {
+                  if (window.confirm(`Delete "${title}"? This can't be undone.`)) onDelete(id);
+                }}
+                className={`${iconBtn} hover:bg-red-50 hover:text-red-600`}
+                aria-label="Delete quiz"
+                title="Delete quiz"
               >
                 <HiOutlineTrash className="text-xl" />
               </button>
-              {/* Tooltip Wrapper Bubble */}
-              <span className="absolute bottom-full mb-2 hidden group-hover/tooltip:flex flex-col items-center pointer-events-none z-10">
-                <span className="relative z-10 p-2 text-sm leading-none text-white whitespace-nowrap bg-slate-800 rounded-md shadow-sm font-medium">
-                  Delete Quiz
-                </span>
-                <span className="w-2 h-2 -mt-1 rotate-45 bg-slate-800" />
-              </span>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Title */}
-        <h2 className="text-2xl font-bold leading-tight text-slate-900 tracking-tight">
-          {title}
-        </h2>
+        <Link
+          href={`/genuslab/quizzes/${id}/edit`}
+          className="block text-xl font-bold leading-snug tracking-tight text-slate-900 break-words line-clamp-2 hover:text-blue-700"
+        >
+          {title || "Untitled quiz"}
+        </Link>
 
-        {/* Description */}
-        <p className="mt-2.5 text-sm leading-relaxed text-slate-500 line-clamp-2">
-          {description}
-        </p>
+        <p className="mt-1.5 truncate text-sm text-slate-500">{description}</p>
 
-        {/* Stats Matrix Grid Block */}
-        <div className="mt-5 grid grid-cols-1 gap-3">
-          <div className="rounded-xl bg-slate-50 border border-slate-100 p-4">
-            <p className="text-[14px] font-bold uppercase tracking-wider text-slate-400">
-              Questions
-            </p>
-            <h3 className="mt-1 text-3xl font-extrabold text-slate-900">
-              {questions}
-            </h3>
-          </div>
+        <div className="mt-4 flex items-baseline justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Questions
+          </span>
+          <span
+            className={`text-2xl font-extrabold tabular-nums ${
+              questions ? "text-slate-900" : "text-amber-600"
+            }`}
+          >
+            {questions}
+          </span>
         </div>
+        {!questions && (
+          <p className="mt-2 text-xs text-amber-700">
+            No questions yet, so this quiz won&apos;t go live.
+          </p>
+        )}
       </div>
 
-      {/* Primary Context Administration Buttons Block */}
-      <div className="mt-6 grid grid-cols-2 gap-3 pt-2">
-        {/* View Details Action (Secondary Slate Layout) */}
-        <button
-          type="button"
-          onClick={onViewDetails}
-          className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-slate-200 hover:bg-slate-300 transition-colors duration-150 text-slate-800 font-bold rounded-xl text-sm tracking-wide cursor-pointer"
+      {/* Main actions */}
+      {/* Buttons sit side by side and wrap to their own rows when the card
+          is narrow, instead of cutting the label off. */}
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link
+          href={`/genuslab/quizzes/create-quiz/json/questions?id=${id}`}
+          onClick={onInsertQuestions}
+          className="flex flex-[1_1_8.5rem] items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-slate-100 px-3 py-2.5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200"
         >
-          <HiOutlineEye className="text-base shrink-0" />
-          View Details
-        </button>
-
-        {/* Edit Quiz Action (Primary Blue Layout) */}
-        <button
-          type="button"
-          onClick={onEdit}
-          className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 transition-colors duration-150 text-white font-bold rounded-xl text-sm tracking-wide cursor-pointer shadow-sm"
+          <HiOutlinePlusCircle className="shrink-0 text-base" />
+          <span>Add questions</span>
+        </Link>
+        <Link
+          href={`/genuslab/quizzes/${id}/edit`}
+          className="flex flex-[1_1_5.5rem] items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
         >
-          <HiOutlinePencilSquare className="text-base shrink-0" />
-          Edit Quiz
-        </button>
+          <HiOutlinePencilSquare className="shrink-0 text-base" />
+          <span>Edit</span>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 };
 

@@ -137,6 +137,16 @@ export default function SupportPage() {
           prev.map((m) => (m.id === replyId ? { ...m, content: full } : m)),
         );
       }
+      // An empty reply would leave the typing bubble spinning forever.
+      if (!full.trim()) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === replyId
+              ? { ...m, sender: "SYSTEM", content: "No reply came back. Please ask again, or tap Talk to a person." }
+              : m,
+          ),
+        );
+      }
     } catch (err: any) {
       const status = err?.response?.status;
       const text =

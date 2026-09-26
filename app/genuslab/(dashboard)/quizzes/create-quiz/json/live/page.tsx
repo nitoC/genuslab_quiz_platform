@@ -19,12 +19,18 @@ import RankIdReference from "@/features/quiz/components/RankIdReference";
 import MistakeExample from "@/features/quiz/components/MistakeExample";
 import {
   EPISODE_SLOTS,
+  Problem,
   RankInfo,
+  dateString,
   dayForDate,
+  describeJsonError,
   serverErrorText,
+  stripQuiz,
   validateQuestions,
   validateQuizBatch,
 } from "@/features/quiz/validation";
+import ProblemList from "@/features/quiz/components/ProblemList";
+import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 
 const LIVE_QUIZ_SAMPLE_HREF = "/samples/live-quiz-batch-sample.json";
 
@@ -215,8 +221,11 @@ const LIVE_QUIZ_WALKTHROUGH_STEPS = [
         </p>
         <p>
           Faster: pick a Target Schedule Date and click{" "}
-          <span className="font-semibold">Insert a full day</span> to get all 7
-          episodes for that date with the right day number and slots.
+          <span className="font-semibold">Add missing episodes</span>. It adds
+          any of the 7 episodes that date doesn&apos;t have yet, with the right
+          day number and slot, below what&apos;s already in the box. It never
+          changes your existing quizzes. The new ones have an empty title for
+          you to fill in.
         </p>
       </>
     ),
@@ -440,23 +449,84 @@ export default function BulkQuizCreator() {
     queryFn: async () => (await getRankData()).data.payload as RankInfo[],
   });
 
+  // Rank/topic for attached questions: when picked, written into every
+  // question (overwriting what the JSON had), also on paste.
+  const [qRank, setQRank] = useState("");
+  const [qTopic, setQTopic] = useState("");
+  const [parseProblem, setParseProblem] = useState<Problem | null>(null);
+  const rankTopics: string[] = (() => {
+    const r: any = ranks.find((x: any) => x.id === qRank);
+    return Array.isArray(r?.topics) ? r.topics.map(String) : [];
+  })();
+
   // Same rules the server applies (see features/quiz/validation.ts).
-  const check = QParsed
+  const check: { errors: Problem[]; warnings: Problem[] } = QParsed
     ? validateQuizBatch(QParsed, {
         currentDay: dayInfo?.currentDay,
         fallbackDate: activeDate,
       })
-    : { errors: [], warnings: [] };
+    : { errors: parseProblem ? [parseProblem] : [], warnings: [] };
   QParsed?.forEach((quiz, i) => {
     if (quiz.questions === undefined) return;
     if (!Array.isArray(quiz.questions)) {
-      check.errors.push(`Quiz #${i + 1}: questions must be an array`);
+      check.errors.push({
+        text: `Quiz #${i + 1}: "questions" must be a list.`,
+        fix: 'Use "questions": [ { ... }, { ... } ], or remove it to add questions later.',
+      });
       return;
     }
     validateQuestions(quiz.questions, ranks).forEach((e) =>
-      check.errors.push(`Quiz #${i + 1} ${e.charAt(0).toLowerCase()}${e.slice(1)}`),
+      check.errors.push({
+        ...e,
+        text: `Quiz #${i + 1} ${e.text.charAt(0).toLowerCase()}${e.text.slice(1)}`,
+        fix: e.fix.replace("Pick the rank from the dropdown", 'Pick "Rank for attached questions" above'),
+      }),
     );
   });
+
+  // Applies the picked date (and its day number) and the picked rank/topic
+  // to whatever is in the box. Runs shortly after each paste or edit, so
+  // typing isn't interrupted; only rewrites when something changes.
+  useEffect(() => {
+    if (!jsonText.trim()) return;
+    const t = setTimeout(() => {
+      let parsed: any;
+      try {
+        parsed = JSON.parse(jsonText);
+      } catch {
+        return;
+      }
+      if (!Array.isArray(parsed)) return;
+      const currentDay = dayInfo?.currentDay;
+      const next = parsed.map((q: any) => {
+        if (!q || typeof q !== "object") return q;
+        const n = { ...q };
+        if (activeDate) {
+          n.activeDate = activeDate;
+          if (currentDay !== undefined) n.day = dayForDate(activeDate, currentDay);
+        }
+        if (qRank && Array.isArray(n.questions)) {
+          n.questions = n.questions.map((x: any) =>
+            x && typeof x === "object" ? { ...x, rankId: qRank, ...(qTopic ? { topic: qTopic } : {}) } : x,
+          );
+        }
+        return n;
+      });
+      if (JSON.stringify(next) !== JSON.stringify(parsed)) {
+        setJsonText(JSON.stringify(next, null, 2));
+      }
+    }, 500);
+    return () => clearTimeout(t);
+  }, [jsonText, activeDate, qRank, qTopic, dayInfo?.currentDay]);
+
+  const stripUnknown = () => {
+    if (!QParsed) return toast.error("Fix the JSON first so it can be read");
+    const before = JSON.stringify(QParsed);
+    const after = QParsed.map(stripQuiz);
+    if (JSON.stringify(after) === before) return toast("No unknown fields found");
+    rewrite(after);
+    toast.success("Unknown fields removed");
+  };
 
   const rewrite = (quizzes: QuizObject[]) =>
     setJsonText(JSON.stringify(quizzes, null, 2));
@@ -472,20 +542,32 @@ export default function BulkQuizCreator() {
     );
   };
 
-  // All 7 episodes for the target date, ready to rename and submit.
+  // Adds the episodes the target date doesn't have yet. Never touches what's
+  // already in the box (it used to replace it, titles and all). New entries
+  // get an empty title so the checker below asks for a real one.
   const insertFullDay = () => {
     if (!activeDate) return toast.error("Pick a Target Schedule Date first");
     if (dayInfo?.currentDay === undefined) return;
+    if (jsonText.trim() && !QParsed) {
+      return toast.error("Fix the JSON in the box first, so nothing in it is lost");
+    }
     const day = dayForDate(activeDate, dayInfo.currentDay);
-    rewrite(
-      EPISODE_SLOTS.map((s, i) => ({
-        title: `Day ${day} - Episode ${i + 1}`,
-        day,
-        episode: s.episode,
-        activeAt: s.activeAt,
-        activeDate,
-      })),
+    const existing = QParsed ?? [];
+    const taken = new Set(
+      existing
+        .filter((q) => (q.activeDate || activeDate || "").slice(0, 10) === activeDate)
+        .map((q) => q.episode),
     );
+    const added = EPISODE_SLOTS.filter((s) => !taken.has(s.episode)).map((s) => ({
+      title: "",
+      day,
+      episode: s.episode,
+      activeAt: s.activeAt,
+      activeDate,
+    }));
+    if (!added.length) return toast("Every episode for that date is already in the box");
+    rewrite([...existing, ...added]);
+    toast.success(`Added ${added.length} episode(s). Give each one a title.`);
   };
 
   const [summary, setSummary] = useState({
@@ -514,6 +596,14 @@ export default function BulkQuizCreator() {
 
     try {
       const parsed = JSON.parse(jsonText);
+      setParseProblem(null);
+      if (!Array.isArray(parsed)) {
+        setParseProblem({
+          text: "The JSON is a single object, not a list.",
+          fix: "Wrap it in square brackets: [ { ... } ]. This page always takes a list, even for one quiz.",
+        });
+        setQParsed(undefined);
+      }
       if (Array.isArray(parsed)) {
         setValidationStatus("success");
 
@@ -539,6 +629,8 @@ export default function BulkQuizCreator() {
       }
     } catch (e) {
       setValidationStatus("error");
+      setQParsed(undefined);
+      setParseProblem(describeJsonError(jsonText, e));
     }
   }, [jsonText]);
 
@@ -551,6 +643,7 @@ export default function BulkQuizCreator() {
   const handleClear = () => {
     setJsonText("");
     setActiveDate("");
+    setParseProblem(null);
   };
 
   const handleSubmit = async () => {
@@ -565,12 +658,16 @@ export default function BulkQuizCreator() {
 
       setSubmitting(true);
 
-      // Empty question lists are left out so those quizzes stay drafts.
-      const finalizedPayload = QParsed.map(({ questions, ...quiz }) => ({
-        ...quiz,
-        activeDate: quiz.activeDate || activeDate,
-        ...(questions?.length ? { questions } : {}),
-      }));
+      // Unknown fields are always stripped; empty question lists are left
+      // out so those quizzes stay drafts.
+      const finalizedPayload = QParsed.map((raw) => {
+        const { questions, ...quiz } = stripQuiz(raw);
+        return {
+          ...quiz,
+          activeDate: quiz.activeDate || activeDate,
+          ...(questions?.length ? { questions } : {}),
+        };
+      });
 
       const res = await createQuizBatch(finalizedPayload);
       const added = res?.data?.payload?.questions ?? 0;
@@ -668,20 +765,115 @@ export default function BulkQuizCreator() {
 
         {/* Activation Configuration Field Block */}
         <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
-          <label className="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
-            Target Schedule Date (activeDate)
+          <label
+            htmlFor="schedule-date"
+            className="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2"
+          >
+            Schedule date
           </label>
-          <div className="flex flex-wrap justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { label: "Today", date: dateString(0) },
+              { label: "Tomorrow", date: dateString(1) },
+            ].map((b) => (
+              <button
+                key={b.label}
+                type="button"
+                onClick={() => setActiveDate(b.date)}
+                className={`rounded-xl px-4 py-2.5 text-sm font-semibold border transition-colors ${
+                  activeDate === b.date
+                    ? "bg-blue-600 border-blue-600 text-white"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {b.label}
+                {dayInfo?.currentDay !== undefined && (
+                  <span className="ml-1.5 font-normal opacity-80">
+                    (day {dayForDate(b.date, dayInfo.currentDay)})
+                  </span>
+                )}
+              </button>
+            ))}
+            {/* Past dates are disabled. */}
             <input
+              id="schedule-date"
               type="date"
+              min={dateString(0)}
               value={activeDate}
-              onChange={(e) => setActiveDate(e.target.value)}
-              className="w-full max-w-xs px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v && v < dateString(0)) return toast.error("Past dates can't be scheduled");
+                setActiveDate(v);
+              }}
+              aria-label="Pick a later date"
+              className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer"
             />
+            {activeDate && (
+              <button
+                type="button"
+                onClick={() => setActiveDate("")}
+                className="text-sm font-semibold text-slate-500 hover:text-slate-800"
+              >
+                Use the dates in my JSON instead
+              </button>
+            )}
           </div>
-          <p className="mt-1.5 text-slate-400 text-sm">
-            This value will be dynamically injected into every array block item
-            payload upon creation.
+          <p className="mt-1.5 text-slate-500 text-sm">
+            {activeDate
+              ? `Every quiz in the box is set to ${activeDate}${
+                  dayInfo?.currentDay !== undefined ? ` (day ${dayForDate(activeDate, dayInfo.currentDay)})` : ""
+                }, replacing the dates and day numbers in the JSON.`
+              : "Pick a date to set it (and the matching day number) on every quiz. Otherwise each quiz's own activeDate is used."}
+          </p>
+        </div>
+
+        {/* Rank for questions attached in the JSON (optional) */}
+        <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
+          <p className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
+            Rank for attached questions (optional)
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="w-full sm:w-72">
+              <CustomSelect
+                value={qRank}
+                searchable
+                placeholder="Keep each question's rankId"
+                ariaLabel="Rank for attached questions"
+                onChange={(v: string) => {
+                  setQRank(v);
+                  setQTopic("");
+                }}
+                options={[...(ranks as any[])]
+                  .sort((a, b) => b.rank - a.rank)
+                  .map((r) => ({ label: `#${r.rank} — ${r.rankName}`, value: r.id }))}
+              />
+            </div>
+            <div className="w-full sm:w-64">
+              <CustomSelect
+                value={qTopic}
+                disabled={!rankTopics.length}
+                placeholder={qRank ? "Keep each question's topic" : "Pick a rank first"}
+                ariaLabel="Topic for attached questions"
+                onChange={(v: string) => setQTopic(v)}
+                options={rankTopics.map((t) => ({ label: t, value: t }))}
+              />
+            </div>
+            {qRank && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQRank("");
+                  setQTopic("");
+                }}
+                className="text-sm font-semibold text-slate-500 hover:text-slate-800"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          <p className="mt-1.5 text-slate-500 text-sm">
+            When picked, the rank (and topic) is written into every attached
+            question, including ones you paste later.
           </p>
         </div>
 
@@ -699,7 +891,7 @@ export default function BulkQuizCreator() {
                 onClick={insertFullDay}
                 className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
               >
-                Insert a full day (7 episodes)
+                Add missing episodes for the date
               </button>
               <button
                 type="button"
@@ -709,33 +901,16 @@ export default function BulkQuizCreator() {
               >
                 Fill in day numbers
               </button>
+              <button
+                type="button"
+                onClick={stripUnknown}
+                disabled={!QParsed?.length}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+              >
+                Strip unknown fields
+              </button>
             </div>
-            {(check.errors.length > 0 || check.warnings.length > 0) && (
-              <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-sm">
-                {check.errors.length > 0 && (
-                  <div>
-                    <p className="font-bold text-rose-600">
-                      {check.errors.length} problem(s) — the server would reject this upload
-                    </p>
-                    <ul className="mt-1 list-disc pl-5 text-rose-700">
-                      {check.errors.slice(0, 20).map((e) => (
-                        <li key={e}>{e}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {check.warnings.length > 0 && (
-                  <div>
-                    <p className="font-bold text-amber-600">Check these</p>
-                    <ul className="mt-1 list-disc pl-5 text-amber-700">
-                      {check.warnings.slice(0, 20).map((w) => (
-                        <li key={w}>{w}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
+            <ProblemList errors={check.errors} warnings={check.warnings} />
             <IntegrationWorkflow
               status={
                 validationStatus === "success" && check.errors.length

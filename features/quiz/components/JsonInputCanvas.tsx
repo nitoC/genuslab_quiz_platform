@@ -2,7 +2,9 @@
 
 import { createQuestion, getRankData } from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { stripQuestion } from "@/features/quiz/validation";
 import { HiCode } from "react-icons/hi";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 import JsonFileDropzone from "./JsonFileDropzone";
@@ -85,6 +87,49 @@ export default function JsonInputCanvas({
     setJsonText(JSON.stringify(updated, null, 2));
   };
 
+  // Picked rank/topic also apply to anything pasted or typed later, not
+  // just when the dropdown changes. Waits for a pause so typing isn't
+  // interrupted, and only rewrites when something actually changes.
+  useEffect(() => {
+    if (!jsonText.trim() || (!questionRank && !questionTopic)) return;
+    const t = setTimeout(() => {
+      let parsed: any;
+      try {
+        parsed = JSON.parse(jsonText);
+      } catch {
+        return;
+      }
+      if (!Array.isArray(parsed)) return;
+      const next = parsed.map((q: any) =>
+        q && typeof q === "object"
+          ? {
+              ...q,
+              ...(questionRank ? { rankId: questionRank } : {}),
+              ...(questionTopic ? { topic: questionTopic } : {}),
+            }
+          : q,
+      );
+      if (JSON.stringify(next) !== JSON.stringify(parsed)) {
+        setJsonText(JSON.stringify(next, null, 2));
+      }
+    }, 500);
+    return () => clearTimeout(t);
+  }, [jsonText, questionRank, questionTopic, setJsonText]);
+
+  const stripUnknown = () => {
+    let parsed: any;
+    try {
+      parsed = JSON.parse(jsonText);
+    } catch {
+      return toast.error("Fix the JSON first so it can be read");
+    }
+    const list = Array.isArray(parsed) ? parsed : [parsed];
+    const cleaned = list.map((q) => (q && typeof q === "object" ? stripQuestion(q) : q));
+    if (JSON.stringify(cleaned) === JSON.stringify(list)) return toast("No unknown fields found");
+    setJsonText(JSON.stringify(cleaned, null, 2));
+    toast.success("Unknown fields removed");
+  };
+
   const selectRank = (nextRankId: string) => {
     setQuestionRank(nextRankId);
     // Topics are scoped per rank — a topic chosen for the previous rank
@@ -116,6 +161,13 @@ export default function JsonInputCanvas({
               className="px-2.5 py-1 text-sm font-medium bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-colors"
             >
               Format
+            </button>
+            <button
+              type="button"
+              onClick={stripUnknown}
+              className="px-2.5 py-1 text-sm font-medium bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-colors"
+            >
+              Strip unknown fields
             </button>
             <button
               onClick={onClear}

@@ -10,10 +10,14 @@ import BuilderNavTabs from "@/features/quiz/components/BuilderNavTabs";
 import { createQuestion, getRankData, updateQuiz } from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Problem,
   RankInfo,
+  describeJsonError,
   serverErrorText,
+  stripQuestion,
   validateQuestions,
 } from "@/features/quiz/validation";
+import ProblemList from "@/features/quiz/components/ProblemList";
 import MistakeExample from "@/features/quiz/components/MistakeExample";
 import PageLoader from "@/components/ui/PageLoader";
 import { IQuestionSubmit } from "@/interfaces";
@@ -342,7 +346,7 @@ function JsonBuilderPage() {
     },
   ];
 
-  const [parseError, setParseError] = useState("");
+  const [parseError, setParseError] = useState<Problem | null>(null);
 
   // Keep every item (bad ones are listed below the box instead of being
   // dropped without a word).
@@ -350,7 +354,7 @@ function JsonBuilderPage() {
     if (!jsonText.trim()) {
       setIsValid(false);
       setParsedQuestions([]);
-      setParseError("");
+      setParseError(null);
       return;
     }
 
@@ -359,12 +363,10 @@ function JsonBuilderPage() {
       const targetArray = Array.isArray(parsed) ? parsed : [parsed];
       setParsedQuestions(targetArray);
       setIsValid(targetArray.length > 0);
-      setParseError("");
+      setParseError(null);
     } catch (e: any) {
       setIsValid(false);
-      setParseError(
-        `Not valid JSON: ${e?.message ?? "check quotes and commas"}. Use straight quotes and no comma after the last item.`,
-      );
+      setParseError(describeJsonError(jsonText, e));
     }
   }, [jsonText]);
 
@@ -377,12 +379,12 @@ function JsonBuilderPage() {
   const finalQuestions = parsedQuestions.map((a) => ({
     ...a,
     rankId: questionRank,
-    topic: a.topic || questionTopic || undefined,
+    topic: questionTopic || a.topic || undefined,
   }));
-  const problems = parseError
+  const problems: Problem[] = parseError
     ? [parseError]
     : !questionRank && parsedQuestions.length
-      ? ["Pick the rank these questions are for (step 2)."]
+      ? [{ text: "No rank picked yet.", fix: "Pick the rank these questions are for in step 2; it's written into every question." }]
       : validateQuestions(finalQuestions, ranks);
 
   // The preview needs the basic shape to render.
@@ -413,9 +415,10 @@ function JsonBuilderPage() {
           `Fix ${problems.length} problem(s) listed under the JSON box first`,
         );
       setSubmitting(true);
-      // A question's own `topic` wins over the picker (see finalQuestions).
+      // Only schema fields are sent (update/seed rejects unknown ones); the
+      // quiz id comes from the URL.
       const payload = finalQuestions.map((q) =>
-        id ? { ...q, quizId: id } : q,
+        id ? { ...stripQuestion(q), quizId: id } : stripQuestion(q),
       ) as IQuestionSubmit[];
       const res = id
         ? await updateQuiz(id, payload)
@@ -483,18 +486,9 @@ function JsonBuilderPage() {
                 submitting={submitting}
                 handlePreview={() => setPreview(true)}
               />
-              {problems.length > 0 && (
-                <div className="mt-4 rounded-xl border border-rose-200 bg-white p-4 text-sm">
-                  <p className="font-bold text-rose-600">
-                    {problems.length} problem(s) — the server would reject this upload
-                  </p>
-                  <ul className="mt-1 list-disc pl-5 text-rose-700">
-                    {problems.slice(0, 25).map((p) => (
-                      <li key={p}>{p}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div className="mt-4">
+                <ProblemList errors={problems} />
+              </div>
             </div>
             <div className="space-y-6">
               <RequiredSchema sampleHref={sampleHref} />
