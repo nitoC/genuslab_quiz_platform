@@ -98,26 +98,34 @@ export default function SupportPage() {
     }
 
     const now = Date.now();
-    setMessages((prev) => [...prev, { id: `u${now}`, sender: "USER", content: text }]);
+    const replyId = `r${now}`;
+    // While the AI has the chat, show its typing bubble straight away; the
+    // server only answers once the first words are ready.
+    const aiTurn = mode === "AI" || mode === "CLOSED";
+    setMessages((prev) => [
+      ...prev,
+      { id: `u${now}`, sender: "USER", content: text },
+      ...(aiTurn ? [{ id: replyId, sender: "AI" as Sender, content: "" }] : []),
+    ]);
     setInput("");
     setIsLoading(true);
 
-    const replyId = `r${now}`;
     try {
       const response = await sendSupportMessage(text);
       const replyMode = response.headers?.["x-support-mode"];
 
-      if (replyMode === "human") {
-        // Joined the staff queue; show the notice (if any) as a system line.
+      if (replyMode === "human" || replyMode === "error") {
+        // Joined the staff queue, or the AI is unavailable: show the notice
+        // (if any) as a system line in place of the typing bubble.
         const notice = await readAll(response.data);
-        if (notice) {
-          setMessages((prev) => [...prev, { id: replyId, sender: "SYSTEM", content: notice }]);
-        }
-        setMode((m) => (m === "HUMAN" ? "HUMAN" : "WAITING"));
+        setMessages((prev) => [
+          ...prev.filter((m) => m.id !== replyId),
+          ...(notice ? [{ id: replyId, sender: "SYSTEM" as Sender, content: notice }] : []),
+        ]);
+        if (replyMode === "human") setMode((m) => (m === "HUMAN" ? "HUMAN" : "WAITING"));
         return;
       }
 
-      setMessages((prev) => [...prev, { id: replyId, sender: "AI", content: "" }]);
       const reader = (response.data as ReadableStream).getReader();
       const decoder = new TextDecoder();
       let full = "";
