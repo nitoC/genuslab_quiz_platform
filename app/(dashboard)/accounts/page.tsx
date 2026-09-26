@@ -59,7 +59,6 @@ export default function ManageBankAccountsPage() {
 
         // Call your API to remove the account here
         // Example: await removeBankAccount(accountIdToRemove);
-        console.log(`Removing bank account with ID: ${accountIdToRemove}`);
         // After successful removal, update the state
         await deleteBankAccount(accountIdToRemove);
         toast.success("Bank account removed successfully.");
@@ -79,7 +78,6 @@ export default function ManageBankAccountsPage() {
   if (isError) {
     return <div className="p-10">Error occurred while fetching user data.</div>;
   }
-  console.log(data?.user, "user data in manage bank accounts page");
   const user = data?.user;
   const account = data?.user?.accounts?.[0];
   return (

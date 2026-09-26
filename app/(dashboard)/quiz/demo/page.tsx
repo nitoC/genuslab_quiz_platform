@@ -57,7 +57,6 @@ const speedCalc = (startTime: number, endTime: number) => {
   const seconds = totalSeconds % 60;
   const s = `${minutes}m: ${seconds}s`;
   // 4. Print the result
-  console.log(s);
   // Output: "3min: 5sec"
   return s;
 };
@@ -109,13 +108,10 @@ const QuizPage = () => {
   const chooseAnswer = (id: string, answer: number) => {
     const dup = [...selectedAnswers];
 
-    console.log({ id, answer }, "option");
     const isInRecord = dup.find((a, b) => a && a.id === id);
 
     if (isInRecord) {
       const updated = selectedAnswers.map((a, b) => {
-        console.log(a.id, "a id");
-        console.log(id, "the id");
         return a.id === id ? { id: a.id, answer: answer } : a;
       });
       setSelectedAnswers(updated);
@@ -123,7 +119,6 @@ const QuizPage = () => {
       dup.push({ id, answer });
       setSelectedAnswers(dup);
     }
-    console.log(selectedAnswers, "answers");
   };
 
   // 4. Handle Option Selection
@@ -163,7 +158,6 @@ const QuizPage = () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      console.log(selectedAnswers, "in handlesubmit");
       const res = await getDemoResult({
         answers: selectedAnswers.map((a) => ({
           questionId: a.id,
@@ -171,7 +165,6 @@ const QuizPage = () => {
         })),
       });
       const s = speedCalc(res?.data?.startTime, res?.data?.endTime);
-      console.log(res.data.percentage, "submit data");
       setScore(res.data?.percentage);
       setspeed(s);
 

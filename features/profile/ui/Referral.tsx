@@ -46,7 +46,6 @@ const ReferralTabContent = ({ user }: { user: any }) => {
     queryKey: ["get profile ref", user?.id],
     queryFn: async () => {
       const res = await getReferrals(5, 1, user?.id);
-      console.log(res, "referrals");
       return res.data.payload;
     },
   });
@@ -54,7 +53,6 @@ const ReferralTabContent = ({ user }: { user: any }) => {
   const handleCopyCode = (link?: boolean) => {
     if (link) {
       const baseUrl = window.location.origin;
-      console.log(`${baseUrl + "/signup?"}ref=${referralCode}`);
       const refLink = `${baseUrl + "/signup?"}ref=${referralCode}`;
       navigator.clipboard.writeText(refLink);
       toast.success("Referral link copied to clipboard!");

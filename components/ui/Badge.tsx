@@ -11,10 +11,7 @@ const STATUS_CLASSES: Record<BadgeStatus, string> = {
   inactive: "text-slate-500",
 };
 
-// Plain colored-dot + text status indicator — no pill/chip container. A
-// background+border capsule around ordinary status text is decoration, not
-// information; the dot plus the semantic text color already communicate
-// status without needing a shape around it.
+// Status as a colored dot + text, no pill.
 const Badge = ({
   status,
   children,

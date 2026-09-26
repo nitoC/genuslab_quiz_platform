@@ -18,10 +18,9 @@ const ShareCard = ({
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      console.log("in handle copy");
       setclipBoard(true);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error("oops! an error occured");
     } finally {
       setclipBoard(false);

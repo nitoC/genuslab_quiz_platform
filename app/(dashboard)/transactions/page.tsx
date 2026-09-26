@@ -126,13 +126,7 @@ const TYPE_OPTIONS: { label: string; value: TransactionTypeFilter }[] = [
   { label: "Plan", value: "plan" },
 ];
 
-// The backend's real TransactionType enum is plan | quiz | referral | finance
-// — there is no "rewards" value. quiz/referral/finance are all reward
-// payouts (money paid OUT to the user); plan is a subscription payment
-// (money the user paid IN). A Transaction only ever gets created for a
-// reward once it's been claimed, so every reward-sourced transaction here
-// is inherently a "claimed" one — there's no separate "earned but
-// unclaimed" transaction to show under a generic "Rewards" bucket.
+// quiz/referral/finance are reward payouts; plan is a subscription payment.
 const REWARD_TRANSACTION_TYPES = ["quiz", "referral", "finance"];
 
 // Helper functions for mapping backend transaction values
@@ -191,15 +185,8 @@ const TransactionsPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // TanStack Query to fetch user transactions from API
-  //
-  // Deliberately NOT forwarding `selectedType` to the backend: the backend's
-  // real TransactionType enum is plan/quiz/referral/finance, but this page's
-  // filter options are all/referral/rewards/plan — sending "rewards" (an
-  // invalid enum value) made the backend request fail, which the catch
-  // block below swallowed into an empty result. All type/category filtering
-  // already happens client-side (see filteredTransactions), so fetch
-  // everything once and let that logic do the filtering correctly.
+  // Fetch everything and filter on the client. The page's filter values
+  // (e.g. "rewards") aren't backend transaction types.
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ["userTransactions"],
     queryFn: async () => {
@@ -257,9 +244,7 @@ const TransactionsPage = () => {
       });
 
       const rawType = (item.type?.toLowerCase() || "plan") as string;
-      // "Referral" stays its own dropdown option; quiz/finance payouts both
-      // fall under the generic "Rewards" option. Plan (subscription
-      // payments) is the only debit — every reward payout is a credit.
+            // quiz + finance both show as "Rewards". Only plan is a debit.
       const filterType: "referral" | "rewards" | "plan" =
         rawType === "referral"
           ? "referral"

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { HiOutlineInformationCircle, HiOutlineDownload } from "react-icons/hi";
+import { EPISODE_SLOTS } from "@/features/quiz/validation";
 
 interface DataReferenceGuideProps {
   sampleHref?: string;
@@ -35,24 +36,28 @@ export default function DataReferenceGuide({
         </a>
       )}
 
-      {/* ACTIVESLOT Segment */}
+      {/* Each episode has exactly one slot; the server rejects any other
+          pairing, and EPISODE_0 isn't accepted. */}
       <div className="bg-blue-700/50 rounded-lg p-3.5 space-y-1.5">
         <span className="text-[14px] uppercase font-bold tracking-wider text-blue-200 block">
-          ActiveSlot Values
+          episode → activeAt
         </span>
-        <p className="font-mono text-[14px] text-blue-100 leading-relaxed tracking-wide">
-          MORNING_7_9, MORNING_9_11, MIDDAY_11_13, AFTERNOON_13_15,
-          AFTERNOON_15_17, EVENING_17_19, NIGHT_19_21
-        </p>
+        <ul className="font-mono text-[13px] text-blue-100 leading-relaxed space-y-0.5">
+          {EPISODE_SLOTS.map((s) => (
+            <li key={s.episode}>
+              {s.episode} → {s.activeAt}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* EPISODETYPE Segment */}
       <div className="bg-blue-700/50 rounded-lg p-3.5 space-y-1.5">
         <span className="text-[14px] uppercase font-bold tracking-wider text-blue-200 block">
-          EpisodeType Values
+          day &amp; activeDate
         </span>
-        <p className="font-mono text-[14px] text-blue-100 tracking-wide">
-          EPISODE_0 through EPISODE_7
+        <p className="text-[13px] text-blue-100 leading-relaxed">
+          One day number per date: today&apos;s is the Available Day, tomorrow
+          is +1. activeDate is &quot;YYYY-MM-DD&quot;.
         </p>
       </div>
     </div>

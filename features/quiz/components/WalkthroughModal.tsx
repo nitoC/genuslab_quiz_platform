@@ -17,10 +17,7 @@ export interface WalkthroughModalProps {
   sampleFileLabel?: string;
 }
 
-// Light-theme, step-by-step guide for admins who have never used one of the
-// JSON upload tools before. Matches the same overlay/panel conventions as
-// ConfirmDialog.tsx (the only other light-themed modal in the codebase) so
-// it feels native to this admin console rather than bolted on.
+// Step-by-step guide for the JSON upload pages.
 export default function WalkthroughModal({
   open,
   onClose,

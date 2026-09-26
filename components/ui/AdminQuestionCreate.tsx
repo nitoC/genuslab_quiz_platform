@@ -43,10 +43,8 @@ export default function QuestionBuilder({
   } = useQuery({
     queryKey: ["fetchRanks"],
     queryFn: async () => {
-      console.log(id);
       const res = await getRankData();
 
-      console.log(res, "fetch ranks response");
       return res.data.payload;
     },
   });
@@ -191,7 +189,6 @@ export default function QuestionBuilder({
 
         {/* Footer */}
         <div
-          onClick={() => console.log(ranksData)}
           className="flex items-center justify-between pt-4 pb-10"
         >
           <button
@@ -269,9 +266,7 @@ const AdminQuestionCard = ({
     value: a.id,
   }));
 
-  // Topics are scoped per rank (Rank.topics in the schema) — look up the
-  // currently selected rank's topic list so the topic dropdown only ever
-  // offers values that are valid for that rank.
+    // Topics belong to the selected rank.
   const selectedRank = rank.find(
     (a: any) => a.rankName === question.rankRequirement,
   );
@@ -283,8 +278,6 @@ const AdminQuestionCard = ({
         .map((t: string) => ({ label: t, value: t }))
     : [];
 
-  console.log(filteredRank, "filtered");
-  console.log(question.rankRequirement, "question");
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -391,9 +384,7 @@ const AdminQuestionCard = ({
               label={question.rankRequirement}
               // value={question.rankRequirement}
               onChange={(value: string) =>
-                // Topics are scoped per rank, so a topic picked for the
-                // previous rank is no longer valid — clear it in the same
-                // update instead of leaving a stale value behind.
+                                // Reset topic — it belonged to the previous rank.
                 updateQuestion(
                   { ...question, rankRequirement: value },
                   "topic",

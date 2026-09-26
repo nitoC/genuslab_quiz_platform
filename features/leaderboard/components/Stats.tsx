@@ -121,7 +121,6 @@ const Stats = ({ BAR_COLORS, detailsId }: StatsProps) => {
     queryKey: ["user-dashboard", detailsId],
     queryFn: async () => {
       const res = await getUserDashboard(detailsId!);
-      console.log(res, "stats");
       return res.data?.payload;
     },
     enabled: !!detailsId,

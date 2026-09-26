@@ -13,10 +13,7 @@ type GradientButtonProps = {
   disabled?: boolean;
   className?: string;
   href: string;
-  /**
-   * Tailwind gradient classes, e.g.
-   * "from-blue-600 to-indigo-600"
-   */
+  // Tailwind gradient classes, e.g. "from-blue-600 to-indigo-600".
   gradient?: string;
 };
 

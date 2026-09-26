@@ -17,11 +17,8 @@ import { MdAdminPanelSettings, MdVisibility, MdVisibilityOff, MdContentCopy, MdA
 import { FaPlus, FaTrash } from "react-icons/fa6";
 import { useAdminUser as useUser } from "@/store/useAdminUser";
 
-// Cryptographically random, no ambiguous-looking characters (no 0/O, 1/l/I).
-// Guarantees at least one uppercase letter, one digit, and one special
-// character by construction — the backend requires all three, and relying
-// on chance to hit every category from a mixed charset risks an occasional
-// generated password that fails its own validation.
+// Random password without look-alike characters. Always includes an
+// uppercase letter, a digit and a symbol, which the backend requires.
 const generatePassword = (length = 14) => {
   const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
   const lower = "abcdefghjkmnpqrstuvwxyz";

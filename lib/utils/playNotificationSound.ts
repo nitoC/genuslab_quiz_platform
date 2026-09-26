@@ -1,6 +1,4 @@
-// Synthesizes a short two-tone chime with the Web Audio API so we don't need
-// to ship/license an audio asset. Fails silently — browsers that block
-// autoplay audio without prior interaction simply won't play it.
+// Two-tone chime via Web Audio. Silently does nothing if autoplay is blocked.
 export const playNotificationSound = () => {
   if (typeof window === "undefined") return;
 

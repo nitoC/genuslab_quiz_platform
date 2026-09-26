@@ -33,9 +33,7 @@ interface LeaderboardItem {
   userDetailsId: string;
 }
 
-// Formats a raw seconds value as "1m 23s" (or just "45s" under a minute) —
-// null/undefined means the completion time is unknown (e.g. no leaderboard
-// time entry for that user), rendered as an em dash rather than "0s".
+// "1m 23s" / "45s"; em dash when the time is unknown.
 const formatSpeed = (seconds: number | null | undefined) => {
   if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
     return "—";
@@ -48,10 +46,7 @@ const formatSpeed = (seconds: number | null | undefined) => {
     : `${remainingSeconds}s`;
 };
 
-// A label/value pair — replaces what used to be 4 separate bordered pill
-// chips (XP, Score, Winning Time, Participants) competing for attention
-// next to each other. These are plain facts about the winner, not
-// statuses, so they read as text with a clear label, not capsules.
+// Plain label/value pair for the winner's stats.
 const Stat = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div>
     <p className="text-grey text-[13px]">{label}</p>
@@ -93,12 +88,7 @@ const EpisodePerformancePage = () => {
     const slot = slotData.find((s: any) => s.episode === episode);
     if (!slot) return false;
 
-    // 1. Parse base quiz date safely. The `date` query param is built
-    // upstream as `format(activeDate, "dd-MM-yyyy")` (see
-    // quizzes/previous/page.tsx and [...ids]/page.tsx) — NOT "YYYY-MM-DD".
-    // Destructuring this split as [year, month, day] silently swapped year
-    // and day (e.g. "14-09-2026" -> year=14, day=2026), producing a garbage
-    // slot window so `ongoing` was false for virtually every real episode.
+    // `date` is dd-MM-yyyy.
     const [day, month, year] = date.split("-").map(Number);
     if (!year || !month || !day) return false;
 

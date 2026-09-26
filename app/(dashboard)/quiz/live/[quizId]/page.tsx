@@ -56,7 +56,6 @@ const speedCalc = (startTime: number, endTime: number) => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   const s = `${minutes}m: ${seconds}s`;
-  console.log(s);
   return s;
 };
 
@@ -80,11 +79,7 @@ const QuizPage = () => {
   }>({
     queryKey: ["initiate quiz", quizId],
     queryFn: async () => {
-      // getUserDetails() hits `GET user-details/:id`, which looks up
-      // UserDetails by its `userId` foreign key — so this needs the
-      // User's own id, not `user.details.id` (that's the UserDetails
-      // row's own primary key, a different value). Passing the wrong
-      // one made the lookup return nothing downstream.
+      // getUserDetails expects the User id, not the UserDetails id.
       const userId = userData?.user?.id || userStore?.userId;
       if (!userId) {
         toast.error("user not found");
@@ -139,9 +134,7 @@ const QuizPage = () => {
   const totalQuestions = data?.questions?.length ?? 0;
   const currentQuestion = data?.questions?.[currentQuestionIndex];
 
-  // Next.js reuses this component instance when navigating between two
-  // /quiz/live/[quizId] URLs (only the param changes), so quiz-progress
-  // state from the previous quiz must be reset explicitly here.
+    // Next reuses this component when only quizId changes, so reset state here.
   useEffect(() => {
     setCurrentQuestionIndex(0);
     setSelectedAnswers([]);
@@ -273,7 +266,7 @@ const QuizPage = () => {
       localStorage.removeItem("quiz-attempt");
     } catch (err: any) {
       toast.error("Failed to submit answer. Check your network connection.");
-      console.log(err.response);
+      console.error(err.response);
     } finally {
       setSubmitting(false);
     }
@@ -281,11 +274,7 @@ const QuizPage = () => {
 
   useEffect(() => {
     async function verifyAttempt() {
-      // getUserDetails() hits `GET user-details/:id`, which looks up
-      // UserDetails by its `userId` foreign key — so this needs the
-      // User's own id, not `user.details.id` (that's the UserDetails
-      // row's own primary key, a different value). Passing the wrong
-      // one made the lookup return nothing downstream.
+      // getUserDetails expects the User id, not the UserDetails id.
       const userId = userData?.user?.id || userStore?.userId;
       if (!userId) {
         toast.error("user not found");
@@ -310,7 +299,6 @@ const QuizPage = () => {
         if (!stored) return;
 
         const parsed = JSON.parse(stored);
-        console.log("stored", parsed);
         // Verify the saved attempt matches the active session attemptId
 
         // toast.info("Resuming un-submitted quiz attempt...");
@@ -324,7 +312,6 @@ const QuizPage = () => {
         });
         localStorage.removeItem("quiz-attempt");
 
-        console.log("submitted prev quiz");
       } catch (error) {
         console.error("Error reading stored quiz attempt:", error);
       }
@@ -351,7 +338,7 @@ const QuizPage = () => {
     const status = (error as any)?.response?.status;
     const conflictReason = (error as any)?.response?.data?.message;
     const errorCode = (error as any)?.response?.data?.code;
-    console.log((error as any)?.response, "error res");
+    console.error((error as any)?.response, "error res");
     if (status === 409) {
       return (
         <Layout type="quiz">

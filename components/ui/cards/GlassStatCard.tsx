@@ -4,10 +4,7 @@ import { cn } from "@/lib/utils/cn";
 
 export type GlassStatAccent = "neutral" | "success" | "warning" | "info";
 
-// Reuses the app's existing color tokens rather than raw Tailwind
-// emerald/amber colors — "success" for money/wins, "warning" only for a
-// genuine achievement highlight (not decoration), "neutral" is the default
-// for plain numbers that don't need a colored icon chip at all.
+// success = money/wins, warning = achievements, neutral = plain numbers.
 const ACCENT_CLASSES: Record<GlassStatAccent, string> = {
   neutral: "bg-white/5 text-blue",
   success: "bg-green/10 text-green",
@@ -15,13 +12,7 @@ const ACCENT_CLASSES: Record<GlassStatAccent, string> = {
   info: "bg-blue/10 text-blue",
 };
 
-/**
- * Shared stat card for the dark/glass user-facing pages (dashboard,
- * rewards-breakdown, player stats) — was previously copy-pasted with minor
- * variations in each of those files. One component now, so a future fix
- * (spacing, contrast, whatever) lands everywhere at once instead of only
- * where someone remembers to change it.
- */
+// Stat card for the dark user-facing pages.
 const GlassStatCard = ({
   icon,
   label,

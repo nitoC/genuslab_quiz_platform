@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-// html2canvas-pro (not vanilla html2canvas) — Tailwind v4's default palette
-// emits modern CSS color functions (oklch/lab) that html2canvas 1.x can't
-// parse and crashes on; this fork adds support for them, same API.
+// html2canvas-pro handles Tailwind v4's oklch colours; plain html2canvas crashes.
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { MdArrowBack, MdDownload } from "react-icons/md";
@@ -23,10 +21,7 @@ export interface RecordDetailViewProps {
   subtitle?: string; // e.g. plan/transaction title
   amount?: string; // pre-formatted, e.g. "₦4,000"
   amountLabel?: string;
-  // "credit" (green) for money paid TO the user (e.g. a reward payout),
-  // "debit" (red) for money paid BY the user (e.g. a subscription charge).
-  // Defaults to neutral white when the record isn't a credit/debit
-  // transaction (e.g. an unrelated document).
+  // credit = paid to the user (green), debit = paid by the user (red).
   amountVariant?: "credit" | "debit" | "neutral";
   statusLabel?: string;
   statusVariant?: "success" | "warning" | "danger" | "neutral";
@@ -35,10 +30,8 @@ export interface RecordDetailViewProps {
   filename: string; // used as the downloaded PDF's file name
 }
 
-// Full-screen (not a centered card) detail view, reused for both
-// transactions and subscriptions so a single PDF-export implementation
-// (html2canvas + jsPDF, same technique as components/ui/modals/receipt.tsx)
-// serves every downloadable record on the frontend.
+// Full-screen receipt view with PDF download, used for transactions and
+// subscriptions.
 export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
   open,
   onClose,

@@ -7,7 +7,14 @@ import QuizPreview from "@/features/quiz/components/QuizPreview";
 import TemplatePanel from "@/features/quiz/components/TemplatePanel";
 import WalkthroughModal from "@/features/quiz/components/WalkthroughModal";
 import BuilderNavTabs from "@/features/quiz/components/BuilderNavTabs";
-import { createQuestion, updateQuiz } from "@/lib/api/apis";
+import { createQuestion, getRankData, updateQuiz } from "@/lib/api/apis";
+import { useQuery } from "@tanstack/react-query";
+import {
+  RankInfo,
+  serverErrorText,
+  validateQuestions,
+} from "@/features/quiz/validation";
+import MistakeExample from "@/features/quiz/components/MistakeExample";
 import PageLoader from "@/components/ui/PageLoader";
 import { IQuestionSubmit } from "@/interfaces";
 import toast, { Toaster } from "react-hot-toast";
@@ -56,9 +63,7 @@ export interface QuestionObject {
   difficulty: "easy" | "medium" | "hard";
   hint?: string;
   rankId: string;
-  // Optional per-question override — must be one of the selected rank's
-  // `topics` entries. Falls back to the batch-level topic picker below if
-  // the pasted JSON doesn't set one itself.
+    // Optional; must be one of the rank's topics. Falls back to the picker below.
   topic?: string;
 }
 
@@ -94,8 +99,9 @@ function JsonBuilderPage() {
         <div className="text-[13px] leading-relaxed space-y-1.5">
           <p>
             <span className="font-bold">How you got here:</span> Quizzes →
-            click the <span className="font-semibold">Drafts</span> filter
-            tab → click the small{" "}
+            the <span className="font-semibold">Drafts</span> (or{" "}
+            <span className="font-semibold">Upcoming</span>) filter tab →
+            the small{" "}
             <span className="font-semibold">+ (Insert Questions)</span> icon
             in the top-right corner of a quiz's card. That click carried this
             quiz's ID in the page's URL (
@@ -110,8 +116,9 @@ function JsonBuilderPage() {
             moment you click "Submit Questions" below.
           </p>
           <p>
-            Once you submit, this quiz stops being an empty draft and can go
-            live.
+            Once you submit, a draft quiz moves to Upcoming and can go live.
+            One upload covers <span className="font-bold">one rank</span>;
+            come back through the same link for each other rank.
           </p>
         </div>
       </div>
@@ -119,8 +126,8 @@ function JsonBuilderPage() {
   ) : (
     <p>
       This uploads the pool of <span className="font-semibold">demo questions</span>{" "}
-      shown to users trying a practice quiz — they aren't tied to any
-      specific live quiz, so there's no quiz ID involved here.
+      shown to users trying a practice quiz. They aren&apos;t tied to any
+      live quiz, and each demo picks 10 at random from the whole pool.
     </p>
   );
 
@@ -236,6 +243,87 @@ function JsonBuilderPage() {
         </>
       ),
     },
+    ...(id
+      ? [
+          {
+            title: "How many questions per rank",
+            body: (
+              <>
+                <p>
+                  When a player starts this quiz they get up to{" "}
+                  <span className="font-bold">10 questions</span>, drawn only
+                  from the questions uploaded for{" "}
+                  <span className="font-semibold">their own rank</span>. The
+                  draw aims for 7 easy, 2 medium and 1 hard, and tops up from
+                  whatever else is there.
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-[13px]">
+                  <li>
+                    Upload at least 10 per rank (7 easy, 2 medium, 1 hard is
+                    ideal). With fewer, players get a shorter quiz.
+                  </li>
+                  <li>
+                    A rank with no questions for this quiz can&apos;t play it:
+                    those players see &quot;No questions available for your
+                    rank&quot;.
+                  </li>
+                  <li>
+                    The sample file is a full 10-question set for rank #13
+                    Keen Mind, with the right mix.
+                  </li>
+                </ul>
+              </>
+            ),
+          },
+        ]
+      : []),
+    {
+      title: "Common mistakes (and the fix)",
+      body: (
+        <div className="space-y-3">
+          <p>
+            Anything below is listed in red under the JSON box before you
+            submit, so you can fix it first.
+          </p>
+          <MistakeExample
+            title="Answer as a letter, or counted from 1"
+            wrong={`"options": ["var", "let", "const", "static"],\n"answer": 3`}
+            right={`"options": ["var", "let", "const", "static"],\n"answer": 2`}
+            why={'Positions start at 0: "var" is 0, "let" 1, "const" 2. Letters like "C" are rejected.'}
+          />
+          <MistakeExample
+            title="Too few or too many options"
+            wrong={`"options": ["Yes"]`}
+            right={`"options": ["Yes", "No"]`}
+            why="Each question needs 2 to 5 options, all non-empty."
+          />
+          <MistakeExample
+            title="Unknown difficulty"
+            wrong={`"difficulty": "simple"`}
+            right={`"difficulty": "easy"`}
+            why='Only "easy", "medium" or "hard" (capitals are fine).'
+          />
+          <MistakeExample
+            title="Missing explanation"
+            wrong={`{ "questionText": "...", "options": [...], "answer": 0 }`}
+            right={`{ "questionText": "...", "options": [...], "answer": 0,\n  "answerDescription": "Why this is right." }`}
+            why="answerDescription is required; players see it after answering."
+          />
+          <MistakeExample
+            title="Topic from another rank"
+            wrong={`// rank #13 Keen Mind\n"topic": "HTML"`}
+            right={`// rank #13 Keen Mind\n"topic": "Loops"`}
+            why="A topic must be one of the picked rank's topics. Leave it out, or pick it from the Topic dropdown."
+          />
+          <MistakeExample
+            title="Invalid JSON from a word processor"
+            wrong={`{ “questionText”: “What is RAM?”, }`}
+            right={`{ "questionText": "What is RAM?" }`}
+            why="Use straight quotes and no comma after the last item. Click Format to check it parses."
+          />
+        </div>
+      ),
+    },
     {
       title: "Check & submit",
       body: (
@@ -254,41 +342,53 @@ function JsonBuilderPage() {
     },
   ];
 
-  // Parse and validate incoming JSON structure
-  useEffect(() => {
-    // console.log(jsonText, "jsonte");
-    // console.log(jsonText.trim(), "jsonte trim tr");
-    // console.log(!jsonText.trim(), "jsonte trim");
+  const [parseError, setParseError] = useState("");
 
+  // Keep every item (bad ones are listed below the box instead of being
+  // dropped without a word).
+  useEffect(() => {
     if (!jsonText.trim()) {
       setIsValid(false);
       setParsedQuestions([]);
+      setParseError("");
       return;
     }
 
     try {
       const parsed = JSON.parse(jsonText);
-      console.log(parsed, "parsed");
-      console.log(jsonText, " not parsed");
       const targetArray = Array.isArray(parsed) ? parsed : [parsed];
-
-      // Basic structural validation
-      const validQuestions = targetArray.filter(
-        (q) =>
-          q && typeof q.questionText === "string" && Array.isArray(q.options),
-      );
-
-      if (validQuestions.length > 0) {
-        setParsedQuestions(validQuestions);
-        setIsValid(true);
-      } else {
-        setIsValid(false);
-      }
-    } catch (e) {
-      console.log(e, "e");
+      setParsedQuestions(targetArray);
+      setIsValid(targetArray.length > 0);
+      setParseError("");
+    } catch (e: any) {
       setIsValid(false);
+      setParseError(
+        `Not valid JSON: ${e?.message ?? "check quotes and commas"}. Use straight quotes and no comma after the last item.`,
+      );
     }
   }, [jsonText]);
+
+  const { data: ranks = [] } = useQuery({
+    queryKey: ["fetchRanks"],
+    queryFn: async () => (await getRankData()).data.payload as RankInfo[],
+  });
+
+  // Exactly what will be sent: the picked rank and topic applied.
+  const finalQuestions = parsedQuestions.map((a) => ({
+    ...a,
+    rankId: questionRank,
+    topic: a.topic || questionTopic || undefined,
+  }));
+  const problems = parseError
+    ? [parseError]
+    : !questionRank && parsedQuestions.length
+      ? ["Pick the rank these questions are for (step 2)."]
+      : validateQuestions(finalQuestions, ranks);
+
+  // The preview needs the basic shape to render.
+  const previewable = parsedQuestions.filter(
+    (q) => q && typeof q.questionText === "string" && Array.isArray(q.options),
+  );
 
   const handleFormat = () => {
     try {
@@ -296,7 +396,7 @@ function JsonBuilderPage() {
       setJsonText(JSON.stringify(parsed, null, 2));
     } catch (e) {
       // Keep unformatted text if it's invalid JSON
-      console.log(e, "error");
+      console.error(e, "error");
     }
   };
 
@@ -304,46 +404,26 @@ function JsonBuilderPage() {
     // toast.error("fhdlf");
     // console.log("hely sumb");
     // return;
-    console.log(parsedQuestions, "parsed questions");
     if (submitting) return;
     try {
-      if (!questionRank) return toast.error("select question rank");
-      if (!parsedQuestions || parsedQuestions.length < 1)
-        return toast.error("incomplete or empty question field");
+      if (!parsedQuestions.length)
+        return toast.error("Paste or upload your questions first");
+      if (problems.length)
+        return toast.error(
+          `Fix ${problems.length} problem(s) listed under the JSON box first`,
+        );
       setSubmitting(true);
-      const payload: IQuestionSubmit[] = parsedQuestions.map((a) => {
-        // A question's own `topic` (from the pasted JSON) wins; otherwise
-        // fall back to the batch-level topic picked alongside the rank.
-        const topic = a.topic || questionTopic || undefined;
-        if (id) {
-          return {
-            ...a,
-            rankId: questionRank,
-            topic,
-            quizId: id,
-          } as IQuestionSubmit;
-        }
-        return {
-          ...a,
-          rankId: questionRank,
-          topic,
-        } as IQuestionSubmit;
-      });
+      // A question's own `topic` wins over the picker (see finalQuestions).
+      const payload = finalQuestions.map((q) =>
+        id ? { ...q, quizId: id } : q,
+      ) as IQuestionSubmit[];
       const res = id
         ? await updateQuiz(id, payload)
         : await createQuestion(payload);
-      if (res) toast.success("questions has been uploaded");
+      if (res) toast.success(`${payload.length} question(s) uploaded`);
       setJsonText("");
     } catch (err) {
-      toast.error("oops! something went wrong");
-      if (err instanceof Error) {
-        console.log(err.message, "error in catch");
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const responseError = err as { response?: { data?: unknown } };
-        console.log(responseError.response?.data, "error in catch");
-      } else {
-        console.log(err, "error in catch");
-      }
+      toast.error(`Upload failed\n${serverErrorText(err)}`);
     } finally {
       setSubmitting(false);
     }
@@ -403,6 +483,18 @@ function JsonBuilderPage() {
                 submitting={submitting}
                 handlePreview={() => setPreview(true)}
               />
+              {problems.length > 0 && (
+                <div className="mt-4 rounded-xl border border-rose-200 bg-white p-4 text-sm">
+                  <p className="font-bold text-rose-600">
+                    {problems.length} problem(s) — the server would reject this upload
+                  </p>
+                  <ul className="mt-1 list-disc pl-5 text-rose-700">
+                    {problems.slice(0, 25).map((p) => (
+                      <li key={p}>{p}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             <div className="space-y-6">
               <RequiredSchema sampleHref={sampleHref} />
@@ -412,7 +504,7 @@ function JsonBuilderPage() {
           {/* Bottom Preview Framework */}
           {preview && (
             <QuizPreview
-              questions={parsedQuestions}
+              questions={previewable}
               isValid={isValid}
               handlePreview={() => setPreview(false)}
             />

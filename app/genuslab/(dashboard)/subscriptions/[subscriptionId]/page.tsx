@@ -39,9 +39,7 @@ const InfoRow = ({ label, value }: { label: string; value: React.ReactNode }) =>
 export default function SubscriptionDetailPage() {
   const { subscriptionId } = useParams<{ subscriptionId: string }>();
   const queryClient = useQueryClient();
-  // Lazy initializer runs once on mount rather than every render — reading
-  // the clock directly in the render body is an impure calculation React's
-  // compiler flags.
+    // Read the clock once on mount (the compiler flags Date.now() in render).
   const [now] = useState(() => Date.now());
 
   const { data: sub, isLoading, isError } = useQuery({

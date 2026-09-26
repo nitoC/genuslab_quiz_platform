@@ -1,133 +1,217 @@
 "use client";
 
-import { sendSupportMessage } from "@/lib/api/apis";
-import { useState, useRef, useEffect } from "react";
-import { FaPaperPlane, FaRobot, FaUser, FaCircleNotch } from "react-icons/fa";
+import {
+  closeSupportConversation,
+  getSupportConversation,
+  requestSupportHuman,
+  sendSupportMessage,
+} from "@/lib/api/apis";
+import { useState, useRef, useEffect, useCallback } from "react";
+import {
+  FaPaperPlane,
+  FaRobot,
+  FaUser,
+  FaCircleNotch,
+  FaHeadset,
+  FaCircleInfo,
+} from "react-icons/fa6";
 import ReactMarkdown from "react-markdown";
+import toast from "react-hot-toast";
 
 import Header from "@/components/layouts/Header";
 import Layout from "@/components/layouts/Layout";
 import GlassCard from "@/components/ui/cards/GlassCard";
+import { useSocket } from "@/store/useSocket";
+
+type Sender = "USER" | "AI" | "STAFF" | "SYSTEM";
+type Mode = "AI" | "WAITING" | "HUMAN" | "CLOSED";
 
 interface Message {
   id: string;
-  role: "user" | "assistant";
+  sender: Sender;
   content: string;
+  staffName?: string;
 }
 
-const STORAGE_KEY = "support_chat_messages";
+const fromServer = (m: any): Message => ({
+  id: m.id,
+  sender: m.sender,
+  content: m.content,
+  staffName: m.staff?.name,
+});
 
 export default function SupportPage() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [mode, setMode] = useState<Mode>("AI");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const socket = useSocket((s: any) => s.socket);
 
-  // 1. Load persisted messages from sessionStorage on mount
-  useEffect(() => {
+  // The conversation lives on the server, so it survives reloads and
+  // devices, and staff can see it.
+  const load = useCallback(async () => {
     try {
-      const savedMessages = sessionStorage.getItem(STORAGE_KEY);
-      if (savedMessages) {
-        setMessages(JSON.parse(savedMessages));
-      }
-    } catch (err) {
-      console.error("Failed to load messages from sessionStorage:", err);
+      const res = await getSupportConversation();
+      const convo = res.data?.payload;
+      setMessages(convo ? convo.messages.map(fromServer) : []);
+      setMode(convo?.status ?? "AI");
+    } catch {
+      toast.error("Couldn't load your support chat. Please refresh.");
     } finally {
       setIsLoaded(true);
     }
   }, []);
 
-  // 2. Save messages to sessionStorage whenever state changes
   useEffect(() => {
-    if (!isLoaded) return;
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch (err) {
-      console.error("Failed to save messages to sessionStorage:", err);
-    }
-  }, [messages, isLoaded]);
+    load();
+  }, [load]);
 
-  // Auto-scroll to bottom as incoming streaming chunks land
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // Staff replies (and hand-back/close notes) arrive live.
+  useEffect(() => {
+    if (!socket) return;
+    const onMessage = (m: any) => {
+      setMessages((prev) =>
+        prev.some((p) => p.id === m.id) ? prev : [...prev, fromServer(m)],
+      );
+      if (m.sender === "STAFF") setMode("HUMAN");
+      if (m.status) setMode(m.status === "CLOSED" ? "CLOSED" : m.status);
+    };
+    socket.on("support-message", onMessage);
+    return () => socket.off("support-message", onMessage);
+  }, [socket]);
 
   useEffect(() => {
-    if (isLoaded) {
-      scrollToBottom();
-    }
+    if (isLoaded) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoaded]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    const text = input.trim();
+    if (!text || isLoading) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: input,
-    };
-    const updatedMessages = [...messages, userMessage];
+    // A closed chat starts fresh on the next message.
+    if (mode === "CLOSED") {
+      setMessages([]);
+      setMode("AI");
+    }
 
-    setMessages(updatedMessages);
+    const now = Date.now();
+    setMessages((prev) => [...prev, { id: `u${now}`, sender: "USER", content: text }]);
     setInput("");
     setIsLoading(true);
 
-    const assistantMessageId = (Date.now() + 1).toString();
-    setMessages((prev) => [
-      ...prev,
-      { id: assistantMessageId, role: "assistant", content: "" },
-    ]);
-
+    const replyId = `r${now}`;
     try {
-      const response = await sendSupportMessage(updatedMessages);
+      const response = await sendSupportMessage(text);
+      const replyMode = response.headers?.["x-support-mode"];
 
-      if (!response.data) throw new Error("No response body text stream found");
+      if (replyMode === "human") {
+        // Joined the staff queue; show the notice (if any) as a system line.
+        const notice = await readAll(response.data);
+        if (notice) {
+          setMessages((prev) => [...prev, { id: replyId, sender: "SYSTEM", content: notice }]);
+        }
+        setMode((m) => (m === "HUMAN" ? "HUMAN" : "WAITING"));
+        return;
+      }
 
-      const stream = response.data as unknown as ReadableStream;
-      const reader = stream.getReader();
+      setMessages((prev) => [...prev, { id: replyId, sender: "AI", content: "" }]);
+      const reader = (response.data as ReadableStream).getReader();
       const decoder = new TextDecoder();
-      let completeResponse = "";
-
+      let full = "";
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-
-        const chunkText = decoder.decode(value, { stream: true });
-        completeResponse += chunkText;
-
+        full += decoder.decode(value, { stream: true });
         setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === assistantMessageId
-              ? { ...msg, content: completeResponse }
-              : msg,
-          ),
+          prev.map((m) => (m.id === replyId ? { ...m, content: full } : m)),
         );
       }
-    } catch (err) {
-      console.error("Error streaming backend data:", err);
+    } catch (err: any) {
+      const status = err?.response?.status;
+      const text =
+        status === 429
+          ? "You're sending messages too quickly. Please wait a moment and try again."
+          : "Sorry, your message couldn't be sent. Please try again.";
+      setMessages((prev) => [
+        ...prev.filter((m) => m.id !== replyId),
+        { id: replyId, sender: "SYSTEM", content: text },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const talkToPerson = async () => {
+    try {
+      await requestSupportHuman("Tapped Talk to a person");
+      await load();
+      toast.success("Our support team has been notified");
+    } catch {
+      toast.error("Couldn't reach support. Please try again.");
+    }
+  };
+
+  const endChat = async () => {
+    try {
+      await closeSupportConversation();
+      setMessages([]);
+      setMode("AI");
+    } catch {
+      toast.error("Couldn't end the chat. Please try again.");
+    }
+  };
+
+  const banner =
+    mode === "WAITING"
+      ? "Waiting for a member of our support team. They'll reply here, and you'll get a notification."
+      : mode === "HUMAN"
+        ? "You're chatting with our support team."
+        : null;
+
   return (
     <Layout>
       <div className="flex flex-col h-[calc(100vh-80px)] overflow-hidden">
-        <Header title="AI Support Assistant" backBtn={false} />
+        <Header title="Support" backBtn={false} />
 
         <div className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col min-h-0 max-w-5xl w-full mx-auto gap-4">
-          {/* Chat Messages Scrolling Window */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-grey">
+              {mode === "AI" || mode === "CLOSED"
+                ? "Our assistant answers first. Need a person? Tap the button."
+                : banner}
+            </p>
+            <div className="flex gap-2">
+              {(mode === "AI" || mode === "CLOSED") && (
+                <button
+                  type="button"
+                  onClick={talkToPerson}
+                  className="flex items-center gap-2 rounded-xl border border-white/15 px-3 py-2 text-sm font-semibold text-(--primary) hover:bg-white/5"
+                >
+                  <FaHeadset size={13} /> Talk to a person
+                </button>
+              )}
+              {messages.length > 0 && mode !== "CLOSED" && (
+                <button
+                  type="button"
+                  onClick={endChat}
+                  className="rounded-xl border border-white/15 px-3 py-2 text-sm text-grey hover:bg-white/5"
+                >
+                  End chat
+                </button>
+              )}
+            </div>
+          </div>
+
           <GlassCard className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col justify-between chat-scrollbar">
             {!isLoaded ? (
-              /* Loading State during Session Retrieval */
               <div className="my-auto flex items-center justify-center text-grey text-sm gap-2">
                 <FaCircleNotch className="animate-spin" size={14} />
-                <span>Restoring chat history...</span>
+                <span>Loading your chat...</span>
               </div>
             ) : messages.length === 0 ? (
-              /* Empty Placeholder State */
               <div className="my-auto flex flex-col items-center justify-center text-center p-6 space-y-4">
                 <div className="p-4 rounded-2xl bg-blue/10 text-blue border border-blue/20">
                   <FaRobot size={36} />
@@ -137,44 +221,58 @@ export default function SupportPage() {
                     How can we help you today?
                   </h2>
                   <p className="text-sm text-grey">
-                    Ask questions about your account, active quizzes, rewards,
-                    or platform navigation.
+                    Ask about your account, quizzes, rewards or payments. For a
+                    payment or reward problem, tap Talk to a person.
                   </p>
                 </div>
               </div>
             ) : (
-              /* Active Stream Messages */
-              <div className="space-y-4 chat-scrollbar">
+              <div className="space-y-4">
                 {messages.map((msg) => {
-                  const isUser = msg.role === "user";
+                  if (msg.sender === "SYSTEM") {
+                    return (
+                      <div key={msg.id} className="flex justify-center">
+                        <p className="flex max-w-[90%] items-start gap-2 rounded-xl bg-white/5 px-3 py-2 text-xs text-grey">
+                          <FaCircleInfo className="mt-0.5 shrink-0" size={11} />
+                          {msg.content}
+                        </p>
+                      </div>
+                    );
+                  }
+                  const isUser = msg.sender === "USER";
+                  const isStaff = msg.sender === "STAFF";
                   return (
                     <div
                       key={msg.id}
-                      className={`flex items-start gap-3 ${
-                        isUser ? "flex-row-reverse" : "flex-row"
-                      }`}
+                      className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
                     >
                       <div
                         className={`p-2 rounded-full shrink-0 ${
                           isUser
                             ? "bg-blue/20 text-blue border border-blue/30"
-                            : "bg-green/20 text-green border border-green/30"
+                            : isStaff
+                              ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                              : "bg-green/20 text-green border border-green/30"
                         }`}
                       >
-                        {isUser ? <FaUser size={12} /> : <FaRobot size={12} />}
+                        {isUser ? <FaUser size={12} /> : isStaff ? <FaHeadset size={12} /> : <FaRobot size={12} />}
                       </div>
 
                       <div
-                        className={`max-w-[85%] sm:max-w-[75%] p-4 text-sm sm:text-sm rounded-2xl ${
+                        className={`max-w-[85%] sm:max-w-[75%] p-4 text-sm rounded-2xl ${
                           isUser
                             ? "bg-blue/20 text-white border border-blue/30 rounded-tr-none"
                             : "bg-white/5 text-slate-200 border border-white/10 rounded-tl-none"
                         }`}
                       >
+                        {isStaff && (
+                          <p className="mb-1 text-xs font-semibold text-amber-400">
+                            {msg.staffName || "Support team"}
+                          </p>
+                        )}
                         {msg.content ? (
                           <ReactMarkdown
                             components={{
-                              // Ensure links open in a new tab with styled colors
                               a: ({ node, ...props }) => (
                                 <a
                                   {...props}
@@ -183,18 +281,11 @@ export default function SupportPage() {
                                   className="text-blue underline font-medium hover:opacity-80 transition-opacity"
                                 />
                               ),
-                              // Ensure bold text stands out properly
                               strong: ({ node, ...props }) => (
-                                <strong
-                                  {...props}
-                                  className="font-bold text-white"
-                                />
+                                <strong {...props} className="font-bold text-white" />
                               ),
                               p: ({ node, ...props }) => (
-                                <p
-                                  {...props}
-                                  className="mb-2 last:mb-0 leading-relaxed"
-                                />
+                                <p {...props} className="mb-2 last:mb-0 leading-relaxed" />
                               ),
                             }}
                           >
@@ -215,15 +306,20 @@ export default function SupportPage() {
             )}
           </GlassCard>
 
-          {/* User Input Bar */}
           <GlassCard className="shrink-0 p-2 sm:p-3">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <input
+                id="support-input"
                 type="text"
                 value={input}
+                maxLength={2000}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your question or support request..."
-                className="w-full bg-transparent px-4 py-2.5 text-sm sm:text-sm text-(--primary) placeholder-grey outline-none"
+                placeholder={
+                  mode === "WAITING" || mode === "HUMAN"
+                    ? "Write to our support team..."
+                    : "Type your question or support request..."
+                }
+                className="w-full bg-transparent px-4 py-2.5 text-sm text-(--primary) placeholder-grey outline-none"
               />
               <button
                 type="submit"
@@ -245,4 +341,17 @@ export default function SupportPage() {
       </div>
     </Layout>
   );
+}
+
+async function readAll(stream: any): Promise<string> {
+  if (!stream?.getReader) return "";
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let out = "";
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    out += decoder.decode(value, { stream: true });
+  }
+  return out;
 }

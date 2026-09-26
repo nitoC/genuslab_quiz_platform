@@ -9,9 +9,7 @@ const TABS = [
   { label: "Bulk Live Quiz Creator", href: "/genuslab/quizzes/create-quiz/json/live" },
 ];
 
-// A small, persistent way to jump between the JSON builder tools without
-// having to go back to the picker page first — and a reminder of where
-// "back" actually goes, since these builder pages have no shared header.
+// Tabs to switch between the JSON builder pages.
 export default function BuilderNavTabs() {
   const pathname = usePathname();
 

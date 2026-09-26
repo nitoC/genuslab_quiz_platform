@@ -38,7 +38,6 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
     // if (loading) return;
     try {
       setIsSigningOut(true);
-      console.log("signing out");
       // setLoading(true);
 
       // Axios request to your logout server endpoint
@@ -46,7 +45,6 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
       toast.success("logout successfull");
       // localStorage.clear();
       useUserStore.setState({ user: null });
-      console.log("signing out bottom");
       router.push("/login");
     } catch (error) {
       console.error(
@@ -60,10 +58,7 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
     }
   };
 
-  // The single notification socket connection is owned by SocketProvider
-  // (mounted once at the dashboard layout level, so it survives page
-  // navigation) — Header just reads it back out of the shared store rather
-  // than opening a second connection of its own.
+  // SocketProvider owns the socket; just read from the store here.
   const socket = useSocket((state: any) => state.socket);
 
   useEffect(() => {
@@ -73,7 +68,6 @@ const Header = ({ title, backBtn = false }: HeaderProps) => {
   useEffect(() => {
     if (!socket) return;
     const handleUnread = (notification: any) => {
-      console.log(notification, "checking for unread");
       setUnRead(notification);
     };
     socket.on("has-unread", handleUnread);

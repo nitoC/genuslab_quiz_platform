@@ -1,8 +1,8 @@
 "use client";
 
-import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+import { useFlutterwave } from "flutterwave-react-v3";
 import useUser from "@/hooks/useUser";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export const useFlutterwaveExec = () => {
   const {
@@ -11,7 +11,11 @@ export const useFlutterwaveExec = () => {
     isError: isUserError,
   } = useUser();
 
-  // Memoize config so tx_ref stays stable across re-renders
+  // Bumped after each checkout so every attempt gets its own tx_ref.
+  // Reusing one made retries fail and blurred which payment was which.
+  const [attempt, setAttempt] = useState(0);
+  const nextCheckout = useCallback(() => setAttempt((n) => n + 1), []);
+
   const config = useMemo(() => {
     const user = userData?.user;
 
@@ -26,17 +30,19 @@ export const useFlutterwaveExec = () => {
         phone_number: user?.phone || "",
         name: user?.name || "",
       },
-      // Fixed: Moved customizations out of customer object to root level
       customizations: {
         title: "Genuslab academy premium",
         description: "Payment subscription for the genuslab academy quiz",
         logo: "https://genuslabtech.online/_next/image?url=%2Flogo%2Flogo.png&w=256&q=75",
       },
     };
-  }, [userData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData, attempt]);
 
   return {
     useFlutterwaveExec: useFlutterwave(config),
+    txRef: config.tx_ref,
+    nextCheckout,
     userData,
     isUserLoading,
     isUserError,

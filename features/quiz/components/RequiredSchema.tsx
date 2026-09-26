@@ -42,7 +42,7 @@ export default function RequiredSchema({
     {
       field: "rankId",
       required: true,
-      desc: "The rank this question belongs to. You don't need to type this — pick a rank from the dropdown above and it's filled in for you.",
+      desc: "The rank this question belongs to. Pick it from the dropdown above; it's written onto every question and replaces any rankId already in your JSON.",
     },
     {
       field: "topic",

@@ -30,13 +30,7 @@ const BottomToast = ({
   if (!isOpen) return null;
 
   return (
-    // The positioning classes live on this plain wrapper, not on GlassCard
-    // itself — GlassCard's own base classes hardcode `relative`, and since
-    // Tailwind's generated stylesheet orders `relative` after `fixed`,
-    // putting both on the same element let `relative` silently win,
-    // dropping the toast into normal document flow (extra page scroll,
-    // toast rendered off-screen at the end of the page) instead of pinning
-    // it to the viewport.
+    // Position on a wrapper — GlassCard's `relative` would override `fixed`.
     <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-sm z-50">
       <GlassCard className="flex flex-row items-center gap-4 p-4 hover:bg-white/5 transition-colors">
         <button

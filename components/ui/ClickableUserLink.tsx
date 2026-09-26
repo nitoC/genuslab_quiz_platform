@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 
-/**
- * Wraps a leaderboard avatar/name so clicking it opens that player's public
- * stats page — except when it's the current user's own entry, where it just
- * renders the children inertly (no point linking to your own public-stats
- * view of yourself from a leaderboard).
- */
+// Links a leaderboard entry to that player's stats (not for your own entry).
 const ClickableUserLink = ({
   userDetailsId,
   currentUserDetailsId,
@@ -20,9 +15,7 @@ const ClickableUserLink = ({
   children: ReactNode;
   className?: string;
 }) => {
-  // Always renders a real wrapping element (not a bare Fragment) even when
-  // inert — callers pass layout-critical classes here (e.g. `relative` for
-  // a Next.js <Image fill> child), which a Fragment would silently drop.
+    // Always a real element — callers pass layout classes (e.g. `relative`).
   if (!userDetailsId || userDetailsId === currentUserDetailsId) {
     return <div className={className}>{children}</div>;
   }

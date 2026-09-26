@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils/cn";
 import { fetchQuizById, updateQuizData } from "@/lib/api/apis";
 import toast from "react-hot-toast";
 import useQuizData from "@/hooks/useQuizData";
+import { serverErrorText } from "@/features/quiz/validation";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 
@@ -27,7 +28,8 @@ export type ActiveSlot =
   | "AFTERNOON_15_17"
   | "EVENING_17_19"
   | "NIGHT_19_21";
-export type QuizStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED" | "UPCOMING";
+// Must match the backend QuizStatus enum.
+export type QuizStatus = "DRAFT" | "UPCOMING" | "ACTIVE" | "ARCHIVED";
 export type EpisodeType =
   | "EPISODE_0"
   | "EPISODE_1"
@@ -62,8 +64,8 @@ export interface QuizFormData {
   questions: QuestionFormData[];
 }
 
+// EPISODE_0 has no time slot, so the server rejects it.
 const EPISODE_OPTIONS: EpisodeType[] = [
-  "EPISODE_0",
   "EPISODE_1",
   "EPISODE_2",
   "EPISODE_3",
@@ -85,7 +87,7 @@ const SLOT_OPTIONS: ActiveSlot[] = [
 const STATUS_OPTIONS: QuizStatus[] = [
   "DRAFT",
   "UPCOMING",
-  "PUBLISHED",
+  "ACTIVE",
   "ARCHIVED",
 ];
 
@@ -110,12 +112,18 @@ export default function EditQuizPage() {
   // Update Quiz Mutation
   const updateMutation = useMutation<void, Error, QuizFormData>({
     mutationFn: async (data: QuizFormData) => {
-      const quizData = { ...data };
-      // if (quizData.questions.length < 1) {
-      delete (quizData as Partial<QuizFormData>).questions;
-      // }
-
-      await updateQuizData(quizData);
+      // Only the fields PUT quiz/update accepts.
+      const { id, title, day, episode, activeAt, activeDate, status } =
+        data as any;
+      await updateQuizData({
+        id,
+        title,
+        day: Number(day),
+        episode,
+        activeAt,
+        activeDate: activeDate ? String(activeDate).slice(0, 10) : undefined,
+        status,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quiz", quizId] });
@@ -123,7 +131,8 @@ export default function EditQuizPage() {
       router.push("/genuslab/quizzes");
     },
     onError: (err: Error) => {
-      alert(`Error updating quiz: ${err.message}`);
+      toast.error(`Could not update quiz
+${serverErrorText(err)}`);
     },
   });
 

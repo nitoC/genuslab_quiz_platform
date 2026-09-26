@@ -9,9 +9,7 @@ interface PageLoaderProps {
   className?: string;
 }
 
-// Single source of truth for "still loading" states that previously
-// rendered as raw, unstyled "loading..." text — a spinner + label reads as
-// an intentional loading screen instead of an unfinished one.
+// Spinner + label for loading states.
 const PageLoader = ({
   label = "Loading...",
   theme = "dark",

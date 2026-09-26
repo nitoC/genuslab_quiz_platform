@@ -55,7 +55,6 @@ import { QuizObject } from "@/app/genuslab/(dashboard)/quizzes/create-quiz/json/
 //USER ENDPOINTS
 export const registerUser = async (payload: any) => {
   const res = await axiosSystem.post("auth/register", payload);
-  console.log(res, "created user payload");
   return res;
 };
 
@@ -63,15 +62,11 @@ export const getNotifications = async (query?: "read" | "unread") => {
   const res = await axiosUser.get(
     `notification?${query ? `type=${query}` : ""}`,
   );
-  console.log(res, "notifications response");
   return res;
 };
 
-// Admin-console variant of getNotifications — same route, but issued via
-// axiosAdmin so that if the request 401s on an expired token, the axiosAdmin
-// response interceptor's failure redirect sends the browser to
-// /genuslab/admin instead of the regular user /login page. Used by
-// AdminTopbar, which fires this unconditionally on every admin page load.
+// Admin version: uses axiosAdmin so an expired token sends you to the
+// admin login, not /login.
 export const getAdminNotifications = async (query?: "read" | "unread") => {
   const res = await axiosAdmin.get(
     `notification?${query ? `type=${query}` : ""}`,
@@ -81,13 +76,11 @@ export const getAdminNotifications = async (query?: "read" | "unread") => {
 
 export const markNotificationAsRead = async (id: string) => {
   const res = await axiosUser.patch(`notification/mark-as-read/${id}`);
-  console.log(res, "mark notification as read response");
   return res;
 };
 
 export const markAllNotificationsAsRead = async () => {
   const res = await axiosUser.patch(`notification/mark-all-as-read`);
-  console.log(res, "mark all notifications as read response");
   return res;
 };
 // export const tokenUser = async (payload: any) => {
@@ -128,12 +121,8 @@ export const logout = async () => {
   return res;
 };
 
-// Admin-console logout — hits its own route (clears the separate
-// 'adminRefreshToken' cookie, not the client's 'refreshToken') and is
-// issued via axiosAdmin so that if the logout request itself 401s (e.g. an
-// already-expired session), the axiosAdmin response interceptor's failure
-// redirect sends the browser to /genuslab/admin instead of the regular
-// user /login page.
+// Admin logout: clears adminRefreshToken and redirects to the admin login
+// if the session has already expired.
 export const adminLogout = async () => {
   const res = await axiosAdmin.delete("auth/admin/logout");
   return res;
@@ -152,10 +141,7 @@ export const getUserProfile = async (id: string) => {
   return res;
 };
 
-// Admin-console variant of getUserProfile — same route, but issued via
-// axiosAdmin so a 401 on an expired token redirects to /genuslab/admin
-// instead of /login. Used by AdminTopbar, which fires this unconditionally
-// on every admin page load.
+// Admin version of getUserProfile (axiosAdmin).
 export const getAdminOwnProfile = async (id: string) => {
   const res = await axiosAdmin.get(`user/profile/${id}`);
   return res;
@@ -253,7 +239,6 @@ export const submitLiveQuestion = async (data: any) => {
   return res;
 };
 export const submitAttempt = async (detailsId: string, data: any) => {
-  console.log(detailsId, "details id");
   const res = await axiosUser.post(
     `question/attempt/submit/${detailsId}`,
     data,
@@ -262,10 +247,9 @@ export const submitAttempt = async (detailsId: string, data: any) => {
   return res;
 };
 
-//TRANSACTION ENDPOINTS
-/**
- * Create a transaction (Admin only)
- */
+// TRANSACTION ENDPOINTS
+
+// Admin only.
 export const createTransaction = async (payload: {
   userId: string;
   type: string;
@@ -326,15 +310,17 @@ export const getTransactionById = async (id: string) => {
   return res;
 };
 
+export const getAdminTransactionById = async (id: string) => {
+  const res = await axiosAdmin.get(`transaction/${id}`);
+  return res;
+};
+
 export const updateTransactionStatus = async (id: string, status: string) => {
   const res = await axiosAdmin.patch(`transaction/${id}/status`, { status });
   return res;
 };
 
-/**
- * Get paginated & filtered transactions for the current user
- * @param params Filters including type, status, limit, and page
- */
+// Current user's transactions, filtered and paginated.
 export const getUserTransactions = async (params?: {
   type?: string;
   status?: string;
@@ -385,10 +371,7 @@ export const getPerformanceStats = async (detailsId: string, day: any) => {
   return await axiosUser.get(`stats/user/${detailsId}/day-performance/${day}`);
 };
 
-/**
- * Public-facing stats for viewing another user's profile from a
- * leaderboard avatar click.
- */
+// Another user's public stats (leaderboard profile).
 export const getPublicUserStats = async (detailsId: string) => {
   return await axiosUser.get(`stats/user/${detailsId}/public`);
 };
@@ -463,11 +446,7 @@ export const updateProfileData = async (data: {
   return res;
 };
 
-/**
- * Rank for a specific day
- * Example:
- * 15-07-2026
- */
+// Rank for a day, e.g. "15-07-2026".
 export const getRankForDay = async (detailsId: string, day: string) => {
   return await axiosUser.get(`stats/user/${detailsId}/rank/${day}`);
 };
@@ -597,8 +576,10 @@ export const subscribe = async (data: {
   return res;
 };
 
-export const acquireCheckoutLock = async () => {
-  const res = await axiosUser.post(`subscription/checkout-lock`);
+// Sends the tx_ref this checkout will use, so the server can recover the
+// payment if we never get to report it.
+export const acquireCheckoutLock = async (txRef: string) => {
+  const res = await axiosUser.post(`subscription/checkout-lock`, { txRef });
   return res;
 };
 export const releaseCheckoutLock = async () => {
@@ -607,27 +588,20 @@ export const releaseCheckoutLock = async () => {
 };
 //ADMIN ENDPOINTS
 export const adminLogin = async (payload: any) => {
-  console.log(payload, "admin login payload");
   const res = await axiosSystem.post("auth/admin/login", payload);
-  console.log(res, "admin login response");
   return res;
 };
 
 export const createQuiz = async (payload: any) => {
-  console.log(payload, "create quiz payload");
   const res = await axiosAdmin.post("quiz/seed", payload);
-  console.log(res, "create quiz response");
   return res;
 };
 export const updateQuizData = async (payload: any) => {
-  console.log(payload, "update quiz payload");
   const res = await axiosAdmin.put("quiz/update", payload);
-  console.log(res, "create quiz response");
   return res;
 };
 
 export const fetchQuizById = async (quizId: string) => {
-  console.log(quizId, "auifdk)");
   const res = await axiosAdmin.get(`quiz/${quizId}`);
   return res;
 };
@@ -637,46 +611,85 @@ export const createQuestion = async (payload: IQuestionSubmit[]) => {
   return res;
 };
 export const updateQuiz = async (id: string, payload: any) => {
-  console.log(id, "update quiz id");
-  console.log(
-    {
-      id,
-      questions: payload,
-    },
-    "update quiz id",
-  );
   const res = await axiosAdmin.patch(`quiz/update/seed`, {
     id,
     questions: payload,
   });
-  console.log(res, "update quiz response");
   return res;
 };
 export const createQuizBatch = async (payload: QuizObject[]) => {
   const res = await axiosAdmin.post(`quiz/batch/seed`, payload);
-  console.log(res, "update quiz response");
   return res;
 };
 //SUPPORT ENDPOINT
-export const sendSupportMessage = async (messages: any[]) => {
+// Sends one message. The server keeps the conversation. The reply streams
+// back as text; header x-support-mode is "ai" or "human" (staff queue).
+export const sendSupportMessage = async (content: string) => {
   const res = await axiosUser.post(
     "support-ai",
-    { messages: messages },
+    { content },
     { responseType: "stream", adapter: "fetch" },
+  );
+  return res;
+};
+
+export const getSupportConversation = async () => {
+  const res = await axiosUser.get("support-ai/conversation");
+  return res;
+};
+
+export const requestSupportHuman = async (reason?: string) => {
+  const res = await axiosUser.post("support-ai/handoff", { reason });
+  return res;
+};
+
+export const closeSupportConversation = async () => {
+  const res = await axiosUser.post("support-ai/close");
+  return res;
+};
+
+// Staff inbox (admin console)
+export const getSupportChats = async (status?: string, page = 1) => {
+  const res = await axiosAdmin.get("support-ai/admin/conversations", {
+    params: { status: status || undefined, page },
+  });
+  return res;
+};
+
+export const getSupportChatSummary = async () => {
+  const res = await axiosAdmin.get("support-ai/admin/summary");
+  return res;
+};
+
+export const getSupportChat = async (id: string) => {
+  const res = await axiosAdmin.get(`support-ai/admin/conversations/${id}`);
+  return res;
+};
+
+export const replySupportChat = async (id: string, content: string) => {
+  const res = await axiosAdmin.post(
+    `support-ai/admin/conversations/${id}/reply`,
+    { content },
+  );
+  return res;
+};
+
+export const setSupportChatStatus = async (id: string, status: "AI" | "CLOSED") => {
+  const res = await axiosAdmin.patch(
+    `support-ai/admin/conversations/${id}/status`,
+    { status },
   );
   return res;
 };
 
 export const getEpisodeDetails = async () => {
   const res = await axiosSystem.get(`system/episode-slots`);
-  console.log(res, "fetch episode details response");
   return res;
 };
 
+// Admin-only route.
 export const fetchQuizDetails = async (id: string) => {
-  console.log(id, "fetch quiz details id");
-  const res = await axiosUser.get(`quiz/${id}`);
-  console.log(res, "fetch quiz details response");
+  const res = await axiosAdmin.get(`quiz/${id}`);
   return res;
 };
 
@@ -697,49 +710,37 @@ export const getAllActiveQuiz = async () => {
 
 export const getAllUserQuizzes = async (did: string) => {
   const res = await axiosUser.get(`attempts/${did}`);
-  console.log(res);
   return res;
 };
 export const deleteQuiz = async (id: string) => {
-  console.log(id, "delete quiz id");
   const res = await axiosAdmin.delete(`quiz/delete/${id}`);
-  console.log(res, "delete quiz response");
   return res;
 };
 
+// Admin-only: the response includes the answer.
 export const fetchQuestionDetails = async (id: string) => {
-  console.log(id, "fetch question details id");
-  const res = await axiosUser.get(`question/${id}`);
-  console.log(res, "fetch question details response");
+  const res = await axiosAdmin.get(`question/${id}`);
   return res;
 };
 
 export const fetchQuizQuestions = async (id: string) => {
-  console.log(id, "fetch quiz questions details id");
-  const res = await axiosUser.get(`quiz/questions/${id}`);
-  console.log(res, "fetch quiz questions details response");
+  const res = await axiosAdmin.get(`quiz/questions/${id}`);
   return res;
 };
 
 // BANK ENDPOINTS
 export const linkBankAccount = async (payload: any) => {
   const res = await axiosUser.post("accounts", payload);
-  console.log(res, "link bank account response");
   return res;
 };
 
 export const deleteBankAccount = async (id: string) => {
   const res = await axiosUser.delete(`accounts/${id}`);
-  console.log(res, "delete bank account response");
   return res;
 };
 
-//system endpoints
-//SYSTEM ENDPOINTS
-// Was pointed at "system/activity-details", which doesn't exist on the
-// backend (that controller only has /time, /quiz-slots, /episode-slots,
-// /next-quiz) — every call 404'd. The real endpoint, returning
-// { pastDay, currentDay }, lives on the quiz controller.
+// SYSTEM ENDPOINTS
+// Day counter lives on the quiz controller.
 export const getQuizDay = async () => {
   const res = await axiosAdmin.get("quiz/activity-details");
   return res;
@@ -747,12 +748,10 @@ export const getQuizDay = async () => {
 
 export const getSlotDetails = async () => {
   const res = await axiosSystem.get(`system/quiz-slots`);
-  console.log(res, "fetch slot details response");
   return res;
 };
 export const getTime = async () => {
   const res = await axiosSystem.get("system/time");
-  console.log(res, "system time response");
   return res;
 };
 
@@ -770,7 +769,6 @@ export const getNextTime = async () => {
 
 const getRankings = async () => {
   const res = await axiosUser.get("rank/all");
-  console.log(res, "rankings response");
   return res;
 };
 
@@ -845,9 +843,7 @@ export const getAdminRewards = async (params?: {
   return res;
 };
 
-// ADMIN/ACCOUNTANT: every user's linked payout bank account — used by the
-// Finance page's "Bank Accounts" tab so staff can look one up before
-// sending a manual reward payout.
+// ADMIN/ACCOUNTANT: all users' payout bank accounts (Finance > Bank Accounts).
 export const getAdminBankAccounts = async (params?: {
   search?: string;
   page?: number;
@@ -956,9 +952,8 @@ export const markContactAsRead = async (id: string) => {
 export interface ContactMessageInput {
   name: string;
   email: string;
-  // Capitalised to match the `Company` column rendered by the admin inbox
-  // (see app/genuslab/(dashboard)/contacts/page.tsx).
-  Company?: string;
+  // The API takes `company`; it's saved (and read back) as `Company`.
+  company?: string;
   subject: string;
   message: string;
   type?: "message" | "consultation";
@@ -1084,10 +1079,8 @@ export const getStudioQuizWinnersForMonth = async (
   return res;
 };
 
-/** Top scorer on the ONLINE quiz's monthly leaderboard for the previous
- * month — the eligible candidate for that month's studio quiz. Admin-console
- * route (Admin JWT) — the mobile app uses the separate client-key-guarded
- * `studio-quiz/eligible-candidate/previous-month` route instead. */
+// Last month's top online-quiz scorer (admin route; the mobile app uses
+// the client-key one).
 export const getPreviousMonthEligibleCandidate = async () => {
   const res = await axiosAdmin.get(
     "studio-quiz/admin/eligible-candidate/previous-month",
@@ -1095,11 +1088,7 @@ export const getPreviousMonthEligibleCandidate = async () => {
   return res;
 };
 
-/** Top scorer on the online quiz's monthly leaderboard for any month
- * (MM-yyyy) — the eligible candidate for that month's studio quiz.
- * Admin-console route (Admin JWT) — the mobile app uses the separate
- * client-key-guarded `studio-quiz/eligible-candidate/month/:month` route
- * instead. */
+// Top online-quiz scorer for a given month (MM-yyyy). Admin route.
 export const getEligibleCandidateForMonth = async (month: string) => {
   const res = await axiosAdmin.get(
     `studio-quiz/admin/eligible-candidate/month/${month}`,

@@ -1,4 +1,5 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import React, { useState } from "react";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
@@ -16,8 +17,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [sending, setSending] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [email, setEmail] = useState("admin@genuslab.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const validate = (email: string, password: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,14 +41,11 @@ export default function LoginPage() {
         password,
       });
 
-      console.log(res, "admin login response in page");
       if (res?.data?.payload) {
         updateUser(res.data.payload);
         toast.success("admin Login successful!");
 
-        // A forced password change takes priority over the normal landing
-        // page — the account was just created with a temporary/generated
-        // password that shouldn't stay usable past this first login.
+                // New accounts must change their temporary password first.
         if (res.data.payload.mustChangePassword) {
           setTimeout(() => {
             router.push("/genuslab/change-password?first=true");
@@ -69,13 +67,10 @@ export default function LoginPage() {
         }, 1500);
       }
     } catch (err) {
-      console.log(err, "admin login error in page");
-      toast.error(
-        "admin Login failed. Please check your credentials and try again.",
-      );
+      toast.error(authErrorMessage(err, "adminLogin"));
+      // Keep the email; clear the password for the next try.
+      setPassword("");
     } finally {
-      setEmail("admin@genuslab.com");
-      setPassword("password123");
       setSending(false);
     }
   };

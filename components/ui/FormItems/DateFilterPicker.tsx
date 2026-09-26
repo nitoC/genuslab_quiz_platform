@@ -21,11 +21,7 @@ interface Props {
   theme?: "light" | "dark";
   maxDate?: Date;
   minDate?: Date;
-  // "bottom-end" anchors the calendar's right edge to the input instead of
-  // its left edge — use it for a picker that sits near the right edge of
-  // its container, or the calendar can extend past the viewport and cause
-  // a page-level horizontal scrollbar (it renders in a body-level portal,
-  // so it isn't clipped by any parent's overflow).
+  // Use "bottom-end" near the right edge so the calendar stays on screen.
   popperPlacement?: "bottom-start" | "bottom-end";
 }
 
@@ -42,9 +38,7 @@ interface DropdownOption {
   value: number;
 }
 
-// Small header dropdown used for jumping months/years quickly — a plain
-// "next month" arrow would make navigating years of transaction history
-// tediously slow.
+// Quick month/year jump.
 const HeaderDropdown = ({
   options,
   value,
@@ -134,11 +128,7 @@ const HeaderDropdown = ({
   );
 };
 
-// Custom date-filter input backed by react-datepicker — replaces native
-// <input type="date"> with a calendar that matches the app's own design,
-// rendered in a portal (so it can never get clipped by a scrolling table
-// container) and with month/year jump controls for fast navigation across
-// years of history.
+// Date filter using react-datepicker, rendered in a portal.
 const DateFilterPicker = ({
   value,
   onChange,

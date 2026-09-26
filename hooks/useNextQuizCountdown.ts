@@ -21,11 +21,7 @@ interface NextQuizCountdown {
 // server-driven countdown instead of drifting duplicate implementations.
 const useNextQuizCountdown = (refetchQuiz?: () => void): NextQuizCountdown => {
   const [remainingMs, setRemainingMs] = useState<number | null>(null);
-  // Snapshot of remainingMs the first time each waiting window is observed —
-  // the denominator for the progress ring, since the API only ever gives us
-  // a target time, not the total length of the window. Kept in state (not a
-  // ref) so it's never read during render — ref reads outside effects/events
-  // can tear under concurrent rendering.
+  // Remaining time when this wait started — used as the progress ring's total.
   const [initialRemainingMs, setInitialRemainingMs] = useState<number | null>(
     null,
   );
@@ -42,19 +38,8 @@ const useNextQuizCountdown = (refetchQuiz?: () => void): NextQuizCountdown => {
   const nextTime = data?.nextTime;
   const currentTime = data?.currentTime;
 
-  // Guards against re-triggering refetch() for the SAME stale nextTime.
-  // Without this, once the countdown hits zero: tick() calls refetch() ->
-  // refetch resolves with a new `data` object -> if the effect below
-  // depended on the whole `data` object, that new reference would
-  // re-trigger the effect immediately (not waiting for the 1s interval) ->
-  // tick() runs again -> still <= 0 (a slow/failed refetch, or the server
-  // briefly re-returning the same already-passed time) -> refetch() again
-  // -> loop, bounded only by promise-resolution speed, not by time. This
-  // was observed hammering the endpoint fast enough to trip the backend's
-  // per-second rate limiter. Tracking the exact nextTime we've already
-  // fired a refetch for — and depending on the primitive nextTime/
-  // currentTime values below instead of the `data` object — closes both
-  // the immediate re-trigger and the every-tick repeat.
+  // Remember which nextTime we already refetched for, so hitting zero
+  // doesn't trigger a refetch loop.
   const hasTriggeredRefetchRef = useRef<number | null>(null);
 
   useEffect(() => {

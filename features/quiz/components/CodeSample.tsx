@@ -7,9 +7,7 @@ interface CodeSampleProps {
   label?: string;
 }
 
-// Matches TemplatePanel.tsx's dark "code block" styling so example JSON
-// inside the walkthrough modal (and anywhere else) looks consistent with
-// the rest of the JSON-builder tooling instead of inventing a new look.
+// Same dark code-block style as TemplatePanel.
 export default function CodeSample({ code, label }: CodeSampleProps) {
   return (
     <div className="rounded-lg overflow-hidden border border-slate-800">

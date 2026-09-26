@@ -9,38 +9,105 @@
     ],
     "answer": 1,
     "answerDescription": "A variable is a named storage location used to hold a value that can change over time.",
-    "difficulty": "medium",
+    "difficulty": "easy",
     "hint": "Its value can often change while a program runs.",
     "rankId": "cmnlmyirc0007rog61a9gv2e8",
-    "topic": "Programming foundations"
+    "topic": "Variables"
   },
   {
-    "questionText": "What is the purpose of a \"loop\" in programming?",
+    "questionText": "What is an algorithm?",
     "options": [
-      "Repeating a block of code multiple times",
-      "Permanently stopping a program",
-      "Formatting a hard drive",
-      "Connecting to the internet"
+      "A step-by-step set of instructions to solve a problem",
+      "A programming language",
+      "A kind of computer chip",
+      "A spreadsheet formula"
     ],
     "answer": 0,
-    "answerDescription": "A loop repeats a block of code multiple times, often until a condition is met.",
-    "difficulty": "medium",
-    "hint": "For and while loops are common examples.",
+    "answerDescription": "An algorithm is a clear sequence of steps that solves a problem or completes a task.",
+    "difficulty": "easy",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Algorithms"
+  },
+  {
+    "questionText": "In a flowchart, which shape usually shows a decision?",
+    "options": ["Rectangle", "Diamond", "Oval", "Arrow"],
+    "answer": 1,
+    "answerDescription": "A diamond marks a yes/no decision; rectangles are steps and ovals are start/end.",
+    "difficulty": "easy",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Flowcharts"
+  },
+  {
+    "questionText": "Which structure repeats a block of code?",
+    "options": ["A loop", "A comment", "A variable", "An import"],
+    "answer": 0,
+    "answerDescription": "Loops such as for and while run the same block of code repeatedly.",
+    "difficulty": "easy",
     "rankId": "cmnlmyirc0007rog61a9gv2e8",
     "topic": "Loops"
   },
   {
-    "questionText": "What does \"conditional logic\" (like if/else) allow a program to do?",
+    "questionText": "What is the result of the logical expression: true AND false?",
+    "options": ["true", "false"],
+    "answer": 1,
+    "answerDescription": "AND is only true when both sides are true, so true AND false is false.",
+    "difficulty": "easy",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Logic"
+  },
+  {
+    "questionText": "What does a program do with source code before running it?",
     "options": [
-      "Permanently freeze the program",
-      "Automatically format storage",
-      "Make decisions and take different actions based on conditions",
-      "Disable all variables"
+      "Translates it into instructions the computer can execute",
+      "Prints it out",
+      "Deletes the comments and stops",
+      "Uploads it to the internet"
     ],
+    "answer": 0,
+    "answerDescription": "A compiler or interpreter turns source code into something the machine can run.",
+    "difficulty": "easy",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Programming foundations"
+  },
+  {
+    "questionText": "Which value would you store in a boolean variable?",
+    "options": ["\"hello\"", "42", "true", "3.14"],
     "answer": 2,
-    "answerDescription": "Conditional logic lets a program choose different actions depending on whether conditions are true or false.",
+    "answerDescription": "A boolean holds only true or false.",
+    "difficulty": "easy",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Variables"
+  },
+  {
+    "questionText": "How many times does this loop run?  for i from 1 to 5",
+    "options": ["4", "5", "6", "It never stops"],
+    "answer": 1,
+    "answerDescription": "It runs once for each of 1, 2, 3, 4 and 5, so five times.",
     "difficulty": "medium",
-    "hint": "It lets code respond differently to different inputs.",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Loops"
+  },
+  {
+    "questionText": "Which is the best first step when designing an algorithm?",
+    "options": [
+      "Start writing code immediately",
+      "Clearly define the problem and its inputs and outputs",
+      "Choose a programming language",
+      "Draw the user interface"
+    ],
+    "answer": 1,
+    "answerDescription": "You need to know exactly what goes in and what should come out before choosing steps.",
+    "difficulty": "medium",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Algorithms"
+  },
+  {
+    "questionText": "If x = 3, what is the value of (x > 2) OR (x < 1) AND (x == 5)?",
+    "options": ["true", "false"],
+    "answer": 0,
+    "answerDescription": "AND binds tighter than OR: (x < 1) AND (x == 5) is false, and (x > 2) is true, so true OR false is true.",
+    "difficulty": "hard",
+    "hint": "AND is evaluated before OR.",
     "rankId": "cmnlmyirc0007rog61a9gv2e8",
     "topic": "Logic"
   }

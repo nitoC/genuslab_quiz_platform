@@ -16,13 +16,7 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
   onClick,
   className = "",
 }) => {
-  // TimerPop (the "next event starts in" bar) renders null whenever there's
-  // no countdown ready — this button's bottom offset was originally sized
-  // to sit just above that bar, so without it the same offset just leaves a
-  // large empty gap under the button. Reading the same shared countdown
-  // query here (cheap — react-query dedupes it against TimerPop's own call)
-  // lets the button drop down to a normal FAB position when the bar isn't
-  // actually on screen.
+  // Sit above the countdown bar only when it's showing.
   const { isReady: timerBarVisible } = useNextQuizCountdown();
 
   const content = (
@@ -60,9 +54,7 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
     "fixed",
     "right-4",
     "sm:right-6",
-    // Below the mobile sidebar drawer (z-30) and its backdrop (z-25), above
-    // the sticky header (z-10) — was z-50, which rendered on top of the
-    // open mobile sidebar.
+        // Below the mobile sidebar (z-30), above the header (z-10).
     "z-20",
     timerBarVisible ? "bottom-27 sm:bottom-30" : "bottom-5 sm:bottom-6",
     "focus:outline-none",

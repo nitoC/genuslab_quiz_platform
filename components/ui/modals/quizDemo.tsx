@@ -11,10 +11,7 @@ type GradientButtonProps = {
   children: React.ReactNode;
 
   className?: string;
-  /**
-   * Tailwind gradient classes, e.g.
-   * "from-emerald-400 via-teal-400 to-emerald-600"
-   */
+  // Tailwind gradient classes, e.g. "from-emerald-400 to-emerald-600".
   gradient?: string;
 };
 
@@ -63,7 +60,6 @@ const DemoQuizModal = ({
       <div
         className="absolute inset-0 bg-slate-900/30 backdrop-blur-[10px]"
         onClick={() => {
-          console.log(true, "true");
           onClose();
         }}
       />

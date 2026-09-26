@@ -33,7 +33,6 @@ const GetReadyModal = () => {
     queryKey: ["active quiz"],
     queryFn: async () => {
       const res = await getCurrentActive();
-      console.log(res.data.payload, "active quizzes");
       return res?.data?.payload ?? 0;
     },
   });

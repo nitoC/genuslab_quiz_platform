@@ -9,10 +9,7 @@ interface JsonFileDropzoneProps {
   hint?: string;
 }
 
-// Primary, beginner-friendly way to load a JSON payload — drag a file onto
-// this box or click it to browse. Pasting into the textarea below still
-// works as a fallback for anyone who already has the JSON on their
-// clipboard, but this is the first thing a new admin should notice.
+// Drag a .json file here or click to browse. Pasting still works.
 export default function JsonFileDropzone({
   onFileText,
   hint = "Accepts a .json file",

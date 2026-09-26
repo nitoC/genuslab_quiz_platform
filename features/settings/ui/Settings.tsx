@@ -142,7 +142,7 @@ const AccountSection = ({ user }: any) => {
       toast.success("Personal information updated successfully!");
     } catch (err) {
       toast.error("something went wrong!");
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }

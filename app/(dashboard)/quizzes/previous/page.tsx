@@ -76,15 +76,7 @@ const QuizCardSkeleton = () => (
   </GlassCard>
 );
 
-/* --------------------------------------------------------------------------
- * TAB TOGGLE BUTTON
- *
- * Below the `xs` breakpoint (custom, 400px) there isn't room for icon +
- * label side by side without wrapping/overflowing, so the label is hidden
- * and only the icon shows — with a small floating tooltip (CSS-only, via
- * group-hover) standing in for the label on hover/tap, so the button's
- * purpose is never lost, just its always-visible text.
- * -------------------------------------------------------------------------- */
+// Tab button. Below 400px only the icon shows, with a hover tooltip.
 
 const TabButton = ({
   active,

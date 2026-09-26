@@ -1,9 +1,10 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useRef, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc"; // Google sign-in is off for now
 import CustomInput from "@/components/ui/FormItems/CustomInput";
 import PageLoader from "@/components/ui/PageLoader";
 import PasswordInput from "@/components/ui/FormItems/PasswordInput";
@@ -173,7 +174,6 @@ function SignUpPage() {
       // console.log(payload, "registration payload");
       // toast.success("Account created successfully");
       const response = await registerUser(payload);
-      console.log(response, "registration response");
       if (response.data.status === "success") {
         localStorage.setItem("user", JSON.stringify(response.data.payload));
         toast.success("Account created successfully");
@@ -184,15 +184,7 @@ function SignUpPage() {
         toast.error((response as any).message || "Registration failed");
       }
     } catch (err: any) {
-      console.error(err?.response?.data);
-      if (err?.response?.data?.statusCode === 409) {
-        return toast.error("user already exists. login");
-      }
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("Registration failed. Please try again.");
-      }
+      toast.error(authErrorMessage(err, "signup"));
     } finally {
       setLoading(false);
     }
@@ -351,6 +343,8 @@ function SignUpPage() {
                   {loading ? "Signing up..." : "Sign up"}
                 </button>
 
+                {/* Google sign-up is off until it's wired up (the button did
+                    nothing).
                 <button
                   type="button"
                   className="flex w-full items-center justify-center gap-3 rounded-md bg-gray-100 py-3 text-sm font-medium transition hover:bg-gray-200"
@@ -358,6 +352,7 @@ function SignUpPage() {
                   <FcGoogle className="text-lg" />
                   Log in with Google
                 </button>
+                */}
               </form>
             </div>
           </div>

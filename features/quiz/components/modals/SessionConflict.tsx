@@ -6,11 +6,7 @@ import { FiArrowRight as ArrowRight, FiInfo as Info } from "react-icons/fi";
 
 interface ActiveSessionModalProps {
   onViewDetails?: () => void;
-  /** The backend's actual conflict reason (AttemptGaurd's 409 message) —
-   * "Quiz already completed" / "Quiz session has expired" / "user already
-   * in another session" are three different situations that each need
-   * different copy, not one generic "you have an active session" message
-   * that's actively wrong for the completed/expired cases. */
+  // The 409 message from the backend, so we can show the right text.
   reason?: string;
 }
 

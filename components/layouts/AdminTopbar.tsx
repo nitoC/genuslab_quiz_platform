@@ -22,10 +22,7 @@ import {
   MdPerson,
 } from "react-icons/md";
 
-// The single, consistent home for the sidebar toggle, notification access,
-// and admin profile menu — replaces the old pattern of a mobile-only menu
-// button embedded inside each page's own header. See directive: the menu
-// control belongs in a persistent app header, not floating in page content.
+// Sidebar toggle, notifications and profile menu for every admin page.
 const AdminTopbar = () => {
   const router = useRouter();
   const { collapsed, toggleSidebar, toggleCollapsed } = useSidebar(

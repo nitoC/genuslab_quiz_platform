@@ -100,7 +100,6 @@ const CustomBankSelect: React.FC<CustomBankSelectProps> = ({
 
   const selectedBank = banks.find((b: any) => b.bankName === value);
 
-  console.log(filteredBanks);
 
   return (
     <div className="relative w-full" ref={dropdownRef}>

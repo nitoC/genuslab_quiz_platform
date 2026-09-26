@@ -16,9 +16,7 @@ type AdminUserState = {
   setIsInitialized: (isInitialized: boolean) => void;
 };
 
-// Mirrors store/useUser.ts exactly, but kept as a fully separate store so
-// an admin-console session and a client-facing session can coexist in the
-// same browser without one overwriting the other's identity in memory.
+// Same as useUser, kept separate so admin and user sessions can coexist.
 export const useAdminUser = create<AdminUserState>((set) => {
   return {
     user: null,

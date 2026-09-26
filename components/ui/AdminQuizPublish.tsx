@@ -231,7 +231,6 @@ export default function QuizDetailsPage({
     queryKey: ["get quiz", id],
     queryFn: async () => {
       const res = await fetchQuizDetails(id as string);
-      console.log(res.data, "data in publish");
       return res.data;
     },
   });
@@ -243,10 +242,8 @@ export default function QuizDetailsPage({
   } = useQuery({
     queryKey: ["fetchRanks"],
     queryFn: async () => {
-      console.log(id);
       const res = await getRankData();
 
-      console.log(res, "fetch ranks response");
       return res.data.payload;
     },
   });
@@ -287,7 +284,6 @@ export default function QuizDetailsPage({
   const handleSubmit = async () => {
     const payload = handleQuestionTransform();
     try {
-      console.log(payload, "transformed");
       if (id) {
         await updateQuiz(id, payload);
       } else {
@@ -298,7 +294,7 @@ export default function QuizDetailsPage({
         reset();
       }, 400);
     } catch (err) {
-      console.log("err", err);
+      console.error("err", err);
       toast.error("oops! something went wrong");
     }
   };

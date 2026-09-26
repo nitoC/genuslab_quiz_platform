@@ -1,6 +1,4 @@
-// Lightweight heuristic User-Agent parsing for the admin Sessions views —
-// good enough to show "Chrome on Windows" style labels without pulling in a
-// full UA-parsing dependency for a handful of admin-only display strings.
+// Rough UA parsing for "Chrome on Windows" style labels in admin sessions.
 export interface ParsedUserAgent {
   browser: string;
   device: string;

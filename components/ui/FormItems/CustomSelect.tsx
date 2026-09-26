@@ -16,15 +16,11 @@ interface CustomSelectProps {
   searchable?: boolean;
   ariaLabel?: string;
   onChange: (value: any) => void;
-  // Allows callers to pass through DOM-ish props (id, etc.) some existing
-  // call sites already relied on before this component had a typed props
-  // interface at all.
+    // Extra DOM props (id, etc.) some callers pass.
   [key: string]: any;
 }
 
-// Reusable custom dropdown for every single-select control in the app — no
-// native <select> anywhere, so styling/keyboard behavior/accessibility stay
-// identical across every filter, form, and settings page that needs one.
+// Shared dropdown used instead of native <select>.
 const CustomSelect = (props: CustomSelectProps) => {
   const [drop, setDrop] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
@@ -36,11 +32,8 @@ const CustomSelect = (props: CustomSelectProps) => {
   const searchRef = useRef<HTMLInputElement>(null);
   const listId = useId();
 
-  // "value mode": the caller controls selection via option.value (needed
-  // whenever the display label differs from the underlying value, e.g.
-  // "All Statuses" -> ""). Falls back to the legacy label-matching mode
-  // used by the existing callers (quiz/question create, signup) when no
-  // `value` prop is passed.
+  // Pass `value` to match by option.value; without it we match by label
+  // (older call sites).
   const valueMode = props.value !== undefined;
 
   const selectedIndex = options.findIndex((item) =>

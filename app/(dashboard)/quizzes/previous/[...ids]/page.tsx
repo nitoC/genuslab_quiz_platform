@@ -98,7 +98,6 @@ const QuizReviewPage = () => {
     queryKey: ["quiz answers", attemptId, detailsId],
     queryFn: async () => {
       const res = await getAttemptsAnswers(detailsId ?? "", attemptId ?? "");
-      console.log(res, "answers");
       return res?.data?.payload;
     },
   });

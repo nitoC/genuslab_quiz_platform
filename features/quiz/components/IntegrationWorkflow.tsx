@@ -62,9 +62,9 @@ export default function IntegrationWorkflow({
             <HiOutlineLink className="text-lg" />
           </div>
           <span className="text-sm font-bold text-slate-400 mt-2">
-            Question Assignment
+            Add Questions
           </span>
-          <span className="text-[14px] text-slate-400">Mapping & linking</span>
+          <span className="text-[14px] text-slate-400">Next, per quiz</span>
         </div>
       </div>
     </div>

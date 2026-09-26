@@ -25,7 +25,11 @@ import toast from "react-hot-toast";
 
 export default function PricingPage() {
   const { data, isLoading, refetch } = useSubscription();
-  const { useFlutterwaveExec, userData } = useFlutterExec();
+  const { useFlutterwaveExec, userData, txRef, nextCheckout } =
+    useFlutterExec();
+  // True from the click until Flutterwave closes, so a second click can't
+  // start another payment.
+  const [checkingOut, setCheckingOut] = useState(false);
 
   // State for controlling Receipt Modal
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
@@ -38,23 +42,41 @@ export default function PricingPage() {
       subscribe(payload),
   });
 
-  const handleSubscription = async () => {
-    const hasSubscription = await getUserSubscription();
-    if (hasSubscription.data && hasSubscription.data.payload)
-      return toast.error("user already has an active subscription");
+  const finishCheckout = async () => {
+    await releaseCheckoutLock().catch(() => {});
+    nextCheckout();
+    setCheckingOut(false);
+  };
 
-    // Acquire the server-side lock BEFORE opening the Flutterwave popup.
-    // If another session is already mid-checkout for this user, this
-    // rejects immediately and the popup never opens here — that's the only
-    // point where a real duplicate charge can actually be prevented, since
-    // once two popups are open, both charges happen outside our control.
+  const handleSubscription = async () => {
+    if (checkingOut) return;
+    setCheckingOut(true);
+
+    const hasSubscription = await getUserSubscription().catch(() => null);
+    if (hasSubscription?.data?.payload?.name === "PREMIUM") {
+      setCheckingOut(false);
+      return toast.error("You already have an active Premium subscription");
+    }
+
+    // The server refuses if a payment is already open or pending, and if an
+    // earlier payment went through unreported it activates Premium from it
+    // instead of letting the user pay again.
     try {
-      await acquireCheckoutLock();
+      const res = await acquireCheckoutLock(txRef);
+      if (res.data?.payload?.recovered) {
+        await refetch();
+        toast.success(
+          "Your earlier payment was confirmed. Premium is now active.",
+        );
+        setCheckingOut(false);
+        return;
+      }
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
           "A payment is already in progress for your account.",
       );
+      setCheckingOut(false);
       return;
     }
 
@@ -89,16 +111,18 @@ export default function PricingPage() {
 
           // 3. Open Receipt Overlay
           setIsReceiptOpen(true);
-        } catch (error) {
-          toast.error("Subscription failed");
+        } catch (error: any) {
+          toast.error(
+            error?.response?.data?.message || "Subscription failed",
+          );
           console.error("Subscription process failed:", error);
         } finally {
           closePaymentModal();
-          await releaseCheckoutLock();
+          await finishCheckout();
         }
       },
       onClose: async () => {
-        await releaseCheckoutLock();
+        await finishCheckout();
       },
     });
   };
@@ -126,7 +150,7 @@ export default function PricingPage() {
                 plan={plan}
                 activePlan={data?.data.payload}
                 handleSubscription={handleSubscription}
-                submitting={subscribeMutation.isPending}
+                submitting={checkingOut || subscribeMutation.isPending}
               />
             ))}
           </div>

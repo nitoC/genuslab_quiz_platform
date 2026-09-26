@@ -5,13 +5,8 @@ import { format } from "date-fns";
 import { MdCalendarMonth } from "react-icons/md";
 import { Calendar } from "@/components/ui/calendar";
 
-/**
- * A month+year picker built on the existing shadcn-style Calendar
- * (react-day-picker) rather than a bespoke widget — `captionLayout="dropdown"`
- * already gives month/year `<select>`s in the caption, which is exactly the
- * navigation a month+year picker needs. The day grid still shows, but callers
- * only care about which month/year was picked (see `monthKey`).
- */
+// Month/year picker on top of Calendar's dropdown caption. Only the
+// month and year are used.
 export default function MonthYearPicker({
   value,
   onChange,

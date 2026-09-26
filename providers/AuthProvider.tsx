@@ -9,10 +9,7 @@ import PageLoader from "@/components/ui/PageLoader";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
-  // Admin console and client app each bootstrap from their own cookie
-  // ('adminRefreshToken' vs 'refreshToken') into their own store, so a
-  // session in one never gets overwritten or misread by the other when
-  // both are open in the same browser.
+  // Admin and client each restore their own session (separate cookie and store).
   const isAdminRoute = !!pathname?.startsWith("/genuslab");
 
   const setInitialized = useUser((state) => state.setIsInitialized);

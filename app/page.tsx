@@ -110,7 +110,6 @@ export default function Home() {
               </div>
               <div className="hidden md:flex flex-col md:flex-row items-stretch gap-[10px] md:justify-center">
                 <Button
-                  handler={() => console.log("hello world login")}
                   text="Join Quiz"
                   type="link"
                   url="/login"
@@ -119,7 +118,6 @@ export default function Home() {
                   Icon={<MdOutlineKeyboardDoubleArrowRight color="#3a94ff" />}
                 />
                 <Button
-                  handler={() => console.log("hello world")}
                   text="Watch Live Show"
                   type="link"
                   style={"flex justify-center gap-3"}

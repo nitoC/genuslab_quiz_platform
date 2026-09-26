@@ -114,9 +114,7 @@ export default function CreateQuiz() {
             quizId={quizId}
             setQuestion={setQuestion}
             handler={(option?: string) => {
-              console.log(question, "question");
               const validate = question.every((a, b) => {
-                console.log(a, "a");
                 return (
                   a.difficulty &&
                   a.explanation &&

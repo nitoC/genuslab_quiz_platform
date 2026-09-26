@@ -9,7 +9,6 @@ const useRank = () => {
       return res.data.payload;
     },
   });
-  console.log(data, "in section");
   return { data, isLoading, isError, error };
 };
 

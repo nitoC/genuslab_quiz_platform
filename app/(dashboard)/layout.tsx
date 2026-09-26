@@ -11,9 +11,7 @@ import BottomToast from "@/components/toasts/BottomToast";
 import { useBottomToast } from "@/store/useBottomToast";
 import useNewQuizNotifier from "@/hooks/useNewQuizNotifier";
 
-// Rendered inside QueryClientProvider so its useQuery call has context —
-// dashLayout itself is the component that CREATES that provider, so a hook
-// called directly in dashLayout's body runs one level too high to see it.
+// Has to sit inside QueryClientProvider to use useQuery.
 const NewQuizNotifier = () => {
   useNewQuizNotifier();
   return null;

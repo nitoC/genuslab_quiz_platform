@@ -73,9 +73,7 @@ const formatDate = (value?: string) =>
       })
     : "—";
 
-// Search-as-you-type user picker used by both the "add participant" and
-// "add result" forms — resolves to a `userDetailsId`, which is what the
-// StudioQuizParticipant/Result models key on (not the User id).
+// User search for participant/result forms. Returns userDetailsId, not User id.
 const UserPicker = ({
   value,
   onSelect,

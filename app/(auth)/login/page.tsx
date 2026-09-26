@@ -1,11 +1,12 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import CustomInput from "@/components/ui/FormItems/CustomInput";
 import PasswordInput from "@/components/ui/FormItems/PasswordInput";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc"; // Google sign-in is off for now
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/api/apis";
 import { toast } from "react-toastify";
@@ -94,12 +95,10 @@ const LoginPage = () => {
         email: form.email,
         password: form.password,
       });
-      console.log("Login response:", resp.data);
       if (resp?.data?.payload) {
         // const userData = resp.data.payload;
         // delete userData.accessToken;
         // localStorage.setItem("user", JSON.stringify(userData));
-        console.log("User payload:", resp.data.payload);
         user(resp.data.payload);
 
         if (remember) {
@@ -131,11 +130,7 @@ const LoginPage = () => {
       //   toast.error(resp?.data || "Login failed");
       // }
     } catch (error) {
-      console.error(error);
-      console.log((error as any)?.response?.data);
-      toast.error(
-        error instanceof Error ? error.message : "Login failed. Try again.",
-      );
+      toast.error(authErrorMessage(error, "login"));
     } finally {
       setLoading(false);
     }
@@ -223,6 +218,8 @@ const LoginPage = () => {
                   {loading ? "Logging in..." : "Login"}
                 </button>
 
+                {/* Google sign-in is off until it's actually wired up (this
+                    button only navigated to /dashboard).
                 <button
                   type="button"
                   onClick={() => router.push("/dashboard")}
@@ -231,6 +228,7 @@ const LoginPage = () => {
                   <FcGoogle className="text-lg" />
                   Log in with Google
                 </button>
+                */}
                 <p className="text-gray-600">
                   Don't have an account?{" "}
                   <Link className="text-blue" href={"/signup"}>

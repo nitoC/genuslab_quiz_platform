@@ -1,10 +1,7 @@
 import React from "react";
 
-// The page-header pattern for every admin page EXCEPT /genuslab/quizzes,
-// which keeps its own pre-existing AdminHeader untouched (see
-// components/layouts/AdminHeader.tsx). The sidebar menu toggle lives in the
-// global AdminTopbar now, so this component only ever renders title,
-// subtitle, and contextual actions.
+// Title, subtitle and actions for admin pages (quizzes has its own header).
+// The menu toggle is in AdminTopbar.
 const AdminPageHeader = ({
   title,
   subtitle,

@@ -15,6 +15,7 @@ import {
   MdReceiptLong,
   MdAccountBalance,
   MdSupportAgent,
+  MdHeadsetMic,
   MdShare,
   MdNotificationsActive,
   MdOutlineDevices,
@@ -26,10 +27,7 @@ import {
 } from "react-icons/md";
 import useAdminRole from "@/hooks/useAdminRole";
 
-// `roles` omitted = every staff role can see it (Admin always can, since
-// Admin is a superset). Accountant is scoped to Transactions/Subscriptions
-// (+ read-only Users); Support is scoped to Users (read-only) + its own
-// message queue.
+// No `roles` = visible to every staff role. Admin sees everything.
 const navLinks = [
   {
     label: "Dashboard",
@@ -85,6 +83,12 @@ const navLinks = [
     href: "/genuslab/finance",
     icon: MdAccountBalance,
     roles: ["ADMIN", "ACCOUNTANT"],
+  },
+  {
+    label: "Support Chats",
+    href: "/genuslab/support-chats",
+    icon: MdHeadsetMic,
+    roles: ["ADMIN", "SUPPORT"],
   },
   {
     label: "Support Messages",

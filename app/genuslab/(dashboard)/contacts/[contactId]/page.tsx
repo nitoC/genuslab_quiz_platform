@@ -51,9 +51,7 @@ export default function ContactDetailPage() {
     },
   });
 
-  // Auto-mark as read the moment an unread message is opened — matches the
-  // "open to read" convention of a support inbox rather than requiring a
-  // separate manual click.
+    // Mark as read when opened.
   useEffect(() => {
     if (contact && !contact.read && !markReadMutation.isPending) {
       markReadMutation.mutate();

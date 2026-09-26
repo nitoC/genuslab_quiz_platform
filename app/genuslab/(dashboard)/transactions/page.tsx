@@ -67,6 +67,11 @@ const AdminTransactionsPageContent = () => {
     if (typeParam && TYPE_OPTIONS.includes(typeParam)) {
       setType(typeParam);
     }
+    // Deep links, e.g. ?status=failed or ?search=<userId or providerRef>.
+    const statusParam = searchParams.get("status");
+    if (statusParam) setStatus(statusParam);
+    const searchParam = searchParams.get("search");
+    if (searchParam) setSearch(searchParam);
   }, [searchParams]);
 
   const { data: summary } = useQuery({
@@ -137,7 +142,7 @@ const AdminTransactionsPageContent = () => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            placeholder="Search by transaction ID or reference..."
+            placeholder="Search by reference, transaction ID, user ID, name or email..."
             className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:bg-white transition-colors"
           />
         </div>
@@ -267,8 +272,12 @@ const AdminTransactionsPageContent = () => {
                         {tx.status}
                       </Badge>
                     </td>
-                    <td className="font-data px-6 py-4 text-xs text-slate-400">
-                      {tx.userId}
+                    <td className="px-6 py-4 text-xs">
+                      <div className="font-medium text-slate-700">
+                        {tx.user?.name || "—"}
+                      </div>
+                      <div className="text-slate-400">{tx.user?.email}</div>
+                      <div className="font-data text-slate-300">{tx.userId}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link

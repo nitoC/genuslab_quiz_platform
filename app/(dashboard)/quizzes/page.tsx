@@ -79,7 +79,6 @@ const page = () => {
     queryKey: ["active-quiz-episodes"],
     queryFn: async () => {
       const res = await getAllActiveQuiz();
-      console.log(res.data.payload, "quiz data");
       return res.data.payload;
     },
   });
@@ -121,12 +120,10 @@ const page = () => {
     queryKey: ["todayTotalRewards"],
     queryFn: async () => {
       const res = await getTodayTotalRewards();
-      console.log(res?.data, "today rewards data");
       return res?.data?.total || res?.data?.payload || 0;
     },
   });
 
-  console.log(user?.details);
 
   // Base fallback posters for rendering safety
 
@@ -135,7 +132,6 @@ const page = () => {
       return null;
     }
     const next = quizData.find((a: any) => a.status === "active".toUpperCase());
-    console.log(next, "next");
     return next;
   }, [quizData]);
   const localPosters = [
@@ -148,9 +144,7 @@ const page = () => {
     "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60",
   ];
 
-  // 2. RENDER GLOBAL SKELETON IF LOADING CORE DATA pop
-  // avgData depends on the user query resolving first, so it's rendered
-  // inline further down instead of gating the whole page behind a waterfall.
+    // Skeleton while core data loads. avgData renders inline further down.
   if (isLoading || slotLoading || userLoading) {
     return <DashboardSkeleton />;
   }

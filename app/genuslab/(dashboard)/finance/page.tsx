@@ -48,10 +48,7 @@ const TYPE_OPTIONS = [
   { label: "Referral", value: "referral" },
 ];
 
-// Reward payouts (quiz/finance/referral) are money paid OUT to the user —
-// a credit. A subscription ("plan") is money the user paid IN — a debit.
-// The unfiltered transactions list includes plan transactions too, even
-// though they aren't one of the payout-type filter options above.
+// Payouts are credits to the user; subscriptions (plan) are debits.
 const REWARD_TRANSACTION_TYPES = ["quiz", "finance", "referral"];
 
 const FinancePage = () => (

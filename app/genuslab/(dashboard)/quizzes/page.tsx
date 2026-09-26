@@ -53,7 +53,6 @@ export default function QuizManagementPage() {
     (a: any, b: any) => a.day - b.day
   );
 
-  console.log(quizzesTransform);
 
   const deleteMutation = useMutation({
     mutationKey: ["delete quiz", active],

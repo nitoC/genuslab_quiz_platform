@@ -9,8 +9,9 @@ import {
   fetchQuizDetails,
   getEpisodeDetails,
   getSlotDetails,
-  updateQuiz,
+  updateQuizData,
 } from "@/lib/api/apis";
+import { serverErrorText } from "@/features/quiz/validation";
 import CustomSelect from "./FormItems/CustomSelect";
 import { toast } from "react-toastify";
 import clsx from "clsx";
@@ -30,6 +31,7 @@ const AdminQuizCreate = ({
     day: "",
     episode: "",
     activeAt: "",
+    activeDate: "",
     // type: quizType,
   });
 
@@ -43,10 +45,9 @@ const AdminQuizCreate = ({
       try {
         if (!id) return null;
         const res = await fetchQuizDetails(id);
-        console.log(res, "quiz details in page");
         return res.data.payload;
       } catch (err) {
-        console.log(err, "error fetching quiz details");
+        console.error(err, "error fetching quiz details");
         throw err;
       }
     },
@@ -61,10 +62,9 @@ const AdminQuizCreate = ({
     queryFn: async () => {
       try {
         const res = await getSlotDetails();
-        console.log(res, " slot quiz details in page");
         return res.data.payload;
       } catch (err) {
-        console.log(err, "error fetching slot details");
+        console.error(err, "error fetching slot details");
         throw err;
       }
     },
@@ -79,10 +79,9 @@ const AdminQuizCreate = ({
     queryFn: async () => {
       try {
         const res = await getEpisodeDetails();
-        console.log(res, " episode quiz details in page");
         return res.data.payload;
       } catch (err) {
-        console.log(err, "error fetching episode details");
+        console.error(err, "error fetching episode details");
         throw err;
       }
     },
@@ -95,61 +94,42 @@ const AdminQuizCreate = ({
   };
 
   const handleQuizSubmit = async () => {
-    // Validate inputs
-    if (!quizInput.title || !quizInput.day || !quizInput.episode) {
-      return toast.warn("Please fill in all required fields.");
+    const title = quizInput.title || quizDetails?.title;
+    const activeDate = quizInput.activeDate || quizDetails?.activeDate?.slice?.(0, 10);
+    if (!title || !quizInput.episode || !quizInput.activeAt || !activeDate) {
+      return toast.warn("Please fill in title, date, episode and time slot.");
     }
-    // console.log(
-    //   slotDetails?.find((s: any) => s.label === quizInput.activeAt),
-    //   "active at details",
-    // );
-    // return;
+    const day = Number(quizInput.day || quizDetails?.day);
     try {
       const submitItem = {
-        ...quizInput,
+        title,
+        activeDate,
+        // Left out = the server uses the current day.
+        ...(day ? { day } : {}),
         episode: episodeDetails?.find((e: any) => e.label === quizInput.episode)
-          .tag,
+          ?.tag,
         activeAt: slotDetails?.find((s: any) => s.label === quizInput.activeAt)
-          .tag,
+          ?.tag,
       };
-      console.log(submitItem, "submit item");
-      if (
-        !id ||
-        quizInput.title !== quizDetails?.title ||
-        quizInput.day !== quizDetails?.day ||
-        quizInput.episode !== quizDetails?.episode ||
-        quizInput.activeAt !== quizDetails?.activeAt
-        // quizInput.type !== quizDetails?.type
-      ) {
-        toast.info("Quiz details updated! Proceeding to question builder...");
-        const res = await updateQuiz(id as string, submitItem);
-        console.log(res, "quiz details updated in page");
-        const quizId = res.data.payload.id;
-        handler(quizId);
-        return;
-      }
+
+      // Existing quiz: save changes (PUT quiz/update), then go on.
       if (id) {
+        await updateQuizData({ id, ...submitItem });
+        toast.info("Quiz details updated! Proceeding to question builder...");
         handler(id);
         return;
       }
+
       const res = await createQuiz(submitItem);
-      console.log(res, "quiz details in page");
-      const quizId = res.data.payload.id;
       toast.success("Quiz details saved! Proceeding to question builder...");
-      handler(quizId);
-      return;
+      handler(res.data.payload.id);
     } catch (err) {
-      console.log(err, "error creating quiz");
-      toast.error(
-        (err as Error).message || "Error creating quiz. Please try again.",
-      );
-      return;
+      toast.error(`Could not save quiz\n${serverErrorText(err)}`);
     }
   };
-  const inactive = !quizInput.title || !quizInput.day || !quizInput.episode;
+  const inactive =
+    !(quizInput.title || quizDetails?.title) || !quizInput.episode || !quizInput.activeAt;
 
-  console.log(quizInput, "quiz input state");
-  console.log(inactive, "inactive state");
   // useEffect(() => {
   //   async function fetchData() {
   //     const res = await getSlotDetails();
@@ -177,7 +157,6 @@ const AdminQuizCreate = ({
             value={quizInput.title || quizDetails?.title || ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange("title", e.target.value);
-              console.log(quizInput, "quiz title in input");
             }}
             placeholder="Eg: Advanced Microservices & Architecture"
           />
@@ -218,10 +197,24 @@ const AdminQuizCreate = ({
 
         {/* Row Inputs */}
         <div className="grid grid-cols-1 gap-6">
+          {/* Date the quiz runs on */}
+          <div className="space-y-2 flex flex-col gap-2">
+            <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
+              Date
+            </label>
+            <input
+              id="quiz-active-date"
+              type="date"
+              value={quizInput.activeDate || quizDetails?.activeDate?.slice?.(0, 10) || ""}
+              onChange={(e) => handleChange("activeDate", e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm"
+            />
+          </div>
+
           {/* Release Day */}
           <div className="space-y-2 flex flex-col gap-2">
             <label className="text-sm font-semibold uppercase tracking-wider text-gray-500">
-              Release Day
+              Release Day (optional: today&apos;s day number if left empty)
             </label>
 
             <AdminInput
@@ -314,7 +307,7 @@ const AdminQuizCreate = ({
                   day: "",
                   episode: "",
                   activeAt: "",
-                  // type: quizType,
+                  activeDate: "",
                 });
                 toast.info("Draft discarded");
               }}

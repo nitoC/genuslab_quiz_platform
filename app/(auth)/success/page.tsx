@@ -1,4 +1,5 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -52,12 +53,7 @@ function PasswordResetSuccessPage() {
       setCooldown(60);
     } catch (error) {
       setResendStatus("error");
-      toast.error(
-        (error as any).response?.data?.message ||
-          (error as any).message ||
-          "Something went wrong",
-      );
-      console.log(error, "error");
+      toast.error(authErrorMessage(error, "forgot"));
     } finally {
       setIsResending(false);
     }
@@ -155,8 +151,8 @@ function PasswordResetSuccessPage() {
             Check your inbox
           </h1>
           <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-md mx-auto mb-6">
-            We’ve dispatched a password reset link to your email address. Follow
-            the link inside to set a new password.
+            If an account exists for this email, we’ve sent it a password reset
+            link. Follow the link inside to set a new password.
           </p>
 
           {/* User Email Badge Component */}

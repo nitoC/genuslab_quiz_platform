@@ -131,7 +131,6 @@ const RankLeaderboardPage = () => {
     enabled: !!rankId && !!rank?.unlocked,
     queryFn: async () => {
       const res = await getRankLeaderboard(rankId as string, 12);
-      console.log(res, "ranks leaderboard");
       return res.data.payload || [];
     },
   });

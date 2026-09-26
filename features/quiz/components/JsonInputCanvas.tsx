@@ -34,9 +34,7 @@ export default function JsonInputCanvas({
   submitting,
   handlePreview,
 }: JsonInputCanvasProps) {
-  // Remembers the last few ranks used in this session so switching back to
-  // one you were just working with is a single click instead of re-opening
-  // the (searchable, but still 20-items-deep) dropdown every time.
+    // Last few ranks used, for quick switching.
   const [recentRankIds, setRecentRankIds] = useState<string[]>([]);
 
   const {
@@ -48,7 +46,6 @@ export default function JsonInputCanvas({
     queryFn: async () => {
       const res = await getRankData();
 
-      console.log(res, "fetch ranks response");
       return res.data.payload;
     },
   });
@@ -60,11 +57,8 @@ export default function JsonInputCanvas({
     ? selectedRank.topics.filter((t: unknown): t is string => typeof t === "string")
     : [];
 
-  // Writes the dropdown selections into every question object already
-  // pasted in the textarea, so what's submitted is exactly what's shown —
-  // not a silent fallback applied only at submit time. Leaves the textarea
-  // untouched if it's empty or not valid JSON yet, so it never clobbers a
-  // payload the admin is still mid-edit on.
+  // Copy the dropdown values into every question in the textarea.
+  // Skips if the JSON isn't valid yet.
   const applyDropdownValuesToJson = (nextRank: string, nextTopic: string) => {
     if (!jsonText.trim()) return;
 

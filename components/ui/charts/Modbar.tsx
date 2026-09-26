@@ -38,7 +38,6 @@ const CustomCardChart = ({ data }: { data: any[] }) => {
   const validateData =
     data && data.map((entry) => ({ ...entry, value: Number(entry.value) }));
 
-  console.log(validateData);
 
   return (
     <div

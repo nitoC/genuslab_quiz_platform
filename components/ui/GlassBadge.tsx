@@ -14,18 +14,8 @@ const VARIANT_CLASSES: Record<GlassBadgeVariant, string> = {
   info: "text-blue",
 };
 
-/**
- * Status indicator for the dark/glass user-facing pages (dashboard,
- * leaderboard, rewards, player stats) — the admin dashboard's own `Badge`
- * (components/ui/Badge.tsx, exports `BadgeStatus`) is a separate light-theme
- * component with 15+ existing call sites; this is deliberately a different
- * file/name so the two never collide.
- *
- * Plain colored text, no background/border chip — a pill-shaped capsule
- * around ordinary status text is decoration, not information. Reserved for
- * things that ARE a status (live, locked, pending, error), not a default
- * container for ordinary text.
- */
+// Status text for the dark user-facing pages (the admin one is Badge).
+// Use it for real statuses only.
 const GlassBadge = ({
   children,
   variant = "neutral",

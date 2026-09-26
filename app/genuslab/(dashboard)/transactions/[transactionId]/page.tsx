@@ -7,7 +7,10 @@ import toast from "react-hot-toast";
 import AdminCard from "@/components/ui/cards/AdminCard";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
-import { getTransactionById, updateTransactionStatus } from "@/lib/api/apis";
+import {
+  getAdminTransactionById as getTransactionById,
+  updateTransactionStatus,
+} from "@/lib/api/apis";
 import { MdArrowBack, MdReceiptLong } from "react-icons/md";
 import { FaCrown, FaGamepad, FaGift, FaMoneyBillWave } from "react-icons/fa";
 

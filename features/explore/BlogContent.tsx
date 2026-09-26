@@ -18,8 +18,6 @@ const BlogContent = ({ posts }: { posts: any }) => {
     ? (postsDup = posts.filter((a: any) => a.title !== post.title))
     : (postsDup = []);
   const postIcons = [<MdCalendarToday />, <MdFlashOn />, <MdSmartToy />];
-  console.log(postsDup, "dup");
-  console.log(subHours("2026-05-05T15:56:00.000Z", 2), "sub hours");
   return (
     <GlassCard className="lg:col-span-4 p-6 md:p-8 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6 md:mb-8 shrink-0">

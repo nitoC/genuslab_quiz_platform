@@ -44,7 +44,6 @@ const Profile = ({ user, rank, totalRewards, userRewardsArray }: any) => {
     queryKey: ["total-rewards", user?.details?.id],
     queryFn: async () => {
       const res = await getTotalRewards(user?.details?.id);
-      console.log(res, "total rewards");
       return res.data;
     },
     enabled: !!user?.details?.id,

@@ -157,7 +157,7 @@ export default function ContactPage() {
       await submitContactMessage({
         name: form.name.trim(),
         email: form.email.trim(),
-        Company: form.company.trim() || undefined,
+        company: form.company.trim() || undefined,
         subject: form.subject.trim(),
         message: form.message.trim(),
         type: "message",

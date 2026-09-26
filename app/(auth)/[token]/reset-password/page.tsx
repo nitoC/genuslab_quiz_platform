@@ -1,4 +1,5 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import { resetPassword, verifyToken } from "@/lib/api/apis";
 import PasswordInput from "@/components/ui/FormItems/PasswordInput";
@@ -202,12 +203,7 @@ const ResetPasswordPage = () => {
       await resetPassword(password, token);
       setIsSubmitted(true);
     } catch (err: any) {
-      console.error("Reset password error:", err?.response || err);
-      setErrorMsg(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Failed to reset password. Please try again.",
-      );
+      setErrorMsg(authErrorMessage(err, "reset"));
     } finally {
       setIsSubmitting(false);
     }

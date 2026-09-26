@@ -114,10 +114,7 @@ import { useAdminUser } from "@/store/useAdminUser";
 //   },
 // );
 
-// Two fully independent refresh flows — separate in-flight-request guards,
-// separate cookies/endpoints, separate stores — so refreshing an admin
-// session's token can never clobber (or be clobbered by) a concurrent
-// client session's token in the same browser.
+// Separate refresh flows for user and admin sessions.
 let userRefreshPromise: Promise<string> | null = null;
 let adminRefreshPromise: Promise<string> | null = null;
 

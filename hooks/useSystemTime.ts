@@ -8,7 +8,6 @@ const useSystemTime = () => {
     queryKey: ["system time"],
     queryFn: async () => {
       const res = await getTime();
-      console.log(res, "time system data");
       return res.data;
     },
   });

@@ -70,9 +70,7 @@ const SessionsPageContent = () => {
     },
   });
 
-  // Two distinct data sources: the paginated/filterable admin-wide list, or
-  // (when arriving from a user's detail page) the flat list of every
-  // session belonging to just that one user.
+    // All sessions (paginated), or just one user's when coming from their page.
   const { data, isLoading, isError } = useQuery({
     queryKey: userId
       ? ["admin-user-sessions", userId]

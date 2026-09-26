@@ -1,4 +1,5 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import CustomInput from "@/components/ui/FormItems/CustomInput";
 import { forgotPassword } from "@/lib/api/apis";
@@ -43,12 +44,7 @@ const Page = () => {
         toast.error(res?.data?.message || "Could not process request.");
       }
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          "Something went wrong",
-      );
-      console.error(error.response);
+      toast.error(authErrorMessage(error, "forgot"));
     } finally {
       setSubmitting(false);
     }

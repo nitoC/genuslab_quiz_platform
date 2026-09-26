@@ -1,4 +1,5 @@
 "use client";
+import { authErrorMessage } from "@/lib/utils/authErrorMessage";
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -53,9 +54,7 @@ function ChangePasswordForm() {
       toast.success("Password updated");
       router.push(landingPage);
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || "Failed to update password",
-      );
+      toast.error(authErrorMessage(error, "changePassword"));
     } finally {
       setSubmitting(false);
     }

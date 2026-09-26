@@ -11,7 +11,7 @@
     "answerDescription": "RAM stands for Random Access Memory, used to temporarily hold data for running programs.",
     "difficulty": "easy",
     "hint": "It temporarily holds data for active programs.",
-    "rankId": "cmnlmyira0000rog6qehxfkxb",
+    "rankId": "cmnlmyirb0000rog6i4843zlm",
     "topic": "Basic computer literacy"
   },
   {
@@ -26,7 +26,7 @@
     "answerDescription": "A monitor displays visual output, making it an output device.",
     "difficulty": "easy",
     "hint": "You look at it to see results.",
-    "rankId": "cmnlmyira0000rog6qehxfkxb",
+    "rankId": "cmnlmyirb0000rog6i4843zlm",
     "topic": "Basic computer literacy"
   },
   {
@@ -41,7 +41,7 @@
     "answerDescription": "Safely shutting down through the menu lets the system close files and processes properly.",
     "difficulty": "easy",
     "hint": "It ensures files close properly before power off.",
-    "rankId": "cmnlmyira0000rog6qehxfkxb",
+    "rankId": "cmnlmyirb0000rog6i4843zlm",
     "topic": "Device awareness"
   }
 ]

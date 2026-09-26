@@ -173,7 +173,6 @@ const Page = () => {
    * USER QUERY
    * ---------------------------- */
   const { data, isLoading, isError, error, userStore } = useUser();
-  console.log(data, "user");
 
   const detailsId = data?.user?.details?.id;
 
@@ -211,10 +210,7 @@ const Page = () => {
       queryKey: ["mostRecentTransaction"],
       queryFn: async () => {
         const res = await getMostRecentTransaction();
-        // The controller wraps the transaction as { success, payload }, so
-        // the actual transaction (and its `amount`) lives one level deeper
-        // than `res.data` — reading `res.data` directly meant `.amount` was
-        // always undefined and this card never showed a real payout.
+        // The transaction is under data.payload.
         return res?.data?.payload;
       },
     });
@@ -262,7 +258,7 @@ const Page = () => {
    * ERROR
    * ---------------------------- */
   if (isError || !data?.user) {
-    console.log(data?.user, "is error");
+    console.error(data?.user, "is error");
     return (
       <Layout>
         <div>

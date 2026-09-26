@@ -93,8 +93,6 @@ function AvatarUpload({ handleModal, onUploaded }: AvatarUploadProps) {
       const uploadUrl = presigned.uploadUrl;
       const imageUrl = presigned.fileUrl;
 
-      console.log(presigned, "presigned");
-      console.log(imageUrl, "presigned imageurl");
 
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();

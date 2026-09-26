@@ -12,12 +12,7 @@ export interface StatCardProps {
   secondary?: React.ReactNode;
   trend?: { value: number; label?: string };
   href?: string;
-  // Kept for backward compatibility with existing call sites — every value
-  // now renders identically (one neutral icon treatment). A different color
-  // per metric card ("blue" for one, "purple" for the next) was decorative
-  // variety, not meaning, and several of the old accent pairs (e.g.
-  // amber-600 on amber-50) fell short of accessible contrast. Icons here
-  // are wayfinding, not a way to color-code cards.
+  // Still accepted by old call sites, but every card now uses the same icon style.
   accent?: "blue" | "emerald" | "amber" | "red" | "slate" | "purple";
 }
 

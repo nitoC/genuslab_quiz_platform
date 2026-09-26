@@ -161,7 +161,6 @@ const ProfilePage = () => {
     setAvatarUrl(url);
   };
   const userName = user?.name;
-  console.log(avatarUrl, "avatar url");
   return (
     <Layout>
       <Header title="Profile" backBtn={false} />

@@ -125,7 +125,6 @@ const NotificationsPage = () => {
     if (!socket) return;
 
     const handleIncomingNotification = (newNotice: any) => {
-      console.log("Received notification:", newNotice);
 
       queryClient.setQueryData(["notifications", filter], (oldData: any) => {
         if (!oldData) return oldData;

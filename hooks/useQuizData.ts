@@ -12,7 +12,6 @@ const useQuizData = (quizId: string) => {
   } = useQuery({
     queryKey: ["quiz", quizId],
     queryFn: async () => {
-      console.log("in query fn for quizId:", quizId);
       const res = await fetchQuizById(quizId);
       const payload = res?.data?.payload || res;
 

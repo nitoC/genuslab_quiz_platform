@@ -38,7 +38,6 @@ const AccountTabContent = ({ user }: any) => {
     phone: user?.phone,
   });
 
-  console.log(user, "user");
   // const [isTwoFactorActive, setIsTwoFactorActive] = useState(true);
   const accounts = useMemo(() => {
     return {
@@ -64,7 +63,7 @@ const AccountTabContent = ({ user }: any) => {
       toast.success("Personal information updated successfully!");
     } catch (err) {
       toast.error("something went wrong!");
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }

@@ -316,9 +316,7 @@ const AuditTrailModal = ({
   );
 };
 
-// Shown when a claim attempt is blocked because the recipient has no
-// linked payout bank account — offers to nudge them instead of just
-// dead-ending the admin with an error toast.
+// Shown when the user has no payout account — lets the admin nudge them.
 const NoBankAccountModal = ({
   open,
   reward,

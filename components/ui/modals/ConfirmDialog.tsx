@@ -14,10 +14,7 @@ export interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-// Light-theme confirmation modal for destructive/irreversible admin actions
-// (suspend user, revoke session, delete bank, etc.) — styled to match the
-// admin dashboard's card/button conventions rather than the dark-glass
-// modals used in the user-facing app.
+// Light-theme confirm dialog for destructive admin actions.
 const ConfirmDialog = ({
   open,
   title,

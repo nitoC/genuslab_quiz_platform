@@ -42,9 +42,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// Shared "1st/2nd/3rd place" row — a glass-consistent neutral chip (white/5
-// on top of GlassCard's own translucent surface) instead of a solid slate
-// block, so it reads as one material with the card around it.
+// 1st/2nd/3rd place row.
 const PlaceRow = ({
   label,
   amount,

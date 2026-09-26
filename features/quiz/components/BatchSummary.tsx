@@ -46,34 +46,21 @@ export default function BatchSummary({
             </span>
           </div>
 
-          {/* Questions/Quiz Row */}
+          {/* Questions are optional per quiz. */}
           <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
               <HiOutlineDocumentText className="text-blue-600 text-base" />
-              <span>Questions / Quiz</span>
+              <span>Questions attached</span>
             </div>
             <span className="text-lg font-bold text-slate-900">
-              {summary.questionsPerQuiz}
+              {summary.totalCapacity}
             </span>
           </div>
-
-          {/* Capacity Progress Segment */}
-          <div className="pt-2">
-            <div className="flex justify-between text-sm font-medium text-slate-500 mb-1.5">
-              <span>Total Capacity</span>
-              <span className="font-bold text-slate-900">
-                {summary.totalCapacity} Questions
-              </span>
-            </div>
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div
-                className="bg-blue-600 h-full transition-all duration-300"
-                style={{
-                  width: `${Math.min((summary.totalCapacity / 200) * 100, 100)}%`,
-                }}
-              />
-            </div>
-          </div>
+          <p className="text-sm text-slate-500">
+            {summary.totalCapacity
+              ? "Quizzes with questions start as Upcoming; any without stay Drafts."
+              : "No questions attached: quizzes will be saved as Drafts. Add questions to each afterwards."}
+          </p>
 
           {/* Titles Preview Block */}
           {summary.titles.length > 0 && (
@@ -104,7 +91,7 @@ export default function BatchSummary({
         onClick={handlePreview}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm shadow-blue-200 transition-colors"
       >
-        <span>Create and Assign Questions</span>
+        <span>Review and Create Quizzes</span>
         <HiLightningBolt className="text-base" />
       </button>
     </div>
