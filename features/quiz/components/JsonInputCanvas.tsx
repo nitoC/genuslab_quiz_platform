@@ -2,9 +2,10 @@
 
 import { createQuestion, getRankData } from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
-import React, { useRef, useState } from "react";
-import { HiCode, HiUpload } from "react-icons/hi";
+import React, { useState } from "react";
+import { HiCode } from "react-icons/hi";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
+import JsonFileDropzone from "./JsonFileDropzone";
 
 interface JsonInputCanvasProps {
   jsonText: string;
@@ -33,8 +34,6 @@ export default function JsonInputCanvas({
   submitting,
   handlePreview,
 }: JsonInputCanvasProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [rankId, setRankId] = useState<string>("");
 
   const {
@@ -89,20 +88,6 @@ export default function JsonInputCanvas({
     setJsonText(JSON.stringify(updated, null, 2));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result;
-      if (typeof result === "string") {
-        setJsonText(result);
-      }
-    };
-    reader.readAsText(file);
-  };
-
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
@@ -114,19 +99,6 @@ export default function JsonInputCanvas({
           </div>
 
           <div className="flex items-center gap-1.5">
-            <input
-              type="file"
-              accept=".json"
-              ref={fileInputRef}
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
-            >
-              <HiUpload /> Upload
-            </button>
             <button
               onClick={onFormat}
               className="px-2.5 py-1 text-sm font-medium bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-colors"
@@ -143,7 +115,26 @@ export default function JsonInputCanvas({
         </div>
 
         <div className="p-5 space-y-4">
-          {/* Selector row */}
+          {/* Step 1: load your data */}
+          <div className="flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white shrink-0">
+              1
+            </span>
+            <span className="text-sm font-semibold text-slate-600">
+              Upload a .json file, or paste your questions in the box below
+            </span>
+          </div>
+          <JsonFileDropzone onFileText={setJsonText} />
+
+          {/* Step 2: selector row */}
+          <div className="flex items-center gap-2 pt-1">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white shrink-0">
+              2
+            </span>
+            <span className="text-sm font-semibold text-slate-600">
+              Choose the rank & topic these questions belong to
+            </span>
+          </div>
           <div className="flex flex-col gap-1.5 max-w-xs">
             <label className="text-sm font-semibold text-slate-500">
               Select Question Rank
@@ -193,7 +184,15 @@ export default function JsonInputCanvas({
             />
           </div>
 
-          {/* Textarea Workspace */}
+          {/* Step 3: review/edit the raw JSON */}
+          <div className="flex items-center gap-2 pt-1">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white shrink-0">
+              3
+            </span>
+            <span className="text-sm font-semibold text-slate-600">
+              Review the JSON below — edit directly here if anything needs fixing
+            </span>
+          </div>
           <textarea
             value={jsonText}
             onChange={(e) => setJsonText(e.target.value)}
@@ -201,6 +200,14 @@ export default function JsonInputCanvas({
             className="w-full h-96 p-4 font-mono text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-slate-700 resize-none leading-relaxed"
           />
         </div>
+      </div>
+      <div className="flex items-center gap-2 px-1">
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white shrink-0">
+          4
+        </span>
+        <span className="text-sm font-semibold text-slate-600">
+          Preview to double-check, then submit
+        </span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 justify-center">
         <button

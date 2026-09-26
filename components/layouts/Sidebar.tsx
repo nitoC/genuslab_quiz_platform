@@ -29,7 +29,7 @@ const navLinks = [
   },
   {
     label: "Academy",
-    href: "/academy",
+    href: "/courses",
     icon: FaBookmark,
   },
   {

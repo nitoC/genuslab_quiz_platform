@@ -1,0 +1,47 @@
+[
+  {
+    "questionText": "What is a \"variable\" in programming?",
+    "options": [
+      "A type of computer virus",
+      "A named storage location that holds a value",
+      "A physical hardware component",
+      "A network cable connector"
+    ],
+    "answer": 1,
+    "answerDescription": "A variable is a named storage location used to hold a value that can change over time.",
+    "difficulty": "medium",
+    "hint": "Its value can often change while a program runs.",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Programming foundations"
+  },
+  {
+    "questionText": "What is the purpose of a \"loop\" in programming?",
+    "options": [
+      "Repeating a block of code multiple times",
+      "Permanently stopping a program",
+      "Formatting a hard drive",
+      "Connecting to the internet"
+    ],
+    "answer": 0,
+    "answerDescription": "A loop repeats a block of code multiple times, often until a condition is met.",
+    "difficulty": "medium",
+    "hint": "For and while loops are common examples.",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Loops"
+  },
+  {
+    "questionText": "What does \"conditional logic\" (like if/else) allow a program to do?",
+    "options": [
+      "Permanently freeze the program",
+      "Automatically format storage",
+      "Make decisions and take different actions based on conditions",
+      "Disable all variables"
+    ],
+    "answer": 2,
+    "answerDescription": "Conditional logic lets a program choose different actions depending on whether conditions are true or false.",
+    "difficulty": "medium",
+    "hint": "It lets code respond differently to different inputs.",
+    "rankId": "cmnlmyirc0007rog61a9gv2e8",
+    "topic": "Logic"
+  }
+]

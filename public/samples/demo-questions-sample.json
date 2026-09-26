@@ -1,0 +1,47 @@
+[
+  {
+    "questionText": "What does \"RAM\" stand for?",
+    "options": [
+      "Random Access Memory",
+      "Rapid Application Module",
+      "Read Access Manager",
+      "Removable Archive Media"
+    ],
+    "answer": 0,
+    "answerDescription": "RAM stands for Random Access Memory, used to temporarily hold data for running programs.",
+    "difficulty": "easy",
+    "hint": "It temporarily holds data for active programs.",
+    "rankId": "cmnlmyira0000rog6qehxfkxb",
+    "topic": "Basic computer literacy"
+  },
+  {
+    "questionText": "Which of these is considered a computer output device?",
+    "options": [
+      "Keyboard",
+      "Mouse",
+      "Monitor",
+      "Microphone"
+    ],
+    "answer": 2,
+    "answerDescription": "A monitor displays visual output, making it an output device.",
+    "difficulty": "easy",
+    "hint": "You look at it to see results.",
+    "rankId": "cmnlmyira0000rog6qehxfkxb",
+    "topic": "Basic computer literacy"
+  },
+  {
+    "questionText": "Which of these is a common way to safely shut down a computer?",
+    "options": [
+      "Unplugging it while it is running",
+      "Removing the battery while it is powered on",
+      "Closing the lid only, forever",
+      "Using the shutdown option in the menu"
+    ],
+    "answer": 3,
+    "answerDescription": "Safely shutting down through the menu lets the system close files and processes properly.",
+    "difficulty": "easy",
+    "hint": "It ensures files close properly before power off.",
+    "rankId": "cmnlmyira0000rog6qehxfkxb",
+    "topic": "Device awareness"
+  }
+]

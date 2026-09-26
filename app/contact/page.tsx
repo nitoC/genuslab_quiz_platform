@@ -29,7 +29,8 @@ import type { IconType } from "react-icons";
 
 const SUPPORT_EMAIL = "support@genuslabtechnologies.com";
 const ADMIN_EMAIL = "admin@genuslabtechnologies.com";
-const PHONE_LABEL = "+234 707 920 6847";
+const PHONE_LABEL = "+234 816 277 3858";
+// const PHONE_LABEL = "+234 707 920 6847";
 const PHONE_HREF = "tel:+2347079206847";
 const OFFICE_LABEL = "Suite 41, Vicbalkon towers, Utako, Abuja, Nigeria";
 const OFFICE_MAP_URL = "https://maps.app.goo.gl/Zq2rjfkY1jvGA5De6";
@@ -81,7 +82,11 @@ const socialLinks: { icon: IconType; label: string; href: string }[] = [
     label: "Instagram",
     href: "https://www.instagram.com/genuslabofficial/",
   },
-  { icon: FaTiktok, label: "TikTok", href: "https://www.tiktok.com/@genus_lab" },
+  {
+    icon: FaTiktok,
+    label: "TikTok",
+    href: "https://www.tiktok.com/@genus_lab",
+  },
 ];
 
 // The same four workspace photos used in "Visit Our Spaces" on
@@ -349,29 +354,31 @@ export default function ContactPage() {
               </h2>
 
               <ul className="mt-6 space-y-3">
-                {contactCards.map(({ label, icon: Icon, value, href, external }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      {...(external
-                        ? { target: "_blank", rel: "noopener noreferrer" }
-                        : {})}
-                      className="flex items-start gap-4 rounded-xl border border-gray-100 p-4 transition hover:border-blue hover:bg-[#F5F9FF]"
-                    >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#F5F9FF] text-blue">
-                        <Icon size={18} />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-xs font-bold uppercase tracking-wide text-gray-400">
-                          {label}
+                {contactCards.map(
+                  ({ label, icon: Icon, value, href, external }) => (
+                    <li key={label}>
+                      <a
+                        href={href}
+                        {...(external
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className="flex items-start gap-4 rounded-xl border border-gray-100 p-4 transition hover:border-blue hover:bg-[#F5F9FF]"
+                      >
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#F5F9FF] text-blue">
+                          <Icon size={18} />
                         </span>
-                        <span className="mt-0.5 block break-words text-sm font-semibold text-[#080820]">
-                          {value}
+                        <span className="min-w-0">
+                          <span className="block text-xs font-bold uppercase tracking-wide text-gray-400">
+                            {label}
+                          </span>
+                          <span className="mt-0.5 block break-words text-sm font-semibold text-[#080820]">
+                            {value}
+                          </span>
                         </span>
-                      </span>
-                    </a>
-                  </li>
-                ))}
+                      </a>
+                    </li>
+                  ),
+                )}
               </ul>
 
               <h3 className="mt-8 text-sm font-bold uppercase tracking-wide text-gray-900">
@@ -467,5 +474,3 @@ export default function ContactPage() {
     </>
   );
 }
-
-

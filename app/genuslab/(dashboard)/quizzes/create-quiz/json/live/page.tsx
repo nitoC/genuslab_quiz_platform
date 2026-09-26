@@ -6,6 +6,7 @@ import IntegrationWorkflow from "@/features/quiz/components/IntegrationWorkflow"
 import BatchSummary from "@/features/quiz/components/BatchSummary";
 import DataReferenceGuide from "@/features/quiz/components/DataReferenceGuide";
 import LiveQuizPreview from "@/features/quiz/components/LiveQuizPreview";
+import WalkthroughModal from "@/features/quiz/components/WalkthroughModal";
 import { createQuiz, createQuizBatch, getQuizDay } from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -13,6 +14,76 @@ import toast from "react-hot-toast";
 import useRank from "@/hooks/useRank";
 
 import { FaChevronDown, FaLock } from "react-icons/fa";
+import { HiOutlineAcademicCap } from "react-icons/hi";
+
+const LIVE_QUIZ_SAMPLE_HREF = "/samples/live-quiz-batch-sample.json";
+
+const LIVE_QUIZ_WALKTHROUGH_STEPS = [
+  {
+    title: "What is this page for?",
+    body: (
+      <p>
+        This creates one or more <span className="font-semibold">live quiz slots</span>{" "}
+        in a single batch — each with a title, day, episode, time slot, and
+        its own set of questions. After this step, the quizzes are saved in
+        draft so you can review them under Quizzes.
+      </p>
+    ),
+  },
+  {
+    title: "Get your JSON ready",
+    body: (
+      <>
+        <p>
+          Prepare an array of quiz objects — each one needs{" "}
+          <span className="font-mono">title</span>,{" "}
+          <span className="font-mono">day</span>,{" "}
+          <span className="font-mono">episode</span> (e.g.{" "}
+          <span className="font-mono">EPISODE_1</span>),{" "}
+          <span className="font-mono">activeAt</span> (a time slot), and a{" "}
+          <span className="font-mono">questions</span> array — using the same
+          question format as the regular questions upload page.
+        </p>
+        <p>
+          Grab the sample batch file below to see two full, working quiz
+          objects laid out exactly like this.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: "Check the day counter",
+    body: (
+      <p>
+        The <span className="text-blue-600 font-semibold">Available Day</span>{" "}
+        number shown on this page is the safe value to use in every quiz
+        object's <span className="font-mono">day</span> field right now —
+        using an already-used day can get your batch rejected.
+      </p>
+    ),
+  },
+  {
+    title: "Load it in",
+    body: (
+      <p>
+        Drag your <span className="font-mono">.json</span> file onto the
+        upload box, or paste the array straight into the text box. Pick a{" "}
+        <span className="font-semibold">Target Schedule Date</span> above if
+        your quiz objects don't already set their own{" "}
+        <span className="font-mono">activeDate</span>.
+      </p>
+    ),
+  },
+  {
+    title: "Check & submit",
+    body: (
+      <p>
+        Click <span className="font-semibold">"Create and Assign Questions"</span>{" "}
+        to preview the batch, then confirm to save every quiz as a draft.
+      </p>
+    ),
+  },
+];
 
 type Rank = {
   id: string;
@@ -78,6 +149,7 @@ export default function BulkQuizCreator() {
   >("idle");
 
   const [activeDate, setActiveDate] = useState<string>("");
+  const [walkthroughOpen, setWalkthroughOpen] = useState(false);
 
   const [summary, setSummary] = useState({
     totalQuizzes: 0,
@@ -198,16 +270,25 @@ export default function BulkQuizCreator() {
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-12 text-slate-800">
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-            Bulk Live Quiz Creator
-          </h1>
-          <p className="mt-2 text-sm sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
-            Scale your assessments by importing multiple quizzes simultaneously.
-            Paste your JSON array below. Each quiz object should include a
-            title, day, episode (e.g., EPISODE_1), activeAt slot, and an array
-            of questions.
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+              Bulk Live Quiz Creator
+            </h1>
+            <p className="mt-2 text-sm sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+              Scale your assessments by importing multiple quizzes
+              simultaneously. Upload or paste your JSON array below. Each quiz
+              object should include a title, day, episode (e.g., EPISODE_1),
+              activeAt slot, and an array of questions.
+            </p>
+          </div>
+          <button
+            onClick={() => setWalkthroughOpen(true)}
+            className="flex items-center gap-1.5 rounded-xl bg-white border border-slate-200 px-4 py-2 text-sm font-bold text-blue-600 shadow-sm hover:bg-blue-50 transition-colors shrink-0"
+          >
+            <HiOutlineAcademicCap size={18} />
+            New here? Take the walkthrough
+          </button>
         </div>
 
         {/* Previous / available-now / next day — same styling as the quiz
@@ -269,7 +350,7 @@ export default function BulkQuizCreator() {
               handlePreview={() => setPreview(true)}
               summary={summary}
             />
-            <DataReferenceGuide />
+            <DataReferenceGuide sampleHref={LIVE_QUIZ_SAMPLE_HREF} />
           </div>
         </div>
       </div>
@@ -283,6 +364,14 @@ export default function BulkQuizCreator() {
           handleSubmit={handleSubmit}
         />
       )}
+
+      <WalkthroughModal
+        open={walkthroughOpen}
+        onClose={() => setWalkthroughOpen(false)}
+        title="Creating Live Quizzes in Bulk"
+        steps={LIVE_QUIZ_WALKTHROUGH_STEPS}
+        sampleFileHref={LIVE_QUIZ_SAMPLE_HREF}
+      />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import { useParams, useRouter } from "next/navigation";
 import useUser from "@/hooks/useUser";
 import ActiveSessionModal from "@/features/quiz/components/modals/SessionConflict";
 import SessionFailureModal from "@/features/quiz/components/modals/SessionError";
+import NotSubscribedModal from "@/features/quiz/components/modals/NotSubscribed";
 import handleQuizStorage from "@/lib/utils/handleQuizStorage";
 import {
   MobileQuizHeader,
@@ -349,11 +350,19 @@ const QuizPage = () => {
   if (isError || !data?.questions || totalQuestions === 0) {
     const status = (error as any)?.response?.status;
     const conflictReason = (error as any)?.response?.data?.message;
+    const errorCode = (error as any)?.response?.data?.code;
     console.log((error as any)?.response, "error res");
     if (status === 409) {
       return (
         <Layout type="quiz">
           <ActiveSessionModal reason={conflictReason} />
+        </Layout>
+      );
+    }
+    if (status === 403 && errorCode === "SUBSCRIPTION_REQUIRED") {
+      return (
+        <Layout type="quiz">
+          <NotSubscribedModal />
         </Layout>
       );
     }

@@ -1256,6 +1256,51 @@ export const changePassword = async (data: {
   return res;
 };
 
+// ============ ACADEMY / COURSES ============
+
+export const getMyCourses = async () => {
+  const res = await axiosUser.get("academy/courses");
+  return res;
+};
+
+export const startCourse = async (courseId: string) => {
+  const res = await axiosUser.post(`academy/courses/${courseId}/start`);
+  return res;
+};
+
+export const getAdminCourses = async () => {
+  const res = await axiosAdmin.get("academy/admin/courses");
+  return res;
+};
+
+export const createAdminCourse = async (payload: {
+  rankId: string;
+  title: string;
+  description?: string;
+  order?: number;
+}) => {
+  const res = await axiosAdmin.post("academy/admin/courses", payload);
+  return res;
+};
+
+export const updateAdminCourse = async (
+  id: string,
+  payload: {
+    rankId?: string;
+    title?: string;
+    description?: string;
+    order?: number;
+  },
+) => {
+  const res = await axiosAdmin.patch(`academy/admin/courses/${id}`, payload);
+  return res;
+};
+
+export const deleteAdminCourse = async (id: string) => {
+  const res = await axiosAdmin.delete(`academy/admin/courses/${id}`);
+  return res;
+};
+
 export const getAdminApprovedBanks = async (params?: {
   search?: string;
   page?: number;

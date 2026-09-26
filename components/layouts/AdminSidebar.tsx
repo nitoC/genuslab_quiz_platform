@@ -22,6 +22,7 @@ import {
   MdAdminPanelSettings,
   MdCardGiftcard,
   MdHistory,
+  MdSchool,
 } from "react-icons/md";
 import useAdminRole from "@/hooks/useAdminRole";
 
@@ -53,6 +54,12 @@ const navLinks = [
     label: "Ranks & XP",
     href: "/genuslab/ranks",
     icon: MdMilitaryTech,
+    roles: ["ADMIN"],
+  },
+  {
+    label: "Academy",
+    href: "/genuslab/academy",
+    icon: MdSchool,
     roles: ["ADMIN"],
   },
   {
