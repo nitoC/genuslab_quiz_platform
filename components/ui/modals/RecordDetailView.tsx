@@ -23,6 +23,11 @@ export interface RecordDetailViewProps {
   subtitle?: string; // e.g. plan/transaction title
   amount?: string; // pre-formatted, e.g. "₦4,000"
   amountLabel?: string;
+  // "credit" (green) for money paid TO the user (e.g. a reward payout),
+  // "debit" (red) for money paid BY the user (e.g. a subscription charge).
+  // Defaults to neutral white when the record isn't a credit/debit
+  // transaction (e.g. an unrelated document).
+  amountVariant?: "credit" | "debit" | "neutral";
   statusLabel?: string;
   statusVariant?: "success" | "warning" | "danger" | "neutral";
   reference: string; // the transaction/subscription reference shown prominently
@@ -42,6 +47,7 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
   subtitle,
   amount,
   amountLabel = "Amount",
+  amountVariant = "neutral",
   statusLabel,
   statusVariant = "neutral",
   reference,
@@ -135,7 +141,21 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
               {amount && (
                 <div>
                   <p className="text-sm text-slate-400">{amountLabel}</p>
-                  <p className="mt-1 text-3xl font-bold text-white">
+                  <p
+                    className={cn(
+                      "mt-1 text-3xl font-bold",
+                      amountVariant === "credit"
+                        ? "text-green-400"
+                        : amountVariant === "debit"
+                          ? "text-red-400"
+                          : "text-white",
+                    )}
+                  >
+                    {amountVariant === "credit"
+                      ? "+"
+                      : amountVariant === "debit"
+                        ? "-"
+                        : ""}
                     {amount}
                   </p>
                 </div>

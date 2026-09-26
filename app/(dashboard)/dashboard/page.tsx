@@ -616,7 +616,13 @@ const Page = () => {
                       </h2>
 
                       <p className="text-grey text-sm mt-2">
-                        xxxx-8329 GTBank PLC
+                        {/* Snapshot of the account THIS payout was actually
+                            sent to — not a live lookup of the user's
+                            current linked account, which may have changed
+                            or been removed since this payout was made. */}
+                        {mostRecentTransactionData?.payoutAccountNumber
+                          ? `•••• ${mostRecentTransactionData.payoutAccountNumber.slice(-4)} ${mostRecentTransactionData.payoutBankName}`
+                          : "No bank account on record for this payout"}
                       </p>
                     </div>
 

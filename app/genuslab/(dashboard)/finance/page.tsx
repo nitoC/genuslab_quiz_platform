@@ -48,6 +48,12 @@ const TYPE_OPTIONS = [
   { label: "Referral", value: "referral" },
 ];
 
+// Reward payouts (quiz/finance/referral) are money paid OUT to the user —
+// a credit. A subscription ("plan") is money the user paid IN — a debit.
+// The unfiltered transactions list includes plan transactions too, even
+// though they aren't one of the payout-type filter options above.
+const REWARD_TRANSACTION_TYPES = ["quiz", "finance", "referral"];
+
 const FinancePage = () => (
   <Suspense fallback={null}>
     <FinancePageContent />
@@ -291,7 +297,17 @@ const FinancePageContent = () => {
                         <td className="px-6 py-4 capitalize text-slate-600">
                           {tx.type}
                         </td>
-                        <td className="font-data px-6 py-4 text-right font-semibold text-slate-800">
+                        <td
+                          className={cn(
+                            "font-data px-6 py-4 text-right font-semibold",
+                            REWARD_TRANSACTION_TYPES.includes(tx.type)
+                              ? "text-emerald-600"
+                              : "text-red-500",
+                          )}
+                        >
+                          {REWARD_TRANSACTION_TYPES.includes(tx.type)
+                            ? "+"
+                            : "-"}
                           ₦{Number(tx.amount).toLocaleString()}
                         </td>
                         <td className="px-6 py-4">

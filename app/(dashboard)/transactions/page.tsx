@@ -114,12 +114,10 @@ const TransactionItem = ({
   );
 };
 
-const CATEGORY_TABS = [
-  "All",
-  "Subscription",
-  "Rewards",
-  "Claimed Rewards",
-] as const;
+// "Rewards" (earned but not yet claimed) was removed — a Transaction only
+// ever exists for a reward once it has actually been claimed and paid out,
+// so that tab could never show anything and just looked broken.
+const CATEGORY_TABS = ["All", "Subscription", "Claimed Rewards"] as const;
 
 const TYPE_OPTIONS: { label: string; value: TransactionTypeFilter }[] = [
   { label: "All Types", value: "all" },
@@ -128,15 +126,22 @@ const TYPE_OPTIONS: { label: string; value: TransactionTypeFilter }[] = [
   { label: "Plan", value: "plan" },
 ];
 
+// The backend's real TransactionType enum is plan | quiz | referral | finance
+// — there is no "rewards" value. quiz/referral/finance are all reward
+// payouts (money paid OUT to the user); plan is a subscription payment
+// (money the user paid IN). A Transaction only ever gets created for a
+// reward once it's been claimed, so every reward-sourced transaction here
+// is inherently a "claimed" one — there's no separate "earned but
+// unclaimed" transaction to show under a generic "Rewards" bucket.
+const REWARD_TRANSACTION_TYPES = ["quiz", "referral", "finance"];
+
 // Helper functions for mapping backend transaction values
 const mapCategory = (
   type: string,
 ): "Subscription" | "Rewards" | "Claimed Rewards" => {
   const lower = type?.toLowerCase() || "";
   if (lower === "plan" || lower === "subscription") return "Subscription";
-  if (lower === "referral") return "Rewards";
-  if (lower === "rewards" || lower === "reward") return "Rewards";
-  if (lower === "claimed" || lower === "withdrawal") return "Claimed Rewards";
+  if (REWARD_TRANSACTION_TYPES.includes(lower)) return "Claimed Rewards";
   return "Subscription";
 };
 
@@ -187,19 +192,26 @@ const TransactionsPage = () => {
   }, []);
 
   // TanStack Query to fetch user transactions from API
+  //
+  // Deliberately NOT forwarding `selectedType` to the backend: the backend's
+  // real TransactionType enum is plan/quiz/referral/finance, but this page's
+  // filter options are all/referral/rewards/plan — sending "rewards" (an
+  // invalid enum value) made the backend request fail, which the catch
+  // block below swallowed into an empty result. All type/category filtering
+  // already happens client-side (see filteredTransactions), so fetch
+  // everything once and let that logic do the filtering correctly.
   const { data: apiResponse, isLoading } = useQuery({
-    queryKey: ["userTransactions", selectedType],
+    queryKey: ["userTransactions"],
     queryFn: async () => {
       try {
         const res = await getUserTransactions({
-          type: selectedType === "all" ? undefined : selectedType,
           limit: 100,
           page: 1,
         });
         return res?.data?.payload?.data || [];
       } catch (err) {
         console.error("Error fetching transactions:", err);
-        return err;
+        return [];
       }
     },
   });
@@ -244,11 +256,17 @@ const TransactionsPage = () => {
         hour12: true,
       });
 
-      const filterType = (item.type?.toLowerCase() || "plan") as
-        | "referral"
-        | "rewards"
-        | "plan";
-      const isCredit = item.type === "referral" || item.type === "rewards";
+      const rawType = (item.type?.toLowerCase() || "plan") as string;
+      // "Referral" stays its own dropdown option; quiz/finance payouts both
+      // fall under the generic "Rewards" option. Plan (subscription
+      // payments) is the only debit — every reward payout is a credit.
+      const filterType: "referral" | "rewards" | "plan" =
+        rawType === "referral"
+          ? "referral"
+          : rawType === "plan"
+            ? "plan"
+            : "rewards";
+      const isCredit = REWARD_TRANSACTION_TYPES.includes(rawType);
 
       return {
         id: item.id || item._id,
@@ -542,6 +560,15 @@ const TransactionsPage = () => {
             selectedTransaction
               ? `₦${Number(selectedTransaction.amount || 0).toLocaleString()}`
               : undefined
+          }
+          amountVariant={
+            selectedTransaction
+              ? REWARD_TRANSACTION_TYPES.includes(
+                  (selectedTransaction.type || "").toLowerCase(),
+                )
+                ? "credit"
+                : "debit"
+              : "neutral"
           }
           statusLabel={
             selectedTransaction ? mapStatus(selectedTransaction.status) : undefined
