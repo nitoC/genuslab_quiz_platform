@@ -7,100 +7,239 @@ import BatchSummary from "@/features/quiz/components/BatchSummary";
 import DataReferenceGuide from "@/features/quiz/components/DataReferenceGuide";
 import LiveQuizPreview from "@/features/quiz/components/LiveQuizPreview";
 import WalkthroughModal from "@/features/quiz/components/WalkthroughModal";
+import BuilderNavTabs from "@/features/quiz/components/BuilderNavTabs";
 import { createQuiz, createQuizBatch, getQuizDay } from "@/lib/api/apis";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import useRank from "@/hooks/useRank";
 
-import { FaChevronDown, FaLock } from "react-icons/fa";
-import { HiOutlineAcademicCap } from "react-icons/hi";
+import { HiOutlineAcademicCap, HiOutlineExclamation } from "react-icons/hi";
+import CodeSample from "@/features/quiz/components/CodeSample";
 
 const LIVE_QUIZ_SAMPLE_HREF = "/samples/live-quiz-batch-sample.json";
 
-const LIVE_QUIZ_WALKTHROUGH_STEPS = [
+const QUIZ_OBJECT_EXAMPLE = `{
+  "title": "Morning Trivia - Episode 1",
+  "day": 29,
+  "episode": "EPISODE_1",
+  "activeAt": "MORNING_7_9",
+  "activeDate": "2026-09-26"
+}`;
+
+const QUIZ_BATCH_EXAMPLE = `[
   {
-    title: "What is this page for?",
-    body: (
-      <p>
-        This creates one or more <span className="font-semibold">live quiz slots</span>{" "}
-        in a single batch — each with a title, day, episode, time slot, and
-        its own set of questions. After this step, the quizzes are saved in
-        draft so you can review them under Quizzes.
-      </p>
-    ),
+    "title": "Morning Trivia - Episode 1",
+    "day": 29,
+    "episode": "EPISODE_1",
+    "activeAt": "MORNING_7_9",
+    "activeDate": "2026-09-26"
   },
   {
-    title: "Get your JSON ready",
+    "title": "Midday Trivia - Episode 2",
+    "day": 29,
+    "episode": "EPISODE_2",
+    "activeAt": "MORNING_9_11",
+    "activeDate": "2026-09-26"
+  }
+]`;
+
+const LIVE_QUIZ_WALKTHROUGH_STEPS = [
+  {
+    title: "What this page actually creates",
     body: (
       <>
         <p>
-          Prepare an array of quiz objects — each one needs{" "}
-          <span className="font-mono">title</span>,{" "}
-          <span className="font-mono">day</span>,{" "}
-          <span className="font-mono">episode</span> (e.g.{" "}
-          <span className="font-mono">EPISODE_1</span>),{" "}
-          <span className="font-mono">activeAt</span> (a time slot), and a{" "}
-          <span className="font-mono">questions</span> array — using the same
-          question format as the regular questions upload page.
+          This page creates the <span className="font-semibold">quiz slots themselves</span> —
+          think of them as empty containers: a title, which day, which
+          episode, and what time they go live. It does{" "}
+          <span className="font-bold">not</span> attach any questions, even
+          if you include a <span className="font-mono">questions</span> array
+          in your JSON — that field is ignored by this particular upload.
         </p>
         <p>
-          Grab the sample batch file below to see two full, working quiz
-          objects laid out exactly like this.
+          Every quiz you create here is saved with{" "}
+          <span className="font-semibold text-amber-700">Draft</span> status
+          and has <span className="font-semibold">zero questions</span> until
+          you complete the second step covered later in this guide.
+        </p>
+        <div className="flex gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2.5 text-amber-800">
+          <HiOutlineExclamation className="text-lg shrink-0 mt-0.5" />
+          <p className="text-[13px] leading-relaxed">
+            <span className="font-bold">This is a two-step process:</span>{" "}
+            (1) create the quiz slots here, then (2) go add real questions to
+            each one from the Quizzes page. Step 5 of this guide shows
+            exactly how.
+          </p>
+        </div>
+      </>
+    ),
+  },
+  {
+    title: "Example: a single quiz object",
+    body: (
+      <>
+        <p>
+          Each item in your array needs exactly these five fields. Here's
+          one fully valid quiz object:
+        </p>
+        <CodeSample code={QUIZ_OBJECT_EXAMPLE} label="One quiz object" />
+        <ul className="list-disc pl-5 space-y-1 text-[13px]">
+          <li>
+            <span className="font-mono font-semibold">title</span> — any
+            readable name, shown to admins (not to students directly).
+          </li>
+          <li>
+            <span className="font-mono font-semibold">day</span> — the
+            internal day counter (see step 3 for the safe value to use).
+          </li>
+          <li>
+            <span className="font-mono font-semibold">episode</span> — one of{" "}
+            <span className="font-mono">EPISODE_1</span> through{" "}
+            <span className="font-mono">EPISODE_7</span>.
+          </li>
+          <li>
+            <span className="font-mono font-semibold">activeAt</span> — the
+            time slot, e.g. <span className="font-mono">MORNING_7_9</span>{" "}
+            (full list in the Data Reference Guide card on the right).
+          </li>
+          <li>
+            <span className="font-mono font-semibold">activeDate</span> — an{" "}
+            <span className="font-mono">"YYYY-MM-DD"</span> date string.
+          </li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    title: "Example: a full batch (multiple quizzes at once)",
+    body: (
+      <>
+        <p>
+          The page expects an <span className="font-semibold">array</span> —
+          you can create several episodes for the same day in one upload:
+        </p>
+        <CodeSample code={QUIZ_BATCH_EXAMPLE} label="Batch of 2 quiz objects" />
+        <p>
+          Grab the full sample file below (2 ready-to-use quiz objects) if
+          you'd rather start from a working file than type this by hand.
         </p>
       </>
     ),
   },
   {
-    title: "Check the day counter",
+    title: "Picking a safe day number",
     body: (
-      <p>
-        The <span className="text-blue-600 font-semibold">Available Day</span>{" "}
-        number shown on this page is the safe value to use in every quiz
-        object's <span className="font-mono">day</span> field right now —
-        using an already-used day can get your batch rejected.
-      </p>
+      <>
+        <p>
+          The <span className="text-blue-600 font-semibold">Available Day</span>{" "}
+          number shown further down this page (next to{" "}
+          <span className="text-red-500 font-semibold">Previous Day</span> and{" "}
+          <span className="text-emerald-600 font-semibold">Next Day</span>) is
+          the safe value to put in every quiz object's{" "}
+          <span className="font-mono">day</span> field right now.
+        </p>
+        <p>
+          Example: if the page shows{" "}
+          <span className="font-mono font-semibold">
+            Available Day (use now): 29
+          </span>
+          , every quiz object you upload in this batch should use{" "}
+          <span className="font-mono">"day": 29</span>. Reusing an
+          already-scheduled day/episode/slot combination gets the whole batch
+          rejected with a conflict error.
+        </p>
+        <p>
+          If you don't set <span className="font-mono">activeDate</span> on
+          a quiz object, pick a date using the{" "}
+          <span className="font-semibold">Target Schedule Date</span> field
+          above — it gets applied to every quiz object that's missing one.
+        </p>
+      </>
     ),
   },
   {
-    title: "Load it in",
+    title: "Upload it in",
     body: (
       <p>
         Drag your <span className="font-mono">.json</span> file onto the
-        upload box, or paste the array straight into the text box. Pick a{" "}
-        <span className="font-semibold">Target Schedule Date</span> above if
-        your quiz objects don't already set their own{" "}
-        <span className="font-mono">activeDate</span>.
+        upload box, or paste the array straight into the text box. The
+        summary card on the right updates live as you type, showing how many
+        quizzes were detected.
       </p>
     ),
   },
   {
-    title: "Check & submit",
+    title: "Submit — then check the Integration Workflow",
     body: (
       <p>
         Click <span className="font-semibold">"Create and Assign Questions"</span>{" "}
-        to preview the batch, then confirm to save every quiz as a draft.
+        to preview the batch, then confirm. The three-step tracker on this
+        page (JSON Validation → Quiz Creation → Question Assignment) reflects
+        what actually happened — but remember: "Question Assignment" here
+        only means the quiz rows were created, not that real questions were
+        attached. That's the next step.
       </p>
     ),
   },
+  {
+    title: "⚠️ Now go add the actual questions",
+    body: (
+      <>
+        <p>
+          Your quizzes were just created as{" "}
+          <span className="font-semibold text-amber-700">Drafts</span> with{" "}
+          <span className="font-semibold">no questions attached yet</span>.
+          A quiz in this state won't go live for students. To finish it:
+        </p>
+        <ol className="list-decimal pl-5 space-y-1.5 text-[13px]">
+          <li>
+            Open <span className="font-semibold">Quizzes</span> in the sidebar.
+          </li>
+          <li>
+            Click the{" "}
+            <span className="font-semibold">Drafts</span> filter tab to find
+            the quiz(zes) you just created.
+          </li>
+          <li>
+            On that quiz's card, click the small{" "}
+            <span className="font-semibold">+ (Insert Questions)</span> icon
+            in the top-right corner — it's the small circled plus sign next
+            to the archive/delete icons.
+          </li>
+          <li>
+            That click takes you to the same JSON builder used for demo
+            questions, but with this quiz's ID already carried in the URL (
+            <span className="font-mono">?id=...</span>). Paste or upload your
+            array of question objects there.
+          </li>
+          <li>
+            <span className="font-bold">
+              You don't need to add a{" "}
+              <span className="font-mono">quizId</span> field to your
+              questions yourself
+            </span>{" "}
+            — because you arrived via that Insert Questions link, the page
+            automatically stamps the correct{" "}
+            <span className="font-mono">quizId</span> onto every question the
+            moment you click "Submit Questions" there.
+          </li>
+          <li>
+            See the{" "}
+            <span className="font-semibold">
+              "New here? Take the walkthrough"
+            </span>{" "}
+            button on that page for its own detailed guide with more
+            examples.
+          </li>
+        </ol>
+        <p>
+          Repeat this for every quiz in your batch — each one needs its own
+          questions added separately.
+        </p>
+      </>
+    ),
+  },
 ];
-
-type Rank = {
-  id: string;
-  rank: number;
-  rankName: string;
-  unlockXp: number;
-  unlocked: boolean;
-  unlockedAt: string | null;
-  createdAt: string;
-  reward: number;
-};
-
-type RankDropdownProps = {
-  ranks?: Rank[];
-  activeRank?: Rank | null;
-  setActiveRank: (rank: Rank) => void;
-};
 
 export interface QuizObject {
   title?: string;
@@ -112,8 +251,6 @@ export interface QuizObject {
 }
 
 export default function BulkQuizCreator() {
-  const { data, isLoading, isError, error } = useRank();
-
   // The "day" counter every quiz's `day` field must satisfy (> currentDay -
   // 2 for a batch to be accepted) — surfaced so admins don't have to guess
   // or hit a 409 to find out what value is safe to use.
@@ -126,17 +263,6 @@ export default function BulkQuizCreator() {
         | undefined;
     },
   });
-
-  //  Safely handle activeRank state initialization when data is undefined
-  const [activeRank, setActiveRank] = useState<Rank | null>(null);
-
-  // Synchronize activeRank when rank data becomes available
-  useEffect(() => {
-    if (data && Array.isArray(data) && data.length > 0 && !activeRank) {
-      const unlockedRank = data.find((rank: Rank) => rank.unlocked);
-      setActiveRank(unlockedRank ?? data[data.length - 1]);
-    }
-  }, [data, activeRank]);
 
   const timerRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const router = useRouter();
@@ -269,6 +395,8 @@ export default function BulkQuizCreator() {
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-12 text-slate-800">
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
+        <BuilderNavTabs />
+
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -277,9 +405,9 @@ export default function BulkQuizCreator() {
             </h1>
             <p className="mt-2 text-sm sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
               Scale your assessments by importing multiple quizzes
-              simultaneously. Upload or paste your JSON array below. Each quiz
-              object should include a title, day, episode (e.g., EPISODE_1),
-              activeAt slot, and an array of questions.
+              simultaneously. Upload or paste your JSON array below — each
+              quiz object needs a title, day, episode (e.g., EPISODE_1),
+              activeAt slot, and activeDate.
             </p>
           </div>
           <button
@@ -289,6 +417,24 @@ export default function BulkQuizCreator() {
             <HiOutlineAcademicCap size={18} />
             New here? Take the walkthrough
           </button>
+        </div>
+
+        {/* Always-visible notice — not just inside the optional walkthrough
+            — since forgetting this step leaves a quiz permanently stuck in
+            Draft with zero questions and no obvious error to point at why. */}
+        <div className="flex gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3.5">
+          <HiOutlineExclamation className="text-xl text-amber-500 shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-800 leading-relaxed">
+            <span className="font-bold">This only creates the quiz slots</span>{" "}
+            (title, day, episode, time) — it does <span className="font-bold">not</span>{" "}
+            attach questions, even if your JSON includes a{" "}
+            <span className="font-mono">questions</span> field. After
+            submitting, go to{" "}
+            <span className="font-semibold">Quizzes → Drafts</span> and click
+            the <span className="font-semibold">+ (Insert Questions)</span>{" "}
+            icon on each quiz to add its actual question set. See the
+            walkthrough above for a full example.
+          </p>
         </div>
 
         {/* Previous / available-now / next day — same styling as the quiz
@@ -320,13 +466,6 @@ export default function BulkQuizCreator() {
               onChange={(e) => setActiveDate(e.target.value)}
               className="w-full max-w-xs px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer"
             />
-            {!isLoading && data && (
-              <RankDropdown
-                ranks={data}
-                activeRank={activeRank}
-                setActiveRank={setActiveRank}
-              />
-            )}
           </div>
           <p className="mt-1.5 text-slate-400 text-sm">
             This value will be dynamically injected into every array block item
@@ -372,98 +511,6 @@ export default function BulkQuizCreator() {
         steps={LIVE_QUIZ_WALKTHROUGH_STEPS}
         sampleFileHref={LIVE_QUIZ_SAMPLE_HREF}
       />
-    </div>
-  );
-}
-
-function RankDropdown({
-  ranks = [],
-  setActiveRank,
-  activeRank,
-}: RankDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleSelectRank = (rank: Rank) => {
-    setActiveRank(rank);
-    setIsOpen(false);
-  };
-
-  if (!activeRank) return null;
-
-  return (
-    <div className="relative w-full max-w-md">
-      {/* Selected Rank */}
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition hover:border-blue-600"
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-            {activeRank.rank}
-          </div>
-
-          <div className="text-left">
-            <p className="text-sm font-semibold text-gray-900">
-              {activeRank.rankName}
-            </p>
-
-            <p className="text-sm text-gray-500">
-              {activeRank.unlockXp?.toLocaleString()} XP
-            </p>
-          </div>
-        </div>
-
-        <FaChevronDown
-          className={`text-sm text-gray-500 transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
-      </button>
-
-      {/* Dropdown List */}
-      {isOpen && (
-        <div className="absolute z-50 mt-2 max-h-80 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
-          {ranks?.map((rank) => {
-            const isActive = activeRank.id === rank.id;
-
-            return (
-              <button
-                key={rank.id}
-                type="button"
-                onClick={() => handleSelectRank(rank)}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left transition ${
-                  isActive ? "bg-blue-50 text-blue-600" : "hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${
-                      isActive
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {rank.rank}
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      {rank.rankName}
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-                      {rank.unlockXp?.toLocaleString()} XP
-                    </p>
-                  </div>
-                </div>
-
-                {!rank.unlocked && <FaLock className="text-sm text-gray-400" />}
-              </button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

@@ -60,10 +60,10 @@ export default function WalkthroughModal({
         aria-modal="true"
         aria-labelledby="walkthrough-title"
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden"
+        className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden flex flex-col max-h-[85vh]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 shrink-0">
           <h2 id="walkthrough-title" className="text-lg font-bold text-slate-900">
             {title}
           </h2>
@@ -78,20 +78,20 @@ export default function WalkthroughModal({
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 min-h-[180px]">
+        <div className="px-6 py-5 min-h-[180px] overflow-y-auto">
           <div className="flex items-center gap-2 mb-3">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shrink-0">
               {stepIndex + 1}
             </span>
             <h3 className="text-base font-bold text-slate-800">{step.title}</h3>
           </div>
-          <div className="text-sm text-slate-600 leading-relaxed space-y-2">
+          <div className="text-sm text-slate-600 leading-relaxed space-y-3">
             {step.body}
           </div>
         </div>
 
         {/* Progress dots */}
-        <div className="flex items-center justify-center gap-1.5 pb-4">
+        <div className="flex items-center justify-center gap-1.5 pb-4 shrink-0">
           {steps.map((_, i) => (
             <button
               key={i}
@@ -106,7 +106,7 @@ export default function WalkthroughModal({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4 shrink-0">
           {sampleFileHref ? (
             <a
               href={sampleFileHref}

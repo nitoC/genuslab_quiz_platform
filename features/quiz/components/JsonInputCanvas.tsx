@@ -34,7 +34,10 @@ export default function JsonInputCanvas({
   submitting,
   handlePreview,
 }: JsonInputCanvasProps) {
-  const [rankId, setRankId] = useState<string>("");
+  // Remembers the last few ranks used in this session so switching back to
+  // one you were just working with is a single click instead of re-opening
+  // the (searchable, but still 20-items-deep) dropdown every time.
+  const [recentRankIds, setRecentRankIds] = useState<string[]>([]);
 
   const {
     isLoading: ranksLoading,
@@ -87,6 +90,21 @@ export default function JsonInputCanvas({
     });
     setJsonText(JSON.stringify(updated, null, 2));
   };
+
+  const selectRank = (nextRankId: string) => {
+    setQuestionRank(nextRankId);
+    // Topics are scoped per rank — a topic chosen for the previous rank
+    // won't necessarily be valid for the new one.
+    setQuestionTopic("");
+    applyDropdownValuesToJson(nextRankId, "");
+    setRecentRankIds((prev) =>
+      [nextRankId, ...prev.filter((id) => id !== nextRankId)].slice(0, 6),
+    );
+  };
+
+  const recentRanks = recentRankIds
+    .map((id) => ranksData.find((a: any) => a.id === id))
+    .filter(Boolean);
 
   return (
     <div className="flex flex-col gap-4">
@@ -142,28 +160,50 @@ export default function JsonInputCanvas({
             <CustomSelect
               value={questionRank}
               loading={ranksLoading}
-              onChange={(value: string) => {
-                setQuestionRank(value);
-                setRankId(value);
-                // Topics are scoped per rank — a topic chosen for the
-                // previous rank won't necessarily be valid for the new one.
-                setQuestionTopic("");
-                applyDropdownValuesToJson(value, "");
-              }}
-              placeholder="Select Rank"
+              searchable
+              onChange={selectRank}
+              placeholder="Search or select a rank..."
               ariaLabel="Question Rank"
-              options={(ranksData ?? []).map((a: any) => ({
-                label: a.rankName,
-                value: a.id,
-              }))}
+              options={(ranksData ?? [])
+                .slice()
+                .sort((a: any, b: any) => b.rank - a.rank)
+                .map((a: any) => ({
+                  label: `#${a.rank} — ${a.rankName}`,
+                  value: a.id,
+                }))}
             />
-            <input
-              className="text-sm text-slate-300"
-              type="text"
-              value={rankId}
-              disabled
-            />
+            {selectedRank && (
+              <span className="w-fit rounded-md bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-600">
+                Building for: #{selectedRank.rank} — {selectedRank.rankName}
+              </span>
+            )}
           </div>
+
+          {/* One-click switching between ranks you've used already this
+              session, instead of re-opening the dropdown every time. */}
+          {recentRanks.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Recently used ranks
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {recentRanks.map((rank: any) => (
+                  <button
+                    key={rank.id}
+                    type="button"
+                    onClick={() => selectRank(rank.id)}
+                    className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${
+                      questionRank === rank.id
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    #{rank.rank} {rank.rankName}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Topic — applied to every question in the batch below, unless a
               question in the pasted JSON sets its own `topic` field. */}

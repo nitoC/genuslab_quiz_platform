@@ -843,6 +843,18 @@ export const getAdminRewards = async (params?: {
   return res;
 };
 
+// ADMIN/ACCOUNTANT: every user's linked payout bank account — used by the
+// Finance page's "Bank Accounts" tab so staff can look one up before
+// sending a manual reward payout.
+export const getAdminBankAccounts = async (params?: {
+  search?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await axiosAdmin.get("accounts/admin/bank-accounts", { params });
+  return res;
+};
+
 export const updateAdminReward = async (
   id: string,
   payload: { claimed: boolean; notes: string },

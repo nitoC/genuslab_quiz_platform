@@ -211,8 +211,11 @@ const Page = () => {
       queryKey: ["mostRecentTransaction"],
       queryFn: async () => {
         const res = await getMostRecentTransaction();
-        console.log(res?.data, "most recent transaction data");
-        return res?.data;
+        // The controller wraps the transaction as { success, payload }, so
+        // the actual transaction (and its `amount`) lives one level deeper
+        // than `res.data` — reading `res.data` directly meant `.amount` was
+        // always undefined and this card never showed a real payout.
+        return res?.data?.payload;
       },
     });
 
@@ -231,8 +234,11 @@ const Page = () => {
 
   /* Update payout from most recent transaction data */
   useEffect(() => {
-    if (mostRecentTransactionData?.amount) {
-      setCurrentPayout(mostRecentTransactionData.amount);
+    // Prisma serializes the `Decimal` amount field as a string over JSON,
+    // so this needs an explicit Number() cast or `.toLocaleString()` below
+    // just echoes the raw string instead of formatting it.
+    if (mostRecentTransactionData?.amount != null) {
+      setCurrentPayout(Number(mostRecentTransactionData.amount));
     }
   }, [mostRecentTransactionData]);
 

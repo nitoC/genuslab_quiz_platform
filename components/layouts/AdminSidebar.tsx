@@ -84,7 +84,7 @@ const navLinks = [
     label: "Finance & Banks",
     href: "/genuslab/finance",
     icon: MdAccountBalance,
-    roles: ["ADMIN"],
+    roles: ["ADMIN", "ACCOUNTANT"],
   },
   {
     label: "Support Messages",

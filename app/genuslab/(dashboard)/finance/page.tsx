@@ -11,7 +11,11 @@ import AdminPagination from "@/components/ui/AdminPagination";
 import CustomSelect from "@/components/ui/FormItems/CustomSelect";
 import Badge, { BadgeStatus } from "@/components/ui/Badge";
 import ApprovedBanksPanel from "@/components/admin/ApprovedBanksPanel";
-import { getAdminFinanceOverview, getAllTransactions } from "@/lib/api/apis";
+import {
+  getAdminFinanceOverview,
+  getAllTransactions,
+  getAdminBankAccounts,
+} from "@/lib/api/apis";
 import { cn } from "@/lib/utils/cn";
 import {
   MdAccountBalance,
@@ -19,11 +23,13 @@ import {
   MdCheckCircleOutline,
   MdErrorOutline,
   MdChevronRight,
+  MdSearch,
 } from "react-icons/md";
 
 const TABS = [
   { key: "overview", label: "Overview" },
   { key: "transactions", label: "Transactions" },
+  { key: "payout-accounts", label: "Payout Bank Accounts" },
   { key: "banks", label: "Approved Banks" },
 ] as const;
 
@@ -56,6 +62,9 @@ const FinancePageContent = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
 
+  const [bankSearch, setBankSearch] = useState("");
+  const [bankPage, setBankPage] = useState(1);
+
   useEffect(() => {
     const tabParam = searchParams.get("tab");
     if (tabParam && TABS.some((t) => t.key === tabParam)) {
@@ -87,6 +96,26 @@ const FinancePageContent = () => {
 
   const transactions = data?.data ?? [];
   const meta = data?.meta;
+
+  const {
+    data: bankData,
+    isLoading: isBankLoading,
+    isError: isBankError,
+  } = useQuery({
+    queryKey: ["admin-bank-accounts", bankSearch, bankPage],
+    enabled: tab === "payout-accounts",
+    queryFn: async () => {
+      const res = await getAdminBankAccounts({
+        search: bankSearch || undefined,
+        page: bankPage,
+        limit,
+      });
+      return res?.data?.payload;
+    },
+  });
+
+  const bankAccounts = bankData?.data ?? [];
+  const bankMeta = bankData?.meta;
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -289,6 +318,82 @@ const FinancePageContent = () => {
               meta={meta}
               onPageChange={setPage}
               itemLabel="transactions"
+            />
+          </AdminCard>
+        </div>
+      )}
+
+      {tab === "payout-accounts" && (
+        <div className="flex flex-col gap-6">
+          <AdminCard>
+            <div className="relative max-w-sm">
+              <MdSearch
+                size={18}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                value={bankSearch}
+                onChange={(e) => {
+                  setBankSearch(e.target.value);
+                  setBankPage(1);
+                }}
+                placeholder="Search by name or email..."
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm text-slate-800 outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10"
+              />
+            </div>
+          </AdminCard>
+
+          <AdminCard className="p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-left text-slate-500 uppercase text-xs">
+                  <tr>
+                    <th className="px-6 py-3.5 font-bold">User</th>
+                    <th className="px-6 py-3.5 font-bold">Bank</th>
+                    <th className="px-6 py-3.5 font-bold">Account Number</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {isBankLoading ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-14 text-center text-slate-400">
+                        Loading bank accounts...
+                      </td>
+                    </tr>
+                  ) : isBankError ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-14 text-center text-red-400">
+                        Unable to load bank accounts. Please try again.
+                      </td>
+                    </tr>
+                  ) : bankAccounts.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-14 text-center text-slate-400">
+                        No linked payout accounts found.
+                      </td>
+                    </tr>
+                  ) : (
+                    bankAccounts.map((acc: any) => (
+                      <tr key={acc.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="px-6 py-4">
+                          <p className="font-bold text-slate-800">{acc.user?.name}</p>
+                          <p className="text-xs text-slate-400">{acc.user?.email}</p>
+                        </td>
+                        <td className="px-6 py-4 text-slate-600">{acc.bankName}</td>
+                        <td className="font-data px-6 py-4 text-slate-800">
+                          {acc.accountNumber}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <AdminPagination
+              meta={bankMeta}
+              onPageChange={setBankPage}
+              itemLabel="bank accounts"
             />
           </AdminCard>
         </div>

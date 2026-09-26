@@ -56,6 +56,7 @@ interface RewardRow {
     id: string;
     user: { name: string; email: string };
   };
+  bankAccount: { bankName: string; accountNumber: string } | null;
 }
 
 const formatCurrency = (value: string | number) =>
@@ -119,6 +120,23 @@ const RewardEditModal = ({
               <span className="font-bold text-slate-800">
                 {formatCurrency(reward.value)}
               </span>
+            </div>
+            <div className="mt-3 border-t border-slate-200 pt-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                Payout Account
+              </p>
+              {reward.bankAccount ? (
+                <p className="mt-1 font-semibold text-slate-700">
+                  {reward.bankAccount.bankName} —{" "}
+                  <span className="font-data">
+                    {reward.bankAccount.accountNumber}
+                  </span>
+                </p>
+              ) : (
+                <p className="mt-1 font-semibold text-amber-600">
+                  No bank account linked yet
+                </p>
+              )}
             </div>
           </div>
 
@@ -453,6 +471,7 @@ export default function RewardsPage() {
                 <th className="px-6 py-3.5 font-bold">User</th>
                 <th className="px-6 py-3.5 font-bold">Source</th>
                 <th className="px-6 py-3.5 font-bold text-right">Value</th>
+                <th className="px-6 py-3.5 font-bold">Bank Account</th>
                 <th className="px-6 py-3.5 font-bold">Status</th>
                 <th className="px-6 py-3.5 font-bold">Notes</th>
                 <th className="px-6 py-3.5 font-bold text-right">Action</th>
@@ -461,19 +480,19 @@ export default function RewardsPage() {
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-14 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-14 text-center text-slate-400">
                     Loading rewards...
                   </td>
                 </tr>
               ) : isError ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-14 text-center text-red-400">
+                  <td colSpan={7} className="px-6 py-14 text-center text-red-400">
                     Unable to load rewards. Please try again.
                   </td>
                 </tr>
               ) : rewards.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-14 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-14 text-center text-slate-400">
                     <div className="flex flex-col items-center gap-2">
                       <MdCardGiftcard size={28} className="text-slate-300" />
                       <p className="font-semibold text-slate-500">
@@ -501,6 +520,22 @@ export default function RewardsPage() {
                     </td>
                     <td className="font-data px-6 py-4 text-right font-semibold text-slate-800">
                       {formatCurrency(r.value)}
+                    </td>
+                    <td className="px-6 py-4">
+                      {r.bankAccount ? (
+                        <>
+                          <p className="font-semibold text-slate-700">
+                            {r.bankAccount.bankName}
+                          </p>
+                          <p className="font-data text-xs text-slate-400">
+                            {r.bankAccount.accountNumber}
+                          </p>
+                        </>
+                      ) : (
+                        <span className="text-xs font-semibold text-amber-600">
+                          No bank linked
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <Badge status={r.claimed ? "success" : "warning"}>

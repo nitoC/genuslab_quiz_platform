@@ -251,6 +251,17 @@
   }
 }
 
+html,
+body {
+  /* The mobile off-canvas sidebar is a fixed, w-70 element translated fully
+     off-screen with -translate-x-full when closed. Some mobile WebKit
+     builds (iOS Safari in particular) still count a translated `fixed`
+     element's untransformed layout box toward the page's horizontal scroll
+     extent, so without this the whole page becomes swipe-scrollable
+     sideways, revealing a blank gutter where the hidden sidebar "would" sit. */
+  overflow-x: hidden;
+}
+
 body {
   /* background: var(--background);
   color: var(--foreground);
