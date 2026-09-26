@@ -643,6 +643,12 @@ export const requestSupportHuman = async (reason?: string) => {
   return res;
 };
 
+// Back to the assistant while no staff member has replied yet.
+export const resumeSupportAi = async () => {
+  const res = await axiosUser.post("support-ai/resume");
+  return res;
+};
+
 export const closeSupportConversation = async () => {
   const res = await axiosUser.post("support-ai/close");
   return res;

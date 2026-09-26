@@ -4,6 +4,7 @@ import {
   closeSupportConversation,
   getSupportConversation,
   requestSupportHuman,
+  resumeSupportAi,
   sendSupportMessage,
 } from "@/lib/api/apis";
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -52,38 +53,72 @@ export default function SupportPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socket = useSocket((s: any) => s.socket);
 
-  // The conversation lives on the server, so it survives reloads and
-  // devices, and staff can see it.
+  // The server's copy is the only source of truth: every tab reloads it
+  // when something changes, so tabs can't drift apart.
+  const loadSeq = useRef(0);
+  const sending = useRef(false); // this tab is streaming a reply
+  const reloadAfterSend = useRef(false);
+  const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const load = useCallback(async () => {
+    const seq = ++loadSeq.current;
     try {
       const res = await getSupportConversation();
+      if (seq !== loadSeq.current) return; // a newer load already started
       const convo = res.data?.payload;
       setMessages(convo ? convo.messages.map(fromServer) : []);
       setMode(convo?.status ?? "AI");
     } catch {
-      toast.error("Couldn't load your support chat. Please refresh.");
+      if (seq === loadSeq.current) toast.error("Couldn't load your support chat. Please refresh.");
     } finally {
-      setIsLoaded(true);
+      if (seq === loadSeq.current) setIsLoaded(true);
     }
   }, []);
 
+  // Coalesces bursts of change events; waits while this tab is mid-reply
+  // so the streaming bubble isn't replaced halfway.
+  const requestReload = useCallback(() => {
+    if (sending.current) {
+      reloadAfterSend.current = true;
+      return;
+    }
+    if (reloadTimer.current) clearTimeout(reloadTimer.current);
+    reloadTimer.current = setTimeout(load, 250);
+  }, [load]);
+
   useEffect(() => {
+    // The old version kept its own copy of the chat in the browser; that
+    // copy could disagree with the server, so drop it.
+    try {
+      sessionStorage.removeItem("support_chat_messages");
+    } catch {}
     load();
   }, [load]);
 
-  // Staff replies (and hand-back/close notes) arrive live.
+  // Changes from any tab, the AI, or staff arrive over the socket.
   useEffect(() => {
     if (!socket) return;
-    const onMessage = (m: any) => {
-      setMessages((prev) =>
-        prev.some((p) => p.id === m.id) ? prev : [...prev, fromServer(m)],
-      );
-      if (m.sender === "STAFF") setMode("HUMAN");
-      if (m.status) setMode(m.status === "CLOSED" ? "CLOSED" : m.status);
+    socket.on("support-updated", requestReload);
+    socket.on("support-message", requestReload);
+    return () => {
+      socket.off("support-updated", requestReload);
+      socket.off("support-message", requestReload);
     };
-    socket.on("support-message", onMessage);
-    return () => socket.off("support-message", onMessage);
-  }, [socket]);
+  }, [socket, requestReload]);
+
+  // Catch up when coming back to this tab (e.g. if the socket dropped).
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") requestReload();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", requestReload);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", requestReload);
+      if (reloadTimer.current) clearTimeout(reloadTimer.current);
+    };
+  }, [requestReload]);
 
   useEffect(() => {
     if (isLoaded) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -112,6 +147,8 @@ export default function SupportPage() {
     ]);
     setInput("");
     setIsLoading(true);
+    sending.current = true;
+    let failed = false;
 
     try {
       const response = await sendSupportMessage(text);
@@ -151,6 +188,7 @@ export default function SupportPage() {
         );
       }
     } catch (err: any) {
+      failed = true;
       // Say what actually went wrong, so it's clear whether to retry,
       // log in again or wait.
       const status = err?.response?.status;
@@ -171,6 +209,22 @@ export default function SupportPage() {
       ]);
     } finally {
       setIsLoading(false);
+      sending.current = false;
+      // Swap the temporary bubbles for the saved messages (and pick up any
+      // handoff), unless sending failed: then keep the error on screen.
+      if (!failed || reloadAfterSend.current) {
+        reloadAfterSend.current = false;
+        if (!failed) load();
+      }
+    }
+  };
+
+  const backToAssistant = async () => {
+    try {
+      await resumeSupportAi();
+      await load();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Couldn't switch back. Please try again.");
     }
   };
 
@@ -187,8 +241,7 @@ export default function SupportPage() {
   const endChat = async () => {
     try {
       await closeSupportConversation();
-      setMessages([]);
-      setMode("AI");
+      await load();
     } catch {
       toast.error("Couldn't end the chat. Please try again.");
     }
@@ -221,6 +274,16 @@ export default function SupportPage() {
                   className="flex items-center gap-2 rounded-xl border border-white/15 px-3 py-2 text-sm font-semibold text-(--primary) hover:bg-white/5"
                 >
                   <FaHeadset size={13} /> Talk to a person
+                </button>
+              )}
+              {/* Only before a staff member has replied. */}
+              {mode === "WAITING" && (
+                <button
+                  type="button"
+                  onClick={backToAssistant}
+                  className="flex items-center gap-2 rounded-xl border border-white/15 px-3 py-2 text-sm font-semibold text-(--primary) hover:bg-white/5"
+                >
+                  <FaRobot size={13} /> Back to the assistant
                 </button>
               )}
               {messages.length > 0 && mode !== "CLOSED" && (
