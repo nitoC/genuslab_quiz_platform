@@ -442,7 +442,7 @@ function JsonBuilderPage() {
       /> */}
       <div className="min-h-screen bg-slate-50 p-6 md:p-12 text-slate-800">
         <div className="max-w-6xl mx-auto space-y-6">
-          <BuilderNavTabs />
+          <BuilderNavTabs quizMode={!!id} />
 
           {/* Header */}
           <div className="flex flex-wrap items-start justify-between gap-4">

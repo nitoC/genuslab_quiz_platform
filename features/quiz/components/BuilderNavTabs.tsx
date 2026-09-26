@@ -9,9 +9,29 @@ const TABS = [
   { label: "Bulk Live Quiz Creator", href: "/genuslab/quizzes/create-quiz/json/live" },
 ];
 
-// Tabs to switch between the JSON builder pages.
-export default function BuilderNavTabs() {
+// Tabs to switch between the JSON builder pages. When adding questions to
+// a specific live quiz (quizMode), the demo/live tabs don't apply, so show a
+// way back to the quizzes list instead.
+export default function BuilderNavTabs({ quizMode = false }: { quizMode?: boolean }) {
   const pathname = usePathname();
+
+  if (quizMode) {
+    return (
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href="/genuslab/quizzes"
+          className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+        >
+          <HiOutlineArrowLeft size={16} />
+          Quizzes
+        </Link>
+        <span className="text-slate-300">/</span>
+        <span className="rounded-md bg-white px-3 py-1.5 text-xs font-bold text-blue-600 shadow-sm">
+          Add Questions
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-3">
