@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { MdArrowForward, MdOutlinePlayCircle } from "react-icons/md";
-import useNextQuizCountdown from "@/hooks/useNextQuizCountdown";
 
 interface FloatingDemoButtonProps {
   href?: string;
@@ -16,8 +15,11 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
   onClick,
   className = "",
 }) => {
-  // Sit above the countdown bar only when it's showing.
-  const { isReady: timerBarVisible } = useNextQuizCountdown();
+  // Sit on top of the countdown bar when it's showing: TimerPop publishes its
+  // height in --timer-bar-h (0 or unset when hidden, so we drop to the bottom).
+  const style: React.CSSProperties = {
+    bottom: "max(1.25rem, calc(var(--timer-bar-h, 0px) + 0.5rem))",
+  };
 
   const content = (
     <span className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-slate-900 shadow-sm transition-colors duration-200 hover:border-slate-300 hover:bg-slate-50 sm:gap-3 sm:px-4 sm:py-3">
@@ -52,11 +54,13 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
   const wrapperClasses = [
     "group",
     "fixed",
+    // Same side inset as the countdown bar (px-4 md:px-8).
     "right-4",
-    "sm:right-6",
+    "md:right-8",
         // Below the mobile sidebar (z-30), above the header (z-10).
     "z-20",
-    timerBarVisible ? "bottom-27 sm:bottom-30" : "bottom-5 sm:bottom-6",
+    "transition-[bottom]",
+    "duration-300",
     "focus:outline-none",
     "focus-visible:ring-2",
     "focus-visible:ring-slate-400",
@@ -72,6 +76,7 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
         type="button"
         onClick={onClick}
         className={wrapperClasses}
+        style={style}
         aria-label="Join demo"
       >
         {content}
@@ -83,6 +88,7 @@ export const FloatingDemoButton: React.FC<FloatingDemoButtonProps> = ({
     <Link
       href={href ?? "/quiz/demo"}
       className={wrapperClasses}
+      style={style}
       aria-label="Join demo"
     >
       {content}
